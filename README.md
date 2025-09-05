@@ -17,14 +17,15 @@ Este repositorio contiene el desarrollo del **obligatorio de Diseño de Aplicaci
 El proyecto consiste en una aplicación para un parque temático virtual.  
 
 ## 🗂️ Estructura de la solución  
+```
+Obligatorio.sln                   (Archivo de solución .NET)
 
-/Obligatorio.sln # Archivo de solución .NET
+src/
+├─ Parque.WebApi/                 (Capa de presentación – endpoints HTTP)
+├─ Parque.Aplicacion/             (Casos de uso y lógica de negocio)
+├─ Parque.Dominio/                (Entidades y reglas del dominio)
+└─ Parque.Infraestructura/        (Acceso a datos y servicios externos)
 
-/src
-/Parque.WebApi # Capa de presentación (endpoints HTTP)
-/Parque.Aplicacion # Casos de uso y orquestación de lógica
-/Parque.Dominio # Entidades del dominio y reglas de negocio
-/Parque.Infraestructura # Acceso a datos, servicios externos, implementaciones
-
-/tests
-/Parque.Aplicacion.Tests # Proyecto de pruebas (MSTest)
+tests/
+└─ Parque.Aplicacion.Tests/       (Proyecto de pruebas – MSTest)
+```
