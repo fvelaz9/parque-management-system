@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "qZtyODgXyPw=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\t1999\\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\\1.ORT\\DA2\\cardozo-pons-velazquez\\src\\Parque.Aplicacion\\Parque.Aplicacion.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\t1999\\.nuget\\packages\\stylecop.analyzers\\1.2.0-beta.261\\stylecop.analyzers.1.2.0-beta.261.nupkg.sha512",
+    "C:\\Users\\t1999\\.nuget\\packages\\stylecop.analyzers.unstable\\1.2.0.261\\stylecop.analyzers.unstable.1.2.0.261.nupkg.sha512"
+  ],
+  "logs": []
+}
