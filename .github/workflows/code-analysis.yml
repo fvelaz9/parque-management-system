@@ -9,8 +9,8 @@ on:
     - '**.csproj'
 
 jobs:
-  run:
-    name: Run
+  analysis:
+    name: Code Analysis
     uses: IngSoft-DA2/workflows/.github/workflows/reusable-code-analysis.yml@self-hosted-runner
     permissions: write-all
     with:
