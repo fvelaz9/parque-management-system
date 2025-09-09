@@ -9,8 +9,8 @@ on:
     - '**.csproj'
 
 jobs:
-  build:
-    name: Build and Test
+  run:
+    name: Run
     uses: IngSoft-DA2/workflows/.github/workflows/reusable-build-test.yml@self-hosted
     permissions: write-all
     with:
