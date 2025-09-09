@@ -11,7 +11,7 @@ on:
 jobs:
   analysis:
     name: Code Analysis
-    uses: IngSoft-DA2/workflows/.github/workflows/reusable-code-analysis.yml@self-hosted-runner
+    uses: IngSoft-DA2/workflows/.github/workflows/reusable-code-analysis.yml@self-hosted
     permissions: write-all
     with:
       solution-name: 'Obligatorio.sln'
