@@ -1,7 +1,7 @@
 {
   "version": 3,
   "targets": {
-    "net9.0": {
+    "net8.0": {
       "Microsoft.ApplicationInsights/2.22.0": {
         "type": "package",
         "dependencies": {
@@ -1750,7 +1750,7 @@
     }
   },
   "projectFileDependencyGroups": {
-    "net9.0": [
+    "net8.0": [
       "MSTest >= 3.6.4",
       "Microsoft.NET.Test.Sdk >= 17.12.0",
       "Parque.Aplicacion >= 1.0.0",
@@ -1779,15 +1779,15 @@
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
-        "net9.0"
+        "net8.0"
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
-        "net9.0": {
-          "targetAlias": "net9.0",
+        "net8.0": {
+          "targetAlias": "net8.0",
           "projectReferences": {
             "C:\\Users\\t1999\\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\\1.ORT\\DA2\\cardozo-pons-velazquez\\src\\Parque.Aplicacion\\Parque.Aplicacion.csproj": {
               "projectPath": "C:\\Users\\t1999\\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\\1.ORT\\DA2\\cardozo-pons-velazquez\\src\\Parque.Aplicacion\\Parque.Aplicacion.csproj"
@@ -1808,8 +1808,8 @@
       "SdkAnalysisLevel": "9.0.300"
     },
     "frameworks": {
-      "net9.0": {
-        "targetAlias": "net9.0",
+      "net8.0": {
+        "targetAlias": "net8.0",
         "dependencies": {
           "MSTest": {
             "target": "Package",
