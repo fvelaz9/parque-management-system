@@ -12,5 +12,7 @@ public class Cuenta
     public IReadOnlyCollection<Rol> Roles => _roles;
     public Guid? VisitanteId { get; private set; }
 
-    private Cuenta() { }
+    private Cuenta()
+    {
+    }
 }
