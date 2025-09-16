@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Parque.WebApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7e278293a5477031ab1d6a42e92004e8536284d8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+94e47e4c82e13fdae90f5c89b8e03153f74efbf7")]
 [assembly: System.Reflection.AssemblyProductAttribute("Parque.WebApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Parque.WebApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
