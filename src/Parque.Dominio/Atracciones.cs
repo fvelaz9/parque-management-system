@@ -2,14 +2,47 @@ namespace Parque.Dominio;
 
 public class Atracciones
 {
-    public Guid Id { get; private set; }
-    public string Nombre { get; private set; }
+    public Guid Id { get; set; }
+    public string Nombre { get; set; }
     
-    public TipoAtraccion Tipo { get; private set; }
-    public int Edad_Minima { get; private set; }
-    public int Capacidad { get; private set; }
+    public TipoAtraccion Tipo { get; set; }
+    public int Edad_Minima { get; set; }
+    public int Capacidad { get; set; }
     
-    public string Descripcion { get; private set; }
-    public EstadoAtraccion Estado { get; private set; }
+    public string Descripcion { get; set; }
+    public EstadoAtraccion Estado { get; set; }
+    
+    public Atracciones(string nombre, TipoAtraccion tipo, int edadMinima, int capacidadMaxima, string descripcion)
+    {
+        //Id = Guid.NewGuid();
+        Nombre = nombre;
+        Tipo = tipo;
+        Edad_Minima = edadMinima;
+        Capacidad  = capacidadMaxima;
+        Descripcion = descripcion;
+        Estado = EstadoAtraccion.Disponible;
+    }
+
+    public int CalcularAforoDisponible(int aforoActual)
+    {
+        return Capacidad - aforoActual;
+    }
+    
+    public bool PuedeIngresar(Visitante visitante, DateTime fechaActual, int aforoActual)
+    {
+        if (Estado == EstadoAtraccion.FueraDeServicio)
+            return false;
+
+        if (visitante.Edad < EdadMinima)
+            return false;
+
+        if (aforoActual >= CapacidadMaxima)
+            return false;
+
+        return true;
+    }
+
+    
+    
     
 }
