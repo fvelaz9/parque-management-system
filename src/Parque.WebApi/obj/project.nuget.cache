@@ -1,11 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "Q8u1xPIo944=",
+  "dgSpecHash": "LqqvKp3Qy5o=",
   "success": true,
-  "projectFilePath": "C:\\Users\\t1999\\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\\1.ORT\\DA2\\cardozo-pons-velazquez\\src\\Parque.WebApi\\Parque.WebApi.csproj",
+  "projectFilePath": "C:\\Users\\Usuario\\Documents\\GitHub\\cardozo-pons-velazquez\\src\\Parque.WebApi\\Parque.WebApi.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\t1999\\.nuget\\packages\\stylecop.analyzers\\1.2.0-beta.261\\stylecop.analyzers.1.2.0-beta.261.nupkg.sha512",
-    "C:\\Users\\t1999\\.nuget\\packages\\stylecop.analyzers.unstable\\1.2.0.261\\stylecop.analyzers.unstable.1.2.0.261.nupkg.sha512"
+    "C:\\Users\\Usuario\\.nuget\\packages\\stylecop.analyzers\\1.2.0-beta.261\\stylecop.analyzers.1.2.0-beta.261.nupkg.sha512",
+    "C:\\Users\\Usuario\\.nuget\\packages\\stylecop.analyzers.unstable\\1.2.0.261\\stylecop.analyzers.unstable.1.2.0.261.nupkg.sha512"
   ],
   "logs": []
 }

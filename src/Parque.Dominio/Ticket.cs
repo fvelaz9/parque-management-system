@@ -8,5 +8,4 @@ public class Ticket
     public int EventoId  { get; set; }
     public Guid Codigo {get; set;}
     public DateTime FechaEmision  { get; set; }
-    
 }

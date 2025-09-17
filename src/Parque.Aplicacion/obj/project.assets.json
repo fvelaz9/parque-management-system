@@ -98,23 +98,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\t1999\\.nuget\\packages\\": {},
+    "C:\\Users\\Usuario\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\t1999\\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\\1.ORT\\DA2\\cardozo-pons-velazquez\\src\\Parque.Aplicacion\\Parque.Aplicacion.csproj",
+      "projectUniqueName": "C:\\Users\\Usuario\\Documents\\GitHub\\cardozo-pons-velazquez\\src\\Parque.Aplicacion\\Parque.Aplicacion.csproj",
       "projectName": "Parque.Aplicacion",
-      "projectPath": "C:\\Users\\t1999\\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\\1.ORT\\DA2\\cardozo-pons-velazquez\\src\\Parque.Aplicacion\\Parque.Aplicacion.csproj",
-      "packagesPath": "C:\\Users\\t1999\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\t1999\\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\\1.ORT\\DA2\\cardozo-pons-velazquez\\src\\Parque.Aplicacion\\obj\\",
+      "projectPath": "C:\\Users\\Usuario\\Documents\\GitHub\\cardozo-pons-velazquez\\src\\Parque.Aplicacion\\Parque.Aplicacion.csproj",
+      "packagesPath": "C:\\Users\\Usuario\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Usuario\\Documents\\GitHub\\cardozo-pons-velazquez\\src\\Parque.Aplicacion\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\t1999\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Usuario\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -123,17 +123,18 @@
       ],
       "sources": {
         "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\t1999\\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\\1.ORT\\DA2\\cardozo-pons-velazquez\\src\\Parque.Dominio\\Parque.Dominio.csproj": {
-              "projectPath": "C:\\Users\\t1999\\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\\1.ORT\\DA2\\cardozo-pons-velazquez\\src\\Parque.Dominio\\Parque.Dominio.csproj"
+            "C:\\Users\\Usuario\\Documents\\GitHub\\cardozo-pons-velazquez\\src\\Parque.Dominio\\Parque.Dominio.csproj": {
+              "projectPath": "C:\\Users\\Usuario\\Documents\\GitHub\\cardozo-pons-velazquez\\src\\Parque.Dominio\\Parque.Dominio.csproj"
             },
-            "C:\\Users\\t1999\\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\\1.ORT\\DA2\\cardozo-pons-velazquez\\src\\Parque.Infraestructura\\Parque.Infraestructura.csproj": {
-              "projectPath": "C:\\Users\\t1999\\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\\1.ORT\\DA2\\cardozo-pons-velazquez\\src\\Parque.Infraestructura\\Parque.Infraestructura.csproj"
+            "C:\\Users\\Usuario\\Documents\\GitHub\\cardozo-pons-velazquez\\src\\Parque.Infraestructura\\Parque.Infraestructura.csproj": {
+              "projectPath": "C:\\Users\\Usuario\\Documents\\GitHub\\cardozo-pons-velazquez\\src\\Parque.Infraestructura\\Parque.Infraestructura.csproj"
             }
           }
         }
@@ -146,9 +147,9 @@
       "restoreAuditProperties": {
         "enableAudit": "true",
         "auditLevel": "low",
-        "auditMode": "direct"
+        "auditMode": "all"
       },
-      "SdkAnalysisLevel": "9.0.300"
+      "SdkAnalysisLevel": "9.0.100"
     },
     "frameworks": {
       "net8.0": {
@@ -175,7 +176,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

@@ -1,3 +1,6 @@
+using Parque.Dominio;
+using Parque.Dominio.Usuarios;
+
 namespace DefaultNamespace;
 
 public class Atraccion
@@ -7,13 +10,11 @@ public class Atraccion
     public TipoAtraccion Tipo { get; set; }
     public int Edad_Minima { get; set; }
     public int Capacidad { get; set; }
-    
     public string Descripcion { get; set; }
     public EstadoAtraccion Estado { get; set; }
-    
     public Atraccion(string nombre, TipoAtraccion tipo, int edadMinima, int capacidadMaxima, string descripcion)
     {
-        //Id = Guid.NewGuid();
+        // Id = Guid.NewGuid();
         Nombre = nombre;
         Tipo = tipo;
         Edad_Minima = edadMinima;
@@ -26,7 +27,7 @@ public class Atraccion
     {
         return Capacidad - aforoActual;
     }
-    
+
     public bool PuedeIngresar(Visitante visitante, DateTime fechaActual, int aforoActual)
     {
         if (Estado == EstadoAtraccion.FueraDeServicio)
