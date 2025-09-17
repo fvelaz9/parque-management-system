@@ -85,15 +85,13 @@ public class CuentaTest
     public void Crear_Cuenta_Con_Null_Email_Lanza_Excepcion()
     {
         Assert.ThrowsException<ArgumentNullException>(() =>
-            Cuenta.Crear("Juan", "Gomez", null, new PasswordHash("pass"))
-        );
+            Cuenta.Crear("Juan", "Gomez", new Email("a"), new PasswordHash("pass")));
     }
 
     [TestMethod]
     public void Crear_Cuenta_Con_Null_Password_Lanza_Excepcion()
     {
         Assert.ThrowsException<ArgumentNullException>(() =>
-            Cuenta.Crear("Juan", "Gomez", new Email("juan@mail.com"), null)
-        );
+            Cuenta.Crear("Juan", "Gomez", new Email("juan@mail.com"), new PasswordHash("s")));
     }
 }
