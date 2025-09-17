@@ -15,4 +15,9 @@ public class Cuenta
     private Cuenta()
     {
     }
+
+    public static Cuenta Crear(string nombre, string apellido, Email email, PasswordHash pass)
+    {
+        return new Cuenta { Id = Guid.NewGuid(), Nombre = nombre, Apellido = apellido, Email = email, PasswordHash = pass};
+    }
 }
