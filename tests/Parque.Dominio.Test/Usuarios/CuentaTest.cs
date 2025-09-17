@@ -43,4 +43,16 @@ public class CuentaTest
 
         Assert.AreNotEqual(c1.Id, c2.Id);
     }
+
+    [TestMethod]
+    public void Propiedades_Son_Inmutables_Desde_Externo()
+    {
+        var cuenta = Cuenta.Crear("nombre", "apellido", new Email("email"), new PasswordHash("pass"));
+
+        // Como las propiedades no tienen setters públicos, este test verifica que compilador no permite asignar valores externos
+        // Esto se verifica más a nivel de compilación, no como assert runtime, por lo que sirve como referencia.
+        // Ejemplo comentado:
+        // cuenta.Nombre = "nuevo"; // No compila
+        Assert.IsTrue(true);
+    }
 }

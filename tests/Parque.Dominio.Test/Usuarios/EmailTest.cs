@@ -6,9 +6,10 @@ namespace Parque.Dominio.Test.Usuarios;
 public class EmailTest
 {
     [TestMethod]
-    public void TestMethod1()
+    public void Constructor_Asigna_Valor_Correcto()
     {
-        var email = new Email("mario");
-        Assert.AreEqual("mario", email.Valor);
+        var email = new Email("mario@example.com");
+        Assert.AreEqual("mario@example.com", email.Valor);
     }
+
 }
