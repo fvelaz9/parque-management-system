@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "gcnXZey2fUo=",
+  "dgSpecHash": "ZBNgzC381vc=",
   "success": true,
   "projectFilePath": "C:\\Users\\t1999\\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\\1.ORT\\DA2\\cardozo-pons-velazquez\\tests\\Parque.Aplicacion.Tests\\Parque.Aplicacion.Tests.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\t1999\\.nuget\\packages\\coverlet.msbuild\\6.0.4\\coverlet.msbuild.6.0.4.nupkg.sha512",
     "C:\\Users\\t1999\\.nuget\\packages\\microsoft.applicationinsights\\2.22.0\\microsoft.applicationinsights.2.22.0.nupkg.sha512",
     "C:\\Users\\t1999\\.nuget\\packages\\microsoft.codecoverage\\17.12.0\\microsoft.codecoverage.17.12.0.nupkg.sha512",
     "C:\\Users\\t1999\\.nuget\\packages\\microsoft.net.test.sdk\\17.12.0\\microsoft.net.test.sdk.17.12.0.nupkg.sha512",
