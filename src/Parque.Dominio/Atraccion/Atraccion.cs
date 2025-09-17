@@ -18,7 +18,7 @@ public class Atraccion
         Nombre = nombre;
         Tipo = tipo;
         Edad_Minima = edadMinima;
-        Capacidad  = capacidadMaxima;
+        Capacidad = capacidadMaxima;
         Descripcion = descripcion;
         Estado = EstadoAtraccion.Disponible;
     }
