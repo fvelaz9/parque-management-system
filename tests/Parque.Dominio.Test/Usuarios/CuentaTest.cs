@@ -18,13 +18,14 @@ public class CuentaTest
         Assert.AreEqual("ramirez", cuenta.Apellido);
         Assert.AreEqual("mailprueba", cuenta.Email.Valor);
         Assert.AreEqual("passprueba", cuenta.PasswordHash.Valor);
+        Assert.AreEqual(Rol.Operador, cuenta.Roles.FirstOrDefault());
 
         // VisitanteId debe ser nulo por defecto
         Assert.IsNull(cuenta.VisitanteId);
 
         // Roles debe estar vacío inicialmente
         Assert.IsNotNull(cuenta.Roles);
-        Assert.AreEqual(0, cuenta.Roles.Count);
+        Assert.AreEqual(1, cuenta.Roles.Count);
 
         // Id debe ser distinto de Guid.Empty y generarse nuevo
         Assert.AreNotEqual(Guid.Empty, cuenta.Id);
@@ -54,5 +55,45 @@ public class CuentaTest
         // Ejemplo comentado:
         // cuenta.Nombre = "nuevo"; // No compila
         Assert.IsTrue(true);
+    }
+
+    [TestMethod]
+    public void Crear_Cuenta_Con_VisitanteId_Asignado()
+    {
+        var email = new Email("visitante@mail.com");
+        var password = new PasswordHash("visitantepass");
+        var cuenta = Cuenta.Crear("Ana", "Perez", email, password);
+
+        // Simula asignación interna de VisitanteId (si existe un método o constructor que lo permita)
+        var visitanteId = Guid.NewGuid();
+        typeof(Cuenta)
+            .GetProperty("VisitanteId")?
+            .SetValue(cuenta, visitanteId);
+
+        Assert.AreEqual(visitanteId, cuenta.VisitanteId);
+    }
+
+    [TestMethod]
+    public void Roles_EsSoloLectura_NoPermiteModificacionExterna()
+    {
+        var cuenta = Cuenta.Crear("Mario", "Lopez", new Email("mario@mail.com"), new PasswordHash("mariopass"));
+        var roles = cuenta.Roles as ICollection<Rol>;
+        Assert.IsFalse(roles?.IsReadOnly == false, "Roles collection should be read-only");
+    }
+
+    [TestMethod]
+    public void Crear_Cuenta_Con_Null_Email_Lanza_Excepcion()
+    {
+        Assert.ThrowsException<ArgumentNullException>(() =>
+            Cuenta.Crear("Juan", "Gomez", null, new PasswordHash("pass"))
+        );
+    }
+
+    [TestMethod]
+    public void Crear_Cuenta_Con_Null_Password_Lanza_Excepcion()
+    {
+        Assert.ThrowsException<ArgumentNullException>(() =>
+            Cuenta.Crear("Juan", "Gomez", new Email("juan@mail.com"), null)
+        );
     }
 }

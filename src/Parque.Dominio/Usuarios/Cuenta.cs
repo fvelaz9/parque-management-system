@@ -18,6 +18,15 @@ public class Cuenta
 
     public static Cuenta Crear(string nombre, string apellido, Email email, PasswordHash pass)
     {
-        return new Cuenta { Id = Guid.NewGuid(), Nombre = nombre, Apellido = apellido, Email = email, PasswordHash = pass };
+        var cuenta = new Cuenta
+        {
+            Id = Guid.NewGuid(),
+            Nombre = nombre,
+            Apellido = apellido,
+            Email = email,
+            PasswordHash = pass
+        };
+        cuenta._roles.Add(Rol.Operador);
+        return cuenta;
     }
 }
