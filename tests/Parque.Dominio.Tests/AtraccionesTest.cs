@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Parque.Dominio;
 using System;
+using Moq;
 
 namespace Parque.Tests
 {

@@ -4,7 +4,6 @@ public class Atracciones
 {
     public Guid Id { get; set; }
     public string Nombre { get; set; }
-    
     public TipoAtraccion Tipo { get; set; }
     public int Edad_Minima { get; set; }
     public int Capacidad { get; set; }
