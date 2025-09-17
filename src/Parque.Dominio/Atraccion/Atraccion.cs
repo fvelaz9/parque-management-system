@@ -1,6 +1,6 @@
-namespace Parque.Dominio;
+namespace DefaultNamespace;
 
-public class Atracciones
+public class Atraccion
 {
     public Guid Id { get; set; }
     public string Nombre { get; set; }
@@ -11,7 +11,7 @@ public class Atracciones
     public string Descripcion { get; set; }
     public EstadoAtraccion Estado { get; set; }
     
-    public Atracciones(string nombre, TipoAtraccion tipo, int edadMinima, int capacidadMaxima, string descripcion)
+    public Atraccion(string nombre, TipoAtraccion tipo, int edadMinima, int capacidadMaxima, string descripcion)
     {
         //Id = Guid.NewGuid();
         Nombre = nombre;
@@ -40,8 +40,4 @@ public class Atracciones
 
         return true;
     }
-
-    
-    
-    
 }
