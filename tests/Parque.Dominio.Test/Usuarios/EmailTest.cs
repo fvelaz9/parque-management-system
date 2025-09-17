@@ -11,5 +11,4 @@ public class EmailTest
         var email = new Email("mario@example.com");
         Assert.AreEqual("mario@example.com", email.Valor);
     }
-
 }
