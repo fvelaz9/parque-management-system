@@ -5,7 +5,7 @@ namespace DefaultNamespace;
 
 public class Atraccion
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
     public string Nombre { get; set; }
     public TipoAtraccion Tipo { get; set; }
     public int Edad_Minima { get; set; }
@@ -23,12 +23,7 @@ public class Atraccion
         Estado = EstadoAtraccion.Disponible;
     }
 
-    public int CalcularAforoDisponible(int aforoActual)
-    {
-        return Capacidad - aforoActual;
-    }
-
-    public bool PuedeIngresar(Visitante visitante, DateTime fechaActual, int aforoActual)
+    /*public bool PuedeIngresar(Visitante visitante, DateTime fechaActual, int aforoActual)
     {
         if(Estado == EstadoAtraccion.FueraDeServicio)
         {
@@ -46,5 +41,5 @@ public class Atraccion
         }
 
         return true;
-    }
+    }*/
 }
