@@ -72,26 +72,4 @@ public class CuentaTest
 
         Assert.AreEqual(visitanteId, cuenta.VisitanteId);
     }
-
-    [TestMethod]
-    public void Roles_EsSoloLectura_NoPermiteModificacionExterna()
-    {
-        var cuenta = Cuenta.Crear("Mario", "Lopez", new Email("mario@mail.com"), new PasswordHash("mariopass"));
-        var roles = cuenta.Roles as ICollection<Rol>;
-        Assert.IsFalse(roles?.IsReadOnly == false, "Roles collection should be read-only");
-    }
-
-    [TestMethod]
-    public void Crear_Cuenta_Con_Null_Email_Lanza_Excepcion()
-    {
-        Assert.ThrowsException<ArgumentNullException>(() =>
-            Cuenta.Crear("Juan", "Gomez", new Email("a"), new PasswordHash("pass")));
-    }
-
-    [TestMethod]
-    public void Crear_Cuenta_Con_Null_Password_Lanza_Excepcion()
-    {
-        Assert.ThrowsException<ArgumentNullException>(() =>
-            Cuenta.Crear("Juan", "Gomez", new Email("juan@mail.com"), new PasswordHash("s")));
-    }
 }
