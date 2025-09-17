@@ -23,6 +23,11 @@ public class Atraccion
         Estado = EstadoAtraccion.Disponible;
     }
 
+    public int CalcularAforoDisponible(int aforoActual)
+    {
+        return Capacidad - aforoActual;
+    }
+
     /*public bool PuedeIngresar(Visitante visitante, DateTime fechaActual, int aforoActual)
     {
         if(Estado == EstadoAtraccion.FueraDeServicio)
