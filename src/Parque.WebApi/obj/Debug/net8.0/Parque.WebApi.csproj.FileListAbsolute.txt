@@ -28,6 +28,7 @@ C:\Users\t1999\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\1.ORT
 C:\Users\t1999\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\1.ORT\DA2\cardozo-pons-velazquez\src\Parque.WebApi\obj\Debug\net8.0\staticwebassets.build.json.cache
 C:\Users\t1999\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\1.ORT\DA2\cardozo-pons-velazquez\src\Parque.WebApi\obj\Debug\net8.0\staticwebassets.development.json
 C:\Users\t1999\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\1.ORT\DA2\cardozo-pons-velazquez\src\Parque.WebApi\obj\Debug\net8.0\staticwebassets.build.endpoints.json
+C:\Users\t1999\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\1.ORT\DA2\cardozo-pons-velazquez\src\Parque.WebApi\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt
 C:\Users\t1999\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\1.ORT\DA2\cardozo-pons-velazquez\src\Parque.WebApi\obj\Debug\net8.0\Parque.W.058E5A01.Up2Date
 C:\Users\t1999\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\1.ORT\DA2\cardozo-pons-velazquez\src\Parque.WebApi\obj\Debug\net8.0\Parque.WebApi.dll
 C:\Users\t1999\OneDrive - Facultad de Ingenieria - Universidad ORT Uruguay\1.ORT\DA2\cardozo-pons-velazquez\src\Parque.WebApi\obj\Debug\net8.0\refint\Parque.WebApi.dll
