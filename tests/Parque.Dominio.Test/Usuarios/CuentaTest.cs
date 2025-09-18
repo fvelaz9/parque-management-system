@@ -13,7 +13,7 @@ public class CuentaTest
         var nombre = "Juan";
         var apellido = "Pérez";
         var email = new Email("juan@test.com");
-        var password = new PasswordHash("hash123");
+        var password = new PasswordHash("hash123d12d12d12d12d1d1d31d");
 
         // Act
         var cuenta = Cuenta.Crear(nombre, apellido, email, password);
@@ -33,7 +33,7 @@ public class CuentaTest
         var nombre = "Ana";
         var apellido = "García";
         var email = new Email("ana@test.com");
-        var password = new PasswordHash("hash456");
+        var password = new PasswordHash("hash4561d21d121d12d1d11ded111");
 
         // Act
         var cuenta = Cuenta.Crear(nombre, apellido, email, password);
@@ -92,7 +92,7 @@ public class CuentaTest
     public void Crear_ConNombreVacio_DeberiaLanzarExcepcionConMensajeCorrecto()
     {
         var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
-            Cuenta.Crear(string.Empty, "Pérez", new Email("test@mail.com"), new PasswordHash("hash")));
+            Cuenta.Crear(string.Empty, "Pérez", new Email("test@mail.com"), new PasswordHash("hashd1212d12d12d12d1d131d1d1d")));
 
         Assert.AreEqual("Nombre es requerido", ex.Message);
     }
@@ -101,7 +101,7 @@ public class CuentaTest
     public void Crear_ConApellidoVacio_DeberiaLanzarExcepcionConMensajeCorrecto()
     {
         var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
-            Cuenta.Crear("Juan", string.Empty, new Email("test@mail.com"), new PasswordHash("hash")));
+            Cuenta.Crear("Juan", string.Empty, new Email("test@mail.com"), new PasswordHash("hashd12d12d12d1d21d12d1d12d12d")));
 
         Assert.AreEqual("Apellido es requerido", ex.Message);
     }
@@ -111,7 +111,7 @@ public class CuentaTest
     {
         Email email = null!;
         var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
-            Cuenta.Crear("Juan", "Perez", email, new PasswordHash("hash")));
+            Cuenta.Crear("Juan", "Perez", email, new PasswordHash("hasd12d12d12d12d12d12d1d12d12dh")));
 
         Assert.AreEqual("Email es requerido", ex.Message);
     }
