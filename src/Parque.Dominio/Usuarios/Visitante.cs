@@ -23,11 +23,11 @@ public class Visitante
 
     private static void ValidarFecha(DateTime fecha)
     {
-        var fechaMinima = new DateTime(1850, 1, 1);
+        var fechaMinima = DateTime.UtcNow.AddYears(-125);
 
         if(fecha < fechaMinima)
         {
-            throw new ExcepcionDominio("La fecha mínima es el 1/1/1850");
+            throw new ExcepcionDominio("La edad máxima son 125 años");
         }
     }
 }

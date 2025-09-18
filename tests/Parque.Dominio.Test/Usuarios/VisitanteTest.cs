@@ -31,4 +31,26 @@ public class VisitanteTest
         Assert.ThrowsException<ExcepcionDominio>(() =>
             Visitante.Crear(fechaInvalida));
     }
+
+    [TestMethod]
+    public void Crear_ConFechaMuyAntigua_DeberiaLanzarExcepcion()
+    {
+        // Arrange
+        var fechaMuyAntigua = DateTime.UtcNow.AddYears(-126);
+
+        // Act & Assert
+        Assert.ThrowsException<ExcepcionDominio>(() =>
+            Visitante.Crear(fechaMuyAntigua));
+    }
+
+    [TestMethod]
+    public void Crear_ConFechaFutura_DeberiaLanzarExcepcion()
+    {
+        // Arrange
+        var fechaFutura = DateTime.UtcNow.AddDays(1);
+
+        // Act & Assert
+        Assert.ThrowsException<ExcepcionDominio>(() =>
+            Visitante.Crear(fechaFutura));
+    }
 }
