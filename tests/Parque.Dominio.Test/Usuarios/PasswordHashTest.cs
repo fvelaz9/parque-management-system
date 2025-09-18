@@ -19,4 +19,12 @@ public class PasswordHashTest
     {
         new PasswordHash("abc123");
     }
+
+    [TestMethod]
+    public void Constructor_ConHashValido_DeberiaCrearCorrectamente()
+    {
+        var hashValido = "$2a$10$N9qo8uLOickgx2ZMRZoMye1234567890ABCDEFGHIJ";
+        var password = new PasswordHash(hashValido);
+        Assert.AreEqual(hashValido, password.Valor);
+    }
 }
