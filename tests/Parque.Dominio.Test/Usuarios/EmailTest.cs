@@ -26,4 +26,16 @@ public class EmailTest
         var email = new Email("  TEST@EXAMPLE.COM  ");
         Assert.AreEqual("test@example.com", email.Valor);
     }
+
+    [TestMethod]
+    public void Constructor_ConMultiplesArrobas_DeberiaLanzarExcepcion()
+    {
+        Assert.ThrowsException<ExcepcionDominio>(() => new Email("test@@example.com"));
+    }
+
+    [TestMethod]
+    public void Constructor_SinPuntoEnDominio_DeberiaLanzarExcepcion()
+    {
+        Assert.ThrowsException<ExcepcionDominio>(() => new Email("test@example"));
+    }
 }
