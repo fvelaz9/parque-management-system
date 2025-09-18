@@ -73,4 +73,56 @@ public class CuentaTest
         PasswordHash pass = null!;
         Cuenta.Crear("Juan", "Pérez", new Email("test@mail.com"), pass);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Crear_ConNombreSoloEspacios_DeberiaLanzarExcepcion()
+    {
+        Cuenta.Crear("   ", "Pérez", new Email("test@mail.com"), new PasswordHash("hash"));
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Crear_ConApellidoSoloEspacios_DeberiaLanzarExcepcion()
+    {
+        Cuenta.Crear("Juan", "   ", new Email("test@mail.com"), new PasswordHash("hash"));
+    }
+
+    [TestMethod]
+    public void Crear_ConNombreVacio_DeberiaLanzarExcepcionConMensajeCorrecto()
+    {
+        var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
+            Cuenta.Crear(string.Empty, "Pérez", new Email("test@mail.com"), new PasswordHash("hash")));
+
+        Assert.AreEqual("Nombre es requerido", ex.Message);
+    }
+
+    [TestMethod]
+    public void Crear_ConApellidoVacio_DeberiaLanzarExcepcionConMensajeCorrecto()
+    {
+        var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
+            Cuenta.Crear("Juan", string.Empty, new Email("test@mail.com"), new PasswordHash("hash")));
+
+        Assert.AreEqual("Apellido es requerido", ex.Message);
+    }
+
+    [TestMethod]
+    public void Crear_ConEmailNulo_DeberiaLanzarExcepcionConMensajeCorrecto()
+    {
+        Email email = null!;
+        var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
+            Cuenta.Crear("Juan", "Perez", email, new PasswordHash("hash")));
+
+        Assert.AreEqual("Email es requerido", ex.Message);
+    }
+
+    [TestMethod]
+    public void Crear_ConPass_DeberiaLanzarExcepcionConMensajeCorrecto()
+    {
+        PasswordHash pass = null!;
+        var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
+            Cuenta.Crear("Juan", "Perez", new Email("test@mail.com"), pass));
+
+        Assert.AreEqual("Password es requerido", ex.Message);
+    }
 }
