@@ -8,12 +8,12 @@ public class Visitante
     {
     }
 
-    public static Visitante Crear(DateTime fechaNacimiento, NivelMembresia nivel)
+    public static Visitante Crear(DateTime fechaNacimiento)
     {
         var visitante = new Visitante();
         visitante.Id = Guid.NewGuid();
         visitante.FechaNacimiento = fechaNacimiento;
-        visitante.NivelMembresia = nivel;
+        visitante.NivelMembresia = NivelMembresia.Estandar;
         return visitante;
     }
 }

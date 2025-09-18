@@ -10,14 +10,13 @@ public class VisitanteTest
     {
         // Arrange
         var fechaNacimiento = DateTime.UtcNow;
-        var nivelMembresia = NivelMembresia.Estandar;
 
         // Act
-        var visitante = Visitante.Crear(fechaNacimiento, nivelMembresia);
+        var visitante = Visitante.Crear(fechaNacimiento);
 
         // Assert
         Assert.AreNotEqual(Guid.Empty, visitante.Id);
         Assert.AreEqual(fechaNacimiento, visitante.FechaNacimiento);
-        Assert.AreEqual(nivelMembresia, visitante.NivelMembresia);
+        Assert.AreEqual(NivelMembresia.Estandar, visitante.NivelMembresia);
     }
 }
