@@ -24,4 +24,21 @@ public class CuentaTest
         Assert.AreEqual(email, cuenta.Email);
         Assert.AreEqual(password, cuenta.PasswordHash);
     }
+
+    [TestMethod]
+    public void Crear_ConDatosValidos_DebeAsignarRolVisitantePorDefecto()
+    {
+        // Arrange
+        var nombre = "Ana";
+        var apellido = "García";
+        var email = new Email("ana@test.com");
+        var password = new PasswordHash("hash456");
+
+        // Act
+        var cuenta = Cuenta.Crear(nombre, apellido, email, password);
+
+        // Assert
+        Assert.IsTrue(cuenta.Roles.Contains(Rol.Visitante));
+        Assert.AreEqual(1, cuenta.Roles.Count);
+    }
 }
