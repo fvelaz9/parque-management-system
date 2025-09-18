@@ -18,7 +18,7 @@ public class Cuenta
 
     public static Cuenta Crear(string nombre, string apellido, Email email, PasswordHash passwordHash)
     {
-        ValidarDatos(nombre);
+        ValidarDatos(nombre, apellido);
 
         var cuenta = new Cuenta();
         cuenta.Id = Guid.NewGuid();
@@ -30,11 +30,16 @@ public class Cuenta
         return cuenta;
     }
 
-    private static void ValidarDatos(string nombre)
+    private static void ValidarDatos(string nombre, string apellido)
     {
         if(string.IsNullOrWhiteSpace(nombre))
         {
             throw new ExcepcionDominio("Nombre es requerido");
+        }
+
+        if(string.IsNullOrWhiteSpace(apellido))
+        {
+            throw new ExcepcionDominio("Apellido es requerido");
         }
     }
 }
