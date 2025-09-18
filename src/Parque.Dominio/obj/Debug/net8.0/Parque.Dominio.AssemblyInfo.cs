@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Parque.Dominio")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+575a4888a5eeab2f33b641a8f5f9fb307ab6da60")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b3acc8def94e3832d08f35cf2f457ae88dde5738")]
 [assembly: System.Reflection.AssemblyProductAttribute("Parque.Dominio")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Parque.Dominio")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

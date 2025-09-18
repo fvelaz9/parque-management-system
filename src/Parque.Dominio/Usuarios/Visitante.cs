@@ -29,5 +29,10 @@ public class Visitante
         {
             throw new ExcepcionDominio("La edad máxima son 125 años");
         }
+
+        if(fecha > DateTime.UtcNow)
+        {
+            throw new ExcepcionDominio("La fecha de nacimiento no puede ser en el futuro");
+        }
     }
 }
