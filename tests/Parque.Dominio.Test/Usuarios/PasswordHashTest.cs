@@ -12,4 +12,11 @@ public class PasswordHashTest
     {
         new PasswordHash(string.Empty);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Constructor_ConHashMuyCorto_DeberiaLanzarExcepcion()
+    {
+        new PasswordHash("abc123");
+    }
 }
