@@ -8,6 +8,7 @@ public class Cuenta
     public string Apellido { get; private set; } = string.Empty;
     public Email Email { get; private set; } = default!;
     public PasswordHash PasswordHash { get; private set; } = default!;
+    public Visitante? Visitante { get; private set; }
 
     // Se evita duplicación de roles usando un HashSet
     private readonly HashSet<Rol> _roles = [];
