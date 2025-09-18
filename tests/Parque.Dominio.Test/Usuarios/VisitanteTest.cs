@@ -1,3 +1,4 @@
+using Parque.Dominio.Excepciones;
 using Parque.Dominio.Usuarios;
 
 namespace Parque.Dominio.Test.Usuarios;
@@ -18,5 +19,16 @@ public class VisitanteTest
         Assert.AreNotEqual(Guid.Empty, visitante.Id);
         Assert.AreEqual(fechaNacimiento, visitante.FechaNacimiento);
         Assert.AreEqual(NivelMembresia.Estandar, visitante.NivelMembresia);
+    }
+
+    [TestMethod]
+    public void Crear_ConFechaMinima_DeberiaLanzarExcepcion()
+    {
+        // Arrange
+        var fechaInvalida = DateTime.MinValue;
+
+        // Act & Assert
+        Assert.ThrowsException<ExcepcionDominio>(() =>
+            Visitante.Crear(fechaInvalida));
     }
 }

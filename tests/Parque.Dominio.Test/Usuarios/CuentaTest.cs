@@ -117,7 +117,7 @@ public class CuentaTest
     }
 
     [TestMethod]
-    public void Crear_ConPass_DeberiaLanzarExcepcionConMensajeCorrecto()
+    public void Crear_ConPassNulo_DeberiaLanzarExcepcionConMensajeCorrecto()
     {
         PasswordHash pass = null!;
         var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
