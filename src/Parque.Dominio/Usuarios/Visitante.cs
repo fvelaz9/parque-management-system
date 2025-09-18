@@ -1,4 +1,6 @@
-﻿namespace Parque.Dominio.Usuarios;
+﻿using Parque.Dominio.Excepciones;
+
+namespace Parque.Dominio.Usuarios;
 public class Visitante
 {
     public Guid Id { get; private set; }
@@ -10,10 +12,22 @@ public class Visitante
 
     public static Visitante Crear(DateTime fechaNacimiento)
     {
+        ValidarFecha(fechaNacimiento);
+
         var visitante = new Visitante();
         visitante.Id = Guid.NewGuid();
         visitante.FechaNacimiento = fechaNacimiento;
         visitante.NivelMembresia = NivelMembresia.Estandar;
         return visitante;
+    }
+
+    private static void ValidarFecha(DateTime fecha)
+    {
+        var fechaMinima = new DateTime(1850, 1, 1);
+
+        if(fecha < fechaMinima)
+        {
+            throw new ExcepcionDominio("La fecha mínima es el 1/1/1850");
+        }
     }
 }
