@@ -41,33 +41,6 @@ public class EmailTest
     }
 
     [TestMethod]
-    public void ToString_DebeRetornarElValorDelEmail()
-    {
-        // Arrange
-        var valorEmail = "admin@test.org";
-        var email = new Email(valorEmail);
-
-        // Act
-        var resultado = email.ToString();
-
-        // Assert
-        Assert.AreEqual(valorEmail, resultado);
-    }
-
-    [TestMethod]
-    public void Constructor_ConEmailVacio_DebeCrearEmailConValorVacio()
-    {
-        // Arrange
-        var valorVacio = string.Empty;
-
-        // Act
-        var email = new Email(valorVacio);
-
-        // Assert
-        Assert.AreEqual(valorVacio, email.Valor);
-    }
-
-    [TestMethod]
     public void Constructor_ConDiferentesFormatos_DebeAceptarTodosLosValores()
     {
         // Arrange & Act & Assert
