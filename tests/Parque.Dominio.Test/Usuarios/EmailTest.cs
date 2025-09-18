@@ -1,3 +1,4 @@
+using Parque.Dominio.Excepciones;
 using Parque.Dominio.Usuarios;
 
 namespace Parque.Dominio.Test.Usuarios;
@@ -5,6 +6,13 @@ namespace Parque.Dominio.Test.Usuarios;
 [TestClass]
 public class EmailTest
 {
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Constructor_ConEmailVacio_DeberiaLanzarExcepcion()
+    {
+        new Email(string.Empty);
+    }
+
     [TestMethod]
     public void Constructor_ConValorValido_DebeCrearEmailCorrectamente()
     {
