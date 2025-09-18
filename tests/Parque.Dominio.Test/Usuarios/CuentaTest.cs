@@ -50,4 +50,11 @@ public class CuentaTest
         // Arrange & Act & Assert
         Cuenta.Crear(string.Empty, "Pérez", new Email("test@mail.com"), new PasswordHash("hash"));
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Crear_ConApellidoVacio_DeberiaLanzarExcepcion()
+    {
+        Cuenta.Crear("Juan", string.Empty, new Email("test@mail.com"), new PasswordHash("hash"));
+    }
 }
