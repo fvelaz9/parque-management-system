@@ -1,4 +1,6 @@
-﻿namespace Parque.Dominio.Usuarios;
+﻿using Parque.Dominio.Excepciones;
+
+namespace Parque.Dominio.Usuarios;
 public class Cuenta
 {
     public Guid Id { get; private set; }
@@ -16,15 +18,23 @@ public class Cuenta
 
     public static Cuenta Crear(string nombre, string apellido, Email email, PasswordHash passwordHash)
     {
-        var cuenta = new Cuenta();
+        ValidarDatos(nombre);
 
+        var cuenta = new Cuenta();
         cuenta.Id = Guid.NewGuid();
         cuenta.Nombre = nombre;
         cuenta.Apellido = apellido;
         cuenta.Email = email;
         cuenta.PasswordHash = passwordHash;
         cuenta._roles.Add(Rol.Visitante);
-
         return cuenta;
+    }
+
+    private static void ValidarDatos(string nombre)
+    {
+        if(string.IsNullOrWhiteSpace(nombre))
+        {
+            throw new ExcepcionDominio("Nombre es requerido");
+        }
     }
 }
