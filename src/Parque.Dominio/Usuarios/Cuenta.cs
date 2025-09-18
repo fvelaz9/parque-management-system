@@ -10,23 +10,18 @@ public class Cuenta
     // Se evita duplicación de roles usando un HashSet
     private readonly HashSet<Rol> _roles = [];
     public IReadOnlyCollection<Rol> Roles => _roles;
-    public Guid? VisitanteId { get; private set; }
-
-    private Cuenta()
+    private Cuenta() { }
+    public static Cuenta Crear(string nombre, string apellido, Email email, PasswordHash passwordHash)
     {
-    }
+        var cuenta = new Cuenta();
 
-    public static Cuenta Crear(string nombre, string apellido, Email email, PasswordHash pass)
-    {
-        var cuenta = new Cuenta
-        {
-            Id = Guid.NewGuid(),
-            Nombre = nombre,
-            Apellido = apellido,
-            Email = email,
-            PasswordHash = pass
-        };
-        cuenta._roles.Add(Rol.Operador);
+        cuenta.Id = Guid.NewGuid();
+        cuenta.Nombre = nombre;
+        cuenta.Apellido = apellido;
+        cuenta.Email = email;
+        cuenta.PasswordHash = passwordHash;
+
         return cuenta;
     }
+
 }
