@@ -14,42 +14,16 @@ public class EmailTest
     }
 
     [TestMethod]
-    public void Constructor_ConValorValido_DebeCrearEmailCorrectamente()
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Constructor_SinArroba_DeberiaLanzarExcepcion()
     {
-        // Arrange
-        var valorEmail = "test@example.com";
-
-        // Act
-        var email = new Email(valorEmail);
-
-        // Assert
-        Assert.AreEqual(valorEmail, email.Valor);
+        new Email("invalido");
     }
 
     [TestMethod]
-    public void Valor_DebeRetornarElValorDelConstructor()
+    public void Constructor_DeberiaNormalizarEmail()
     {
-        // Arrange
-        var valorEsperado = "usuario@dominio.com";
-        var email = new Email(valorEsperado);
-
-        // Act
-        var valorActual = email.Valor;
-
-        // Assert
-        Assert.AreEqual(valorEsperado, valorActual);
-    }
-
-    [TestMethod]
-    public void Constructor_ConDiferentesFormatos_DebeAceptarTodosLosValores()
-    {
-        // Arrange & Act & Assert
-        var email1 = new Email("simple@test.com");
-        var email2 = new Email("with.dots@example.org");
-        var email3 = new Email("with+plus@domain.net");
-
-        Assert.AreEqual("simple@test.com", email1.Valor);
-        Assert.AreEqual("with.dots@example.org", email2.Valor);
-        Assert.AreEqual("with+plus@domain.net", email3.Valor);
+        var email = new Email("  TEST@EXAMPLE.COM  ");
+        Assert.AreEqual("test@example.com", email.Valor);
     }
 }
