@@ -6,14 +6,22 @@ namespace Parque.Dominio.Test.Usuarios;
 public class CuentaTest
 {
     [TestMethod]
-    public void Crear_CuentaValida_AsignaDatosCorrectos()
+    public void Crear_ConDatosValidos_DebeCrearCuentaConPropiedadesCorrectas()
     {
-        var email = new Email("prueba@mail.com");
-        var hash = new PasswordHash("abc123");
-        var roles = new List<Rol> { Rol.Visitante };
-        var cuenta = Cuenta.Crear("Mario", "Rossi", email, hash, roles);
-        Assert.AreEqual("Mario", cuenta.Nombre);
+        // Arrange
+        var nombre = "Juan";
+        var apellido = "Pérez";
+        var email = new Email("juan@test.com");
+        var password = new PasswordHash("hash123");
+
+        // Act
+        var cuenta = Cuenta.Crear(nombre, apellido, email, password);
+
+        // Assert
+        Assert.AreNotEqual(Guid.Empty, cuenta.Id);
+        Assert.AreEqual(nombre, cuenta.Nombre);
+        Assert.AreEqual(apellido, cuenta.Apellido);
         Assert.AreEqual(email, cuenta.Email);
-        Assert.IsTrue(cuenta.Roles.Contains(Rol.Visitante));
+        Assert.AreEqual(password, cuenta.PasswordHash);
     }
 }
