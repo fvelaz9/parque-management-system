@@ -1,3 +1,4 @@
+using Parque.Dominio.Excepciones;
 using Parque.Dominio.Usuarios;
 
 namespace Parque.Dominio.Test.Usuarios;
@@ -40,5 +41,13 @@ public class CuentaTest
         // Assert
         Assert.IsTrue(cuenta.Roles.Contains(Rol.Visitante));
         Assert.AreEqual(1, cuenta.Roles.Count);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Crear_ConNombreVacio_DeberiaLanzarExcepcion()
+    {
+        // Arrange & Act & Assert
+        Cuenta.Crear(string.Empty, "Pérez", new Email("test@mail.com"), new PasswordHash("hash"));
     }
 }
