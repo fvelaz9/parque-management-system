@@ -57,4 +57,11 @@ public class CuentaTest
     {
         Cuenta.Crear("Juan", string.Empty, new Email("test@mail.com"), new PasswordHash("hash"));
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Crear_ConEmailNulo_DeberiaLanzarExcepcion()
+    {
+        Cuenta.Crear("Juan", "Pérez", null, new PasswordHash("hash"));
+    }
 }
