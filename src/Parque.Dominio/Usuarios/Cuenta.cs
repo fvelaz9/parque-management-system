@@ -18,7 +18,7 @@ public class Cuenta
 
     public static Cuenta Crear(string nombre, string apellido, Email email, PasswordHash passwordHash)
     {
-        ValidarDatos(nombre, apellido, email, passwordHash);
+        ValidarCreacion(nombre, apellido, email, passwordHash);
 
         var cuenta = new Cuenta();
         cuenta.Id = Guid.NewGuid();
@@ -30,26 +30,27 @@ public class Cuenta
         return cuenta;
     }
 
-    private static void ValidarDatos(string nombre, string apellido, Email email, PasswordHash passwordHash)
+    private static void ValidarCreacion(string nombre, string apellido, Email email, PasswordHash passwordHash)
     {
-        if(string.IsNullOrWhiteSpace(nombre))
-        {
-            throw new ExcepcionDominio("Nombre es requerido");
-        }
+        ValidarCampoRequerido(nombre, "Nombre");
+        ValidarCampoRequerido(apellido, "Apellido");
+        ValidarObjetoRequerido(email, "Email");
+        ValidarObjetoRequerido(passwordHash, "Password");
+    }
 
-        if(string.IsNullOrWhiteSpace(apellido))
+    private static void ValidarCampoRequerido(string valor, string nombreCampo)
+    {
+        if(string.IsNullOrWhiteSpace(valor))
         {
-            throw new ExcepcionDominio("Apellido es requerido");
+            throw new ExcepcionDominio($"{nombreCampo} es requerido");
         }
+    }
 
-        if(email == null)
+    private static void ValidarObjetoRequerido(object obj, string nombreCampo)
+    {
+        if(obj == null)
         {
-            throw new ExcepcionDominio("Email es requerido");
-        }
-
-        if(passwordHash == null)
-        {
-            throw new ExcepcionDominio("Password es requerido");
+            throw new ExcepcionDominio($"{nombreCampo} es requerido");
         }
     }
 }
