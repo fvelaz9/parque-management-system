@@ -6,7 +6,7 @@ public class Email(string valor)
     public string Valor { get; } = ValidarYNormalizar(valor);
     private static string ValidarYNormalizar(string email)
     {
-        if (string.IsNullOrWhiteSpace(email))
+        if(string.IsNullOrWhiteSpace(email))
         {
             throw new ExcepcionDominio("El email no puede estar vacío.");
         }
