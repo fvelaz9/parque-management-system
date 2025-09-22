@@ -1,3 +1,5 @@
+using Parque.Dominio.Atracciones;
+
 namespace Parque.Dominio.Test;
 
 [TestClass]
@@ -7,7 +9,7 @@ public class AtraccionesTest
     public void CalcularAforoDisponible_AforoMenorQueCapacidad_RetornaDisponible()
     {
         // Arrange
-        var atraccion = new Atraccion("Montaña Rusa", TipoAtraccion.MontañaRusa, 12, 10, "Alta velocidad");
+        var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.MontañaRusa, 12, 10, "Alta velocidad");
         var aforoActual = 6;
 
         // Act
