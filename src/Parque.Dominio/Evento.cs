@@ -1,4 +1,4 @@
-using Parque.Dominio.Atraccion;
+using Parque.Dominio.Atracciones;
 
 namespace Parque.Dominio;
 public class Evento(string titulo, string descripcion, DateTime inicio, DateTime fin, int aforoMaximo, float costoAdicional, EstadoEvento estado)
