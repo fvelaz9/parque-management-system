@@ -1,9 +1,4 @@
-using System;
-using DefaultNamespace;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Parque.Dominio;
-
-namespace Parque.Tests;
+namespace Parque.Dominio.Test;
 
 [TestClass]
 public class AtraccionesTest
