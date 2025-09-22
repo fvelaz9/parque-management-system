@@ -1,3 +1,4 @@
+using Parque.Dominio.Excepciones;
 using Parque.Dominio.Usuarios;
 
 namespace Parque.Dominio.Test.Usuarios;
@@ -6,70 +7,122 @@ namespace Parque.Dominio.Test.Usuarios;
 public class CuentaTest
 {
     [TestMethod]
-    public void Crear_Cuenta_Con_Datos_Validos_Asignacion_Correcta()
+    public void Crear_ConDatosValidos_DebeCrearCuentaConPropiedadesCorrectas()
     {
-        var email = new Email("mailprueba");
-        var password = new PasswordHash("passprueba");
+        // Arrange
+        var nombre = "Juan";
+        var apellido = "Pérez";
+        var email = new Email("juan@test.com");
+        var password = new PasswordHash("hash123d12d12d12d12d1d1d31d");
 
-        var cuenta = Cuenta.Crear("jorge", "ramirez", email, password);
+        // Act
+        var cuenta = Cuenta.Crear(nombre, apellido, email, password);
 
-        Assert.IsNotNull(cuenta);
-        Assert.AreEqual("jorge", cuenta.Nombre);
-        Assert.AreEqual("ramirez", cuenta.Apellido);
-        Assert.AreEqual("mailprueba", cuenta.Email.Valor);
-        Assert.AreEqual("passprueba", cuenta.PasswordHash.Valor);
-        Assert.AreEqual(Rol.Operador, cuenta.Roles.FirstOrDefault());
-
-        // VisitanteId debe ser nulo por defecto
-        Assert.IsNull(cuenta.VisitanteId);
-
-        // Roles debe estar vacío inicialmente
-        Assert.IsNotNull(cuenta.Roles);
-        Assert.AreEqual(1, cuenta.Roles.Count);
-
-        // Id debe ser distinto de Guid.Empty y generarse nuevo
+        // Assert
         Assert.AreNotEqual(Guid.Empty, cuenta.Id);
+        Assert.AreEqual(nombre, cuenta.Nombre);
+        Assert.AreEqual(apellido, cuenta.Apellido);
+        Assert.AreEqual(email, cuenta.Email);
+        Assert.AreEqual(password, cuenta.PasswordHash);
     }
 
     [TestMethod]
-    public void Crear_Cuentas_Diferentes_Generan_Ids_Distintos()
+    public void Crear_ConDatosValidos_DebeAsignarRolVisitantePorDefecto()
     {
-        var email1 = new Email("mail1");
-        var email2 = new Email("mail2");
-        var pass1 = new PasswordHash("pass1");
-        var pass2 = new PasswordHash("pass2");
+        // Arrange
+        var nombre = "Ana";
+        var apellido = "García";
+        var email = new Email("ana@test.com");
+        var password = new PasswordHash("hash4561d21d121d12d1d11ded111");
 
-        var c1 = Cuenta.Crear("nombre1", "apellido1", email1, pass1);
-        var c2 = Cuenta.Crear("nombre2", "apellido2", email2, pass2);
+        // Act
+        var cuenta = Cuenta.Crear(nombre, apellido, email, password);
 
-        Assert.AreNotEqual(c1.Id, c2.Id);
+        // Assert
+        Assert.IsTrue(cuenta.Roles.Contains(Rol.Visitante));
+        Assert.AreEqual(1, cuenta.Roles.Count);
     }
 
     [TestMethod]
-    public void Propiedades_Son_Inmutables_Desde_Externo()
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Crear_ConNombreVacio_DeberiaLanzarExcepcion()
     {
-        // var cuenta = Cuenta.Crear("nombre", "apellido", new Email("email"), new PasswordHash("pass"));
-
-        // Como las propiedades no tienen setters públicos, este test verifica que compilador no permite asignar valores externos
-        // Esto se verifica más a nivel de compilación, no como assert runtime, por lo que sirve como referencia.
-        // Ejemplo comentado:
-        // cuenta.Nombre = "nuevo"; // No compila
-        Assert.IsTrue(true);
+        // Arrange & Act & Assert
+        Cuenta.Crear(string.Empty, "Pérez", new Email("test@mail.com"), new PasswordHash("hash"));
     }
 
     [TestMethod]
-    public void Crear_Cuenta_Con_VisitanteId_Asignado()
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Crear_ConApellidoVacio_DeberiaLanzarExcepcion()
     {
-        var email = new Email("visitante@mail.com");
-        var password = new PasswordHash("visitantepass");
-        var cuenta = Cuenta.Crear("Ana", "Perez", email, password);
+        Cuenta.Crear("Juan", string.Empty, new Email("test@mail.com"), new PasswordHash("hash"));
+    }
 
-        // Simula asignación interna de VisitanteId (si existe un método o constructor que lo permita)
-        var visitanteId = Guid.NewGuid();
-        typeof(Cuenta)
-            .GetProperty("VisitanteId")?
-            .SetValue(cuenta, visitanteId);
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Crear_ConEmailNulo_DeberiaLanzarExcepcion()
+    {
+        Email email = null!;
+        Cuenta.Crear("Juan", "Pérez", email, new PasswordHash("hash"));
+    }
 
-        Assert.AreEqual(visitanteId, cuenta.VisitanteId);
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Crear_ConPasswordNulo_DeberiaLanzarExcepcion()
+    {
+        PasswordHash pass = null!;
+        Cuenta.Crear("Juan", "Pérez", new Email("test@mail.com"), pass);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Crear_ConNombreSoloEspacios_DeberiaLanzarExcepcion()
+    {
+        Cuenta.Crear("   ", "Pérez", new Email("test@mail.com"), new PasswordHash("hash"));
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionDominio))]
+    public void Crear_ConApellidoSoloEspacios_DeberiaLanzarExcepcion()
+    {
+        Cuenta.Crear("Juan", "   ", new Email("test@mail.com"), new PasswordHash("hash"));
+    }
+
+    [TestMethod]
+    public void Crear_ConNombreVacio_DeberiaLanzarExcepcionConMensajeCorrecto()
+    {
+        var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
+            Cuenta.Crear(string.Empty, "Pérez", new Email("test@mail.com"), new PasswordHash("hashd1212d12d12d12d1d131d1d1d")));
+
+        Assert.AreEqual("Nombre es requerido", ex.Message);
+    }
+
+    [TestMethod]
+    public void Crear_ConApellidoVacio_DeberiaLanzarExcepcionConMensajeCorrecto()
+    {
+        var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
+            Cuenta.Crear("Juan", string.Empty, new Email("test@mail.com"), new PasswordHash("hashd12d12d12d1d21d12d1d12d12d")));
+
+        Assert.AreEqual("Apellido es requerido", ex.Message);
+    }
+
+    [TestMethod]
+    public void Crear_ConEmailNulo_DeberiaLanzarExcepcionConMensajeCorrecto()
+    {
+        Email email = null!;
+        var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
+            Cuenta.Crear("Juan", "Perez", email, new PasswordHash("hasd12d12d12d12d12d12d1d12d12dh")));
+
+        Assert.AreEqual("Email es requerido", ex.Message);
+    }
+
+    [TestMethod]
+    public void Crear_ConPassNulo_DeberiaLanzarExcepcionConMensajeCorrecto()
+    {
+        PasswordHash pass = null!;
+        var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
+            Cuenta.Crear("Juan", "Perez", new Email("test@mail.com"), pass));
+
+        Assert.AreEqual("Password es requerido", ex.Message);
     }
 }
