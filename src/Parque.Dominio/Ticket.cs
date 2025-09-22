@@ -1,5 +1,4 @@
-namespace Parque.Dominio;
-
+namespace Parque.Dominio
 public class Ticket
 {
     public int Id { get; set; }
