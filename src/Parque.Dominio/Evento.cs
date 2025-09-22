@@ -1,26 +1,26 @@
-namespace DefaultNamespace;
+namespace Parque.Dominio;
 
 public class Evento
 {
-    public int Id {get; set;}
-    public string Titulo {get; set;}
-    public string Descripcion {get; set;}
-    public DateTime Inicio {get; set;}
-    public DateTime Fin {get; set;}
-    public int Aforo_Maximo {get; set;}
-    public float CostoAdicional  {get; set;}
-    public List<Atraccion> Atracciones { get; set; } = new List<Atraccion>();
-    public EstadoEvento Estado {get; set;}
+    public int Id { get; set; }
+    public string Titulo { get; set; }
+    public string Descripcion { get; set; }
+    public DateTime Inicio { get; set; }
+    public DateTime Fin { get; set; }
+    public int AforoMaximo { get; set; }
+    public float CostoAdicional { get; set; }
+    public List<Atraccion> Atracciones { get; set; } = [];
+    public EstadoEvento Estado { get; set; }
 
-    public Evento(string titulo, string descripcion,  DateTime inicio,  DateTime fin, int aforo_Maximo, float costoAdicional, EstadoEvento estado)
+    public Evento(string titulo, string descripcion, DateTime inicio, DateTime fin, int aforoMaximo, float costoAdicional, EstadoEvento estado)
     {
-       Titulo = titulo;
-       Descripcion = descripcion;
-       Inicio = inicio;
-       Fin = fin;
-       Aforo_Maximo = aforo_Maximo;
-       CostoAdicional = costoAdicional;
-       Atracciones = new List<Atraccion>();
-       Estado = estado;
+        Titulo = titulo;
+        Descripcion = descripcion;
+        Inicio = inicio;
+        Fin = fin;
+        AforoMaximo = aforoMaximo;
+        CostoAdicional = costoAdicional;
+        Atracciones = [];
+        Estado = estado;
     }
 }
