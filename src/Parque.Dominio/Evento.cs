@@ -1,5 +1,6 @@
-namespace Parque.Dominio;
+using DefaultNamespace;
 
+namespace Parque.Dominio;
 public class Evento
 {
     public int Id { get; set; }
