@@ -1,7 +1,4 @@
-using Parque.Dominio;
-using Parque.Dominio.Usuarios;
-
-namespace DefaultNamespace;
+namespace Parque.Dominio.Atraccion;
 
 public class Atraccion
 {
