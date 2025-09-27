@@ -1,3 +1,5 @@
+using Parque.Dominio;
+using Microsoft.EntityFrameworkCore;
 namespace DefaultNamespace;
 
 public class AppContexto: DbContext
