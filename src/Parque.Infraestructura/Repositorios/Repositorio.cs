@@ -1,4 +1,4 @@
-namespace DefaultNamespace;
+namespace Parque.Infrastructura.Repositorios;
 
 public class Repositorio<T>(AppContexto contexto) : IRepositorio<T> where T : class
 {
