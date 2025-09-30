@@ -3,7 +3,6 @@ namespace DefaultNamespace;
 public class Repositorio<T>(AppContexto contexto) : IRepositorio<T> where T : class
 {
     private readonly AppContexto _contexto = contexto;
-
     public void Agregar(T entidad)
     {
         _contexto.Add(entidad);
@@ -13,13 +12,11 @@ public class Repositorio<T>(AppContexto contexto) : IRepositorio<T> where T : cl
     {
         return _dbSet.FirstOrDefault(predicado);
     }
-
     public void Editar(T entidad)
     {
         _contexto.Set<T>().Update(entidad);
         _contexto.SaveChanges();
     }
-
     public void Eliminar(Expression<Func<T, bool>> predicado)
     {
         T? entidad = Encontrar(predicado);
