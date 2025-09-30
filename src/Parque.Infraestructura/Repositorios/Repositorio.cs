@@ -1,3 +1,7 @@
+using System.Linq.Expressions;
+using DefaultNamespace;
+using Parque.Infraestructura;
+
 namespace Parque.Infrastructura.Repositorios;
 
 public class Repositorio<T>(AppContexto contexto) : IRepositorio<T> where T : class
@@ -8,15 +12,18 @@ public class Repositorio<T>(AppContexto contexto) : IRepositorio<T> where T : cl
         _contexto.Add(entidad);
         _contexto.SaveChanges();
     }
+
     public T? Encontrar(Expression<Func<T, bool>> predicado)
     {
         return _contexto.Set<T>().FirstOrDefault(predicado);
     }
+
     public void Editar(T entidad)
     {
         _contexto.Set<T>().Update(entidad);
         _contexto.SaveChanges();
     }
+
     public void Eliminar(Expression<Func<T, bool>> predicado)
     {
         T? entidad = Encontrar(predicado);
@@ -31,9 +38,9 @@ public class Repositorio<T>(AppContexto contexto) : IRepositorio<T> where T : cl
     {
         return _contexto.Set<T>().ToList();
     }
+
     public List<T> Obtener(Expression<Func<T, bool>> predicado)
     {
         return _contexto.Set<T>().Where(predicado).ToList();
     }
-    
 }
