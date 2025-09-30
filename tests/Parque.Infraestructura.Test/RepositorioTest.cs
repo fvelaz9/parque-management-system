@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Parque.Infraestructura.Repositorios.Repositorio;
 using Moq;
 
-namespace Parque.Infraestructura.Test;
+namespace Parque.Infraestructura.test;
 
 [TestClass]
 public class RepositorioTest
