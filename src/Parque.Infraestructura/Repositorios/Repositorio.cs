@@ -9,6 +9,9 @@ public class Repositorio<T>(AppContexto contexto) : IRepositorio<T> where T : cl
         _contexto.Add(entidad);
         _contexto.SaveChanges();
     }
- 
+    public T? Encontrar(Expression<Func<T, bool>> predicado)
+    {
+        return _dbSet.FirstOrDefault(predicado);
+    }
     
 }

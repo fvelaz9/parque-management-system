@@ -9,7 +9,6 @@ public interface IRepositorio<T>
     T? Encontrar(Expression<Func<T, bool>> predicate);
     void Editar(T entity);
     void Eliminar(Expression<Func<T, bool>> predicate);
-    IEnumerable<T> Obtener(Expression<Func<T, bool>> predicate);
-    IEnumerable<T> ObtenerLista();
-    
+    List<T> ObtenerTodos();
+    List<T> Obtener(Expression<Func<T, bool>> predicate);
 }
