@@ -14,4 +14,22 @@ public class AppContexto : DbContext
     public DbSet<AtraccionParque> Atracciones { get; set; }
     public AppContexto(DbContextOptions options)
         : base(options) { }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Cuenta>(builder =>
+        {
+            builder.OwnsOne(u => u.Email, email =>
+            {
+                email.Property(e => e.Valor).HasColumnName("Email").IsRequired();
+            });
+        });
+        modelBuilder.Entity<Cuenta>().OwnsOne(u => u.PasswordHash, pass =>
+        {
+            pass.Property(p => p.Valor)
+                .HasColumnName("PasswordHash")
+                .IsRequired();
+        });
+    }
 }
