@@ -13,7 +13,9 @@ public class AppContexto : DbContext
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<AtraccionParque> Atracciones { get; set; }
     public AppContexto(DbContextOptions options)
-        : base(options) { }
+        : base(options)
+    {
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

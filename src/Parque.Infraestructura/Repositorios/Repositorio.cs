@@ -4,7 +4,8 @@ using Parque.Infraestructura;
 
 namespace Parque.Infrastructura.Repositorios;
 
-public class Repositorio<T>(AppContexto contexto) : IRepositorio<T> where T : class
+public class Repositorio<T>(AppContexto contexto) : IRepositorio<T>
+    where T : class
 {
     private readonly AppContexto _contexto = contexto;
     public void Agregar(T entidad)
