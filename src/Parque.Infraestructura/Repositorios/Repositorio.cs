@@ -10,7 +10,7 @@ public class Repositorio<T>(AppContexto contexto) : IRepositorio<T> where T : cl
     }
     public T? Encontrar(Expression<Func<T, bool>> predicado)
     {
-        return _dbSet.FirstOrDefault(predicado);
+        return _contexto.Set<T>().FirstOrDefault(predicado);
     }
     public void Editar(T entidad)
     {
@@ -22,7 +22,7 @@ public class Repositorio<T>(AppContexto contexto) : IRepositorio<T> where T : cl
         T? entidad = Encontrar(predicado);
         if(entidad != null)
         {
-            _contexto.Set<T>.().Remove(entidad);
+            _contexto.Set<T>().Remove(entidad);
             _contexto.SaveChanges();
         }
     }
