@@ -1,7 +1,6 @@
 using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
 
-namespace Parque.Infraestructura;
+namespace Parque.Infraestructura.Repositorios;
 
 public interface IRepositorio<T>
 {

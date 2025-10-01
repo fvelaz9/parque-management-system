@@ -1,7 +1,6 @@
 using System.Linq.Expressions;
-using Parque.Infraestructura;
 
-namespace Parque.Infrastructura.Repositorios;
+namespace Parque.Infraestructura.Repositorios;
 
 public class Repositorio<T>(AppContexto contexto) : IRepositorio<T>
     where T : class
