@@ -9,9 +9,9 @@ on:
     - '**.csproj'
 
 jobs:
-  build:
-    name: Build and Test
-    uses: IngSoft-DA2/workflows/.github/workflows/reusable-build-test.yml@self-hosted-runner
+  run:
+    name: Run
+    uses: IngSoft-DA2/workflows/.github/workflows/reusable-build-test.yml@self-hosted
     permissions: write-all
     with:
-      solution-name: '<<el nombre del archivo de tu solucion, por ejemplo: Test.sln>>'
+      solution-name: 'Obligatorio.sln'
