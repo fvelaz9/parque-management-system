@@ -31,7 +31,8 @@ public class RepositorioTest
         _mockSet.As<IQueryable<Cuenta>>().Setup(m => m.ElementType).Returns(_data.ElementType);
         _mockSet.As<IQueryable<Cuenta>>().Setup(m => m.GetEnumerator()).Returns(() => _data.GetEnumerator());
 
-        _appContextMock = new Mock<AppContexto>();
+        var options = new DbContextOptionsBuilder<AppContexto>().Options;
+        _appContextMock = new Mock<AppContexto>(options);
         _repositorio = new Repositorio<Cuenta>(_appContextMock.Object);
 
         _appContextMock.Setup(x => x.Set<Cuenta>()).Returns(_mockSet.Object);
@@ -47,14 +48,15 @@ public class RepositorioTest
         var password = new PasswordHash("hash123d12d12d12d12d1d1d31d");
         var nuevaCuenta = Cuenta.Crear(nombre, apellido, email, password);
 
-        _mockSet!.Setup(m => m.Add(It.IsAny<Cuenta>())).Verifiable();
+        // Mock the DbContext.Add method instead of DbSet.Add
+        _appContextMock!.Setup(x => x.Add(It.IsAny<Cuenta>())).Verifiable();
         _appContextMock!.Setup(x => x.SaveChanges()).Returns(1);
 
         // Act
         _repositorio!.Agregar(nuevaCuenta);
 
         // Assert
-        _mockSet.Verify(m => m.Add(It.Is<Cuenta>(c => c.Nombre == "Juan")), Times.Once());
+        _appContextMock.Verify(x => x.Add(It.Is<Cuenta>(c => c.Nombre == "Juan")), Times.Once());
         _appContextMock.Verify(x => x.SaveChanges(), Times.Once());
     }
 
