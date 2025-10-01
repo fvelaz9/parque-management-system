@@ -1,5 +1,4 @@
 using System.Linq.Expressions;
-using DefaultNamespace;
 using Parque.Infraestructura;
 
 namespace Parque.Infrastructura.Repositorios;

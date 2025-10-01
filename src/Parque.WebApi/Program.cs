@@ -1,5 +1,5 @@
-using DefaultNamespace;
 using Microsoft.EntityFrameworkCore;
+using Parque.Infraestructura;
 
 var builder = WebApplication.CreateBuilder(args);
 

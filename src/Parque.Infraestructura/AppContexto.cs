@@ -3,7 +3,7 @@ using Parque.Dominio;
 using Parque.Dominio.Atracciones;
 using Parque.Dominio.Usuarios;
 
-namespace DefaultNamespace;
+namespace Parque.Infraestructura;
 
 public class AppContexto : DbContext
 {
