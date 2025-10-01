@@ -11,27 +11,27 @@ public class AtraccionRepositorio : IAtraccionRepositorio
         _context = contexto;
     }
 
-    public AtraccionParque? GetById(int id) =>
+    public AtraccionParque? ObtenerPorId(int id) =>
         _context.Atracciones.FirstOrDefault(a => a.Id == id);
 
-    public IEnumerable<AtraccionParque> GetAll() =>
+    public IEnumerable<AtraccionParque> ObtenerTodos() =>
         _context.Atracciones.ToList();
 
-    public void Add(AtraccionParque atraccion)
+    public void Agregar(AtraccionParque atraccion)
     {
         _context.Atracciones.Add(atraccion);
         _context.SaveChanges();
     }
 
-    public void Update(AtraccionParque atraccion)
+    public void Actualizar(AtraccionParque atraccion)
     {
         _context.Atracciones.Update(atraccion);
         _context.SaveChanges();
     }
 
-    public void Delete(int id)
+    public void Eliminar(int id)
     {
-        var atraccion = GetById(id);
+        var atraccion = ObtenerPorId(id);
         if (atraccion != null)
         {
             _context.Atracciones.Remove(atraccion);

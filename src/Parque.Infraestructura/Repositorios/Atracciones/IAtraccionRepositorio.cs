@@ -5,9 +5,9 @@ using Dominio;
 
 public interface IAtraccionRepositorio
 {
-    AtraccionParque? GetById(int id);
-    IEnumerable<AtraccionParque> GetAll();
-    void Add(AtraccionParque atraccion);
-    void Update(AtraccionParque atraccion);
-    void Delete(int id);
+    AtraccionParque? ObtenerPorId(int id);
+    IEnumerable<AtraccionParque> ObtenerTodos();
+    void Agregar(AtraccionParque atraccion);
+    void Actualizar(AtraccionParque atraccion);
+    void Eliminar(int id);
 }
