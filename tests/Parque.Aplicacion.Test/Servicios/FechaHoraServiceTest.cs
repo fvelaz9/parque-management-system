@@ -36,6 +36,7 @@ public class FechaHoraServiceTest
         Assert.IsTrue(service.UsaFechaPersonalizada());
     }
 
+    [TestMethod]
     public void ResetToSystemTime_DeberiaBorrarTiempoPersonalizado()
     {
         // Arrange
@@ -50,5 +51,24 @@ public class FechaHoraServiceTest
         // Assert
         Assert.AreNotEqual(customTime, result);
         Assert.IsFalse(service.UsaFechaPersonalizada());
+    }
+
+    [TestMethod]
+    public void SetCustomTime_ConcurrentAccess_DeberiaMantenerConsistencia()
+    {
+        // Arrange
+        var service = new ServicioFechaHora();
+        var time1 = new DateTime(2025, 1, 1, 10, 0, 0);
+        var time2 = new DateTime(2025, 12, 31, 23, 59, 0);
+
+        // Act
+        Parallel.Invoke(
+            () => service.AsignarFechaPersonalizada(time1),
+            () => service.AsignarFechaPersonalizada(time2),
+            () => { var fechaActual = service.ObtenerFechaActual(); });
+
+        // Assert
+        var result = service.ObtenerFechaActual();
+        Assert.IsTrue(result == time1 || result == time2);
     }
 }

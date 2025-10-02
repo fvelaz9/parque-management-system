@@ -31,4 +31,12 @@ public class ServicioFechaHora : IServicioFechaHora
             return _fechaPersonalizada.HasValue;
         }
     }
+
+    public void ResetearAFechaSistema()
+    {
+        lock(_lock)
+        {
+            _fechaPersonalizada = null;
+        }
+    }
 }
