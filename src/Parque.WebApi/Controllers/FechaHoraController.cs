@@ -8,10 +8,9 @@ public class FechaHoraController(IServicioFechaHora timeService) : ControllerBas
 {
     private readonly IServicioFechaHora _servicioFecha = timeService;
 
-    [HttpGet("current")]
+    [HttpGet("actual")]
     public IActionResult ObtenerFechaActual()
     {
-        // Usas la instancia inyectada
         var currentTime = _servicioFecha.ObtenerFechaActual();
         return Ok(new { datetime = currentTime });
     }
