@@ -28,7 +28,7 @@ public class FechaHoraServiceTest
         var customTime = new DateTime(2025, 9, 2, 14, 45, 0);
 
         // Act
-        service.AsignarFechaPersonalizada(customTime);
+        service.ConfigurarFecha(customTime);
         var result = service.ObtenerFechaActual();
 
         // Assert
@@ -42,7 +42,7 @@ public class FechaHoraServiceTest
         // Arrange
         var service = new ServicioFechaHora();
         var customTime = new DateTime(2025, 9, 2, 14, 45, 0);
-        service.AsignarFechaPersonalizada(customTime);
+        service.ConfigurarFecha(customTime);
 
         // Act
         service.ResetearAFechaSistema();
@@ -63,8 +63,8 @@ public class FechaHoraServiceTest
 
         // Act
         Parallel.Invoke(
-            () => service.AsignarFechaPersonalizada(time1),
-            () => service.AsignarFechaPersonalizada(time2),
+            () => service.ConfigurarFecha(time1),
+            () => service.ConfigurarFecha(time2),
             () => { var fechaActual = service.ObtenerFechaActual(); });
 
         // Assert

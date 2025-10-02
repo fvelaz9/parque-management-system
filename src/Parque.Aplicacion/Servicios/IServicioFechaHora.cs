@@ -3,7 +3,7 @@
 public interface IServicioFechaHora
 {
     DateTime ObtenerFechaActual();
-    void AsignarFechaPersonalizada(DateTime customTime);
+    void ConfigurarFecha(DateTime customTime);
     bool UsaFechaPersonalizada();
     void ResetearAFechaSistema();
 }

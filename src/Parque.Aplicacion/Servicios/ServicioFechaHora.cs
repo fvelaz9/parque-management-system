@@ -16,7 +16,7 @@ public class ServicioFechaHora : IServicioFechaHora
         }
     }
 
-    public void AsignarFechaPersonalizada(DateTime customTime)
+    public void ConfigurarFecha(DateTime customTime)
     {
         lock(_lock)
         {

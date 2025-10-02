@@ -19,7 +19,7 @@ public class FechaHoraControllerTest
     }
 
     [TestMethod]
-    public void GetCurrentTime_DeberiaRetornarTiempoActual()
+    public void ObtenerFechaActual_DeberiaRetornarTiempoActual()
     {
         // Arrange
         var expectedTime = new DateTime(2025, 9, 2, 14, 45, 0);
@@ -32,5 +32,20 @@ public class FechaHoraControllerTest
         // Assert
         Assert.IsNotNull(result);
         Assert.AreEqual(200, result.StatusCode);
+    }
+
+    [TestMethod]
+    public void ConfigurarFecha_ConFormatoValido_DeberiaConfigurar()
+    {
+        // Arrange
+        var request = new ConfigurarFechaRequest("2025-09-02T14:45");
+
+        // Act
+        var result = _controller!.ConfigurarFecha(request) as OkObjectResult;
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+        _mockServicioFecha!.Verify(s => s.ConfigurarFecha(It.IsAny<DateTime>()), Times.Once);
     }
 }
