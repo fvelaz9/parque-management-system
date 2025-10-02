@@ -27,4 +27,11 @@ public class FechaHoraController(IServicioFechaHora timeService) : ControllerBas
         _servicioFecha.ConfigurarFecha(fechaPersonalizada);
         return Ok(new { mensaje = "Fecha configurada exitosamente" });
     }
+
+    [HttpPost("resetear")]
+    public IActionResult ResetearAFechaSistema()
+    {
+        _servicioFecha.ResetearAFechaSistema();
+        return Ok(new { mensaje = "Fecha reseteada al sistema exitosamente" });
+    }
 }

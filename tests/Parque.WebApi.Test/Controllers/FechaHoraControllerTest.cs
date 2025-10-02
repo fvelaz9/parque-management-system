@@ -64,4 +64,20 @@ public class FechaHoraControllerTest
         Assert.AreEqual(400, result.StatusCode);
         _mockServicioFecha!.Verify(s => s.ConfigurarFecha(It.IsAny<DateTime>()), Times.Never);
     }
+
+    [TestMethod]
+    public void RestablecerFechaDelSistema_DeberiaLlamarAlServicio()
+    {
+        // Arrange
+        var tiempoActual = DateTime.Now;
+        _mockServicioFecha!.Setup(s => s.ObtenerFechaActual()).Returns(tiempoActual);
+
+        // Act
+        var result = _controller!.ResetearAFechaSistema() as OkObjectResult;
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+        _mockServicioFecha.Verify(s => s.ResetearAFechaSistema(), Times.Once);
+    }
 }
