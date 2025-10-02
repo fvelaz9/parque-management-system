@@ -19,7 +19,7 @@ public class FechaHoraController(IServicioFechaHora timeService) : ControllerBas
     [HttpPost("configurar")]
     public IActionResult ConfigurarFecha([FromBody] ConfigurarFechaRequest request)
     {
-        if (!DateTime.TryParse(request.FechaHora, out var fechaPersonalizada))
+        if(!DateTime.TryParse(request.FechaHora, out var fechaPersonalizada))
         {
             return BadRequest("Formato de fecha inválido. Use 'YYYY-MM-DDTHH:MM'.");
         }
