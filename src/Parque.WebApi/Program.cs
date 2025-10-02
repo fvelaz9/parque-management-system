@@ -12,9 +12,6 @@ builder.Services.AddSingleton<IServicioFechaHora, ServicioFechaHora>();
 
 builder.Services.AddDbContext<AppContexto>(options => options.UseSqlServer("name=ConnectionStrings:DefaultConnection"));
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
