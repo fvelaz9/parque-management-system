@@ -134,4 +134,31 @@ public class ServicioCuentaTest
         Assert.AreEqual(new DateTime(1985, 5, 15), cuenta.Visitante!.FechaNacimiento);
         mockRepo.Verify(r => r.Editar(cuenta), Times.Once);
     }
+
+    [TestMethod]
+    public void ModificarPerfil_SoloNombre_ActualizaSoloNombre()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
+        cuenta.AsignarVisitante(new DateTime(1990, 1, 1));
+        var apellidoOriginal = cuenta.Apellido;
+        var emailOriginal = cuenta.Email.Valor;
+        var fechaOriginal = cuenta.Visitante!.FechaNacimiento;
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var dto = new ModificarPerfilDto("Carlos", null, null, null);
+
+        // Act
+        servicio.ModificarPerfil(cuenta.Id, dto);
+
+        // Assert
+        Assert.AreEqual("Carlos", cuenta.Nombre);
+        Assert.AreEqual(apellidoOriginal, cuenta.Apellido);
+        Assert.AreEqual(emailOriginal, cuenta.Email.Valor);
+        Assert.AreEqual(fechaOriginal, cuenta.Visitante.FechaNacimiento);
+    }
 }
