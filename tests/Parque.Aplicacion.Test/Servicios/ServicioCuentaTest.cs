@@ -109,4 +109,29 @@ public class ServicioCuentaTest
         // Act & Assert
         Assert.ThrowsException<ExcepcionDominio>(() => servicio.RegistrarVisitante(dto));
     }
+
+    [TestMethod]
+    public void ModificarPerfil_TodosLosCampos_ActualizaCorrectamente()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
+        cuenta.AsignarVisitante(new DateTime(1990, 1, 1));
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var dto = new ModificarPerfilDto("Carlos", "Gómez", "carlos@test.com", new DateTime(1985, 5, 15));
+
+        // Act
+        servicio.ModificarPerfil(cuenta.Id, dto);
+
+        // Assert
+        Assert.AreEqual("Carlos", cuenta.Nombre);
+        Assert.AreEqual("Gómez", cuenta.Apellido);
+        Assert.AreEqual("carlos@test.com", cuenta.Email.Valor);
+        Assert.AreEqual(new DateTime(1985, 5, 15), cuenta.Visitante!.FechaNacimiento);
+        mockRepo.Verify(r => r.Editar(cuenta), Times.Once);
+    }
 }
