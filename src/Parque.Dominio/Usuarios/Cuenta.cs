@@ -78,4 +78,9 @@ public class Cuenta
             throw new ExcepcionDominio($"{nombreCampo} es requerido");
         }
     }
+
+    public void ActualizarNombre(string nombre)
+    {
+        Nombre = nombre;
+    }
 }
