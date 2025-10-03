@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Parque.Aplicacion.Servicios.Atracciones;
 using Parque.Dominio.Atracciones;
@@ -7,14 +6,9 @@ namespace Parque.WebApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AtraccionesController : ControllerBase
+public class AtraccionesController(IServicioAtracciones service) : ControllerBase
 {
-    private readonly IServicioAtracciones _service;
-
-    public AtraccionesController(IServicioAtracciones service)
-    {
-        _service = service;
-    }
+    private readonly IServicioAtracciones _service = service;
 
     [HttpGet]
     public IActionResult GetAll()
@@ -37,8 +31,7 @@ public class AtraccionesController : ControllerBase
             atraccion.Tipo,
             atraccion.EdadMinima,
             atraccion.Capacidad,
-            atraccion.Descripcion
-        );
+            atraccion.Descripcion);
         return CreatedAtAction(nameof(GetById), new { id = creada.Id }, creada);
     }
 
@@ -51,8 +44,7 @@ public class AtraccionesController : ControllerBase
             atraccion.Tipo,
             atraccion.EdadMinima,
             atraccion.Capacidad,
-            atraccion.Descripcion
-        );
+            atraccion.Descripcion);
         return NoContent();
     }
 

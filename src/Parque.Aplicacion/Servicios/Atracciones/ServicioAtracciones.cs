@@ -2,14 +2,9 @@ using Parque.Aplicacion.Servicios.Atracciones;
 using Parque.Dominio.Atracciones;
 using Parque.Infraestructura.Repositorios;
 
-public class ServicioAtracciones : IServicioAtracciones
+public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio) : IServicioAtracciones
 {
-    private readonly IRepositorio<AtraccionParque> _repositorio;
-
-    public ServicioAtracciones(IRepositorio<AtraccionParque> repositorio)
-    {
-        _repositorio = repositorio;
-    }
+    private readonly IRepositorio<AtraccionParque> _repositorio = repositorio;
 
     public AtraccionParque CrearAtraccion(string nombre, TipoAtraccion tipo, int edadMinima, int capacidad, string descripcion)
     {
