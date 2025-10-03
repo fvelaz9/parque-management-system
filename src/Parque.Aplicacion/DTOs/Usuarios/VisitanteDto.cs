@@ -1,4 +1,4 @@
-﻿namespace Parque.Aplicacion.DTOs;
+﻿namespace Parque.Aplicacion.DTOs.Usuarios;
 public record VisitanteDto(
     Guid Id,
     DateTime FechaNacimiento,
