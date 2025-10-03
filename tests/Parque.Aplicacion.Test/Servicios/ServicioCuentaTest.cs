@@ -161,4 +161,22 @@ public class ServicioCuentaTest
         Assert.AreEqual(emailOriginal, cuenta.Email.Valor);
         Assert.AreEqual(fechaOriginal, cuenta.Visitante.FechaNacimiento);
     }
+
+    [TestMethod]
+    public void ModificarPerfil_CuentaInexistente_DeberiaLanzarExcepcion()
+    {
+        // Arrange
+        Cuenta? cuenta = null;
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var dto = new ModificarPerfilDto("Carlos", null, null, null);
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionEntidadNoEncontrada>(() => servicio.ModificarPerfil(Guid.NewGuid(), dto));
+        Assert.AreEqual("Cuenta no encontrada", ex.Message);
+    }
 }
