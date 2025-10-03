@@ -1,19 +1,17 @@
+using Parque.Aplicacion.Servicios.Atracciones;
 using Parque.Dominio.Atracciones;
-using Parque.Infraestructura.Repositorios.Atracciones;
-
-namespace Parque.Aplicacion.Servicios.Atracciones;
+using Parque.Infraestructura.Repositorios;
 
 public class ServicioAtracciones : IServicioAtracciones
 {
-    private readonly IAtraccionRepositorio _repositorio;
+    private readonly IRepositorio<AtraccionParque> _repositorio;
 
-    public ServicioAtracciones(IAtraccionRepositorio repositorio)
+    public ServicioAtracciones(IRepositorio<AtraccionParque> repositorio)
     {
         _repositorio = repositorio;
     }
 
-    public AtraccionParque CrearAtraccion(string nombre, TipoAtraccion tipo, int edadMinima, int capacidad,
-        string descripcion)
+    public AtraccionParque CrearAtraccion(string nombre, TipoAtraccion tipo, int edadMinima, int capacidad, string descripcion)
     {
         if(capacidad <= 0)
         {
@@ -27,11 +25,13 @@ public class ServicioAtracciones : IServicioAtracciones
 
     public IEnumerable<AtraccionParque> ListarAtracciones() => _repositorio.ObtenerTodos();
 
-    public AtraccionParque? BuscarAtraccion(int id) => _repositorio.ObtenerPorId(id);
+    public AtraccionParque? BuscarAtraccion(int id) =>
+        _repositorio.Encontrar(a => a.Id == id);
 
     public void ModificarAtraccion(int id, string nombre, TipoAtraccion tipo, int edadMinima, int capacidad, string descripcion)
     {
-        var atraccion = _repositorio.ObtenerPorId(id) ?? throw new ArgumentException("Atracción no encontrada");
+        var atraccion = _repositorio.Encontrar(a => a.Id == id)
+                        ?? throw new ArgumentException("Atracción no encontrada");
 
         atraccion.Nombre = nombre;
         atraccion.Tipo = tipo;
@@ -39,8 +39,9 @@ public class ServicioAtracciones : IServicioAtracciones
         atraccion.Capacidad = capacidad;
         atraccion.Descripcion = descripcion;
 
-        _repositorio.Actualizar(atraccion);
+        _repositorio.Editar(atraccion);
     }
 
-    public void EliminarAtraccion(int id) => _repositorio.Eliminar(id);
+    public void EliminarAtraccion(int id) =>
+        _repositorio.Eliminar(a => a.Id == id);
 }
