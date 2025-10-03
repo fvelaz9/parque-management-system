@@ -30,10 +30,26 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
     public void ModificarPerfil(Guid cuentaId, ModificarPerfilDto dto)
     {
         var cuenta = _cuentaRepo.Encontrar(c => c.Id == cuentaId);
-        cuenta.ActualizarNombre("Carlos");
-        cuenta.ActualizarApellido("Gómez");
-        cuenta.ActualizarEmail(new Email("carlos@test.com"));
-        cuenta.Visitante.ActualizarFecha(new DateTime(1985, 5, 15));
+
+        if(!string.IsNullOrWhiteSpace(dto.Nombre))
+        {
+            cuenta.ActualizarNombre(dto.Nombre);
+        }
+
+        if(!string.IsNullOrWhiteSpace(dto.Apellido))
+        {
+            cuenta.ActualizarApellido(dto.Apellido);
+        }
+
+        if(!string.IsNullOrWhiteSpace(dto.Email))
+        {
+            cuenta.ActualizarEmail(new Email(dto.Email));
+        }
+
+        if(dto.FechaNacimiento.HasValue && cuenta.Visitante != null)
+        {
+            cuenta.Visitante.ActualizarFecha(dto.FechaNacimiento.Value);
+        }
 
         _cuentaRepo.Editar(cuenta);
     }
