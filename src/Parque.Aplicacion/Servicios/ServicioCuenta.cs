@@ -12,6 +12,12 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo, IPasswordHashServic
 
     public CuentaDto RegistrarVisitante(RegistrarVisitanteDto dto)
     {
+        var cuentaExistente = _cuentaRepo.Encontrar(c => c.Email.Valor == dto.Email);
+        if(cuentaExistente != null)
+        {
+            throw new ExcepcionDominio("Ya existe una cuenta con este email.");
+        }
+
         var email = new Email(dto.Email);
         var passwordHash = _passwordHashService.HashPassword(dto.Password);
 
