@@ -13,7 +13,7 @@ public class CuentaTest
         var nombre = "Juan";
         var apellido = "Pérez";
         var email = new Email("juan@test.com");
-        var password = new PasswordHash("hash123d12d12d12d12d1d1d31d");
+        var password = "password123";
 
         // Act
         var cuenta = Cuenta.Crear(nombre, apellido, email, password);
@@ -23,7 +23,7 @@ public class CuentaTest
         Assert.AreEqual(nombre, cuenta.Nombre);
         Assert.AreEqual(apellido, cuenta.Apellido);
         Assert.AreEqual(email, cuenta.Email);
-        Assert.AreEqual(password, cuenta.PasswordHash);
+        Assert.AreEqual(password, cuenta.Password);
     }
 
     [TestMethod]
@@ -33,7 +33,7 @@ public class CuentaTest
         var nombre = "Ana";
         var apellido = "García";
         var email = new Email("ana@test.com");
-        var password = new PasswordHash("hash4561d21d121d12d1d11ded111");
+        var password = "password123";
 
         // Act
         var cuenta = Cuenta.Crear(nombre, apellido, email, password);
@@ -48,14 +48,14 @@ public class CuentaTest
     public void Crear_ConNombreVacio_DeberiaLanzarExcepcion()
     {
         // Arrange & Act & Assert
-        Cuenta.Crear(string.Empty, "Pérez", new Email("test@mail.com"), new PasswordHash("hash"));
+        Cuenta.Crear(string.Empty, "Pérez", new Email("test@mail.com"), "password123");
     }
 
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Crear_ConApellidoVacio_DeberiaLanzarExcepcion()
     {
-        Cuenta.Crear("Juan", string.Empty, new Email("test@mail.com"), new PasswordHash("hash"));
+        Cuenta.Crear("Juan", string.Empty, new Email("test@mail.com"), "password123");
     }
 
     [TestMethod]
@@ -63,36 +63,35 @@ public class CuentaTest
     public void Crear_ConEmailNulo_DeberiaLanzarExcepcion()
     {
         Email email = null!;
-        Cuenta.Crear("Juan", "Pérez", email, new PasswordHash("hash"));
+        Cuenta.Crear("Juan", "Pérez", email, "password123");
     }
 
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Crear_ConPasswordNulo_DeberiaLanzarExcepcion()
     {
-        PasswordHash pass = null!;
-        Cuenta.Crear("Juan", "Pérez", new Email("test@mail.com"), pass);
+        Cuenta.Crear("Juan", "Pérez", new Email("test@mail.com"), null!);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Crear_ConNombreSoloEspacios_DeberiaLanzarExcepcion()
     {
-        Cuenta.Crear("   ", "Pérez", new Email("test@mail.com"), new PasswordHash("hash"));
+        Cuenta.Crear("   ", "Pérez", new Email("test@mail.com"), "password123");
     }
 
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Crear_ConApellidoSoloEspacios_DeberiaLanzarExcepcion()
     {
-        Cuenta.Crear("Juan", "   ", new Email("test@mail.com"), new PasswordHash("hash"));
+        Cuenta.Crear("Juan", "   ", new Email("test@mail.com"), "password123");
     }
 
     [TestMethod]
     public void Crear_ConNombreVacio_DeberiaLanzarExcepcionConMensajeCorrecto()
     {
         var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
-            Cuenta.Crear(string.Empty, "Pérez", new Email("test@mail.com"), new PasswordHash("hashd1212d12d12d12d1d131d1d1d")));
+            Cuenta.Crear(string.Empty, "Pérez", new Email("test@mail.com"), "password123"));
 
         Assert.AreEqual("Nombre es requerido", ex.Message);
     }
@@ -101,7 +100,7 @@ public class CuentaTest
     public void Crear_ConApellidoVacio_DeberiaLanzarExcepcionConMensajeCorrecto()
     {
         var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
-            Cuenta.Crear("Juan", string.Empty, new Email("test@mail.com"), new PasswordHash("hashd12d12d12d1d21d12d1d12d12d")));
+            Cuenta.Crear("Juan", string.Empty, new Email("test@mail.com"), "password123"));
 
         Assert.AreEqual("Apellido es requerido", ex.Message);
     }
@@ -111,7 +110,7 @@ public class CuentaTest
     {
         Email email = null!;
         var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
-            Cuenta.Crear("Juan", "Perez", email, new PasswordHash("hasd12d12d12d12d12d12d1d12d12dh")));
+            Cuenta.Crear("Juan", "Perez", email, "password123"));
 
         Assert.AreEqual("Email es requerido", ex.Message);
     }
@@ -119,9 +118,8 @@ public class CuentaTest
     [TestMethod]
     public void Crear_ConPassNulo_DeberiaLanzarExcepcionConMensajeCorrecto()
     {
-        PasswordHash pass = null!;
         var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
-            Cuenta.Crear("Juan", "Perez", new Email("test@mail.com"), pass));
+            Cuenta.Crear("Juan", "Perez", new Email("test@mail.com"), null!));
 
         Assert.AreEqual("Password es requerido", ex.Message);
     }

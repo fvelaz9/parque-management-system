@@ -20,7 +20,7 @@ public class RepositorioTest
         var nombre = "TestUserName";
         var apellido = "Pérez";
         var email = new Email("juan@test.com");
-        var password = new PasswordHash("hash123d12d12d12d12d1d1d31d");
+        var password = "password123";
         _cuenta = Cuenta.Crear(nombre, apellido, email, password);
 
         _data = new List<Cuenta> { _cuenta }.AsQueryable();
@@ -45,7 +45,7 @@ public class RepositorioTest
         var nombre = "Juan";
         var apellido = "Pérez";
         var email = new Email("juan@test.com");
-        var password = new PasswordHash("hash123d12d12d12d12d1d1d31d");
+        var password = "password123";
         var nuevaCuenta = Cuenta.Crear(nombre, apellido, email, password);
 
         // Mock the DbContext.Add method instead of DbSet.Add
@@ -89,7 +89,7 @@ public class RepositorioTest
         var nombre = "UsuarioModificado";
         var apellido = "Pérez";
         var email = new Email("juan@test.com");
-        var password = new PasswordHash("hash123d12d12d12d12d1d1d31d");
+        var password = "password123";
         var cuentaModificada = Cuenta.Crear(nombre, apellido, email, password);
 
         _mockSet!.Setup(m => m.Update(It.IsAny<Cuenta>())).Verifiable();

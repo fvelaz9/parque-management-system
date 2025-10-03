@@ -19,12 +19,7 @@ public class ServicioCuentaTest
         mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
             .Returns((Cuenta)null!);
 
-        var mockPasswordHashService = new Mock<IPasswordHashService>();
-        mockPasswordHashService
-            .Setup(s => s.HashPassword("password123"))
-            .Returns(new PasswordHash("hash123"));
-
-        var cuentaServicio = new ServicioCuenta(mockRepo.Object, mockPasswordHashService.Object);
+        var cuentaServicio = new ServicioCuenta(mockRepo.Object);
 
         var dto = new RegistrarVisitanteDto(
             "Juan",
@@ -52,17 +47,66 @@ public class ServicioCuentaTest
     {
         // Arrange
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
-        var cuentaExistente = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), new PasswordHash("hash1234"));
+        var cuentaExistente = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
         mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
             .Returns(cuentaExistente);
 
-        var mockPasswordHashService = new Mock<IPasswordHashService>();
-
-        var servicio = new ServicioCuenta(mockRepo.Object, mockPasswordHashService.Object);
+        var servicio = new ServicioCuenta(mockRepo.Object);
         var dto = new RegistrarVisitanteDto("Juan", "Pérez", "juan@test.com", "pass", DateTime.Now);
 
         // Act & Assert
         var ex = Assert.ThrowsException<ExcepcionDominio>(() => servicio.RegistrarVisitante(dto));
         Assert.AreEqual("Ya existe una cuenta con este email.", ex.Message);
+    }
+
+    [TestMethod]
+    public void RegistrarVisitante_EmailInvalido_LanzaExcepcion()
+    {
+        // Arrange
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns((Cuenta)null!);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var dto = new RegistrarVisitanteDto("Juan", "Pérez", "email-invalido", "password123", DateTime.Now);
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionDominio>(() => servicio.RegistrarVisitante(dto));
+    }
+
+    [TestMethod]
+    public void RegistrarVisitante_NombreVacio_LanzaExcepcion()
+    {
+        // Arrange
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var dto = new RegistrarVisitanteDto(string.Empty, "Pérez", "juan@test.com", "password123", DateTime.Now);
+
+        // Act & Assert
+        Assert.ThrowsException<ExcepcionDominio>(() => servicio.RegistrarVisitante(dto));
+    }
+
+    [TestMethod]
+    public void RegistrarVisitante_ApellidoVacio_LanzaExcepcion()
+    {
+        // Arrange
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var dto = new RegistrarVisitanteDto("Juan", string.Empty, "juan@test.com", "password123", DateTime.Now);
+
+        // Act & Assert
+        Assert.ThrowsException<ExcepcionDominio>(() => servicio.RegistrarVisitante(dto));
+    }
+
+    [TestMethod]
+    public void RegistrarVisitante_PasswordVacio_LanzaExcepcion()
+    {
+        // Arrange
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var dto = new RegistrarVisitanteDto("Juan", "Pérez", "juan@test.com", string.Empty, DateTime.Now);
+
+        // Act & Assert
+        Assert.ThrowsException<ExcepcionDominio>(() => servicio.RegistrarVisitante(dto));
     }
 }

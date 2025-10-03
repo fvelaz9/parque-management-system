@@ -5,10 +5,9 @@ using Parque.Dominio.Usuarios;
 using Parque.Infraestructura.Repositorios;
 
 namespace Parque.Aplicacion.Servicios;
-public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo, IPasswordHashService passwordHashService) : IServicioCuenta
+public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
 {
     private readonly IRepositorio<Cuenta> _cuentaRepo = cuentaRepo;
-    private readonly IPasswordHashService _passwordHashService = passwordHashService;
 
     public CuentaDto RegistrarVisitante(RegistrarVisitanteDto dto)
     {
@@ -19,9 +18,8 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo, IPasswordHashServic
         }
 
         var email = new Email(dto.Email);
-        var passwordHash = _passwordHashService.HashPassword(dto.Password);
 
-        var cuenta = Cuenta.Crear(dto.Nombre, dto.Apellido, email, passwordHash);
+        var cuenta = Cuenta.Crear(dto.Nombre, dto.Apellido, email, dto.Password);
         cuenta.AsignarVisitante(dto.FechaNacimiento);
 
         _cuentaRepo.Agregar(cuenta);

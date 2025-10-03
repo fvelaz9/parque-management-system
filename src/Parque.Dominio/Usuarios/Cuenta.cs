@@ -7,7 +7,7 @@ public class Cuenta
     public string Nombre { get; private set; } = string.Empty;
     public string Apellido { get; private set; } = string.Empty;
     public Email Email { get; private set; } = default!;
-    public PasswordHash PasswordHash { get; private set; } = default!;
+    public string Password { get; private set; } = string.Empty;
     public Visitante? Visitante { get; private set; }
 
     // Se evita duplicación de roles usando un HashSet
@@ -17,16 +17,16 @@ public class Cuenta
     {
     }
 
-    public static Cuenta Crear(string nombre, string apellido, Email email, PasswordHash passwordHash)
+    public static Cuenta Crear(string nombre, string apellido, Email email, string password)
     {
-        ValidarCreacion(nombre, apellido, email, passwordHash);
+        ValidarCreacion(nombre, apellido, email, password);
 
         var cuenta = new Cuenta();
         cuenta.Id = Guid.NewGuid();
         cuenta.Nombre = nombre;
         cuenta.Apellido = apellido;
         cuenta.Email = email;
-        cuenta.PasswordHash = passwordHash;
+        cuenta.Password = password;
         cuenta._roles.Add(Rol.Visitante);
         return cuenta;
     }
@@ -41,12 +41,18 @@ public class Cuenta
         Visitante = Visitante.Crear(fechaNacimiento);
     }
 
-    private static void ValidarCreacion(string nombre, string apellido, Email email, PasswordHash passwordHash)
+    private static void ValidarCreacion(string nombre, string apellido, Email email, string password)
     {
         ValidarCampoRequerido(nombre, "Nombre");
+        ValidarMaximoCaracteres(nombre, 100, "Nombre");
+
         ValidarCampoRequerido(apellido, "Apellido");
+        ValidarMaximoCaracteres(apellido, 100, "Apellido");
+
+        ValidarCampoRequerido(password, "Password");
+        ValidarMaximoCaracteres(password, 100, "Password");
+
         ValidarObjetoRequerido(email, "Email");
-        ValidarObjetoRequerido(passwordHash, "Password");
     }
 
     private static void ValidarCampoRequerido(string valor, string nombreCampo)
@@ -54,6 +60,14 @@ public class Cuenta
         if(string.IsNullOrWhiteSpace(valor))
         {
             throw new ExcepcionDominio($"{nombreCampo} es requerido");
+        }
+    }
+
+    private static void ValidarMaximoCaracteres(string valor, int maxCaracteres, string nombreCampo)
+    {
+        if(valor.Length > maxCaracteres)
+        {
+            throw new ExcepcionDominio($"{nombreCampo} no puede tener más de {maxCaracteres} caracteres");
         }
     }
 
