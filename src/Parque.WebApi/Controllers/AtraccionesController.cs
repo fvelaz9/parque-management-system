@@ -17,13 +17,16 @@ public class AtraccionesController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetAll() => Ok(_service.ListarAtracciones());  
+    public IActionResult GetAll()
+    {
+        return Ok(_service.ListarAtracciones());
+    }
 
     [HttpGet("{id}")]
     public IActionResult GetById(int id)
     {
         var atraccion = _service.BuscarAtraccion(id);
-        return atraccion == null ? NotFound() : Ok(atraccion); 
+        return atraccion == null ? NotFound() : Ok(atraccion);
     }
 
     [HttpPost]
@@ -36,7 +39,7 @@ public class AtraccionesController : ControllerBase
             atraccion.Capacidad,
             atraccion.Descripcion
         );
-        return CreatedAtAction(nameof(GetById), new { id = creada.Id }, creada);  
+        return CreatedAtAction(nameof(GetById), new { id = creada.Id }, creada);
     }
 
     [HttpPut("{id}")]
@@ -50,13 +53,13 @@ public class AtraccionesController : ControllerBase
             atraccion.Capacidad,
             atraccion.Descripcion
         );
-        return NoContent(); 
+        return NoContent();
     }
 
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
         _service.EliminarAtraccion(id);
-        return NoContent();  
+        return NoContent();
     }
 }
