@@ -179,4 +179,43 @@ public class ServicioCuentaTest
         var ex = Assert.ThrowsException<ExcepcionEntidadNoEncontrada>(() => servicio.ModificarPerfil(Guid.NewGuid(), dto));
         Assert.AreEqual("Cuenta no encontrada", ex.Message);
     }
+
+    [TestMethod]
+    public void ModificarPerfil_FechaSinVisitante_NoLanzaExcepcion()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var dto = new ModificarPerfilDto(null, null, null, new DateTime(1990, 1, 1));
+
+        // Act - No debe lanzar excepción, simplemente ignora
+        servicio.ModificarPerfil(cuenta.Id, dto);
+
+        // Assert
+        Assert.IsNull(cuenta.Visitante);
+        mockRepo.Verify(r => r.Editar(cuenta), Times.Once);
+    }
+
+    [TestMethod]
+    public void ModificarPerfil_EmailInvalido_LanzaExcepcion()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var dto = new ModificarPerfilDto(null, null, "email-invalido", null);
+
+        // Act & Assert
+        Assert.ThrowsException<ExcepcionDominio>(
+            () => servicio.ModificarPerfil(cuenta.Id, dto));
+    }
 }

@@ -29,12 +29,22 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
 
     public void ModificarPerfil(Guid cuentaId, ModificarPerfilDto dto)
     {
-        var cuenta = _cuentaRepo.Encontrar(c => c.Id == cuentaId);
-        if(cuenta == null)
-        {
-            throw new ExcepcionEntidadNoEncontrada("Cuenta no encontrada");
-        }
+        var cuenta = ObtenerCuenta(cuentaId);
 
+        ActualizarDatosPersonales(cuenta, dto);
+        ActualizarFechaVisitante(cuenta, dto.FechaNacimiento);
+
+        _cuentaRepo.Editar(cuenta);
+    }
+
+    private Cuenta ObtenerCuenta(Guid cuentaId)
+    {
+        return _cuentaRepo.Encontrar(c => c.Id == cuentaId)
+            ?? throw new ExcepcionEntidadNoEncontrada("Cuenta no encontrada");
+    }
+
+    private static void ActualizarDatosPersonales(Cuenta cuenta, ModificarPerfilDto dto)
+    {
         if(!string.IsNullOrWhiteSpace(dto.Nombre))
         {
             cuenta.ActualizarNombre(dto.Nombre);
@@ -49,12 +59,13 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
         {
             cuenta.ActualizarEmail(new Email(dto.Email));
         }
+    }
 
-        if(dto.FechaNacimiento.HasValue && cuenta.Visitante != null)
+    private static void ActualizarFechaVisitante(Cuenta cuenta, DateTime? fecha)
+    {
+        if(fecha.HasValue && cuenta.Visitante != null)
         {
-            cuenta.Visitante.ActualizarFecha(dto.FechaNacimiento.Value);
+            cuenta.Visitante.ActualizarFecha(fecha.Value);
         }
-
-        _cuentaRepo.Editar(cuenta);
     }
 }
