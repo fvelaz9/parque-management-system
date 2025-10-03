@@ -11,7 +11,7 @@ public class PasswordHash(string valor)
             throw new ExcepcionDominio("El hash de la contraseña no puede estar vacío.");
         }
 
-        if(hash.Length < 20)
+        if(hash.Length < 7)
         {
             throw new ExcepcionDominio("Hash de password inválido");
         }
