@@ -123,4 +123,19 @@ public class CuentaTest
 
         Assert.AreEqual("Password es requerido", ex.Message);
     }
+
+    [TestMethod]
+    public void ActualizarNombre_NombreVacio_LanzaExcepcionDominio()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear(
+            "Juan",
+            "Pérez",
+            new Email("juan@test.com"),
+            "password123");
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionDominio>(() => cuenta.ActualizarNombre(string.Empty));
+        Assert.AreEqual("Nombre es requerido", ex.Message);
+    }
 }

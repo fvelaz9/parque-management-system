@@ -26,4 +26,8 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
 
         return cuenta.ToDto();
     }
+
+    public void ModificarPerfil(Guid cuentaId, string nombre, string apellido)
+    {
+    }
 }
