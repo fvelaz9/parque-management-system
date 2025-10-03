@@ -81,6 +81,28 @@ public class Cuenta
 
     public void ActualizarNombre(string nombre)
     {
+        ValidarCampoRequerido(nombre, "Nombre");
+        ValidarMaximoCaracteres(nombre, 100, "Nombre");
         Nombre = nombre;
+    }
+
+    public void ActualizarApellido(string apellido)
+    {
+        ValidarCampoRequerido(apellido, "Apellido");
+        ValidarMaximoCaracteres(apellido, 100, "Apellido");
+        Apellido = apellido;
+    }
+
+    public void ActualizarPassword(string password)
+    {
+        ValidarCampoRequerido(password, "Password");
+        ValidarMaximoCaracteres(password, 100, "Password");
+        Password = password;
+    }
+
+    public void ActualizarEmail(Email email)
+    {
+        ValidarObjetoRequerido(email, "Email");
+        Email = email;
     }
 }

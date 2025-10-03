@@ -35,4 +35,10 @@ public class Visitante
             throw new ExcepcionDominio("La fecha de nacimiento no puede ser en el futuro");
         }
     }
+
+    public void ActualizarFecha(DateTime fecha)
+    {
+        ValidarFecha(fecha);
+        FechaNacimiento = fecha;
+    }
 }

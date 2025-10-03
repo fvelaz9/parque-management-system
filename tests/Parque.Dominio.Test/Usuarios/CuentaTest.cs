@@ -138,4 +138,49 @@ public class CuentaTest
         var ex = Assert.ThrowsException<ExcepcionDominio>(() => cuenta.ActualizarNombre(string.Empty));
         Assert.AreEqual("Nombre es requerido", ex.Message);
     }
+
+    [TestMethod]
+    public void ActualizarApellido_ApellidoVacio_LanzaExcepcionDominio()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear(
+            "Juan",
+            "Pérez",
+            new Email("juan@test.com"),
+            "password123");
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionDominio>(() => cuenta.ActualizarApellido(string.Empty));
+        Assert.AreEqual("Apellido es requerido", ex.Message);
+    }
+
+    [TestMethod]
+    public void ActualizarEmail_EmailNulo_LanzaExcepcionDominio()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear(
+            "Juan",
+            "Pérez",
+            new Email("juan@test.com"),
+            "password123");
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionDominio>(() => cuenta.ActualizarEmail(null!));
+        Assert.AreEqual("Email es requerido", ex.Message);
+    }
+
+    [TestMethod]
+    public void ActualizarPass_PassVacia_LanzaExcepcionDominio()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear(
+            "Juan",
+            "Pérez",
+            new Email("juan@test.com"),
+            "password123");
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionDominio>(() => cuenta.ActualizarPassword(string.Empty));
+        Assert.AreEqual("Password es requerido", ex.Message);
+    }
 }
