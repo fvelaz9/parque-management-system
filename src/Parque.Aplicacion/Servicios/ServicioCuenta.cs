@@ -30,6 +30,10 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
     public void ModificarPerfil(Guid cuentaId, ModificarPerfilDto dto)
     {
         var cuenta = _cuentaRepo.Encontrar(c => c.Id == cuentaId);
+        if(cuenta == null)
+        {
+            throw new ExcepcionEntidadNoEncontrada("Cuenta no encontrada");
+        }
 
         if(!string.IsNullOrWhiteSpace(dto.Nombre))
         {
