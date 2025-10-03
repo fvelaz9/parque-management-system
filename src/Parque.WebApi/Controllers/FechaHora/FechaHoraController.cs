@@ -3,7 +3,7 @@ using Parque.Aplicacion.Servicios;
 using Parque.WebApi.Controllers.FechaHora.Models;
 
 namespace Parque.WebApi.Controllers.FechaHora;
-[Route("api/[controller]")]
+[Route("api/[Controller]")]
 [ApiController]
 public class FechaHoraController(IServicioFechaHora timeService) : ControllerBase
 {

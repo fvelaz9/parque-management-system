@@ -31,6 +31,16 @@ public class Cuenta
         return cuenta;
     }
 
+    public void AsignarVisitante(DateTime fechaNacimiento)
+    {
+        if (Visitante != null)
+        {
+            throw new ExcepcionDominio("Esta cuenta ya tiene un visitante asignado");
+        }
+
+        Visitante = Visitante.Crear(fechaNacimiento);
+    }
+
     private static void ValidarCreacion(string nombre, string apellido, Email email, PasswordHash passwordHash)
     {
         ValidarCampoRequerido(nombre, "Nombre");

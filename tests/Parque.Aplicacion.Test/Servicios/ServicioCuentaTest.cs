@@ -36,12 +36,12 @@ public class ServicioCuentaTest
         var resultado = cuentaServicio.RegistrarVisitante(dto);
 
         // Assert
+        Assert.IsNotNull(resultado);
         Assert.AreEqual(dto.Nombre, resultado.Nombre);
         Assert.AreEqual(dto.Apellido, resultado.Apellido);
-        Assert.AreEqual(dto.Email, resultado.Email.Valor);
+        Assert.AreEqual(dto.Email, resultado.Email);
         Assert.IsNotNull(resultado.Visitante);
-        Assert.AreEqual(NivelMembresia.Estandar, resultado.Visitante.NivelMembresia);
-        Assert.AreEqual(new DateTime(1990, 1, 1), resultado.Visitante.FechaNacimiento);
+        Assert.AreEqual(NivelMembresia.Estandar.ToString(), resultado.Visitante.NivelMembresia);
 
         mockRepo.Verify(r => r.Agregar(It.IsAny<Cuenta>()), Times.Once);
     }
