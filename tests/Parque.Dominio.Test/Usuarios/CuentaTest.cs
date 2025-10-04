@@ -203,7 +203,6 @@ public class CuentaTest
     {
         // Arrange
         var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
-        // Ya tiene Rol.Visitante por defecto
 
         // Act
         cuenta.AgregarRol(Rol.Administrador);
@@ -228,5 +227,144 @@ public class CuentaTest
             () => cuenta.AgregarRol(Rol.Administrador));
 
         Assert.AreEqual("La cuenta ya tiene el rol Administrador", ex.Message);
+    }
+
+    [TestMethod]
+    public void AgregarRol_VisitanteDuplicado_LanzaExcepcion()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionDominio>(
+            () => cuenta.AgregarRol(Rol.Visitante));
+
+        Assert.AreEqual("La cuenta ya tiene el rol Visitante", ex.Message);
+    }
+
+    [TestMethod]
+    public void AgregarRol_RolOperador_MantieneLosRolesExistentes()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
+        cuenta.AgregarRol(Rol.Administrador);
+
+        // Act
+        cuenta.AgregarRol(Rol.Operador);
+
+        // Assert
+        Assert.IsTrue(cuenta.Roles.Contains(Rol.Visitante));
+        Assert.IsTrue(cuenta.Roles.Contains(Rol.Administrador));
+        Assert.IsTrue(cuenta.Roles.Contains(Rol.Operador));
+        Assert.AreEqual(3, cuenta.Roles.Count);
+    }
+
+    [TestMethod]
+    public void QuitarRol_RolExistente_QuitaCorrectamente()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
+        cuenta.AgregarRol(Rol.Administrador);
+        cuenta.AgregarRol(Rol.Operador);
+
+        // Act
+        cuenta.QuitarRol(Rol.Administrador);
+
+        // Assert
+        Assert.IsFalse(cuenta.Roles.Contains(Rol.Administrador));
+        Assert.IsTrue(cuenta.Roles.Contains(Rol.Visitante));
+        Assert.IsTrue(cuenta.Roles.Contains(Rol.Operador));
+        Assert.AreEqual(2, cuenta.Roles.Count);
+    }
+
+    [TestMethod]
+    public void QuitarRol_RolNoExistente_LanzaExcepcion()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionDominio>(
+            () => cuenta.QuitarRol(Rol.Administrador));
+
+        Assert.AreEqual("La cuenta no tiene el rol Administrador", ex.Message);
+    }
+
+    [TestMethod]
+    public void QuitarRol_UltimoRol_LanzaExcepcion()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionDominio>(
+            () => cuenta.QuitarRol(Rol.Visitante));
+
+        Assert.AreEqual("La cuenta debe tener al menos un rol", ex.Message);
+    }
+
+    [TestMethod]
+    public void QuitarRol_DejaUnRol_NoLanzaExcepcion()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
+        cuenta.AgregarRol(Rol.Administrador);
+
+        // Act
+        cuenta.QuitarRol(Rol.Administrador);
+
+        // Assert
+        Assert.IsTrue(cuenta.Roles.Contains(Rol.Visitante));
+        Assert.IsFalse(cuenta.Roles.Contains(Rol.Administrador));
+        Assert.AreEqual(1, cuenta.Roles.Count);
+    }
+
+    [TestMethod]
+    public void QuitarRol_QuitaVariosRoles_MantieneLosRestantes()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
+        cuenta.AgregarRol(Rol.Administrador);
+        cuenta.AgregarRol(Rol.Operador);
+
+        // Act
+        cuenta.QuitarRol(Rol.Administrador);
+        cuenta.QuitarRol(Rol.Operador);
+
+        // Assert
+        Assert.IsTrue(cuenta.Roles.Contains(Rol.Visitante));
+        Assert.IsFalse(cuenta.Roles.Contains(Rol.Administrador));
+        Assert.IsFalse(cuenta.Roles.Contains(Rol.Operador));
+        Assert.AreEqual(1, cuenta.Roles.Count);
+    }
+
+    [TestMethod]
+    public void QuitarRol_VisitanteConVariosRoles_QuitaCorrectamente()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
+        cuenta.AgregarRol(Rol.Administrador);
+
+        // Act
+        cuenta.QuitarRol(Rol.Visitante);
+
+        // Assert
+        Assert.IsFalse(cuenta.Roles.Contains(Rol.Visitante));
+        Assert.IsTrue(cuenta.Roles.Contains(Rol.Administrador));
+        Assert.AreEqual(1, cuenta.Roles.Count);
+    }
+
+    [TestMethod]
+    public void QuitarRol_OperadorNoExistente_LanzaExcepcion()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
+        cuenta.AgregarRol(Rol.Administrador);
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionDominio>(
+            () => cuenta.QuitarRol(Rol.Operador));
+
+        Assert.AreEqual("La cuenta no tiene el rol Operador", ex.Message);
     }
 }

@@ -115,4 +115,19 @@ public class Cuenta
 
         _roles.Add(rol);
     }
+
+    public void QuitarRol(Rol rol)
+    {
+        if(!_roles.Contains(rol))
+        {
+            throw new ExcepcionDominio($"La cuenta no tiene el rol {rol}");
+        }
+
+        if(_roles.Count == 1)
+        {
+            throw new ExcepcionDominio("La cuenta debe tener al menos un rol");
+        }
+
+        _roles.Remove(rol);
+    }
 }
