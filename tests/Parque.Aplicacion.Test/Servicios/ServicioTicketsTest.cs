@@ -32,4 +32,23 @@ public class ServicioTicketsTest
         Assert.AreNotEqual(Guid.Empty, ticket.Codigo);
         _repositorioMock.Verify(r => r.Agregar(It.IsAny<Ticket>()), Times.Once);
     }
+
+    [TestMethod]
+    public void ListarTickets_DeberiaRetornarTodosLosTickets()
+    {
+        // Arrange
+        var tickets = new List<Ticket>
+        {
+            new Ticket { Id = 1, CuentaId = 1, EventoId = 1 },
+            new Ticket { Id = 2, CuentaId = 2, EventoId = 2 }
+        };
+        _repositorioMock.Setup(r => r.ObtenerTodos()).Returns(tickets);
+
+        // Act
+        var resultado = _servicio.ListarTickets();
+
+        // Assert
+        Assert.AreEqual(2, resultado.Count());
+        _repositorioMock.Verify(r => r.ObtenerTodos(), Times.Once);
+    }
 }
