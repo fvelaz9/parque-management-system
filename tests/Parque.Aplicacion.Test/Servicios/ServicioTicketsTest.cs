@@ -9,14 +9,14 @@ namespace Parque.Aplicacion.Test.Servicios;
 [TestClass]
 public class ServicioTicketsTest
 {
-    private readonly Mock<IRepositorio<Ticket>> _repositorioMock;
-    private readonly ServicioTicket _servicio;
+    private Mock<IRepositorio<Ticket>> _repositorioMock; // error
+    private ServicioTicket _servicio; // error
 
     [TestInitialize]
     public void Setup()
     {
         _repositorioMock = new Mock<IRepositorio<Ticket>>();
-        _servicio = new ServicioTicket(_repositorioMock.Object);
+        _servicio = new ServicioTicket(_repositorioMock.Object); // error
     }
     
     [TestMethod]
@@ -32,11 +32,10 @@ public class ServicioTicketsTest
 
         // Assert
         Assert.IsNotNull(ticket);
-        Assert.AreEqual(cuentaId, ticket.CuentaId);
-        Assert.AreEqual(fechaVisita.Date, ticket.FechaVisita.Date);
-        Assert.AreEqual(eventoId, ticket.EventoId);
-        Assert.AreNotEqual(Guid.Empty, ticket.Codigo);
+        Assert.AreEqual(cuentaId, ticket.CuentaId); // error
+        Assert.AreEqual(fechaVisita.Date, ticket.FechaVisita.Date); // error
+        Assert.AreEqual(eventoId, ticket.EventoId); // error
+        Assert.AreNotEqual(Guid.Empty, ticket.Codigo); 
         _repositorioMock.Verify(r => r.Agregar(It.IsAny<Ticket>()), Times.Once);
     }
-    
 }
