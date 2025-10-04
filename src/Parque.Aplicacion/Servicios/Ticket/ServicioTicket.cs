@@ -50,4 +50,9 @@ public class ServicioTicket : IServicioTicket
 
         _repositorio.Editar(ticket);
     }
+
+    public void EliminarTicket(int id)
+    {
+        _repositorio.Eliminar(t => t.Id == id);
+    }
 }

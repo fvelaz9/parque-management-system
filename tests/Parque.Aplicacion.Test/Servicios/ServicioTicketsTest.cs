@@ -94,8 +94,8 @@ public class ServicioTicketsTest
     [TestMethod]
     public void EliminarTicket_ConIdValido_DeberiaEliminarTicket()
     {
-        _servicio.EliminarTicket(1);
-
+        var id = 1;
+        _servicio.EliminarTicket(id);
         _repositorioMock.Verify(r => r.Eliminar(It.IsAny<Expression<Func<Ticket, bool>>>()), Times.Once);
     }
 }
