@@ -90,4 +90,12 @@ public class ServicioTicketsTest
         Assert.AreEqual(nuevoEventoId, ticketExistente.EventoId);
         _repositorioMock.Verify(r => r.Editar(ticketExistente), Times.Once);
     }
+
+    [TestMethod]
+    public void EliminarTicket_ConIdValido_DeberiaEliminarTicket()
+    {
+        _servicio.EliminarTicket(1);
+
+        _repositorioMock.Verify(r => r.Eliminar(It.IsAny<Expression<Func<Ticket, bool>>>()), Times.Once);
+    }
 }
