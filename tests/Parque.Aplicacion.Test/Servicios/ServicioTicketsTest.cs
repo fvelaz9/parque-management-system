@@ -51,4 +51,21 @@ public class ServicioTicketsTest
         Assert.AreEqual(2, resultado.Count());
         _repositorioMock.Verify(r => r.ObtenerTodos(), Times.Once);
     }
+    
+    [TestMethod]
+    public void BuscarTicket_ConIdValido_DeberiaRetornarTicket()
+    {
+        // Arrange
+        var ticketEsperado = new Ticket { Id = 1, CuentaId = 1 };
+        _repositorioMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(ticketEsperado);
+
+        // Act
+        var resultado = _servicio.BuscarTicket(1);
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(ticketEsperado.Id, resultado.Id);
+        _repositorioMock.Verify(r => r.Encontrar(It.IsAny<Expression<Func<Ticket, bool>>>()), Times.Once);
+    }
 }
