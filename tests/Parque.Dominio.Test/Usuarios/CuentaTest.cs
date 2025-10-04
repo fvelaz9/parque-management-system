@@ -183,4 +183,18 @@ public class CuentaTest
         var ex = Assert.ThrowsException<ExcepcionDominio>(() => cuenta.ActualizarPassword(string.Empty));
         Assert.AreEqual("Password es requerido", ex.Message);
     }
+
+    [TestMethod]
+    public void AsignarRol_RolAdministrador_AsignaCorrectamente()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
+
+        // Act
+        cuenta.AgregarRol(Rol.Administrador);
+
+        // Assert
+        Assert.IsTrue(cuenta.Roles.Contains(Rol.Administrador));
+        Assert.AreEqual(1, cuenta.Roles.Count);
+    }
 }

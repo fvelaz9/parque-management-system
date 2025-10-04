@@ -20,6 +20,11 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
         return cuenta.ToDto();
     }
 
+    public CuentaDto CrearCuentaPorAdmin(RegistrarCuentaDto dto)
+    {
+        throw new NotImplementedException();
+    }
+
     private void ValidarEmailUnico(string email)
     {
         var cuentaExistente = _cuentaRepo.Encontrar(c => c.Email.Valor == email);

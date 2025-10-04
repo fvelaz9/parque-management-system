@@ -105,4 +105,9 @@ public class Cuenta
         ValidarObjetoRequerido(email, "Email");
         Email = email;
     }
+
+    public void AgregarRol(Rol rol)
+    {
+        throw new NotImplementedException();
+    }
 }
