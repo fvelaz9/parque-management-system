@@ -9,14 +9,13 @@ public class Ticket
     public Guid Codigo { get; set; } = Guid.NewGuid();
     public DateTime FechaEmision { get; set; } = DateTime.Now;
 
-    // Constructor opcional (si querés forzar que siempre se cree válido)
     public Ticket(int cuentaId, DateTime fechaVisita, int eventoId)
     {
         if(fechaVisita <= DateTime.Now)
         {
             throw new ArgumentException("La fecha de visita debe ser futura");
         }
-        
+
         CuentaId = cuentaId;
         FechaVisita = fechaVisita;
         EventoId = eventoId;
@@ -24,6 +23,5 @@ public class Ticket
         FechaEmision = DateTime.Now;
     }
 
-    // Constructor vacío para EF Core y para inicialización por propiedades
     public Ticket() { }
 }

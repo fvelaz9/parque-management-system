@@ -6,7 +6,6 @@ using Parque.Infraestructura.Repositorios;
 namespace Parque.Aplicacion.Test.Servicios;
 
 [TestClass]
-
 public class ServicioAtraccionesTest
 {
     private readonly Mock<IRepositorio<AtraccionParque>> _mockRepo;

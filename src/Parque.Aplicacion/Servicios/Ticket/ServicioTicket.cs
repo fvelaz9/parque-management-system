@@ -7,17 +7,19 @@ public class ServicioTicket : IServicioTicket
 {
     private readonly IRepositorio<Dominio.Ticket> _repositorio;
 
-    public ServicioTicket(IRepositorio<Ticket> repositorio)
+    public ServicioTicket(IRepositorio<Dominio.Ticket> repositorio)
     {
         _repositorio = repositorio;
     }
 
-    public Ticket CrearTicket(int cuentaId, DateTime fechaVisita, int eventoId)
+    public Dominio.Ticket CrearTicket(int cuentaId, DateTime fechaVisita, int eventoId)
     {
-        if (fechaVisita <= DateTime.Now)
+        if(fechaVisita <= DateTime.Now)
+        {
             throw new ArgumentException("La fecha de visita debe ser futura");
+        }
 
-        var ticket = new Ticket
+        var ticket = new Dominio.Ticket
         {
             CuentaId = cuentaId,
             FechaVisita = fechaVisita,
