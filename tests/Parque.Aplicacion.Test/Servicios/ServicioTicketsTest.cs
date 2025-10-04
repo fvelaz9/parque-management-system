@@ -51,7 +51,7 @@ public class ServicioTicketsTest
         Assert.AreEqual(2, resultado.Count());
         _repositorioMock.Verify(r => r.ObtenerTodos(), Times.Once);
     }
-    
+
     [TestMethod]
     public void BuscarTicket_ConIdValido_DeberiaRetornarTicket()
     {

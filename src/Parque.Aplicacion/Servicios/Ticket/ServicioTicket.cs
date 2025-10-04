@@ -33,4 +33,9 @@ public class ServicioTicket : IServicioTicket
     }
 
     public IEnumerable<Dominio.Ticket> ListarTickets() => _repositorio.ObtenerTodos();
+
+    public Dominio.Ticket BuscarTicket(int id)
+    {
+        return _repositorio.Encontrar(t => t.Id == id);
+    }
 }

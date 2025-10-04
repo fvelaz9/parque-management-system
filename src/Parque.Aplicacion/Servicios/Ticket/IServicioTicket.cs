@@ -4,6 +4,5 @@ public interface IServicioTicket
 {
     Dominio.Ticket CrearTicket(int cuentaId, DateTime fechaVisita, int eventoId);
     public IEnumerable<Dominio.Ticket> ListarTickets();
-
-    // Dominio.Ticket? BuscarTicket(int id);
+    Dominio.Ticket? BuscarTicket(int id);
 }
