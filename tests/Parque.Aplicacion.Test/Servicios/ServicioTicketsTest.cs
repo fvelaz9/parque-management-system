@@ -68,4 +68,26 @@ public class ServicioTicketsTest
         Assert.AreEqual(ticketEsperado.Id, resultado.Id);
         _repositorioMock.Verify(r => r.Encontrar(It.IsAny<Expression<Func<Ticket, bool>>>()), Times.Once);
     }
+
+    [TestMethod]
+    public void ModificarTicket_ConIdExistente_DeberiaModificarTicket()
+    {
+        // Arrange
+        var ticketExistente = new Ticket { Id = 1, CuentaId = 1, FechaVisita = DateTime.Now };
+        _repositorioMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(ticketExistente);
+
+        var nuevaCuentaId = 2;
+        var nuevaFechaVisita = DateTime.Now.AddDays(2);
+        var nuevoEventoId = 2;
+
+        // Act
+        _servicio.ModificarTicket(1, nuevaCuentaId, nuevaFechaVisita, nuevoEventoId);
+
+        // Assert
+        Assert.AreEqual(nuevaCuentaId, ticketExistente.CuentaId);
+        Assert.AreEqual(nuevaFechaVisita, ticketExistente.FechaVisita);
+        Assert.AreEqual(nuevoEventoId, ticketExistente.EventoId);
+        _repositorioMock.Verify(r => r.Editar(ticketExistente), Times.Once);
+    }
 }

@@ -38,4 +38,16 @@ public class ServicioTicket : IServicioTicket
     {
         return _repositorio.Encontrar(t => t.Id == id);
     }
+
+    public void ModificarTicket(int id, int cuentaId, DateTime fechaVisita, int eventoId)
+    {
+        var ticket = _repositorio.Encontrar(t => t.Id == id)
+                     ?? throw new ArgumentException("Ticket no encontrado");
+
+        ticket.CuentaId = cuentaId;
+        ticket.FechaVisita = fechaVisita;
+        ticket.EventoId = eventoId;
+
+        _repositorio.Editar(ticket);
+    }
 }
