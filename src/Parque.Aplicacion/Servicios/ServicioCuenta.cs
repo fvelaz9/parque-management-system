@@ -11,20 +11,28 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
 
     public CuentaDto RegistrarVisitante(RegistrarVisitanteDto dto)
     {
-        var cuentaExistente = _cuentaRepo.Encontrar(c => c.Email.Valor == dto.Email);
+        ValidarEmailUnico(dto.Email);
+
+        var cuenta = CrearCuentaBase(dto.Nombre, dto.Apellido, dto.Email, dto.Password);
+        cuenta.AsignarVisitante(dto.FechaNacimiento);
+
+        _cuentaRepo.Agregar(cuenta);
+        return cuenta.ToDto();
+    }
+
+    private void ValidarEmailUnico(string email)
+    {
+        var cuentaExistente = _cuentaRepo.Encontrar(c => c.Email.Valor == email);
         if(cuentaExistente != null)
         {
             throw new ExcepcionDominio("Ya existe una cuenta con este email.");
         }
+    }
 
-        var email = new Email(dto.Email);
-
-        var cuenta = Cuenta.Crear(dto.Nombre, dto.Apellido, email, dto.Password);
-        cuenta.AsignarVisitante(dto.FechaNacimiento);
-
-        _cuentaRepo.Agregar(cuenta);
-
-        return cuenta.ToDto();
+    private static Cuenta CrearCuentaBase(string nombre, string apellido, string email, string password)
+    {
+        var emailObj = new Email(email);
+        return Cuenta.Crear(nombre, apellido, emailObj, password);
     }
 
     public void ModificarPerfil(Guid cuentaId, ModificarPerfilDto dto)
