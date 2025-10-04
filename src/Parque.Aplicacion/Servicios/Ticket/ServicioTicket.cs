@@ -1,7 +1,7 @@
-using Parque.Aplicacion.Servicios.Ticket;
+using Parque.Dominio;
 using Parque.Infraestructura.Repositorios;
 
-namespace Parque.Aplicacion.Servicios.Tickets;
+namespace Parque.Aplicacion.Servicios.Ticket;
 
 public class ServicioTicket : IServicioTicket
 {

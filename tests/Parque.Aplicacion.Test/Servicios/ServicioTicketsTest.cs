@@ -1,7 +1,6 @@
 using System.Linq.Expressions;
 using Moq;
 using Parque.Aplicacion.Servicios.Ticket;
-using Parque.Aplicacion.Servicios.Tickets;
 using Parque.Dominio;
 using Parque.Infraestructura.Repositorios;
 
@@ -13,10 +12,10 @@ public class ServicioTicketsTest
     private Mock<IRepositorio<Ticket>> _repositorioMock;
     private ServicioTicket _servicio;
 
-    public ServicioTicketsTest(ServicioTicket servicio, Mock<IRepositorio<Ticket>> repositorioMock)
+    public ServicioTicketsTest()
     {
-        _servicio = servicio;
-        _repositorioMock = repositorioMock;
+        _repositorioMock = new Mock<IRepositorio<Ticket>>();
+        _servicio = new ServicioTicket(_repositorioMock.Object);
     }
 
     [TestMethod]
