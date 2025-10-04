@@ -197,4 +197,36 @@ public class CuentaTest
         Assert.IsTrue(cuenta.Roles.Contains(Rol.Visitante));
         Assert.AreEqual(2, cuenta.Roles.Count);
     }
+
+    [TestMethod]
+    public void AgregarRol_VariosRoles_AgregaTodos()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
+        // Ya tiene Rol.Visitante por defecto
+
+        // Act
+        cuenta.AgregarRol(Rol.Administrador);
+        cuenta.AgregarRol(Rol.Operador);
+
+        // Assert
+        Assert.IsTrue(cuenta.Roles.Contains(Rol.Visitante));
+        Assert.IsTrue(cuenta.Roles.Contains(Rol.Administrador));
+        Assert.IsTrue(cuenta.Roles.Contains(Rol.Operador));
+        Assert.AreEqual(3, cuenta.Roles.Count);
+    }
+
+    [TestMethod]
+    public void AgregarRol_RolDuplicado_LanzaExcepcion()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
+        cuenta.AgregarRol(Rol.Administrador);
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionDominio>(
+            () => cuenta.AgregarRol(Rol.Administrador));
+
+        Assert.AreEqual("La cuenta ya tiene el rol Administrador", ex.Message);
+    }
 }
