@@ -218,4 +218,38 @@ public class ServicioCuentaTest
         Assert.ThrowsException<ExcepcionDominio>(
             () => servicio.ModificarPerfil(cuenta.Id, dto));
     }
+
+    [TestMethod]
+    public void CrearCuentaPorAdmin_Administrador_CreaCuentaCorrectamente()
+    {
+        // Arrange
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns((Cuenta)null!);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var dto = new RegistrarCuentaDto(
+            "María",
+            "Rodríguez",
+            "maria@admin.com",
+            "admin123",
+            Rol.Administrador,
+            null,
+            null);
+
+        // Act
+        var resultado = servicio.CrearCuentaPorAdmin(dto);
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual("María", resultado.Nombre);
+        Assert.AreEqual("Rodríguez", resultado.Apellido);
+        Assert.AreEqual("maria@admin.com", resultado.Email);
+        Assert.IsTrue(resultado.Roles.Contains(Rol.Administrador.ToString()));
+        Assert.IsTrue(resultado.Roles.Contains(Rol.Visitante.ToString()));
+        Assert.AreEqual(2, resultado.Roles.Count());
+        Assert.IsNull(resultado.Visitante);
+
+        mockRepo.Verify(r => r.Agregar(It.IsAny<Cuenta>()), Times.Once);
+    }
 }
