@@ -6,7 +6,7 @@ using Parque.Dominio;
 namespace Parque.WebApi.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/tickets")]
 public class TicketController(IServicioTicket service) : ControllerBase
 {
     private readonly IServicioTicket _service = service;
