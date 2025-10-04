@@ -108,6 +108,11 @@ public class Cuenta
 
     public void AgregarRol(Rol rol)
     {
+        if (_roles.Contains(rol))
+        {
+            throw new ExcepcionDominio($"La cuenta ya tiene el rol {rol}");
+        }
+
         _roles.Add(rol);
     }
 }
