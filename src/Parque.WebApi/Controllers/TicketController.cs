@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Parque.Aplicacion.DTOS;
 using Parque.Aplicacion.Servicios.Ticket;
 using Parque.Dominio;
 
@@ -31,7 +32,7 @@ public class TicketController(IServicioTicket service) : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Create([FromBody] CreateTicketRequest request)
+    public IActionResult Create([FromBody] CrearTicketDto request)
     {
         var creado = _service.CrearTicket(
             request.CuentaId,
@@ -41,7 +42,7 @@ public class TicketController(IServicioTicket service) : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public IActionResult Update(int id, [FromBody] UpdateTicketRequest request)
+    public IActionResult Update(int id, [FromBody] UpdateTicketDto request)
     {
         _service.ModificarTicket(
             id,
