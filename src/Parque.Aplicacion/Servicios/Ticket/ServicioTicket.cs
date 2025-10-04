@@ -31,4 +31,6 @@ public class ServicioTicket : IServicioTicket
         _repositorio.Agregar(ticket);
         return ticket;
     }
+
+    public IEnumerable<Dominio.Ticket> ListarTickets() => _repositorio.ObtenerTodos();
 }
