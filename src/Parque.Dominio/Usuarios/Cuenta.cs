@@ -17,7 +17,7 @@ public class Cuenta
     {
     }
 
-    public static Cuenta Crear(string nombre, string apellido, Email email, string password)
+    public static Cuenta Crear(string nombre, string apellido, Email email, string password, Rol rolInicial)
     {
         ValidarCreacion(nombre, apellido, email, password);
 
@@ -27,7 +27,7 @@ public class Cuenta
         cuenta.Apellido = apellido;
         cuenta.Email = email;
         cuenta.Password = password;
-        cuenta._roles.Add(Rol.Visitante);
+        cuenta._roles.Add(rolInicial);
         return cuenta;
     }
 

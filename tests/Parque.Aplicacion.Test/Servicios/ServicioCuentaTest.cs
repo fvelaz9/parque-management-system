@@ -47,7 +47,7 @@ public class ServicioCuentaTest
     {
         // Arrange
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
-        var cuentaExistente = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
+        var cuentaExistente = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123", Rol.Visitante);
         mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
             .Returns(cuentaExistente);
 
@@ -114,7 +114,7 @@ public class ServicioCuentaTest
     public void ModificarPerfil_TodosLosCampos_ActualizaCorrectamente()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123", Rol.Visitante);
         cuenta.AsignarVisitante(new DateTime(1990, 1, 1));
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
@@ -139,7 +139,7 @@ public class ServicioCuentaTest
     public void ModificarPerfil_SoloNombre_ActualizaSoloNombre()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123", Rol.Visitante);
         cuenta.AsignarVisitante(new DateTime(1990, 1, 1));
         var apellidoOriginal = cuenta.Apellido;
         var emailOriginal = cuenta.Email.Valor;
@@ -184,7 +184,7 @@ public class ServicioCuentaTest
     public void ModificarPerfil_FechaSinVisitante_NoLanzaExcepcion()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123", Rol.Visitante);
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
         mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
@@ -205,7 +205,7 @@ public class ServicioCuentaTest
     public void ModificarPerfil_EmailInvalido_LanzaExcepcion()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123");
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123", Rol.Visitante);
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
         mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))

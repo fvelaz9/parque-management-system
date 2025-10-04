@@ -13,7 +13,7 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
     {
         ValidarEmailUnico(dto.Email);
 
-        var cuenta = CrearCuentaBase(dto.Nombre, dto.Apellido, dto.Email, dto.Password);
+        var cuenta = CrearCuentaBase(dto.Nombre, dto.Apellido, dto.Email, dto.Password, Rol.Visitante);
         cuenta.AsignarVisitante(dto.FechaNacimiento);
 
         _cuentaRepo.Agregar(cuenta);
@@ -34,10 +34,10 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
         }
     }
 
-    private static Cuenta CrearCuentaBase(string nombre, string apellido, string email, string password)
+    private static Cuenta CrearCuentaBase(string nombre, string apellido, string email, string password, Rol rolInicial)
     {
         var emailObj = new Email(email);
-        return Cuenta.Crear(nombre, apellido, emailObj, password);
+        return Cuenta.Crear(nombre, apellido, emailObj, password, rolInicial);
     }
 
     public void ModificarPerfil(Guid cuentaId, ModificarPerfilDto dto)
