@@ -34,6 +34,15 @@ public class ServicioTicketsTest
     }
 
     [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CrearTicket_ConFechaIgualAhora_DeberiaLanzarExcepcion()
+    {
+        var fechaAhora = DateTime.Now;
+
+        _servicio.CrearTicket(1, fechaAhora, 1);
+    }
+
+    [TestMethod]
     public void ListarTickets_DeberiaRetornarTodosLosTickets()
     {
         // Arrange
