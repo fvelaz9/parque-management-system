@@ -39,6 +39,11 @@ public class ServicioTicket : IServicioTicket
         return _repositorio.Encontrar(t => t.Id == id);
     }
 
+    public Dominio.Ticket? BuscarTicketPorCodigo(Guid codigo)
+    {
+        return _repositorio.Encontrar(t => t.Codigo == codigo);
+    }
+
     public void ModificarTicket(int id, int cuentaId, DateTime fechaVisita, int eventoId)
     {
         var ticket = _repositorio.Encontrar(t => t.Id == id)
