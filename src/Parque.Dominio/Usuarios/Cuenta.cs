@@ -108,6 +108,6 @@ public class Cuenta
 
     public void AgregarRol(Rol rol)
     {
-        throw new NotImplementedException();
+        _roles.Add(rol);
     }
 }

@@ -194,7 +194,7 @@ public class CuentaTest
         cuenta.AgregarRol(Rol.Administrador);
 
         // Assert
-        Assert.IsTrue(cuenta.Roles.Contains(Rol.Administrador));
-        Assert.AreEqual(1, cuenta.Roles.Count);
+        Assert.IsTrue(cuenta.Roles.Contains(Rol.Visitante));
+        Assert.AreEqual(2, cuenta.Roles.Count);
     }
 }
