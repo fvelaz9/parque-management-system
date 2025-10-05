@@ -135,4 +135,12 @@ public class ServicioTicketsTest
         Assert.AreNotEqual(Guid.Empty, ticket.Codigo);
         _repositorioMock.Verify(r => r.Agregar(It.IsAny<Dominio.Ticket>()), Times.Once);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void ComprarTicket_EventoEspecialSinEventoId_DeberiaLanzarExcepcion()
+    {
+        var fechaFutura = DateTime.Now.AddDays(5);
+        _servicio.ComprarTicket(1, fechaFutura, null, TipoTicket.EventoEspecial);
+    }
 }
