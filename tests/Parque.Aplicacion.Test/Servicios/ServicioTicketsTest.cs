@@ -9,8 +9,8 @@ namespace Parque.Aplicacion.Test.Servicios;
 [TestClass]
 public class ServicioTicketsTest
 {
-    private Mock<IRepositorio<Ticket>> _repositorioMock;
-    private ServicioTicket _servicio;
+    private readonly Mock<IRepositorio<Ticket>> _repositorioMock;
+    private readonly ServicioTicket _servicio;
 
     public ServicioTicketsTest()
     {
@@ -25,7 +25,7 @@ public class ServicioTicketsTest
         var fechaVisita = DateTime.Now.AddDays(1);
         var eventoId = 1;
         var tipoticket = TipoTicket.General;
-        var ticket = _servicio.CrearTicket(cuentaId, fechaVisita, eventoId,  tipoticket);
+        var ticket = _servicio.CrearTicket(cuentaId, fechaVisita, eventoId, tipoticket);
         Assert.IsNotNull(ticket);
         Assert.AreEqual(cuentaId, ticket.CuentaId);
         Assert.AreEqual(fechaVisita.Date, ticket.FechaVisita.Date);
@@ -41,7 +41,7 @@ public class ServicioTicketsTest
     {
         var fechaAhora = DateTime.Now;
 
-        _servicio.CrearTicket(1, fechaAhora, 1,TipoTicket.General);
+        _servicio.CrearTicket(1, fechaAhora, 1, TipoTicket.General);
     }
 
     [TestMethod]

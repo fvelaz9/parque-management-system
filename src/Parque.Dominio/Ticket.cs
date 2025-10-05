@@ -11,7 +11,7 @@ public class Ticket
     public DateTime FechaEmision { get; set; } = DateTime.Now;
     public bool EsValido { get; set; } = true;
 
-    public Ticket(int cuentaId, DateTime fechaVisita, int eventoId,  TipoTicket tipoEntrada)
+    public Ticket(int cuentaId, DateTime fechaVisita, int eventoId, TipoTicket tipoEntrada)
     {
         if(fechaVisita <= DateTime.Now)
         {
@@ -27,7 +27,10 @@ public class Ticket
         EsValido = true;
     }
 
-    public Ticket() { }
+    public Ticket()
+    {
+    }
+
     public void MarcarComoUsado()
     {
         EsValido = false;

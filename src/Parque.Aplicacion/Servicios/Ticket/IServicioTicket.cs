@@ -10,4 +10,5 @@ public interface IServicioTicket
     Dominio.Ticket? BuscarTicketPorCodigo(Guid codigo);
     void ModificarTicket(int id, int cuentaId, DateTime fechaVisita, int eventoId, TipoTicket tipoTicket);
     void EliminarTicket(int id);
+    Dominio.Ticket ComprarTicket(int cuentaId, DateTime fechaVisita, int? eventoId, TipoTicket tipoTicket);
 }

@@ -1,21 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Parque.Aplicacion.DTOS;
 using Parque.Aplicacion.Servicios.Ticket;
-using Parque.Aplicacion.Servicios.Ticket; // 👈 namespace plural para evitar confusión
-using Parque.Dominio;
 
 namespace Parque.WebApi.Controllers;
 
 [ApiController]
 [Route("api/tickets")]
-public class TicketController : ControllerBase
+public class TicketController(IServicioTicket service) : ControllerBase
 {
-    private readonly IServicioTicket _service;
-
-    public TicketController(IServicioTicket service)
-    {
-        _service = service;
-    }
+    private readonly IServicioTicket _service = service;
 
     [HttpGet]
     public IActionResult GetAll()
@@ -49,8 +42,7 @@ public class TicketController : ControllerBase
             request.CuentaId,
             request.FechaVisita,
             request.EventoId,
-            request.TipoEntrada 
-        );
+            request.TipoEntrada);
 
         return CreatedAtAction(nameof(GetById), new { id = creado.Id }, creado);
     }
@@ -68,8 +60,7 @@ public class TicketController : ControllerBase
             request.CuentaId,
             request.FechaVisita,
             request.EventoId,
-            request.TipoEntrada 
-        );
+            request.TipoEntrada);
 
         return NoContent();
     }

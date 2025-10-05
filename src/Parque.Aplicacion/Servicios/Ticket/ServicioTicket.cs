@@ -3,14 +3,9 @@ using Parque.Infraestructura.Repositorios;
 
 namespace Parque.Aplicacion.Servicios.Ticket;
 
-public class ServicioTicket : IServicioTicket
+public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio) : IServicioTicket
 {
-    private readonly IRepositorio<Dominio.Ticket> _repositorio;
-
-    public ServicioTicket(IRepositorio<Dominio.Ticket> repositorio)
-    {
-        _repositorio = repositorio;
-    }
+    private readonly IRepositorio<Dominio.Ticket> _repositorio = repositorio;
 
     public Dominio.Ticket CrearTicket(int cuentaId, DateTime fechaVisita, int eventoId, TipoTicket tipoTicket)
     {
@@ -66,5 +61,15 @@ public class ServicioTicket : IServicioTicket
     public void EliminarTicket(int id)
     {
         _repositorio.Eliminar(t => t.Id == id);
+    }
+
+    public Dominio.Ticket ComprarTicket(int cuentaId, DateTime fechaVisita, int? eventoId, TipoTicket tipoTicket)
+    {
+        if(fechaVisita <= DateTime.Now)
+        {
+            throw new ArgumentException("La fecha de visita debe ser futura");
+        }
+
+        return null;
     }
 }
