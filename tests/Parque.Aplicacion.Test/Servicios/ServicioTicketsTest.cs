@@ -24,12 +24,14 @@ public class ServicioTicketsTest
         var cuentaId = 1;
         var fechaVisita = DateTime.Now.AddDays(1);
         var eventoId = 1;
-        var ticket = _servicio.CrearTicket(cuentaId, fechaVisita, eventoId);
+        var tipoticket = TipoTicket.General;
+        var ticket = _servicio.CrearTicket(cuentaId, fechaVisita, eventoId,  tipoticket);
         Assert.IsNotNull(ticket);
         Assert.AreEqual(cuentaId, ticket.CuentaId);
         Assert.AreEqual(fechaVisita.Date, ticket.FechaVisita.Date);
         Assert.AreEqual(eventoId, ticket.EventoId);
         Assert.AreNotEqual(Guid.Empty, ticket.Codigo);
+        Assert.AreEqual(tipoticket, TipoTicket.General);
         _repositorioMock.Verify(r => r.Agregar(It.IsAny<Ticket>()), Times.Once);
     }
 
@@ -39,7 +41,7 @@ public class ServicioTicketsTest
     {
         var fechaAhora = DateTime.Now;
 
-        _servicio.CrearTicket(1, fechaAhora, 1);
+        _servicio.CrearTicket(1, fechaAhora, 1,TipoTicket.General);
     }
 
     [TestMethod]
