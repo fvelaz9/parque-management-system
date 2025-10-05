@@ -10,11 +10,13 @@ namespace Parque.Aplicacion.Test.Servicios;
 public class ServicioTicketsTest
 {
     private readonly Mock<IRepositorio<Ticket>> _repositorioMock;
+    private readonly Mock<IRepositorio<Evento>> _repositorioEventoMock;
     private readonly ServicioTicket _servicio;
 
     public ServicioTicketsTest()
     {
         _repositorioMock = new Mock<IRepositorio<Ticket>>();
+        _repositorioEventoMock = new Mock<IRepositorio<Evento>>();
         _servicio = new ServicioTicket(_repositorioMock.Object);
     }
 
@@ -142,5 +144,16 @@ public class ServicioTicketsTest
     {
         var fechaFutura = DateTime.Now.AddDays(5);
         _servicio.ComprarTicket(1, fechaFutura, null, TipoTicket.EventoEspecial);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void ComprarTicket_EventoNoEncontrado_DeberiaLanzarExcepcion()
+    {
+        var fechaFutura = DateTime.Now.AddDays(5);
+        _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
+            .Returns((Evento)null);
+
+        _servicio.ComprarTicket(1, fechaFutura, 999, TipoTicket.EventoEspecial);
     }
 }
