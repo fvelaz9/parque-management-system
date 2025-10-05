@@ -120,4 +120,19 @@ public class ServicioTicketsTest
 
         _servicio.ComprarTicket(1, fechaPasada, null, TipoTicket.General);
     }
+
+    [TestMethod]
+    public void ComprarTicket_General_DeberiaCrearTicketSinEvento()
+    {
+        var fechaFutura = DateTime.Now.AddDays(5);
+
+        var ticket = _servicio.ComprarTicket(1, fechaFutura, null, TipoTicket.General);
+
+        Assert.IsNotNull(ticket);
+        Assert.AreEqual(1, ticket.CuentaId);
+        Assert.AreEqual(TipoTicket.General, ticket.TipoEntrada);
+        Assert.IsNull(ticket.EventoId);
+        Assert.AreNotEqual(Guid.Empty, ticket.Codigo);
+        _repositorioMock.Verify(r => r.Agregar(It.IsAny<Dominio.Ticket>()), Times.Once);
+    }
 }
