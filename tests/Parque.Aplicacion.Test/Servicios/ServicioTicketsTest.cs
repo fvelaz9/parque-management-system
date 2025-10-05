@@ -156,4 +156,23 @@ public class ServicioTicketsTest
 
         _servicio.CrearTicket(1, fechaFutura, 999, TipoTicket.EventoEspecial);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(InvalidOperationException))]
+    public void CrearTicket_AforoCompleto_DeberiaLanzarExcepcion()
+    {
+        var fechaFutura = DateTime.Now.AddDays(5);
+        var evento = new Evento("Concierto", "Descripción", DateTime.Now, DateTime.Now.AddDays(10), 2, 50, EstadoEvento.Programado);
+        _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
+            .Returns(evento);
+        var ticketsExistentes = new List<Ticket>
+        {
+            new Ticket { Id = 1, EventoId = 1, EsValido = true },
+            new Ticket { Id = 2, EventoId = 1, EsValido = true }
+        };
+        _repositorioMock.Setup(r => r.ObtenerTodos()).Returns(ticketsExistentes);
+
+        // Act
+        _servicio.CrearTicket(1, fechaFutura, 1, TipoTicket.EventoEspecial);
+    }
 }
