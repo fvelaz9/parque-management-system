@@ -120,7 +120,7 @@ public class ServicioTicketsTest
     {
         var fechaPasada = DateTime.Now.AddDays(-1);
 
-        _servicio.ComprarTicket(1, fechaPasada, null, TipoTicket.General);
+        _servicio.CrearTicket(1, fechaPasada, null, TipoTicket.General);
     }
 
     [TestMethod]
@@ -128,7 +128,7 @@ public class ServicioTicketsTest
     {
         var fechaFutura = DateTime.Now.AddDays(5);
 
-        var ticket = _servicio.ComprarTicket(1, fechaFutura, null, TipoTicket.General);
+        var ticket = _servicio.CrearTicket(1, fechaFutura, null, TipoTicket.General);
 
         Assert.IsNotNull(ticket);
         Assert.AreEqual(1, ticket.CuentaId);
@@ -143,7 +143,7 @@ public class ServicioTicketsTest
     public void ComprarTicket_EventoEspecialSinEventoId_DeberiaLanzarExcepcion()
     {
         var fechaFutura = DateTime.Now.AddDays(5);
-        _servicio.ComprarTicket(1, fechaFutura, null, TipoTicket.EventoEspecial);
+        _servicio.CrearTicket(1, fechaFutura, null, TipoTicket.EventoEspecial);
     }
 
     [TestMethod]
@@ -154,6 +154,6 @@ public class ServicioTicketsTest
         _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
             .Returns((Evento)null);
 
-        _servicio.ComprarTicket(1, fechaFutura, 999, TipoTicket.EventoEspecial);
+        _servicio.CrearTicket(1, fechaFutura, 999, TipoTicket.EventoEspecial);
     }
 }
