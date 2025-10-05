@@ -70,6 +70,18 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio) : IServici
             throw new ArgumentException("La fecha de visita debe ser futura");
         }
 
-        return null;
+        var ticket = new Dominio.Ticket
+        {
+            CuentaId = cuentaId,
+            FechaVisita = fechaVisita,
+            EventoId = eventoId,
+            TipoEntrada = tipoTicket,
+            Codigo = Guid.NewGuid(),
+            FechaEmision = DateTime.Now,
+            EsValido = true
+        };
+
+        _repositorio.Agregar(ticket);
+        return ticket;
     }
 }
