@@ -6,6 +6,6 @@ public class CrearTicketDto
 {
     public int CuentaId { get; set; }
     public DateTime FechaVisita { get; set; }
-    public int EventoId { get; set; }
+    public int? EventoId { get; set; }
     public TipoTicket TipoEntrada { get; set; }
 }

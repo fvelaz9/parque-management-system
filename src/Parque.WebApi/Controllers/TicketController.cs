@@ -33,36 +33,54 @@ public class TicketController(IServicioTicket service) : ControllerBase
     [HttpPost]
     public IActionResult Create([FromBody] CrearTicketDto request)
     {
-        if(request == null)
+        if (request == null)
         {
             return BadRequest("El cuerpo de la solicitud no puede ser nulo.");
         }
 
-        var creado = _service.CrearTicket(
-            request.CuentaId,
-            request.FechaVisita,
-            request.EventoId,
-            request.TipoEntrada);
+        try
+        {
+            var creado = _service.CrearTicket(
+                request.CuentaId,
+                request.FechaVisita,
+                request.EventoId,
+                request.TipoEntrada);
 
-        return CreatedAtAction(nameof(GetById), new { id = creado.Id }, creado);
+            return CreatedAtAction(nameof(GetById), new { id = creado.Id }, creado);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { mensaje = ex.Message });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { mensaje = ex.Message });
+        }
     }
 
     [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] UpdateTicketDto request)
     {
-        if(request == null)
+        if (request == null)
         {
             return BadRequest("El cuerpo de la solicitud no puede ser nulo.");
         }
 
-        _service.ModificarTicket(
-            id,
-            request.CuentaId,
-            request.FechaVisita,
-            request.EventoId,
-            request.TipoEntrada);
+        try
+        {
+            _service.ModificarTicket(
+                id,
+                request.CuentaId,
+                request.FechaVisita,
+                request.EventoId,
+                request.TipoEntrada);
 
-        return NoContent();
+            return NoContent();
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { mensaje = ex.Message });
+        }
     }
 
     [HttpDelete("{id:int}")]
