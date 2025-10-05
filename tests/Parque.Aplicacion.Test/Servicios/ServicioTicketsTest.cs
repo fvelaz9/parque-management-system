@@ -91,14 +91,16 @@ public class ServicioTicketsTest
         var nuevaCuentaId = 2;
         var nuevaFechaVisita = DateTime.Now.AddDays(2);
         var nuevoEventoId = 2;
+        var nuevoEventoTipo = TipoTicket.EventoEspecial;
 
         // Act
-        _servicio.ModificarTicket(1, nuevaCuentaId, nuevaFechaVisita, nuevoEventoId);
+        _servicio.ModificarTicket(1, nuevaCuentaId, nuevaFechaVisita, nuevoEventoId, nuevoEventoTipo);
 
         // Assert
         Assert.AreEqual(nuevaCuentaId, ticketExistente.CuentaId);
         Assert.AreEqual(nuevaFechaVisita, ticketExistente.FechaVisita);
         Assert.AreEqual(nuevoEventoId, ticketExistente.EventoId);
+        Assert.IsNotNull(nuevoEventoTipo);
         _repositorioMock.Verify(r => r.Editar(ticketExistente), Times.Once);
     }
 
