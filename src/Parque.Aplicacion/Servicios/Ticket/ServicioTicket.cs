@@ -80,6 +80,14 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
             {
                 throw new ArgumentException("Evento no encontrado");
             }
+
+            var ticketsVendidos = _repositorio.ObtenerTodos()
+                .Count(t => t.EventoId == eventoId.Value && t.EsValido);
+
+            if (ticketsVendidos >= evento.AforoMaximo)
+            {
+                throw new InvalidOperationException("Aforo completo para este evento");
+            }
         }
     }
 }
