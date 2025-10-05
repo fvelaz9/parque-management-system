@@ -18,7 +18,8 @@ public class TicketsTest
             FechaVisita = fechaVisita,
             EventoId = 456,
             Codigo = Guid.NewGuid(),
-            FechaEmision = fechaEmision
+            FechaEmision = fechaEmision,
+            EsValido = true
         };
 
         // Assert
@@ -28,5 +29,7 @@ public class TicketsTest
         Assert.AreEqual(456, ticket.EventoId);
         Assert.IsNotNull(ticket.Codigo);
         Assert.AreEqual(fechaEmision, ticket.FechaEmision);
+        Assert.IsTrue(ticket.EsValido);
+        Assert.IsTrue(ticket.EstaVigente());
     }
 }

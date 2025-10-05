@@ -8,6 +8,7 @@ public class Ticket
     public int EventoId { get; set; }
     public Guid Codigo { get; set; } = Guid.NewGuid();
     public DateTime FechaEmision { get; set; } = DateTime.Now;
+    public bool EsValido { get; set; } = true;
 
     public Ticket(int cuentaId, DateTime fechaVisita, int eventoId)
     {
@@ -21,7 +22,18 @@ public class Ticket
         EventoId = eventoId;
         Codigo = Guid.NewGuid();
         FechaEmision = DateTime.Now;
+        EsValido = true;
     }
 
     public Ticket() { }
+    
+    public void MarcarComoUsado()
+    {
+        EsValido = false;
+    }
+    
+    public bool EstaVigente()
+    {
+        return EsValido && FechaVisita.Date >= DateTime.Now.Date;
+    }
 }
