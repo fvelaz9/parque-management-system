@@ -50,7 +50,7 @@ public class ServicioTicket : IServicioTicket
         return _repositorio.Encontrar(t => t.Codigo == codigo);
     }
 
-    public void ModificarTicket(int id, int cuentaId, DateTime fechaVisita, int eventoId)
+    public void ModificarTicket(int id, int cuentaId, DateTime fechaVisita, int eventoId, TipoTicket tipoTicket)
     {
         var ticket = _repositorio.Encontrar(t => t.Id == id)
                      ?? throw new ArgumentException("Ticket no encontrado");
@@ -58,6 +58,7 @@ public class ServicioTicket : IServicioTicket
         ticket.CuentaId = cuentaId;
         ticket.FechaVisita = fechaVisita;
         ticket.EventoId = eventoId;
+        ticket.TipoEntrada = tipoTicket;
 
         _repositorio.Editar(ticket);
     }
