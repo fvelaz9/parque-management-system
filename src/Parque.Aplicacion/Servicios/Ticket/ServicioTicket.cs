@@ -42,8 +42,11 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
 
     public void ModificarTicket(int id, int cuentaId, DateTime fechaVisita, int? eventoId, TipoTicket tipoTicket)
     {
-        var ticket = _repositorio.Encontrar(t => t.Id == id)
-                     ?? throw new ArgumentException("Ticket no encontrado");
+        var ticket = _repositorio.Encontrar(t => t.Id == id);
+        if(ticket == null)
+        {
+            throw new ArgumentException("Ticket no encontrado");
+        }
 
         ticket.CuentaId = cuentaId;
         ticket.FechaVisita = fechaVisita;
