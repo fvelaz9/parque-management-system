@@ -65,12 +65,33 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio) : IServici
 
     public Dominio.Ticket ComprarTicket(int cuentaId, DateTime fechaVisita, int? eventoId, TipoTicket tipoTicket)
     {
-        if(fechaVisita <= DateTime.Now)
+        ValidarFechaFutura(fechaVisita);
+        ValidarEventoParaTicketEspecial(tipoTicket, eventoId);
+
+        var ticket = CrearTicket(cuentaId, fechaVisita, eventoId, tipoTicket);
+        _repositorio.Agregar(ticket);
+        return ticket;
+    }
+
+    private void ValidarFechaFutura(DateTime fechaVisita)
+    {
+        if (fechaVisita <= DateTime.Now)
         {
             throw new ArgumentException("La fecha de visita debe ser futura");
         }
+    }
 
-        var ticket = new Dominio.Ticket
+    private void ValidarEventoParaTicketEspecial(TipoTicket tipoTicket, int? eventoId)
+    {
+        if (tipoTicket == TipoTicket.EventoEspecial && !eventoId.HasValue)
+        {
+            throw new ArgumentException("Evento requerido para entradas especiales");
+        }
+    }
+
+    private Dominio.Ticket CrearTicket(int cuentaId, DateTime fechaVisita, int? eventoId, TipoTicket tipoTicket)
+    {
+        return new Dominio.Ticket
         {
             CuentaId = cuentaId,
             FechaVisita = fechaVisita,
@@ -80,8 +101,5 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio) : IServici
             FechaEmision = DateTime.Now,
             EsValido = true
         };
-
-        _repositorio.Agregar(ticket);
-        return ticket;
     }
 }
