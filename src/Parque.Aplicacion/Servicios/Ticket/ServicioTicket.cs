@@ -12,11 +12,16 @@ public class ServicioTicket : IServicioTicket
         _repositorio = repositorio;
     }
 
-    public Dominio.Ticket CrearTicket(int cuentaId, DateTime fechaVisita, int eventoId)
+    public Dominio.Ticket CrearTicket(int cuentaId, DateTime fechaVisita, int eventoId, TipoTicket tipoTicket)
     {
         if(fechaVisita <= DateTime.Now)
         {
             throw new ArgumentException("La fecha de visita debe ser futura");
+        }
+
+        if(tipoTicket == TipoTicket.EventoEspecial && eventoId == 0)
+        {
+            throw new ArgumentException("Evento requerido para entradas especiales");
         }
 
         var ticket = new Dominio.Ticket
@@ -24,6 +29,7 @@ public class ServicioTicket : IServicioTicket
             CuentaId = cuentaId,
             FechaVisita = fechaVisita,
             EventoId = eventoId,
+            TipoEntrada = tipoTicket,
             Codigo = Guid.NewGuid(),
             FechaEmision = DateTime.Now
         };

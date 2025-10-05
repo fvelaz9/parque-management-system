@@ -5,12 +5,13 @@ public class Ticket
     public int Id { get; set; }
     public int CuentaId { get; set; }
     public DateTime FechaVisita { get; set; }
-    public int EventoId { get; set; }
+    public int? EventoId { get; set; }
+    public TipoTicket TipoEntrada { get; set; }
     public Guid Codigo { get; set; } = Guid.NewGuid();
     public DateTime FechaEmision { get; set; } = DateTime.Now;
     public bool EsValido { get; set; } = true;
 
-    public Ticket(int cuentaId, DateTime fechaVisita, int eventoId)
+    public Ticket(int cuentaId, DateTime fechaVisita, int eventoId,  TipoTicket tipoEntrada)
     {
         if(fechaVisita <= DateTime.Now)
         {
@@ -20,6 +21,7 @@ public class Ticket
         CuentaId = cuentaId;
         FechaVisita = fechaVisita;
         EventoId = eventoId;
+        TipoEntrada = tipoEntrada;
         Codigo = Guid.NewGuid();
         FechaEmision = DateTime.Now;
         EsValido = true;

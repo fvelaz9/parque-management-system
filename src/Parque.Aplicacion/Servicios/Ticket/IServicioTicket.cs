@@ -1,8 +1,10 @@
+using Parque.Dominio;
+
 namespace Parque.Aplicacion.Servicios.Ticket;
 
 public interface IServicioTicket
 {
-    Dominio.Ticket CrearTicket(int cuentaId, DateTime fechaVisita, int eventoId);
+    Dominio.Ticket CrearTicket(int cuentaId, DateTime fechaVisita, int eventoId, TipoTicket tipoTicket);
     public IEnumerable<Dominio.Ticket> ListarTickets();
     Dominio.Ticket? BuscarTicket(int id);
     Dominio.Ticket? BuscarTicketPorCodigo(Guid codigo);
