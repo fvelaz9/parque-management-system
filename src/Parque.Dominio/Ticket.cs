@@ -28,12 +28,11 @@ public class Ticket
     }
 
     public Ticket() { }
-    
     public void MarcarComoUsado()
     {
         EsValido = false;
     }
-    
+
     public bool EstaVigente()
     {
         return EsValido && FechaVisita.Date >= DateTime.Now.Date;

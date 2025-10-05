@@ -111,4 +111,13 @@ public class ServicioTicketsTest
         _servicio.EliminarTicket(id);
         _repositorioMock.Verify(r => r.Eliminar(It.IsAny<Expression<Func<Ticket, bool>>>()), Times.Once);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void ComprarTicket_ConFechaPasada_DeberiaLanzarExcepcion()
+    {
+        var fechaPasada = DateTime.Now.AddDays(-1);
+
+        _servicio.ComprarTicket(1, fechaPasada, null, TipoTicket.General);
+    }
 }
