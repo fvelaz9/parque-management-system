@@ -3,10 +3,10 @@ using Parque.Infraestructura.Repositorios;
 
 namespace Parque.Aplicacion.Servicios.Ticket;
 
-public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio) : IServicioTicket
+public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositorio<Evento> repositorioEvento) : IServicioTicket
 {
     private readonly IRepositorio<Dominio.Ticket> _repositorio = repositorio;
-
+    private readonly IRepositorio<Evento> _repositorioEvento = repositorioEvento;
     public Dominio.Ticket CrearTicket(int cuentaId, DateTime fechaVisita, int eventoId, TipoTicket tipoTicket)
     {
         if(fechaVisita <= DateTime.Now)
@@ -83,9 +83,18 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio) : IServici
 
     private void ValidarEventoParaTicketEspecial(TipoTicket tipoTicket, int? eventoId)
     {
-        if (tipoTicket == TipoTicket.EventoEspecial && !eventoId.HasValue)
+        if (tipoTicket == TipoTicket.EventoEspecial)
         {
-            throw new ArgumentException("Evento requerido para entradas especiales");
+            if (!eventoId.HasValue)
+            {
+                throw new ArgumentException("Evento requerido para entradas especiales");
+            }
+
+            var evento = _repositorioEvento.Encontrar(e => e.Id == eventoId.Value);
+            if (evento == null)
+            {
+                throw new ArgumentException("Evento no encontrado");
+            }
         }
     }
 

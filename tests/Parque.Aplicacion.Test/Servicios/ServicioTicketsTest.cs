@@ -17,7 +17,7 @@ public class ServicioTicketsTest
     {
         _repositorioMock = new Mock<IRepositorio<Ticket>>();
         _repositorioEventoMock = new Mock<IRepositorio<Evento>>();
-        _servicio = new ServicioTicket(_repositorioMock.Object);
+        _servicio = new ServicioTicket(_repositorioMock.Object, _repositorioEventoMock.Object);
     }
 
     [TestMethod]
