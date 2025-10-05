@@ -68,7 +68,7 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
         ValidarFechaFutura(fechaVisita);
         ValidarEventoParaTicketEspecial(tipoTicket, eventoId);
 
-        var ticket = CrearTicket(cuentaId, fechaVisita, eventoId, tipoTicket);
+        var ticket = CrearTicket(cuentaId, fechaVisita, eventoId ?? 0, tipoTicket);
         _repositorio.Agregar(ticket);
         return ticket;
     }
@@ -96,19 +96,5 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
                 throw new ArgumentException("Evento no encontrado");
             }
         }
-    }
-
-    private Dominio.Ticket CrearTicket(int cuentaId, DateTime fechaVisita, int? eventoId, TipoTicket tipoTicket)
-    {
-        return new Dominio.Ticket
-        {
-            CuentaId = cuentaId,
-            FechaVisita = fechaVisita,
-            EventoId = eventoId,
-            TipoEntrada = tipoTicket,
-            Codigo = Guid.NewGuid(),
-            FechaEmision = DateTime.Now,
-            EsValido = true
-        };
     }
 }
