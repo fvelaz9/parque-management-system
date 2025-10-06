@@ -48,6 +48,12 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
     public void CambiarNivelMembresia(Guid cuentaId, NivelMembresia nuevoNivel)
     {
         var cuenta = ObtenerCuenta(cuentaId);
+
+        if(cuenta.Visitante == null)
+        {
+            throw new ExcepcionDominio("Solo las cuentas con perfil de visitante tienen nivel de membresía.");
+        }
+
         cuenta.Visitante!.AsignarMembresia(nuevoNivel);
         _cuentaRepo.Editar(cuenta);
     }
