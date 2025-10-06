@@ -1,4 +1,4 @@
-namespace Parque.Dominio.Atracciones;
+﻿namespace Parque.Dominio.Atracciones;
 
 public class RegistroVisita
 {
@@ -15,5 +15,7 @@ public class RegistroVisita
     }
 
     // Constructor sin parámetros para Entity Framework
-    public RegistroVisita() { }
+    public RegistroVisita()
+    {
+    }
 }
