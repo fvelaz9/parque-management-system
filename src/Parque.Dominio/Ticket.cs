@@ -1,4 +1,4 @@
-namespace Parque.Dominio;
+﻿namespace Parque.Dominio;
 
 public class Ticket
 {

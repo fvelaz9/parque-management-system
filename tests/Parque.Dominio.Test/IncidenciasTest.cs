@@ -1,7 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Parque.Dominio;
-
-namespace Parque.Dominio.Test;
+﻿namespace Parque.Dominio.Test;
 
 [TestClass]
 public class IncidenciasTest

@@ -1,8 +1,6 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Parque.Dominio.Atracciones;
-using System;
+﻿using Parque.Dominio.Atracciones;
 
-namespace Parque.Dominio.Test.Atracciones;
+namespace Parque.Dominio.Test;
 
 [TestClass]
 public class RegistroVisitaTest

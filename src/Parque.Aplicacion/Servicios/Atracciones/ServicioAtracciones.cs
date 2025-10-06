@@ -54,7 +54,9 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRep
 
         var registro = new RegistroVisita
         {
-            AtraccionId = idAtraccion, Identificador = identificador, FechaIngreso = DateTime.Now
+            AtraccionId = idAtraccion,
+            Identificador = identificador,
+            FechaIngreso = DateTime.Now
         };
         _repositorioRegistros.Agregar(registro);
         return registro;
@@ -81,10 +83,10 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRep
             .GroupBy(r => r.AtraccionId)
             .Select(g => new ReporteAtraccionDto { AtraccionId = g.Key, })
             .ToList();
-        foreach (var reporte in registros)
+        foreach(var reporte in registros)
         {
             var atraccion = _repositorio.Encontrar(a => a.Id == reporte.AtraccionId);
-            if (atraccion == null)
+            if(atraccion == null)
             {
                 reporte.NombreAtraccion = "Desconocida";
             }

@@ -125,7 +125,7 @@ public class ServicioAtraccionesTest
     {
         // Arrange
         _mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
-            .Returns((AtraccionParque)null);
+            .Returns((AtraccionParque?)null);
 
         // Act
         _servicio.RegistrarIngreso(Guid.NewGuid(), 999);
@@ -161,7 +161,7 @@ public class ServicioAtraccionesTest
     {
         // Arrange
         _mockRepoRegistros.Setup(r => r.Encontrar(It.IsAny<Expression<Func<RegistroVisita, bool>>>()))
-            .Returns((RegistroVisita)null);
+            .Returns((RegistroVisita?)null);
 
         // Act
         _servicio.RegistrarEgreso(Guid.NewGuid(), 1);
@@ -201,7 +201,7 @@ public class ServicioAtraccionesTest
         var atraccion = new AtraccionParque("Simulador VR", TipoAtraccion.Simulador, 8, 12, "Test");
         _mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
             .Returns(atraccion);
-        _mockRepoRegistros.Setup(r => r.ObtenerTodos()).Returns(new List<RegistroVisita>());
+        _mockRepoRegistros.Setup(r => r.ObtenerTodos()).Returns([]);
 
         // Act
         var resultado = _servicio.ObtenerAforoActual(1);

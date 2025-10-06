@@ -64,7 +64,7 @@ public class AtraccionesController(IServicioAtracciones service) : ControllerBas
             var registro = _service.RegistrarIngreso(dto.Identificador, id);
             return Ok(registro);
         }
-        catch (ArgumentException ex)
+        catch(ArgumentException ex)
         {
             return BadRequest(new { mensaje = ex.Message });
         }
@@ -78,7 +78,7 @@ public class AtraccionesController(IServicioAtracciones service) : ControllerBas
             var registro = _service.RegistrarEgreso(dto.Identificador, id);
             return Ok(registro);
         }
-        catch (ArgumentException ex)
+        catch(ArgumentException ex)
         {
             return BadRequest(new { mensaje = ex.Message });
         }
@@ -87,7 +87,7 @@ public class AtraccionesController(IServicioAtracciones service) : ControllerBas
     [HttpGet("atracciones")]
     public IActionResult ReporteUsoAtracciones([FromQuery] DateTime desde, [FromQuery] DateTime hasta)
     {
-        if (desde > hasta)
+        if(desde > hasta)
         {
             return BadRequest(new { mensaje = "La fecha 'desde' no puede ser mayor a 'hasta'" });
         }
@@ -104,7 +104,7 @@ public class AtraccionesController(IServicioAtracciones service) : ControllerBas
             var aforo = _service.ObtenerAforoActual(id);
             return Ok(aforo);
         }
-        catch (ArgumentException ex)
+        catch(ArgumentException ex)
         {
             return NotFound(new { mensaje = ex.Message });
         }

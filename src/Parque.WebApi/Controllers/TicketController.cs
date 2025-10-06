@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Parque.Aplicacion.DTOS;
 using Parque.Aplicacion.Servicios.Ticket;
 
@@ -33,7 +33,7 @@ public class TicketController(IServicioTicket service) : ControllerBase
     [HttpPost]
     public IActionResult Create([FromBody] CrearTicketDto request)
     {
-        if (request == null)
+        if(request == null)
         {
             return BadRequest("El cuerpo de la solicitud no puede ser nulo.");
         }
@@ -48,11 +48,11 @@ public class TicketController(IServicioTicket service) : ControllerBase
 
             return CreatedAtAction(nameof(GetById), new { id = creado.Id }, creado);
         }
-        catch (ArgumentException ex)
+        catch(ArgumentException ex)
         {
             return BadRequest(new { mensaje = ex.Message });
         }
-        catch (InvalidOperationException ex)
+        catch(InvalidOperationException ex)
         {
             return Conflict(new { mensaje = ex.Message });
         }
@@ -61,7 +61,7 @@ public class TicketController(IServicioTicket service) : ControllerBase
     [HttpPut("{id:int}")]
     public IActionResult Update(int id, [FromBody] UpdateTicketDto request)
     {
-        if (request == null)
+        if(request == null)
         {
             return BadRequest("El cuerpo de la solicitud no puede ser nulo.");
         }
@@ -77,7 +77,7 @@ public class TicketController(IServicioTicket service) : ControllerBase
 
             return NoContent();
         }
-        catch (ArgumentException ex)
+        catch(ArgumentException ex)
         {
             return BadRequest(new { mensaje = ex.Message });
         }

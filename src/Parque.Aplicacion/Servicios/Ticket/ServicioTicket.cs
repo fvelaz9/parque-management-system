@@ -1,4 +1,4 @@
-using Parque.Dominio;
+﻿using Parque.Dominio;
 using Parque.Infraestructura.Repositorios;
 
 namespace Parque.Aplicacion.Servicios.Ticket;
@@ -32,7 +32,13 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
 
     public Dominio.Ticket BuscarTicket(int id)
     {
-        return _repositorio.Encontrar(t => t.Id == id);
+        var ticket = _repositorio.Encontrar(t => t.Id == id);
+        if (ticket == null)
+        {
+            throw new ArgumentException("Ticket no encontrado");
+        }
+
+        return ticket;
     }
 
     public Dominio.Ticket? BuscarTicketPorCodigo(Guid codigo)
@@ -63,7 +69,7 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
 
     private void ValidarFechaFutura(DateTime fechaVisita)
     {
-        if (fechaVisita <= DateTime.Now)
+        if(fechaVisita <= DateTime.Now)
         {
             throw new ArgumentException("La fecha de visita debe ser futura");
         }
@@ -71,15 +77,15 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
 
     private void ValidarEventoParaTicketEspecial(TipoTicket tipoTicket, int? eventoId)
     {
-        if (tipoTicket == TipoTicket.EventoEspecial)
+        if(tipoTicket == TipoTicket.EventoEspecial)
         {
-            if (!eventoId.HasValue)
+            if(!eventoId.HasValue)
             {
                 throw new ArgumentException("Evento requerido para entradas especiales");
             }
 
             var evento = _repositorioEvento.Encontrar(e => e.Id == eventoId.Value);
-            if (evento == null)
+            if(evento == null)
             {
                 throw new ArgumentException("Evento no encontrado");
             }
@@ -87,7 +93,7 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
             var ticketsVendidos = _repositorio.ObtenerTodos()
                 .Count(t => t.EventoId == eventoId.Value && t.EsValido);
 
-            if (ticketsVendidos >= evento.AforoMaximo)
+            if(ticketsVendidos >= evento.AforoMaximo)
             {
                 throw new InvalidOperationException("Aforo completo para este evento");
             }

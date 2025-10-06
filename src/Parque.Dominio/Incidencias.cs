@@ -1,7 +1,7 @@
-namespace Parque.Dominio;
+﻿namespace Parque.Dominio;
 
 public class Incidencias
 {
     public int Id { get; set; }
-    public string? Descripcion {get; set;}
+    public string? Descripcion { get; set; }
 }
