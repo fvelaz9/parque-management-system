@@ -10,20 +10,8 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
 
     public Dominio.Ticket CrearTicketGeneral(int cuentaId, DateTime fechaVisita)
     {
-        if (fechaVisita <= DateTime.Now)
-        {
-            throw new ArgumentException("La fecha de visita debe ser futura");
-        }
-
-        Dominio.Ticket ticket = new Dominio.Ticket
-        {
-            CuentaId = cuentaId,
-            FechaVisita = fechaVisita,
-            TipoEntrada = TipoTicket.General,
-            Codigo = Guid.NewGuid(),
-            FechaEmision = DateTime.Now,
-            EsValido = true
-        };
+        ValidarFechaFutura(fechaVisita);
+        Dominio.Ticket ticket = ConstruirTicket(cuentaId, fechaVisita, null, TipoTicket.General);
 
         _repositorio.Agregar(ticket);
         return ticket;
@@ -100,4 +88,16 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
             }
         }
     }
+    private Dominio.Ticket ConstruirTicket(int cuentaId, DateTime fechaVisita, int? eventoId, TipoTicket tipo)
+    {
+        return new Dominio.Ticket
+        {
+            CuentaId = cuentaId,
+            FechaVisita = fechaVisita,
+            EventoId = eventoId,
+            TipoEntrada = tipo,
+            Codigo = Guid.NewGuid(),
+            FechaEmision = DateTime.Now,
+            EsValido = true
+        };
 }
