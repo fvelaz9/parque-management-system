@@ -11,6 +11,6 @@ public class CreateEventoRequest
     public DateTime Fin { get; set; }
     public int AforoMaximo { get; set; }
     public float CostoAdicional { get; set; }
-    public List<AtraccionParque> Atracciones { get; set; } = new();
+    public List<AtraccionParque> Atracciones { get; set; } = [];
     public EstadoEvento Estado { get; set; }
 }
