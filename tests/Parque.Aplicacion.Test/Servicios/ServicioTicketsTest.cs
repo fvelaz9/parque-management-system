@@ -19,7 +19,23 @@ public class ServicioTicketsTest
         _repositorioEventoMock = new Mock<IRepositorio<Evento>>();
         _servicio = new ServicioTicket(_repositorioMock.Object, _repositorioEventoMock.Object);
     }
-    
+
+    [TestMethod]
+    public void CrearTicketGeneralValido()
+    {
+        var cuentaId = 123;
+        DateTime fechaVisita = DateTime.Now.AddDays(1);
+
+        _repositorioMock.Setup(r => r.Agregar(It.IsAny<Dominio.Ticket>()));
+        var ticket = _servicio.CrearTicketGeneral(cuentaId, fechaVisita);
+
+        _repositorioMock.Verify(r => r.Agregar(It.IsAny<Dominio.Ticket>()), Times.Once);
+        Assert.IsNotNull(ticket);
+        Assert.AreEqual(TipoTicket.General, ticket.TipoEntrada);
+        Assert.AreEqual(cuentaId, ticket.CuentaId);
+        Assert.AreEqual(fechaVisita, ticket.FechaVisita);
+    }
+
     [TestMethod]
     public void ListarTickets_DeberiaRetornarTodosLosTickets()
     {
