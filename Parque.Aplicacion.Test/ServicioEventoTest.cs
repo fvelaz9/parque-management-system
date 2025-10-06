@@ -121,4 +121,21 @@ public class ServicioEventoTest
 
         _servicioEvento!.ObtenerEventoPorId(999);
     }
+
+    [TestMethod]
+    public void ListarEventos()
+    {
+        List<Evento> eventos = new List<Evento>
+        {
+            new Evento("Evento 1", "addads", DateTime.Now, DateTime.Now.AddHours(1), 50, 10, EstadoEvento.Programado),
+            new Evento("Evento 2", "sdadaas", DateTime.Now, DateTime.Now.AddHours(2), 100, 20, EstadoEvento.Cancelado)
+        };
+
+        _mockRepositorio!.Setup(r => r.ObtenerTodos()).Returns(eventos);
+
+        List<Evento> resultado = _servicioEvento!.ListarEventos();
+
+        Assert.AreEqual(2, resultado.Count);
+        Assert.AreEqual("Evento 1", resultado[0].Titulo);
+    }
 }
