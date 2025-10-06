@@ -175,4 +175,20 @@ public class ServicioTicketsTest
         // Act
         _servicio.CrearTicket(1, fechaFutura, 1, TipoTicket.EventoEspecial);
     }
+
+    [TestMethod]
+    public void BuscarTicketPorCodigo_WhenTicketNotExists_ShouldReturnNull()
+    {
+        // Arrange
+        var codigo = Guid.NewGuid();
+        _repositorioMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
+            .Returns((Dominio.Ticket?)null);
+
+        // Act
+        var resultado = _servicio.BuscarTicketPorCodigo(codigo);
+
+        // Assert
+        Assert.IsNull(resultado);
+        _repositorioMock.VerifyAll();
+    }
 }
