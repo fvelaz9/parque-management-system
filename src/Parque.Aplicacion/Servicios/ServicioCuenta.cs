@@ -54,7 +54,7 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
             throw new ExcepcionDominio("Solo las cuentas con perfil de visitante tienen nivel de membresía.");
         }
 
-        cuenta.Visitante!.AsignarMembresia(nuevoNivel);
+        cuenta.Visitante.AsignarMembresia(nuevoNivel);
         _cuentaRepo.Editar(cuenta);
     }
 

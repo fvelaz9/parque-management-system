@@ -504,4 +504,63 @@ public class ServicioCuentaTest
 
         Assert.AreEqual("Solo las cuentas con perfil de visitante tienen nivel de membresía.", ex.Message);
     }
+
+    [TestMethod]
+    public void CambiarNivelMembresia_CuentaNoExiste_LanzaExcepcion()
+    {
+        // Arrange
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns((Cuenta)null!);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var cuentaIdInexistente = Guid.NewGuid();
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionEntidadNoEncontrada>(
+            () => servicio.CambiarNivelMembresia(cuentaIdInexistente, NivelMembresia.Premium));
+
+        Assert.AreEqual("Cuenta no encontrada", ex.Message);
+    }
+
+    [TestMethod]
+    public void CambiarNivelMembresia_VisitanteAVIP_CambiaCorrectamente()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Luis", "VIP", new Email("luis@vip.com"), "password123", Rol.Visitante);
+        cuenta.AsignarVisitante(new DateTime(1985, 5, 20));
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+
+        // Act
+        servicio.CambiarNivelMembresia(cuenta.Id, NivelMembresia.VIP);
+
+        // Assert
+        Assert.AreEqual(NivelMembresia.VIP, cuenta.Visitante!.NivelMembresia);
+    }
+
+    [TestMethod]
+    public void CambiarNivelMembresia_PremiumAEstandar_CambiaCorrectamente()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("María", "Premium", new Email("maria@premium.com"), "password123", Rol.Visitante);
+        cuenta.AsignarVisitante(new DateTime(1992, 3, 10));
+        cuenta.Visitante!.AsignarMembresia(NivelMembresia.Premium);
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+
+        // Act
+        servicio.CambiarNivelMembresia(cuenta.Id, NivelMembresia.Estandar);
+
+        // Assert
+        Assert.AreEqual(NivelMembresia.Estandar, cuenta.Visitante.NivelMembresia);
+    }
 }
