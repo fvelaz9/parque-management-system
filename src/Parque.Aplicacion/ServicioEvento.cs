@@ -36,7 +36,11 @@ public class ServicioEvento : IServicioEvento
 
     public void EliminarEventoPorId(int eventoId)
     {
-        throw new NotImplementedException();
+        Evento evento = _repositorioEvento.Encontrar(e => e.Id == eventoId);
+        if (evento != null)
+        {
+            _repositorioEvento.Eliminar(e => e.Id == eventoId);
+        }
     }
 
     public Evento ObtenerEventoPorId(int eventoId)
