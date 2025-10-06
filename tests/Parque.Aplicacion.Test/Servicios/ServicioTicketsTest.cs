@@ -76,6 +76,37 @@ public class ServicioTicketsTest
     }
 
     [TestMethod]
+    [ExpectedException(typeof(InvalidOperationException))]
+    public void CrearTicketEventoEspecialAforoCompleto()
+    {
+        var fechaVisita = DateTime.Now.AddDays(2);
+        var evento = new Evento("Show", "Concierto", DateTime.Now, DateTime.Now.AddDays(10), 2, 50, EstadoEvento.Programado);
+
+        _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
+            .Returns(evento);
+
+        var ticketsVendidos = new List<Ticket>
+        {
+            new Ticket { EventoId = 1, EsValido = true },
+            new Ticket { EventoId = 1, EsValido = true }
+        };
+        _repositorioMock.Setup(r => r.ObtenerTodos()).Returns(ticketsVendidos);
+
+        _servicio.CrearTicketEventoEspecial(1, fechaVisita, 1);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CrearTicketEventoEspecialEventoNoEncontrado()
+    {
+        var fechaVisita = DateTime.Now.AddDays(5);
+        _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
+            .Returns((Evento)null);
+
+        _servicio.CrearTicketEventoEspecial(1, fechaVisita, 999);
+    }
+
+    [TestMethod]
     public void ListarTickets_DeberiaRetornarTodosLosTickets()
     {
         // Arrange
