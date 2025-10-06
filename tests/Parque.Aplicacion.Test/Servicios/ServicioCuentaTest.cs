@@ -283,4 +283,65 @@ public class ServicioCuentaTest
 
         mockRepo.Verify(r => r.Agregar(It.IsAny<Cuenta>()), Times.Once);
     }
+
+    [TestMethod]
+    public void CrearCuentaPorAdmin_VisitanteEstandar_CreaCuentaConPerfilCorrectamente()
+    {
+        // Arrange
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns((Cuenta)null!);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var fechaNacimiento = new DateTime(1990, 5, 15);
+        var dto = new RegistrarCuentaDto(
+            "Ana",
+            "García",
+            "ana@visitante.com",
+            "visitante123",
+            Rol.Visitante,
+            fechaNacimiento,
+            null);
+
+        // Act
+        var resultado = servicio.CrearCuentaPorAdmin(dto);
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual("Ana", resultado.Nombre);
+        Assert.IsTrue(resultado.Roles.Contains(Rol.Visitante.ToString()));
+        Assert.AreEqual(1, resultado.Roles.Count());
+        Assert.IsNotNull(resultado.Visitante);
+        Assert.AreEqual(fechaNacimiento, resultado.Visitante.FechaNacimiento);
+        Assert.AreEqual(NivelMembresia.Estandar.ToString(), resultado.Visitante.NivelMembresia);
+
+        mockRepo.Verify(r => r.Agregar(It.IsAny<Cuenta>()), Times.Once);
+    }
+
+    [TestMethod]
+    public void CrearCuentaPorAdmin_VisitantePremium_CreaCuentaConNivelCorrecto()
+    {
+        // Arrange
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns((Cuenta)null!);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var fechaNacimiento = new DateTime(1985, 3, 20);
+        var dto = new RegistrarCuentaDto(
+            "Luis",
+            "Fernández",
+            "luis@premium.com",
+            "premium123",
+            Rol.Visitante,
+            fechaNacimiento,
+            NivelMembresia.Premium);
+
+        // Act
+        var resultado = servicio.CrearCuentaPorAdmin(dto);
+
+        // Assert
+        Assert.IsNotNull(resultado.Visitante);
+        Assert.AreEqual(NivelMembresia.Premium.ToString(), resultado.Visitante.NivelMembresia);
+    }
 }
