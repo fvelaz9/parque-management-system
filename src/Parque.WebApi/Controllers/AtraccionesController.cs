@@ -83,4 +83,16 @@ public class AtraccionesController(IServicioAtracciones service) : ControllerBas
             return BadRequest(new { mensaje = ex.Message });
         }
     }
+    
+    [HttpGet("atracciones")]
+    public IActionResult ReporteUsoAtracciones([FromQuery] DateTime desde, [FromQuery] DateTime hasta)
+    {
+        if (desde > hasta)
+        {
+            return BadRequest(new { mensaje = "La fecha 'desde' no puede ser mayor a 'hasta'" });
+        }
+
+        var reporte = _service.ObtenerReporteUso(desde, hasta);
+        return Ok(reporte);
+    }
 }

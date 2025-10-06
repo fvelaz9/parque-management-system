@@ -1,4 +1,5 @@
-﻿using Parque.Aplicacion.Servicios.Atracciones;
+﻿using Parque.Aplicacion.DTOS;
+using Parque.Aplicacion.Servicios.Atracciones;
 using Parque.Dominio.Atracciones;
 using Parque.Infraestructura.Repositorios;
 
@@ -68,5 +69,21 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRep
         registro.FechaEgreso = DateTime.Now;
         _repositorioRegistros.Editar(registro);
         return registro;
+    }
+
+    public List<ReporteAtraccionDto> ObtenerReporteUso(DateTime fechaInicio, DateTime fechaFin)
+    {
+        var registros = _repositorioRegistros.ObtenerTodos()
+            .Where(r => r.FechaIngreso >= fechaInicio && r.FechaEgreso <= fechaFin)
+            .GroupBy(r => r.AtraccionId)
+            .Select(g => new ReporteAtraccionDto { AtraccionId = g.Key, })
+            .ToList();
+        foreach (var reporte in registros)
+        {
+            var atraccion = _repositorio.Encontrar(a => a.Id == reporte.AtraccionId);
+            reporte.NombreAtraccion = atraccion?.Nombre ?? "Desconocida";
+        }
+
+        return registros.OrderByDescending(r => r.CantidadVisitas).ToList();
     }
 }
