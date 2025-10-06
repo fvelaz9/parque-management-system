@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Moq;
 using Parque.Aplicacion;
 using Parque.Dominio;
@@ -53,5 +54,21 @@ public class ServicioEventoTest
             estado: EstadoEvento.Cancelado);
 
         _servicioEvento!.AgregarEvento(evento);
+    }
+
+    [TestMethod]
+    public void EliminarEventoPorId()
+    {
+        Evento evento = new Evento("Noche", "Temático", DateTime.Now, DateTime.Now.AddHours(2), 100, 50, EstadoEvento.Programado) { Id = 1 };
+
+        var mockRepo = new Mock<IRepositorio<Evento>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>())).Returns(evento);
+        mockRepo.Setup(r => r.Eliminar(It.IsAny<Expression<Func<Evento, bool>>>()));
+
+        var servicio = new ServicioEvento(mockRepo.Object);
+
+        servicio.EliminarEventoPorId(1);
+
+        mockRepo.Verify(r => r.Eliminar(It.IsAny<Expression<Func<Evento, bool>>>()), Times.Once);
     }
 }
