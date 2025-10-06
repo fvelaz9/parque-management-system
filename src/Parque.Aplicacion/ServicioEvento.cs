@@ -53,7 +53,18 @@ public class ServicioEvento : IServicioEvento
 
     public Evento ObtenerEventoPorId(int eventoId)
     {
-        throw new NotImplementedException();
+        if (eventoId <= 0)
+        {
+            throw new Exception("El ID debe ser mayor a cero.");
+        }
+
+        Evento evento = _repositorioEvento.Encontrar(e => e.Id == eventoId);
+        if (evento == null)
+        {
+            throw new Exception($"No se encontró un evento con ID {eventoId}.");
+        }
+
+        return evento;
     }
 
     public List<Evento> ListarEventos()
