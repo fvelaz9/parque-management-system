@@ -58,4 +58,52 @@ public class EventoController(IServicioEvento servicioEvento) : ControllerBase
     {
         servicioEvento.EliminarEventoPorId(eventoId);
     }
+
+    [HttpPut("{eventoId}")]
+    public void Actualizar(int eventoId, UpdateEventoRequest request)
+    {
+        if (request == null)
+        {
+            throw new Exception("El request no puede ser null");
+        }
+
+        Dominio.Evento eventoExistente = servicioEvento.ObtenerEventoPorId(eventoId);
+
+        if (!string.IsNullOrEmpty(request.Titulo))
+        {
+            eventoExistente.Titulo = request.Titulo;
+        }
+
+        if (!string.IsNullOrEmpty(request.Descripcion))
+        {
+            eventoExistente.Descripcion = request.Descripcion;
+        }
+
+        if (request.Inicio.HasValue)
+        {
+            eventoExistente.Inicio = request.Inicio.Value;
+        }
+
+        if (request.Fin.HasValue)
+        {
+            eventoExistente.Fin = request.Fin.Value;
+        }
+
+        if (request.AforoMaximo.HasValue)
+        {
+            eventoExistente.AforoMaximo = request.AforoMaximo.Value;
+        }
+
+        if (request.CostoAdicional.HasValue)
+        {
+            eventoExistente.CostoAdicional = request.CostoAdicional.Value;
+        }
+
+        if (request.Estado.HasValue)
+        {
+            eventoExistente.Estado = request.Estado.Value;
+        }
+
+        servicioEvento.ActualizarEvento(eventoExistente);
+    }
 }
