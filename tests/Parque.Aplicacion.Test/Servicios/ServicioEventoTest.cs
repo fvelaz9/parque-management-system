@@ -41,7 +41,7 @@ public class ServicioEventoTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(InvalidOperationException))]
+    [ExpectedException(typeof(ArgumentException))]
     public void AgregarEventoFechaFinMenorAInicio()
     {
         var evento = new Evento(

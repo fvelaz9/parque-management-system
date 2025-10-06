@@ -55,6 +55,7 @@ public class EventoController(IServicioEvento servicioEvento) : ControllerBase
     [HttpDelete("{eventoId}")]
     public void Eliminar(int eventoId)
     {
+        servicioEvento.ObtenerEventoPorId(eventoId);
         servicioEvento.EliminarEventoPorId(eventoId);
     }
 

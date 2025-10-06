@@ -89,7 +89,7 @@ public class EventoControllerTest
     {
         var request = new CreateEventoRequest
         {
-            Titulo = " ",
+            Titulo = string.Empty,
             AforoMaximo = 10
         };
 
