@@ -31,11 +31,8 @@ builder.Services.AddDbContext<AppContexto>(options =>
                 errorNumbersToAdd: null);
         }));
 
-
-
 // Instancia Db anterior 
 // builder.Services.AddDbContext<AppContexto>(options => options.UseSqlServer("name=ConnectionStrings:DefaultConnection"));
-
 
 var app = builder.Build();
 
