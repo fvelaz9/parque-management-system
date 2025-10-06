@@ -17,6 +17,11 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
         return ticket;
     }
 
+    public Dominio.Ticket CrearTicketEventoEspecial(int cuentaId, DateTime fechaVisita, int eventoId)
+    {
+        throw new NotImplementedException();
+    }
+
     public IEnumerable<Dominio.Ticket> ListarTickets() => _repositorio.ObtenerTodos();
 
     public Dominio.Ticket BuscarTicket(int id)
