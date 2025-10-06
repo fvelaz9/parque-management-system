@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Parque.Aplicacion.DTOS;
 using Parque.Aplicacion.Servicios.Atracciones;
 using Parque.Dominio.Atracciones;
 using Parque.WebApi.Controllers;
@@ -129,5 +130,48 @@ public class AtraccionesController_Test
         // Assert
         Assert.IsInstanceOfType(result, typeof(NoContentResult));
         _serviceMock.VerifyAll();
+    }
+
+    [TestMethod]
+    public void ObtenerAforo_AtraccionExiste_DeberiaRetornarOk()
+    {
+        // Arrange
+        var aforoDto = new AforoAtraccionDto
+        {
+            AtraccionId = 1,
+            NombreAtraccion = "Montaña Rusa",
+            AforoActual = 10,
+            CapacidadMaxima = 24,
+            Disponible = 14
+        };
+
+        _serviceMock!.Setup(s => s.ObtenerAforoActual(1)).Returns(aforoDto);
+
+        // Act
+        var result = _controller!.ObtenerAforo(1);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.AreEqual(aforoDto, okResult.Value);
+        _serviceMock.Verify(s => s.ObtenerAforoActual(1), Times.Once);
+    }
+
+    [TestMethod]
+    public void ObtenerAforo_AtraccionNoExiste_DeberiaRetornarNotFound()
+    {
+        // Arrange
+        _serviceMock!.Setup(s => s.ObtenerAforoActual(999))
+            .Throws(new ArgumentException("Atracción no encontrada"));
+
+        // Act
+        var result = _controller!.ObtenerAforo(999);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(NotFoundObjectResult));
+        var notFoundResult = result as NotFoundObjectResult;
+        Assert.IsNotNull(notFoundResult);
+        _serviceMock.Verify(s => s.ObtenerAforoActual(999), Times.Once);
     }
 }

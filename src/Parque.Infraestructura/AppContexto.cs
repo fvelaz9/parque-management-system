@@ -12,6 +12,7 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
     public DbSet<Evento> Eventos { get; set; }
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<AtraccionParque> Atracciones { get; set; }
+    public DbSet<RegistroVisita> RegistrosVisitas { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

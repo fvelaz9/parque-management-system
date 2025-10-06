@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Parque.Infraestructura;
 
@@ -11,9 +12,11 @@ using Parque.Infraestructura;
 namespace Parque.Infraestructura.Migrations
 {
     [DbContext(typeof(AppContexto))]
-    partial class AppContextoModelSnapshot : ModelSnapshot
+    [Migration("20251006213947_Incidencias_RegistroVisita")]
+    partial class Incidencias_RegistroVisita
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -168,12 +171,6 @@ namespace Parque.Infraestructura.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("Password");
-
                     b.Property<Guid?>("VisitanteId")
                         .HasColumnType("uniqueidentifier");
 
@@ -225,7 +222,28 @@ namespace Parque.Infraestructura.Migrations
                                 .HasForeignKey("CuentaId");
                         });
 
+                    b.OwnsOne("Parque.Dominio.Usuarios.PasswordHash", "PasswordHash", b1 =>
+                        {
+                            b1.Property<Guid>("CuentaId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("Valor")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("PasswordHash");
+
+                            b1.HasKey("CuentaId");
+
+                            b1.ToTable("Cuentas");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CuentaId");
+                        });
+
                     b.Navigation("Email")
+                        .IsRequired();
+
+                    b.Navigation("PasswordHash")
                         .IsRequired();
 
                     b.Navigation("Visitante");
