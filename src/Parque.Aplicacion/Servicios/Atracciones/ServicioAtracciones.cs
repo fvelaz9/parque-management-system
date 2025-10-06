@@ -55,4 +55,18 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRep
         _repositorioRegistros.Agregar(registro);
         return registro;
     }
+
+    public RegistroVisita RegistrarEgreso(Guid identificador, int idAtraccion)
+    {
+        var registro = _repositorioRegistros.Encontrar(a => a.Identificador == identificador && a.AtraccionId == idAtraccion && a.FechaEgreso == null);
+
+        if(registro == null)
+        {
+            throw new ArgumentException("No hay ingreso registrado o ya se registró el egreso");
+        }
+
+        registro.FechaEgreso = DateTime.Now;
+        _repositorioRegistros.Editar(registro);
+        return registro;
+    }
 }

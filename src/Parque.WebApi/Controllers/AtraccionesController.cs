@@ -69,4 +69,18 @@ public class AtraccionesController(IServicioAtracciones service) : ControllerBas
             return BadRequest(new { mensaje = ex.Message });
         }
     }
+    
+    [HttpPost("{id}/egresos")]
+    public IActionResult RegistrarEgreso(int id, [FromBody] RegistroIngresoDto dto)
+    {
+        try
+        {
+            var registro = _service.RegistrarEgreso(dto.Identificador, id);
+            return Ok(registro);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { mensaje = ex.Message });
+        }
+    }
 }
