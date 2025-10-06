@@ -69,7 +69,7 @@ public class ServicioEvento : IServicioEvento
 
     public List<Evento> ListarEventos()
     {
-        throw new NotImplementedException();
+        return _repositorioEvento.ObtenerTodos();
     }
 
     public void ActualizarEvento(Evento evento)
