@@ -8,25 +8,12 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
     private readonly IRepositorio<Dominio.Ticket> _repositorio = repositorio;
     private readonly IRepositorio<Evento> _repositorioEvento = repositorioEvento;
 
-    public Dominio.Ticket CrearTicket(int cuentaId, DateTime fechaVisita, int? eventoId, TipoTicket tipoTicket)
+    public Dominio.Ticket CrearTicket(int cuentaId, DateTime fechaVisita)
     {
-        ValidarFechaFutura(fechaVisita);
-        ValidarEventoParaTicketEspecial(tipoTicket, eventoId);
-
-        var ticket = new Dominio.Ticket
-        {
-            CuentaId = cuentaId,
-            FechaVisita = fechaVisita,
-            EventoId = eventoId,
-            TipoEntrada = tipoTicket,
-            Codigo = Guid.NewGuid(),
-            FechaEmision = DateTime.Now,
-            EsValido = true
-        };
-
-        _repositorio.Agregar(ticket);
-        return ticket;
+        
     }
+
+    
 
     public IEnumerable<Dominio.Ticket> ListarTickets() => _repositorio.ObtenerTodos();
 
