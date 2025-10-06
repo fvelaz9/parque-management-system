@@ -3,20 +3,18 @@ using Parque.Aplicacion.Servicios;
 using Parque.WebApi.Controllers.FechaHora.Models;
 
 namespace Parque.WebApi.Controllers.FechaHora;
-[Route("api/[Controller]")]
+[Route("api/fecha-hora")]
 [ApiController]
-public class FechaHoraController(IServicioFechaHora timeService) : ControllerBase
+public class FechaHoraController(IServicioFechaHora servicioFecha) : ControllerBase
 {
-    private readonly IServicioFechaHora _servicioFecha = timeService;
-
-    [HttpGet("actual")]
+    [HttpGet]
     public IActionResult ObtenerFechaActual()
     {
-        var currentTime = _servicioFecha.ObtenerFechaActual();
+        var currentTime = servicioFecha.ObtenerFechaActual();
         return Ok(new { datetime = currentTime });
     }
 
-    [HttpPost("configurar")]
+    [HttpPut]
     public IActionResult ConfigurarFecha([FromBody] ConfigurarFechaRequest request)
     {
         if(!DateTime.TryParse(request.FechaHora, out var fechaPersonalizada))
@@ -24,14 +22,14 @@ public class FechaHoraController(IServicioFechaHora timeService) : ControllerBas
             return BadRequest("Formato de fecha inválido. Use 'YYYY-MM-DDTHH:MM'.");
         }
 
-        _servicioFecha.ConfigurarFecha(fechaPersonalizada);
+        servicioFecha.ConfigurarFecha(fechaPersonalizada);
         return Ok(new { mensaje = "Fecha configurada exitosamente" });
     }
 
-    [HttpPost("resetear")]
+    [HttpDelete]
     public IActionResult ResetearAFechaSistema()
     {
-        _servicioFecha.ResetearAFechaSistema();
+        servicioFecha.ResetearAFechaSistema();
         return Ok(new { mensaje = "Fecha reseteada al sistema exitosamente" });
     }
 }
