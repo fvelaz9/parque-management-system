@@ -13,7 +13,12 @@ public class ServicioEvento : IServicioEvento
 
     public Evento AgregarEvento(Evento evento)
     {
-       _repositorioEvento.Agregar(evento);
+        if(evento.Fin < evento.Inicio)
+        {
+            throw new InvalidOperationException("La fecha de fin no puede ser anterior a la de inicio.");
+        }
+
+        _repositorioEvento.Agregar(evento);
        return evento;
     }
 
