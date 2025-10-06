@@ -47,7 +47,9 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
 
     public void CambiarNivelMembresia(Guid cuentaId, NivelMembresia nuevoNivel)
     {
-        throw new NotImplementedException();
+        var cuenta = ObtenerCuenta(cuentaId);
+        cuenta.Visitante!.AsignarMembresia(nuevoNivel);
+        _cuentaRepo.Editar(cuenta);
     }
 
     private void AsignarPerfilVisitante(Cuenta cuenta, RegistrarCuentaDto dto)
