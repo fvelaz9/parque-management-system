@@ -47,12 +47,11 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRep
         {
             throw new ArgumentException("Atraccion no encontrado");
         }
-        
+
         var registro = new RegistroVisita
         {
             AtraccionId = idAtraccion, Identificador = identificador, FechaIngreso = DateTime.Now
         };
-        
         _repositorioRegistros.Agregar(registro);
         return registro;
     }

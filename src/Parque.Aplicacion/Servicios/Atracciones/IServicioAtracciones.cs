@@ -10,4 +10,5 @@ public interface IServicioAtracciones
     void ModificarAtraccion(int id, string nombre, TipoAtraccion tipo, int edadMinima, int capacidad, string descripcion);
     void EliminarAtraccion(int id);
     RegistroVisita RegistrarIngreso(Guid identificador, int atraccionId);
+    
 }
