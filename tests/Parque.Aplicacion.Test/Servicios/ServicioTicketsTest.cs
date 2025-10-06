@@ -68,6 +68,14 @@ public class ServicioTicketsTest
     }
 
     [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CrearTicketEventoEspecialFechaInvalida()
+    {
+        var fechaPasada = DateTime.Now.AddDays(-1);
+        _servicio.CrearTicketEventoEspecial(1, fechaPasada, 1);
+    }
+
+    [TestMethod]
     public void ListarTickets_DeberiaRetornarTodosLosTickets()
     {
         // Arrange
