@@ -74,6 +74,28 @@ public class ServicioEvento : IServicioEvento
 
     public void ActualizarEvento(Evento evento)
     {
-        throw new NotImplementedException();
+        ArgumentNullException.ThrowIfNull(evento);
+
+        if (evento.Id <= 0)
+        {
+            throw new Exception("El ID del evento debe ser mayor a cero.");
+        }
+
+        if (evento.Inicio >= evento.Fin)
+        {
+            throw new ArgumentException("La fecha de inicio puede ser anterior a la fecha de fin.");
+        }
+
+        if (evento.AforoMaximo <= 0)
+        {
+            throw new ArgumentException("El aforo debe ser mayor a cero.");
+        }
+
+        if (evento.CostoAdicional < 0)
+        {
+            throw new ArgumentException("El costo adicional no puede ser negativo.");
+        }
+
+        _repositorioEvento.Editar(evento);
     }
 }
