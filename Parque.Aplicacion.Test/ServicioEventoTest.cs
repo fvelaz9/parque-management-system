@@ -138,4 +138,49 @@ public class ServicioEventoTest
         Assert.AreEqual(2, resultado.Count);
         Assert.AreEqual("Evento 1", resultado[0].Titulo);
     }
+
+    [TestMethod]
+    public void ActualizarEvento()
+    {
+        Evento evento = new Evento("Titulo", "Desc", DateTime.Now, DateTime.Now.AddHours(2), 100, 50, EstadoEvento.Programado) { Id = 1 };
+
+        _mockRepositorio!.Setup(r => r.Editar(It.IsAny<Evento>())).Verifiable();
+
+        _servicioEvento!.ActualizarEvento(evento);
+
+        _mockRepositorio.Verify(r => r.Editar(evento), Times.Once);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void ActualizarEventoIdInvalido()
+    {
+        Evento evento = new Evento("Titulo", "Desc", DateTime.Now, DateTime.Now.AddHours(2), 100, 50, EstadoEvento.Programado) { Id = 0 };
+        _servicioEvento!.ActualizarEvento(evento);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void ActualizarEventoFechaInvalida()
+    {
+        Evento evento = new Evento("Titulo", "Desc", DateTime.Now.AddHours(2), DateTime.Now, 100, 50, EstadoEvento.Programado) { Id = 1 };
+        _servicioEvento!.ActualizarEvento(evento);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void ActualizarEventoAforoInvalido()
+    {
+        Evento evento = new Evento("Titulo", "Desc", DateTime.Now, DateTime.Now.AddHours(2), 0, 50, EstadoEvento.Programado) { Id = 1 };
+        _servicioEvento!.ActualizarEvento(evento);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void ActualizarEventoCostoNegativo()
+    {
+        Evento evento = new Evento("Titulo", "Desc", DateTime.Now, DateTime.Now.AddHours(2), 100, -10,
+            EstadoEvento.Programado) { Id = 1 };
+        _servicioEvento!.ActualizarEvento(evento);
+    }
 }
