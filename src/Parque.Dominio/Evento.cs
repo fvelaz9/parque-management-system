@@ -10,6 +10,6 @@ public class Evento(string titulo, string descripcion, DateTime inicio, DateTime
     public DateTime Fin { get; set; } = fin;
     public int AforoMaximo { get; set; } = aforoMaximo;
     public float CostoAdicional { get; set; } = costoAdicional;
-    public List<TipoAtraccion> Atracciones { get; set; } = [];
+    public List<AtraccionParque> Atracciones { get; set; } = [];
     public EstadoEvento Estado { get; set; } = estado;
 }
