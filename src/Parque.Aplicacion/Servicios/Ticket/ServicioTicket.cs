@@ -88,6 +88,7 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
             }
         }
     }
+
     private Dominio.Ticket ConstruirTicket(int cuentaId, DateTime fechaVisita, int? eventoId, TipoTicket tipo)
     {
         return new Dominio.Ticket
@@ -100,4 +101,5 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
             FechaEmision = DateTime.Now,
             EsValido = true
         };
+    }
 }
