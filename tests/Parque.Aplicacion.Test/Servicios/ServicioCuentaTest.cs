@@ -251,4 +251,36 @@ public class ServicioCuentaTest
 
         mockRepo.Verify(r => r.Agregar(It.IsAny<Cuenta>()), Times.Once);
     }
+
+    [TestMethod]
+    public void CrearCuentaPorAdmin_Operador_CreaCuentaCorrectamente()
+    {
+        // Arrange
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns((Cuenta)null!);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var dto = new RegistrarCuentaDto(
+            "Carlos",
+            "López",
+            "carlos@operador.com",
+            "operador123",
+            Rol.Operador,
+            null,
+            null);
+
+        // Act
+        var resultado = servicio.CrearCuentaPorAdmin(dto);
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual("Carlos", resultado.Nombre);
+        Assert.AreEqual("Rodríguez", resultado.Apellido);
+        Assert.IsTrue(resultado.Roles.Contains(Rol.Operador.ToString()));
+        Assert.AreEqual(1, resultado.Roles.Count());
+        Assert.IsNull(resultado.Visitante);
+
+        mockRepo.Verify(r => r.Agregar(It.IsAny<Cuenta>()), Times.Once);
+    }
 }
