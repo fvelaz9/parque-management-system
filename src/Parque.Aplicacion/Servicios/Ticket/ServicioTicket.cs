@@ -11,10 +11,7 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
     public Dominio.Ticket CrearTicket(int cuentaId, DateTime fechaVisita)
     {
         
-    }
-
-    
-
+    } 
     public IEnumerable<Dominio.Ticket> ListarTickets() => _repositorio.ObtenerTodos();
 
     public Dominio.Ticket BuscarTicket(int id)
