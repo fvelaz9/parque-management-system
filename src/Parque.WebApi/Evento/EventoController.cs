@@ -39,4 +39,10 @@ public class EventoController(IServicioEvento servicioEvento) : ControllerBase
 
         return new CreateEventoResponse(evento);
     }
+
+    [HttpGet]
+    public List<EventoOutDto> Listar()
+    {
+        return servicioEvento.ListarEventos().Select(e => new EventoOutDto(e)).ToList();
+    }
 }
