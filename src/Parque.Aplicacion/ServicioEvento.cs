@@ -13,7 +13,8 @@ public class ServicioEvento : IServicioEvento
 
     public Evento AgregarEvento(Evento evento)
     {
-        throw new NotImplementedException();
+       _repositorioEvento.Agregar(evento);
+       return evento;
     }
 
     public void EliminarEventoPorId(int eventoId)
