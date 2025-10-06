@@ -1,10 +1,9 @@
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Moq;
-using Parque.Aplicacion;
 using Parque.Dominio;
 using Parque.Infraestructura.Repositorios;
 
-namespace Parque.Aplicacion.Test;
+namespace Parque.Aplicacion.Test.Servicios;
 
 [TestClass]
 public class ServicioEventoTest
@@ -22,7 +21,7 @@ public class ServicioEventoTest
     [TestMethod]
     public void AgregarEventoValido()
     {
-        Evento evento = new Evento(
+        var evento = new Evento(
             titulo: "Noche de Dinosaurios",
             descripcion: "Evento temático jurásico",
             inicio: DateTime.Today.AddDays(3).AddHours(20),
@@ -59,7 +58,7 @@ public class ServicioEventoTest
     [TestMethod]
     public void EliminarEventoPorId()
     {
-        Evento evento = new Evento("Noche", "Temático", DateTime.Now, DateTime.Now.AddHours(2), 100, 50, EstadoEvento.Programado) { Id = 1 };
+        var evento = new Evento("Noche", "Temático", DateTime.Now, DateTime.Now.AddHours(2), 100, 50, EstadoEvento.Programado) { Id = 1 };
 
         var mockRepo = new Mock<IRepositorio<Evento>>();
         mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>())).Returns(evento);
@@ -97,7 +96,7 @@ public class ServicioEventoTest
     [TestMethod]
     public void ObtenerEventoPorId()
     {
-        Evento evento = new Evento("asada", "Dagdasjh", DateTime.Now, DateTime.Now.AddHours(2), 100, 50, EstadoEvento.Programado) { Id = 1 };
+        var evento = new Evento("asada", "Dagdasjh", DateTime.Now, DateTime.Now.AddHours(2), 100, 50, EstadoEvento.Programado) { Id = 1 };
         _mockRepositorio!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>())).Returns(evento);
 
         Evento resultado = _servicioEvento!.ObtenerEventoPorId(1);
@@ -125,7 +124,7 @@ public class ServicioEventoTest
     [TestMethod]
     public void ListarEventos()
     {
-        List<Evento> eventos = new List<Evento>
+        var eventos = new List<Evento>
         {
             new Evento("Evento 1", "addads", DateTime.Now, DateTime.Now.AddHours(1), 50, 10, EstadoEvento.Programado),
             new Evento("Evento 2", "sdadaas", DateTime.Now, DateTime.Now.AddHours(2), 100, 20, EstadoEvento.Cancelado)
@@ -142,7 +141,7 @@ public class ServicioEventoTest
     [TestMethod]
     public void ActualizarEvento()
     {
-        Evento evento = new Evento("Titulo", "Desc", DateTime.Now, DateTime.Now.AddHours(2), 100, 50, EstadoEvento.Programado) { Id = 1 };
+        var evento = new Evento("Titulo", "Desc", DateTime.Now, DateTime.Now.AddHours(2), 100, 50, EstadoEvento.Programado) { Id = 1 };
 
         _mockRepositorio!.Setup(r => r.Editar(It.IsAny<Evento>())).Verifiable();
 
@@ -155,7 +154,7 @@ public class ServicioEventoTest
     [ExpectedException(typeof(Exception))]
     public void ActualizarEventoIdInvalido()
     {
-        Evento evento = new Evento("Titulo", "Desc", DateTime.Now, DateTime.Now.AddHours(2), 100, 50, EstadoEvento.Programado) { Id = 0 };
+        var evento = new Evento("Titulo", "Desc", DateTime.Now, DateTime.Now.AddHours(2), 100, 50, EstadoEvento.Programado) { Id = 0 };
         _servicioEvento!.ActualizarEvento(evento);
     }
 
@@ -163,7 +162,7 @@ public class ServicioEventoTest
     [ExpectedException(typeof(ArgumentException))]
     public void ActualizarEventoFechaInvalida()
     {
-        Evento evento = new Evento("Titulo", "Desc", DateTime.Now.AddHours(2), DateTime.Now, 100, 50, EstadoEvento.Programado) { Id = 1 };
+        var evento = new Evento("Titulo", "Desc", DateTime.Now.AddHours(2), DateTime.Now, 100, 50, EstadoEvento.Programado) { Id = 1 };
         _servicioEvento!.ActualizarEvento(evento);
     }
 
@@ -171,7 +170,7 @@ public class ServicioEventoTest
     [ExpectedException(typeof(ArgumentException))]
     public void ActualizarEventoAforoInvalido()
     {
-        Evento evento = new Evento("Titulo", "Desc", DateTime.Now, DateTime.Now.AddHours(2), 0, 50, EstadoEvento.Programado) { Id = 1 };
+        var evento = new Evento("Titulo", "Desc", DateTime.Now, DateTime.Now.AddHours(2), 0, 50, EstadoEvento.Programado) { Id = 1 };
         _servicioEvento!.ActualizarEvento(evento);
     }
 
@@ -179,8 +178,9 @@ public class ServicioEventoTest
     [ExpectedException(typeof(ArgumentException))]
     public void ActualizarEventoCostoNegativo()
     {
-        Evento evento = new Evento("Titulo", "Desc", DateTime.Now, DateTime.Now.AddHours(2), 100, -10,
-            EstadoEvento.Programado) { Id = 1 };
+        var evento = new Evento("Titulo", "Desc", DateTime.Now, DateTime.Now.AddHours(2), 100, -10,
+            EstadoEvento.Programado)
+        { Id = 1 };
         _servicioEvento!.ActualizarEvento(evento);
     }
 }

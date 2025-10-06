@@ -1,11 +1,11 @@
-using Moq;
+﻿using Moq;
 using Parque.Aplicacion;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
 using Parque.WebApi.Evento;
 using Parque.WebApi.Evento.Modelos;
 
-namespace Parque.WebApi.Test;
+namespace Parque.WebApi.Test.Controllers;
 
 [TestClass]
 public class EventoControllerTest
@@ -18,8 +18,8 @@ public class EventoControllerTest
     {
         _servicioEventoMock = new Mock<IServicioEvento>(MockBehavior.Strict);
         _controller = new EventoController(_servicioEventoMock.Object);
-        _atraccionesTest = new List<AtraccionParque>
-        {
+        _atraccionesTest =
+        [
             new AtraccionParque(
                 "Montaña Rusa Extrema",
                 TipoAtraccion.MontañaRusa,
@@ -38,7 +38,7 @@ public class EventoControllerTest
                 16,
                 30,
                 "Un Simulador oscuro lleno de sustos y sorpresas") { Id = 3 }
-        };
+        ];
     }
 
     [TestMethod]
@@ -73,7 +73,7 @@ public class EventoControllerTest
             request.Estado);
         expectedEvento.Atracciones = _atraccionesTest!;
 
-        _servicioEventoMock!.Setup(s => s.AgregarEvento(It.IsAny<Parque.Dominio.Evento>()))
+        _servicioEventoMock!.Setup(s => s.AgregarEvento(It.IsAny<Dominio.Evento>()))
             .Returns(expectedEvento);
 
         var response = _controller!.Crear(request);
