@@ -71,4 +71,26 @@ public class ServicioEventoTest
 
         mockRepo.Verify(r => r.Eliminar(It.IsAny<Expression<Func<Evento, bool>>>()), Times.Once);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void EliminarEventoPorIdInvalida()
+    {
+        var mockRepo = new Mock<IRepositorio<Evento>>();
+        var servicio = new ServicioEvento(mockRepo.Object);
+
+        servicio.EliminarEventoPorId(-10);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void EliminarEventoPorIdNoExistente()
+    {
+        var mockRepo = new Mock<IRepositorio<Evento>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>())).Returns((Evento)null!);
+
+        var servicio = new ServicioEvento(mockRepo.Object);
+
+        servicio.EliminarEventoPorId(10);
+    }
 }
