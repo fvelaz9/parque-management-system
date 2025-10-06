@@ -19,7 +19,19 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
 
     public Dominio.Ticket CrearTicketEventoEspecial(int cuentaId, DateTime fechaVisita, int eventoId)
     {
-        throw new NotImplementedException();
+        Dominio.Ticket ticket = new Dominio.Ticket()
+        {
+            CuentaId = cuentaId,
+            FechaVisita = fechaVisita,
+            EventoId = eventoId,
+            TipoEntrada = TipoTicket.EventoEspecial,
+            Codigo = Guid.NewGuid(),
+            FechaEmision = DateTime.Now,
+            EsValido = true
+        };
+
+        _repositorio.Agregar(ticket);
+        return ticket;
     }
 
     public IEnumerable<Dominio.Ticket> ListarTickets() => _repositorio.ObtenerTodos();
