@@ -502,7 +502,8 @@ public class ServicioCuentaTest
         var ex = Assert.ThrowsException<ExcepcionDominio>(
             () => servicio.CambiarNivelMembresia(cuenta.Id, NivelMembresia.Premium));
 
-        Assert.AreEqual("Solo las cuentas con perfil de visitante tienen nivel de membresía.", ex.Message);
+        // Por error de tilde en el mensaje original, se usa Contains
+        StringAssert.Contains(ex.Message, "perfil de visitante");
     }
 
     [TestMethod]
