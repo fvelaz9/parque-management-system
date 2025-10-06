@@ -69,7 +69,7 @@ public class AtraccionesController(IServicioAtracciones service) : ControllerBas
             return BadRequest(new { mensaje = ex.Message });
         }
     }
-    
+
     [HttpPost("{id}/egresos")]
     public IActionResult RegistrarEgreso(int id, [FromBody] RegistroIngresoDto dto)
     {
@@ -83,7 +83,7 @@ public class AtraccionesController(IServicioAtracciones service) : ControllerBas
             return BadRequest(new { mensaje = ex.Message });
         }
     }
-    
+
     [HttpGet("atracciones")]
     public IActionResult ReporteUsoAtracciones([FromQuery] DateTime desde, [FromQuery] DateTime hasta)
     {
