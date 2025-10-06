@@ -27,7 +27,7 @@ public class Visitante
 
         if(fecha < fechaMinima)
         {
-            throw new ExcepcionDominio("La edad máxima son 125 años.");
+            throw new ExcepcionDominio("La edad max es 125.");
         }
 
         if(fecha > DateTime.UtcNow)

@@ -1,4 +1,4 @@
-using Parque.Dominio.Excepciones;
+ï»¿using Parque.Dominio.Excepciones;
 using Parque.Dominio.Usuarios;
 
 namespace Parque.Dominio.Test.Usuarios;
@@ -94,7 +94,7 @@ public class VisitanteTest
         var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
             visitante.ActualizarFecha(fechaMuyAntigua));
 
-        Assert.AreEqual("La edad máxima son 125 años.", ex.Message);
+        Assert.AreEqual("La edad max es 125.", ex.Message);
     }
 
     [TestMethod]
