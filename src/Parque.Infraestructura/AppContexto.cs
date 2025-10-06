@@ -23,12 +23,10 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
             {
                 email.Property(e => e.Valor).HasColumnName("Email").IsRequired();
             });
-        });
-        modelBuilder.Entity<Cuenta>().OwnsOne(u => u.PasswordHash, pass =>
-        {
-            pass.Property(p => p.Valor)
-                .HasColumnName("PasswordHash")
-                .IsRequired();
+            builder.Property(u => u.Password)
+                .HasColumnName("Password")
+                .IsRequired()
+                .HasMaxLength(100);
         });
     }
 }
