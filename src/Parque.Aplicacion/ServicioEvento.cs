@@ -3,9 +3,14 @@ using Parque.Infraestructura.Repositorios;
 
 namespace Parque.Aplicacion;
 
-public class ServicioEvento(IRepositorio<Evento> repositorioEvento) : IServicioEvento
+public class ServicioEvento : IServicioEvento
 {
-    private readonly IRepositorio<Evento> _repositorioEvento = repositorioEvento;
+    private readonly IRepositorio<Evento> _repositorioEvento;
+    public ServicioEvento(IRepositorio<Evento> repositorioEvento)
+    {
+        _repositorioEvento = repositorioEvento;
+    }
+
     public Evento AgregarEvento(Evento evento)
     {
         throw new NotImplementedException();
