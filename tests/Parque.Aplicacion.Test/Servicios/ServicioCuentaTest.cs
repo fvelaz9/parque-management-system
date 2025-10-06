@@ -246,8 +246,7 @@ public class ServicioCuentaTest
         Assert.AreEqual("Rodríguez", resultado.Apellido);
         Assert.AreEqual("maria@admin.com", resultado.Email);
         Assert.IsTrue(resultado.Roles.Contains(Rol.Administrador.ToString()));
-        Assert.IsTrue(resultado.Roles.Contains(Rol.Visitante.ToString()));
-        Assert.AreEqual(2, resultado.Roles.Count());
+        Assert.AreEqual(1, resultado.Roles.Count());
         Assert.IsNull(resultado.Visitante);
 
         mockRepo.Verify(r => r.Agregar(It.IsAny<Cuenta>()), Times.Once);
