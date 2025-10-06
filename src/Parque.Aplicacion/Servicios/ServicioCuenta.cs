@@ -25,9 +25,10 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
         ValidarEmailUnico(dto.Email);
 
         var cuenta = CrearCuentaBase(dto.Nombre, dto.Apellido, dto.Email, dto.Password, dto.Rol);
-        if(dto.Rol == Rol.Visitante && dto.FechaNacimiento.HasValue)
+
+        if(dto.Rol == Rol.Visitante)
         {
-            cuenta.AsignarVisitante(dto.FechaNacimiento.Value);
+            AsignarPerfilVisitante(cuenta, dto);
         }
 
         if(dto.NivelMembresia.HasValue && cuenta.Visitante != null)
@@ -37,6 +38,21 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
 
         _cuentaRepo.Agregar(cuenta);
         return cuenta.ToDto();
+    }
+
+    private void AsignarPerfilVisitante(Cuenta cuenta, RegistrarCuentaDto dto)
+    {
+        if(!dto.FechaNacimiento.HasValue)
+        {
+            throw new ExcepcionDominio("La fecha de nacimiento es requerida para visitantes.");
+        }
+
+        cuenta.AsignarVisitante(dto.FechaNacimiento.Value);
+
+        if(dto.NivelMembresia.HasValue)
+        {
+            cuenta.Visitante!.AsignarMembresia(dto.NivelMembresia.Value);
+        }
     }
 
     private void ValidarEmailUnico(string email)
