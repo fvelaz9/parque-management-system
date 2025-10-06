@@ -33,7 +33,7 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
     public Dominio.Ticket BuscarTicket(int id)
     {
         var ticket = _repositorio.Encontrar(t => t.Id == id);
-        if (ticket == null)
+        if(ticket == null)
         {
             throw new ArgumentException("Ticket no encontrado");
         }
