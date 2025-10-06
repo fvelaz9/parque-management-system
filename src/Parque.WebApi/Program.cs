@@ -10,6 +10,9 @@ builder.Services.AddControllers();
 
 builder.Services.AddSingleton<IServicioFechaHora, ServicioFechaHora>();
 
+builder.Services.
+    AddScoped<IServicioCuenta, ServicioCuenta>();
+
 builder.Services.AddDbContext<AppContexto>(options => options.UseSqlServer("name=ConnectionStrings:DefaultConnection"));
 
 var app = builder.Build();
