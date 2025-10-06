@@ -13,13 +13,25 @@ public class ServicioEvento : IServicioEvento
 
     public Evento AgregarEvento(Evento evento)
     {
-        if(evento.Fin < evento.Inicio)
+        ArgumentNullException.ThrowIfNull(evento);
+
+        if (evento.Inicio >= evento.Fin)
         {
-            throw new InvalidOperationException("La fecha de fin no puede ser anterior a la de inicio.");
+            throw new ArgumentException("La fecha de inicio puede ser anterior a la fecha de fin.");
+        }
+
+        if (evento.AforoMaximo <= 0)
+        {
+            throw new ArgumentException("El aforo debe ser mayor a cero.");
+        }
+
+        if (evento.CostoAdicional < 0)
+        {
+            throw new ArgumentException("El costo adicional no puede ser negativo.");
         }
 
         _repositorioEvento.Agregar(evento);
-       return evento;
+        return evento;
     }
 
     public void EliminarEventoPorId(int eventoId)
