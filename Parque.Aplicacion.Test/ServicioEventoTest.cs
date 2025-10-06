@@ -93,4 +93,32 @@ public class ServicioEventoTest
 
         servicio.EliminarEventoPorId(10);
     }
+
+    [TestMethod]
+    public void ObtenerEventoPorId()
+    {
+        Evento evento = new Evento("asada", "Dagdasjh", DateTime.Now, DateTime.Now.AddHours(2), 100, 50, EstadoEvento.Programado) { Id = 1 };
+        _mockRepositorio!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>())).Returns(evento);
+
+        Evento resultado = _servicioEvento!.ObtenerEventoPorId(1);
+
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(evento.Id, resultado.Id);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void ObtenerEventoPorIdInvalido()
+    {
+        _servicioEvento!.ObtenerEventoPorId(0);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void ObtenerEventoPorIdNoExistente()
+    {
+        _mockRepositorio!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>())).Returns((Evento)null!);
+
+        _servicioEvento!.ObtenerEventoPorId(999);
+    }
 }
