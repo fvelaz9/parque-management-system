@@ -1,4 +1,4 @@
-using System.Linq.Expressions;
+Ôªøusing System.Linq.Expressions;
 using Moq;
 using Parque.Aplicacion.DTOs.Usuarios;
 using Parque.Aplicacion.Servicios;
@@ -23,7 +23,7 @@ public class ServicioCuentaTest
 
         var dto = new RegistrarVisitanteDto(
             "Juan",
-            "PÈrez",
+            "P√©rez",
             "juan@test.com",
             "password123",
             new DateTime(1990, 1, 1));
@@ -47,12 +47,12 @@ public class ServicioCuentaTest
     {
         // Arrange
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
-        var cuentaExistente = Cuenta.Crear("Juan", "PÈrez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        var cuentaExistente = Cuenta.Crear("Juan", "P√©rez", new Email("juan@test.com"), "password123", Rol.Visitante);
         mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
             .Returns(cuentaExistente);
 
         var servicio = new ServicioCuenta(mockRepo.Object);
-        var dto = new RegistrarVisitanteDto("Juan", "PÈrez", "juan@test.com", "pass", DateTime.Now);
+        var dto = new RegistrarVisitanteDto("Juan", "P√©rez", "juan@test.com", "pass", DateTime.Now);
 
         // Act & Assert
         var ex = Assert.ThrowsException<ExcepcionDominio>(() => servicio.RegistrarVisitante(dto));
@@ -68,7 +68,7 @@ public class ServicioCuentaTest
             .Returns((Cuenta)null!);
 
         var servicio = new ServicioCuenta(mockRepo.Object);
-        var dto = new RegistrarVisitanteDto("Juan", "PÈrez", "email-invalido", "password123", DateTime.Now);
+        var dto = new RegistrarVisitanteDto("Juan", "P√©rez", "email-invalido", "password123", DateTime.Now);
 
         // Act & Assert
         var ex = Assert.ThrowsException<ExcepcionDominio>(() => servicio.RegistrarVisitante(dto));
@@ -80,7 +80,7 @@ public class ServicioCuentaTest
         // Arrange
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
         var servicio = new ServicioCuenta(mockRepo.Object);
-        var dto = new RegistrarVisitanteDto(string.Empty, "PÈrez", "juan@test.com", "password123", DateTime.Now);
+        var dto = new RegistrarVisitanteDto(string.Empty, "P√©rez", "juan@test.com", "password123", DateTime.Now);
 
         // Act & Assert
         Assert.ThrowsException<ExcepcionDominio>(() => servicio.RegistrarVisitante(dto));
@@ -104,7 +104,7 @@ public class ServicioCuentaTest
         // Arrange
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
         var servicio = new ServicioCuenta(mockRepo.Object);
-        var dto = new RegistrarVisitanteDto("Juan", "PÈrez", "juan@test.com", string.Empty, DateTime.Now);
+        var dto = new RegistrarVisitanteDto("Juan", "P√©rez", "juan@test.com", string.Empty, DateTime.Now);
 
         // Act & Assert
         Assert.ThrowsException<ExcepcionDominio>(() => servicio.RegistrarVisitante(dto));
@@ -114,7 +114,7 @@ public class ServicioCuentaTest
     public void ModificarPerfil_TodosLosCampos_ActualizaCorrectamente()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Juan", "PÈrez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        var cuenta = Cuenta.Crear("Juan", "P√©rez", new Email("juan@test.com"), "password123", Rol.Visitante);
         cuenta.AsignarVisitante(new DateTime(1990, 1, 1));
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
@@ -122,14 +122,14 @@ public class ServicioCuentaTest
             .Returns(cuenta);
 
         var servicio = new ServicioCuenta(mockRepo.Object);
-        var dto = new ModificarPerfilDto("Carlos", "GÛmez", "carlos@test.com", new DateTime(1985, 5, 15));
+        var dto = new ModificarPerfilDto("Carlos", "G√≥mez", "carlos@test.com", new DateTime(1985, 5, 15));
 
         // Act
         servicio.ModificarPerfil(cuenta.Id, dto);
 
         // Assert
         Assert.AreEqual("Carlos", cuenta.Nombre);
-        Assert.AreEqual("GÛmez", cuenta.Apellido);
+        Assert.AreEqual("G√≥mez", cuenta.Apellido);
         Assert.AreEqual("carlos@test.com", cuenta.Email.Valor);
         Assert.AreEqual(new DateTime(1985, 5, 15), cuenta.Visitante!.FechaNacimiento);
         mockRepo.Verify(r => r.Editar(cuenta), Times.Once);
@@ -139,7 +139,7 @@ public class ServicioCuentaTest
     public void ModificarPerfil_SoloNombre_ActualizaSoloNombre()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Juan", "PÈrez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        var cuenta = Cuenta.Crear("Juan", "P√©rez", new Email("juan@test.com"), "password123", Rol.Visitante);
         cuenta.AsignarVisitante(new DateTime(1990, 1, 1));
         var apellidoOriginal = cuenta.Apellido;
         var emailOriginal = cuenta.Email.Valor;
@@ -184,7 +184,7 @@ public class ServicioCuentaTest
     public void ModificarPerfil_FechaSinVisitante_NoLanzaExcepcion()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Juan", "PÈrez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        var cuenta = Cuenta.Crear("Juan", "P√©rez", new Email("juan@test.com"), "password123", Rol.Visitante);
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
         mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
@@ -193,7 +193,7 @@ public class ServicioCuentaTest
         var servicio = new ServicioCuenta(mockRepo.Object);
         var dto = new ModificarPerfilDto(null, null, null, new DateTime(1990, 1, 1));
 
-        // Act - No debe lanzar excepciÛn, simplemente ignora
+        // Act - No debe lanzar excepci√≥n, simplemente ignora
         servicio.ModificarPerfil(cuenta.Id, dto);
 
         // Assert
@@ -205,7 +205,7 @@ public class ServicioCuentaTest
     public void ModificarPerfil_EmailInvalido_LanzaExcepcion()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Juan", "PÈrez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        var cuenta = Cuenta.Crear("Juan", "P√©rez", new Email("juan@test.com"), "password123", Rol.Visitante);
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
         mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
@@ -229,8 +229,8 @@ public class ServicioCuentaTest
 
         var servicio = new ServicioCuenta(mockRepo.Object);
         var dto = new RegistrarCuentaDto(
-            "MarÌa",
-            "RodrÌguez",
+            "Mar√≠a",
+            "Rodr√≠guez",
             "maria@admin.com",
             "admin123",
             Rol.Administrador,
@@ -242,8 +242,8 @@ public class ServicioCuentaTest
 
         // Assert
         Assert.IsNotNull(resultado);
-        Assert.AreEqual("MarÌa", resultado.Nombre);
-        Assert.AreEqual("RodrÌguez", resultado.Apellido);
+        Assert.AreEqual("Mar√≠a", resultado.Nombre);
+        Assert.AreEqual("Rodr√≠guez", resultado.Apellido);
         Assert.AreEqual("maria@admin.com", resultado.Email);
         Assert.IsTrue(resultado.Roles.Contains(Rol.Administrador.ToString()));
         Assert.AreEqual(1, resultado.Roles.Count());
@@ -263,7 +263,7 @@ public class ServicioCuentaTest
         var servicio = new ServicioCuenta(mockRepo.Object);
         var dto = new RegistrarCuentaDto(
             "Carlos",
-            "LÛpez",
+            "L√≥pez",
             "carlos@operador.com",
             "operador123",
             Rol.Operador,
@@ -276,7 +276,7 @@ public class ServicioCuentaTest
         // Assert
         Assert.IsNotNull(resultado);
         Assert.AreEqual("Carlos", resultado.Nombre);
-        Assert.AreEqual("LÛpez", resultado.Apellido);
+        Assert.AreEqual("L√≥pez", resultado.Apellido);
         Assert.IsTrue(resultado.Roles.Contains(Rol.Operador.ToString()));
         Assert.AreEqual(1, resultado.Roles.Count());
         Assert.IsNull(resultado.Visitante);
@@ -296,7 +296,7 @@ public class ServicioCuentaTest
         var fechaNacimiento = new DateTime(1990, 5, 15);
         var dto = new RegistrarCuentaDto(
             "Ana",
-            "GarcÌa",
+            "Garc√≠a",
             "ana@visitante.com",
             "visitante123",
             Rol.Visitante,
@@ -330,7 +330,7 @@ public class ServicioCuentaTest
         var fechaNacimiento = new DateTime(1985, 3, 20);
         var dto = new RegistrarCuentaDto(
             "Luis",
-            "Fern·ndez",
+            "Fern√°ndez",
             "luis@premium.com",
             "premium123",
             Rol.Visitante,
@@ -356,8 +356,8 @@ public class ServicioCuentaTest
         var servicio = new ServicioCuenta(mockRepo.Object);
         var fechaNacimiento = new DateTime(1988, 7, 10);
         var dto = new RegistrarCuentaDto(
-            "SofÌa",
-            "MartÌn",
+            "Sof√≠a",
+            "Mart√≠n",
             "sofia@vip.com",
             "vip123",
             Rol.Visitante,
@@ -451,7 +451,7 @@ public class ServicioCuentaTest
         var servicio = new ServicioCuenta(mockRepo.Object);
         var dto = new RegistrarCuentaDto(
             "Pedro",
-            "MartÌnez",
+            "Mart√≠nez",
             "pedro@test.com",
             "password123",
             Rol.Visitante,
@@ -469,7 +469,7 @@ public class ServicioCuentaTest
     public void CambiarNivelMembresia_VisitanteAPremium_CambiaCorrectamente()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Ana", "GarcÌa", new Email("ana@test.com"), "password123", Rol.Visitante);
+        var cuenta = Cuenta.Crear("Ana", "Garc√≠a", new Email("ana@test.com"), "password123", Rol.Visitante);
         cuenta.AsignarVisitante(new DateTime(1990, 1, 1));
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
@@ -548,7 +548,7 @@ public class ServicioCuentaTest
     public void CambiarNivelMembresia_PremiumAEstandar_CambiaCorrectamente()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("MarÌa", "Premium", new Email("maria@premium.com"), "password123", Rol.Visitante);
+        var cuenta = Cuenta.Crear("Mar√≠a", "Premium", new Email("maria@premium.com"), "password123", Rol.Visitante);
         cuenta.AsignarVisitante(new DateTime(1992, 3, 10));
         cuenta.Visitante!.AsignarMembresia(NivelMembresia.Premium);
 
@@ -569,7 +569,7 @@ public class ServicioCuentaTest
     public void ObtenerPorId_CuentaExistente_RetornaCuentaDto()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Juan", "PÈrez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        var cuenta = Cuenta.Crear("Juan", "P√©rez", new Email("juan@test.com"), "password123", Rol.Visitante);
         cuenta.AsignarVisitante(new DateTime(1990, 1, 1));
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
@@ -594,7 +594,7 @@ public class ServicioCuentaTest
     public void ObtenerPorId_CuentaAdministrador_RetornaAdminSinVisitante()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("MarÌa", "Admin", new Email("maria@admin.com"), "admin123", Rol.Administrador);
+        var cuenta = Cuenta.Crear("Mar√≠a", "Admin", new Email("maria@admin.com"), "admin123", Rol.Administrador);
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
         mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
@@ -608,7 +608,7 @@ public class ServicioCuentaTest
         // Assert
         Assert.IsNotNull(resultado);
         Assert.AreEqual(cuenta.Id, resultado.Id);
-        Assert.AreEqual("MarÌa", resultado.Nombre);
+        Assert.AreEqual("Mar√≠a", resultado.Nombre);
         Assert.AreEqual("Admin", resultado.Apellido);
         Assert.IsTrue(resultado.Roles.Contains(Rol.Administrador.ToString()));
         Assert.IsNull(resultado.Visitante);
@@ -659,7 +659,7 @@ public class ServicioCuentaTest
     {
         // Arrange
         var email = "ana@test.com";
-        var cuenta = Cuenta.Crear("Ana", "GarcÌa", new Email(email), "password123", Rol.Visitante);
+        var cuenta = Cuenta.Crear("Ana", "Garc√≠a", new Email(email), "password123", Rol.Visitante);
         cuenta.AsignarVisitante(new DateTime(1992, 3, 15));
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
@@ -675,7 +675,7 @@ public class ServicioCuentaTest
         Assert.IsNotNull(resultado);
         Assert.AreEqual(cuenta.Id, resultado.Id);
         Assert.AreEqual("Ana", resultado.Nombre);
-        Assert.AreEqual("GarcÌa", resultado.Apellido);
+        Assert.AreEqual("Garc√≠a", resultado.Apellido);
         Assert.AreEqual(email, resultado.Email);
     }
 
@@ -726,7 +726,7 @@ public class ServicioCuentaTest
         // Arrange
         var emailOriginal = "sofia@test.com";
         var emailConMayusculas = "SOFIA@TEST.COM";
-        var cuenta = Cuenta.Crear("SofÌa", "MartÌn", new Email(emailOriginal), "password123", Rol.Visitante);
+        var cuenta = Cuenta.Crear("Sof√≠a", "Mart√≠n", new Email(emailOriginal), "password123", Rol.Visitante);
         cuenta.AsignarVisitante(new DateTime(1988, 7, 10));
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
@@ -740,7 +740,7 @@ public class ServicioCuentaTest
 
         // Assert
         Assert.IsNotNull(resultado);
-        Assert.AreEqual("SofÌa", resultado.Nombre);
+        Assert.AreEqual("Sof√≠a", resultado.Nombre);
         Assert.AreEqual(emailOriginal, resultado.Email);
     }
 
