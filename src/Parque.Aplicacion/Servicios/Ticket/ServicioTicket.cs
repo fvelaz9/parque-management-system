@@ -10,8 +10,20 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
 
     public Dominio.Ticket CrearTicketGeneral(int cuentaId, DateTime fechaVisita)
     {
-        
-    } 
+        Dominio.Ticket ticket = new Dominio.Ticket
+        {
+            CuentaId = cuentaId,
+            FechaVisita = fechaVisita,
+            TipoEntrada = TipoTicket.General,
+            Codigo = Guid.NewGuid(),
+            FechaEmision = DateTime.Now,
+            EsValido = true
+        };
+
+        _repositorio.Agregar(ticket);
+        return ticket;
+    }
+
     public IEnumerable<Dominio.Ticket> ListarTickets() => _repositorio.ObtenerTodos();
 
     public Dominio.Ticket BuscarTicket(int id)
