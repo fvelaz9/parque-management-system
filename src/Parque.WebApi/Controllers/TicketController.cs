@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Parque.Aplicacion.DTOS;
 using Parque.Aplicacion.Servicios.Ticket;
+using Parque.Dominio;
 
 namespace Parque.WebApi.Controllers;
 
@@ -33,28 +34,46 @@ public class TicketController(IServicioTicket service) : ControllerBase
     [HttpPost]
     public IActionResult Create([FromBody] CrearTicketDto request)
     {
-        if(request == null)
+        if (request == null)
         {
-            return BadRequest("El cuerpo de la solicitud no puede ser nulo.");
+            return BadRequest("El request no puede ser nulo.");
         }
 
         try
         {
-            var creado = _service.CrearTicket(
-                request.CuentaId,
-                request.FechaVisita,
-                request.EventoId,
-                request.TipoEntrada);
+            Dominio.Ticket creado;
+
+            if (request.TipoEntrada == TipoTicket.General)
+            {
+                creado = _service.CrearTicketGeneral(request.CuentaId, request.FechaVisita);
+            }
+            else if (request.TipoEntrada == TipoTicket.EventoEspecial)
+            {
+                if (!request.EventoId.HasValue)
+                {
+                    return BadRequest("Debe especificar el eventoId para tickets de evento especial.");
+                }
+
+                creado = _service.CrearTicketEventoEspecial(request.CuentaId, request.FechaVisita, request.EventoId.Value);
+            }
+            else
+            {
+                return BadRequest("Tipo de ticket no válido.");
+            }
 
             return CreatedAtAction(nameof(GetById), new { id = creado.Id }, creado);
         }
-        catch(ArgumentException ex)
+        catch (ArgumentException ex)
         {
             return BadRequest(new { mensaje = ex.Message });
         }
-        catch(InvalidOperationException ex)
+        catch (InvalidOperationException ex)
         {
             return Conflict(new { mensaje = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { mensaje = $"Error interno: {ex.Message}" });
         }
     }
 
