@@ -20,8 +20,8 @@ public class RepositorioTest
         var nombre = "TestUserName";
         var apellido = "Pérez";
         var email = new Email("juan@test.com");
-        var password = new PasswordHash("hash123d12d12d12d12d1d1d31d");
-        _cuenta = Cuenta.Crear(nombre, apellido, email, password);
+        var password = "password123";
+        _cuenta = Cuenta.Crear(nombre, apellido, email, password, Rol.Visitante);
 
         _data = new List<Cuenta> { _cuenta }.AsQueryable();
 
@@ -45,8 +45,8 @@ public class RepositorioTest
         var nombre = "Juan";
         var apellido = "Pérez";
         var email = new Email("juan@test.com");
-        var password = new PasswordHash("hash123d12d12d12d12d1d1d31d");
-        var nuevaCuenta = Cuenta.Crear(nombre, apellido, email, password);
+        var password = "password123";
+        var nuevaCuenta = Cuenta.Crear(nombre, apellido, email, password, Rol.Visitante);
 
         // Mock the DbContext.Add method instead of DbSet.Add
         _appContextMock!.Setup(x => x.Add(It.IsAny<Cuenta>())).Verifiable();
@@ -89,8 +89,8 @@ public class RepositorioTest
         var nombre = "UsuarioModificado";
         var apellido = "Pérez";
         var email = new Email("juan@test.com");
-        var password = new PasswordHash("hash123d12d12d12d12d1d1d31d");
-        var cuentaModificada = Cuenta.Crear(nombre, apellido, email, password);
+        var password = "password123";
+        var cuentaModificada = Cuenta.Crear(nombre, apellido, email, password, Rol.Visitante);
 
         _mockSet!.Setup(m => m.Update(It.IsAny<Cuenta>())).Verifiable();
         _appContextMock!.Setup(x => x.SaveChanges()).Returns(1);

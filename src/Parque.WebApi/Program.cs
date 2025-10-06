@@ -6,11 +6,20 @@ using Parque.Infraestructura;
 using Parque.Infraestructura.Repositorios;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddControllers();
 builder.Services.AddScoped(typeof(IRepositorio<>), typeof(Repositorio<>));
+
 builder.Services.AddSingleton<IServicioFechaHora, ServicioFechaHora>();
+
+builder.Services.AddScoped(typeof(IRepositorio<>), typeof(Repositorio<>));
+
+builder.Services.AddScoped<IServicioCuenta, ServicioCuenta>();
+
 builder.Services.AddScoped<IServicioAtracciones, ServicioAtracciones>();
+
 builder.Services.AddScoped<IServicioTicket, ServicioTicket>();
+
 builder.Services.AddDbContext<AppContexto>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -21,7 +30,15 @@ builder.Services.AddDbContext<AppContexto>(options =>
                 maxRetryDelay: TimeSpan.FromSeconds(30),
                 errorNumbersToAdd: null);
         }));
+
+
+
+// Instancia Db anterior 
+// builder.Services.AddDbContext<AppContexto>(options => options.UseSqlServer("name=ConnectionStrings:DefaultConnection"));
+
+
 var app = builder.Build();
+
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppContexto>();

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Parque.Infraestructura;
 
@@ -11,9 +12,11 @@ using Parque.Infraestructura;
 namespace Parque.Infraestructura.Migrations
 {
     [DbContext(typeof(AppContexto))]
-    partial class AppContextoModelSnapshot : ModelSnapshot
+    [Migration("20251003201141_CambiarPasswordHashAPlanText")]
+    partial class CambiarPasswordHashAPlanText
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,31 +56,6 @@ namespace Parque.Infraestructura.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Atracciones");
-                });
-
-            modelBuilder.Entity("Parque.Dominio.Atracciones.RegistroVisita", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AtraccionId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("FechaEgreso")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("FechaIngreso")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("Identificador")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("RegistrosVisitas");
                 });
 
             modelBuilder.Entity("Parque.Dominio.Evento", b =>
@@ -134,10 +112,7 @@ namespace Parque.Infraestructura.Migrations
                     b.Property<int>("CuentaId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("EsValido")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("EventoId")
+                    b.Property<int>("EventoId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("FechaEmision")
@@ -145,9 +120,6 @@ namespace Parque.Infraestructura.Migrations
 
                     b.Property<DateTime>("FechaVisita")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("TipoEntrada")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
