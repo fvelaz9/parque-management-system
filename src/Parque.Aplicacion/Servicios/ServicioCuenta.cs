@@ -22,7 +22,10 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
 
     public CuentaDto CrearCuentaPorAdmin(RegistrarCuentaDto dto)
     {
-        throw new NotImplementedException();
+        var cuenta = CrearCuentaBase(dto.Nombre, dto.Apellido, dto.Email, dto.Password, dto.Rol);
+
+        _cuentaRepo.Agregar(cuenta);
+        return cuenta.ToDto();
     }
 
     private void ValidarEmailUnico(string email)
