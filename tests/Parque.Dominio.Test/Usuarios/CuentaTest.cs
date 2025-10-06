@@ -1,4 +1,4 @@
-using Parque.Dominio.Excepciones;
+Ôªøusing Parque.Dominio.Excepciones;
 using Parque.Dominio.Usuarios;
 
 namespace Parque.Dominio.Test.Usuarios;
@@ -11,7 +11,7 @@ public class CuentaTest
     {
         // Arrange
         var nombre = "Juan";
-        var apellido = "PÈrez";
+        var apellido = "P√©rez";
         var email = new Email("juan@test.com");
         var password = "password123";
 
@@ -31,7 +31,7 @@ public class CuentaTest
     {
         // Arrange
         var nombre = "Ana";
-        var apellido = "GarcÌa";
+        var apellido = "Garc√≠a";
         var email = new Email("ana@test.com");
         var password = "password123";
 
@@ -48,7 +48,7 @@ public class CuentaTest
     public void Crear_ConNombreVacio_DeberiaLanzarExcepcion()
     {
         // Arrange & Act & Assert
-        Cuenta.Crear(string.Empty, "PÈrez", new Email("test@mail.com"), "password123", Rol.Visitante);
+        Cuenta.Crear(string.Empty, "P√©rez", new Email("test@mail.com"), "password123", Rol.Visitante);
     }
 
     [TestMethod]
@@ -63,21 +63,21 @@ public class CuentaTest
     public void Crear_ConEmailNulo_DeberiaLanzarExcepcion()
     {
         Email email = null!;
-        Cuenta.Crear("Juan", "PÈrez", email, "password123", Rol.Visitante);
+        Cuenta.Crear("Juan", "P√©rez", email, "password123", Rol.Visitante);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Crear_ConPasswordNulo_DeberiaLanzarExcepcion()
     {
-        Cuenta.Crear("Juan", "PÈrez", new Email("test@mail.com"), null!, Rol.Visitante);
+        Cuenta.Crear("Juan", "P√©rez", new Email("test@mail.com"), null!, Rol.Visitante);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ExcepcionDominio))]
     public void Crear_ConNombreSoloEspacios_DeberiaLanzarExcepcion()
     {
-        Cuenta.Crear("   ", "PÈrez", new Email("test@mail.com"), "password123", Rol.Visitante);
+        Cuenta.Crear("   ", "P√©rez", new Email("test@mail.com"), "password123", Rol.Visitante);
     }
 
     [TestMethod]
@@ -91,7 +91,7 @@ public class CuentaTest
     public void Crear_ConNombreVacio_DeberiaLanzarExcepcionConMensajeCorrecto()
     {
         var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
-            Cuenta.Crear(string.Empty, "PÈrez", new Email("test@mail.com"), "password123", Rol.Visitante));
+            Cuenta.Crear(string.Empty, "P√©rez", new Email("test@mail.com"), "password123", Rol.Visitante));
 
         Assert.AreEqual("Nombre es requerido", ex.Message);
     }
@@ -125,12 +125,117 @@ public class CuentaTest
     }
 
     [TestMethod]
+    public void Crear_ConNombreMayorA100Caracteres_LanzaExcepcion()
+    {
+        // Arrange
+        var nombreLargo = new string('a', 101);
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
+            Cuenta.Crear(nombreLargo, "P√©rez", new Email("test@mail.com"), "password123", Rol.Visitante));
+
+        Assert.AreEqual("Nombre no puede tener m√°s de 100 caracteres", ex.Message);
+    }
+
+    [TestMethod]
+    public void Crear_ConApellidoMayorA100Caracteres_LanzaExcepcion()
+    {
+        // Arrange
+        var apellidoLargo = new string('b', 101);
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
+            Cuenta.Crear("Juan", apellidoLargo, new Email("test@mail.com"), "password123", Rol.Visitante));
+
+        Assert.AreEqual("Apellido no puede tener m√°s de 100 caracteres", ex.Message);
+    }
+
+    [TestMethod]
+    public void Crear_ConPasswordMayorA100Caracteres_LanzaExcepcion()
+    {
+        // Arrange
+        var passwordLarga = new string('c', 101);
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
+            Cuenta.Crear("Juan", "P√©rez", new Email("test@mail.com"), passwordLarga, Rol.Visitante));
+
+        Assert.AreEqual("Password no puede tener m√°s de 100 caracteres", ex.Message);
+    }
+
+    [TestMethod]
+    public void Crear_ConRolAdministrador_CreaCorrectamente()
+    {
+        // Arrange & Act
+        var cuenta = Cuenta.Crear("Admin", "User", new Email("admin@test.com"), "password123", Rol.Administrador);
+
+        // Assert
+        Assert.IsTrue(cuenta.Roles.Contains(Rol.Administrador));
+        Assert.AreEqual(1, cuenta.Roles.Count);
+    }
+
+    [TestMethod]
+    public void Crear_ConRolOperador_CreaCorrectamente()
+    {
+        // Arrange & Act
+        var cuenta = Cuenta.Crear("Operador", "User", new Email("operador@test.com"), "password123", Rol.Operador);
+
+        // Assert
+        Assert.IsTrue(cuenta.Roles.Contains(Rol.Operador));
+        Assert.AreEqual(1, cuenta.Roles.Count);
+    }
+
+    [TestMethod]
+    public void AsignarVisitante_ConFechaValida_AsignaCorrectamente()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "P√©rez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        var fechaNacimiento = new DateTime(1990, 1, 1);
+
+        // Act
+        cuenta.AsignarVisitante(fechaNacimiento);
+
+        // Assert
+        Assert.IsNotNull(cuenta.Visitante);
+        Assert.AreEqual(fechaNacimiento, cuenta.Visitante.FechaNacimiento);
+        Assert.AreEqual(NivelMembresia.Estandar, cuenta.Visitante.NivelMembresia);
+    }
+
+    [TestMethod]
+    public void AsignarVisitante_CuentaYaTieneVisitante_LanzaExcepcion()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "P√©rez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        cuenta.AsignarVisitante(new DateTime(1990, 1, 1));
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
+            cuenta.AsignarVisitante(new DateTime(1995, 5, 5)));
+
+        Assert.AreEqual("Esta cuenta ya tiene un visitante asignado", ex.Message);
+    }
+
+    [TestMethod]
+    public void ActualizarNombre_NombreValido_ActualizaCorrectamente()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "P√©rez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        var nuevoNombre = "Carlos";
+
+        // Act
+        cuenta.ActualizarNombre(nuevoNombre);
+
+        // Assert
+        Assert.AreEqual(nuevoNombre, cuenta.Nombre);
+    }
+
+    [TestMethod]
     public void ActualizarNombre_NombreVacio_LanzaExcepcionDominio()
     {
         // Arrange
         var cuenta = Cuenta.Crear(
             "Juan",
-            "PÈrez",
+            "P√©rez",
             new Email("juan@test.com"),
             "password123",
             Rol.Visitante);
@@ -146,7 +251,7 @@ public class CuentaTest
         // Arrange
         var cuenta = Cuenta.Crear(
             "Juan",
-            "PÈrez",
+            "P√©rez",
             new Email("juan@test.com"),
             "password123",
             Rol.Visitante);
@@ -162,7 +267,7 @@ public class CuentaTest
         // Arrange
         var cuenta = Cuenta.Crear(
             "Juan",
-            "PÈrez",
+            "P√©rez",
             new Email("juan@test.com"),
             "password123",
             Rol.Visitante);
@@ -178,7 +283,7 @@ public class CuentaTest
         // Arrange
         var cuenta = Cuenta.Crear(
             "Juan",
-            "PÈrez",
+            "P√©rez",
             new Email("juan@test.com"),
             "password123",
             Rol.Visitante);
@@ -192,7 +297,7 @@ public class CuentaTest
     public void AsignarRol_RolAdministrador_AsignaCorrectamente()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Juan", "PÈrez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        var cuenta = Cuenta.Crear("Juan", "P√©rez", new Email("juan@test.com"), "password123", Rol.Visitante);
 
         // Act
         cuenta.AgregarRol(Rol.Administrador);
@@ -206,7 +311,7 @@ public class CuentaTest
     public void AgregarRol_VariosRoles_AgregaTodos()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Juan", "PÈrez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        var cuenta = Cuenta.Crear("Juan", "P√©rez", new Email("juan@test.com"), "password123", Rol.Visitante);
 
         // Act
         cuenta.AgregarRol(Rol.Administrador);
@@ -223,7 +328,7 @@ public class CuentaTest
     public void AgregarRol_RolDuplicado_LanzaExcepcion()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Juan", "PÈrez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        var cuenta = Cuenta.Crear("Juan", "P√©rez", new Email("juan@test.com"), "password123", Rol.Visitante);
         cuenta.AgregarRol(Rol.Administrador);
 
         // Act & Assert
@@ -237,7 +342,7 @@ public class CuentaTest
     public void AgregarRol_VisitanteDuplicado_LanzaExcepcion()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Juan", "PÈrez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        var cuenta = Cuenta.Crear("Juan", "P√©rez", new Email("juan@test.com"), "password123", Rol.Visitante);
 
         // Act & Assert
         var ex = Assert.ThrowsException<ExcepcionDominio>(
@@ -250,7 +355,7 @@ public class CuentaTest
     public void AgregarRol_RolOperador_MantieneLosRolesExistentes()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Juan", "PÈrez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        var cuenta = Cuenta.Crear("Juan", "P√©rez", new Email("juan@test.com"), "password123", Rol.Visitante);
         cuenta.AgregarRol(Rol.Administrador);
 
         // Act
@@ -267,7 +372,7 @@ public class CuentaTest
     public void QuitarRol_RolExistente_QuitaCorrectamente()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Juan", "PÈrez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        var cuenta = Cuenta.Crear("Juan", "P√©rez", new Email("juan@test.com"), "password123", Rol.Visitante);
         cuenta.AgregarRol(Rol.Administrador);
         cuenta.AgregarRol(Rol.Operador);
 
@@ -285,7 +390,7 @@ public class CuentaTest
     public void QuitarRol_RolNoExistente_LanzaExcepcion()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Juan", "PÈrez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        var cuenta = Cuenta.Crear("Juan", "P√©rez", new Email("juan@test.com"), "password123", Rol.Visitante);
 
         // Act & Assert
         var ex = Assert.ThrowsException<ExcepcionDominio>(
@@ -298,7 +403,7 @@ public class CuentaTest
     public void QuitarRol_UltimoRol_LanzaExcepcion()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Juan", "PÈrez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        var cuenta = Cuenta.Crear("Juan", "P√©rez", new Email("juan@test.com"), "password123", Rol.Visitante);
 
         // Act & Assert
         var ex = Assert.ThrowsException<ExcepcionDominio>(
@@ -311,7 +416,7 @@ public class CuentaTest
     public void QuitarRol_DejaUnRol_NoLanzaExcepcion()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Juan", "PÈrez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        var cuenta = Cuenta.Crear("Juan", "P√©rez", new Email("juan@test.com"), "password123", Rol.Visitante);
         cuenta.AgregarRol(Rol.Administrador);
 
         // Act
@@ -327,7 +432,7 @@ public class CuentaTest
     public void QuitarRol_QuitaVariosRoles_MantieneLosRestantes()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Juan", "PÈrez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        var cuenta = Cuenta.Crear("Juan", "P√©rez", new Email("juan@test.com"), "password123", Rol.Visitante);
         cuenta.AgregarRol(Rol.Administrador);
         cuenta.AgregarRol(Rol.Operador);
 
@@ -346,7 +451,7 @@ public class CuentaTest
     public void QuitarRol_VisitanteConVariosRoles_QuitaCorrectamente()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Juan", "PÈrez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        var cuenta = Cuenta.Crear("Juan", "P√©rez", new Email("juan@test.com"), "password123", Rol.Visitante);
         cuenta.AgregarRol(Rol.Administrador);
 
         // Act
@@ -362,7 +467,7 @@ public class CuentaTest
     public void QuitarRol_OperadorNoExistente_LanzaExcepcion()
     {
         // Arrange
-        var cuenta = Cuenta.Crear("Juan", "PÈrez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        var cuenta = Cuenta.Crear("Juan", "P√©rez", new Email("juan@test.com"), "password123", Rol.Visitante);
         cuenta.AgregarRol(Rol.Administrador);
 
         // Act & Assert

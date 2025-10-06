@@ -124,4 +124,44 @@ public class VisitanteTest
         // Assert
         Assert.AreEqual(fechaActual, visitante.FechaNacimiento);
     }
+
+    [TestMethod]
+    public void AsignarMembresia_APremium_AsignaCorrectamente()
+    {
+        // Arrange
+        var visitante = Visitante.Crear(DateTime.UtcNow.AddYears(-25));
+
+        // Act
+        visitante.AsignarMembresia(NivelMembresia.Premium);
+
+        // Assert
+        Assert.AreEqual(NivelMembresia.Premium, visitante.NivelMembresia);
+    }
+
+    [TestMethod]
+    public void AsignarMembresia_AVIP_AsignaCorrectamente()
+    {
+        // Arrange
+        var visitante = Visitante.Crear(DateTime.UtcNow.AddYears(-30));
+
+        // Act
+        visitante.AsignarMembresia(NivelMembresia.VIP);
+
+        // Assert
+        Assert.AreEqual(NivelMembresia.VIP, visitante.NivelMembresia);
+    }
+
+    [TestMethod]
+    public void AsignarMembresia_AEstandar_AsignaCorrectamente()
+    {
+        // Arrange
+        var visitante = Visitante.Crear(DateTime.UtcNow.AddYears(-25));
+        visitante.AsignarMembresia(NivelMembresia.Premium);
+
+        // Act
+        visitante.AsignarMembresia(NivelMembresia.Estandar);
+
+        // Assert
+        Assert.AreEqual(NivelMembresia.Estandar, visitante.NivelMembresia);
+    }
 }
