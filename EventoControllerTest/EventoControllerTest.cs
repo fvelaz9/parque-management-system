@@ -154,4 +154,38 @@ public class EventoControllerTest
         Assert.IsNotNull(result);
         Assert.AreEqual(0, result.Count);
     }
+
+    [TestMethod]
+    public void EliminarEvento()
+    {
+        var eventoId = 1;
+        var eventoExistente = new Evento(
+            "Evento a eliminar",
+            "Descripción",
+            DateTime.Now,
+            DateTime.Now.AddHours(2),
+            100,
+            0,
+            EstadoEvento.Programado);
+
+        _servicioEventoMock!.Setup(s => s.ObtenerEventoPorId(eventoId))
+            .Returns(eventoExistente);
+        _servicioEventoMock.Setup(s => s.EliminarEventoPorId(eventoId));
+
+        _controller!.Eliminar(eventoId);
+
+        _servicioEventoMock.VerifyAll();
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void EliminarCuandoNoExiste()
+    {
+        var eventoId = 999;
+
+        _servicioEventoMock!.Setup(s => s.ObtenerEventoPorId(eventoId))
+            .Returns((Evento)null);
+
+        _controller!.Eliminar(eventoId);
+    }
 }
