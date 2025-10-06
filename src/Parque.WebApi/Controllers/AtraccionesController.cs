@@ -95,4 +95,18 @@ public class AtraccionesController(IServicioAtracciones service) : ControllerBas
         var reporte = _service.ObtenerReporteUso(desde, hasta);
         return Ok(reporte);
     }
+
+    [HttpGet("{id}/aforo")]
+    public IActionResult ObtenerAforo(int id)
+    {
+        try
+        {
+            var aforo = _service.ObtenerAforoActual(id);
+            return Ok(aforo);
+        }
+        catch (ArgumentException ex)
+        {
+            return NotFound(new { mensaje = ex.Message });
+        }
+    }
 }

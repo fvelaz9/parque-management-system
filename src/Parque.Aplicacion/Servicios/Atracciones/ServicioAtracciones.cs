@@ -27,8 +27,11 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRep
 
     public void ModificarAtraccion(int id, string nombre, TipoAtraccion tipo, int edadMinima, int capacidad, string descripcion)
     {
-        var atraccion = _repositorio.Encontrar(a => a.Id == id)
-                        ?? throw new ArgumentException("Atracción no encontrada");
+        var atraccion = _repositorio.Encontrar(a => a.Id == id);
+        if(atraccion == null)
+        {
+            throw new ArgumentException("Atraccion no encontrada");
+        }
 
         atraccion.Nombre = nombre;
         atraccion.Tipo = tipo;
@@ -46,7 +49,7 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRep
         var atraccion = _repositorio.Encontrar(a => a.Id == idAtraccion);
         if(atraccion == null)
         {
-            throw new ArgumentException("Atraccion no encontrado");
+            throw new ArgumentException("Atraccion no encontrada");
         }
 
         var registro = new RegistroVisita
@@ -99,9 +102,19 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRep
         var atraccion = _repositorio.Encontrar(d => d.Id == atraccionId);
         if(atraccion == null)
         {
-            return null;
+            throw new ArgumentException("Atraccion no encontrada");
         }
 
-        return null;
+        var aforo = _repositorioRegistros.ObtenerTodos()
+            .Count(r => r.AtraccionId == atraccionId && r.FechaEgreso == null);
+
+        return new AforoAtraccionDto
+        {
+            AtraccionId = atraccion.Id,
+            NombreAtraccion = atraccion.Nombre,
+            AforoActual = aforo,
+            CapacidadMaxima = atraccion.Capacidad,
+            Disponible = atraccion.Capacidad - aforo
+        };
     }
 }
