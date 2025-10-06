@@ -21,7 +21,7 @@ public static class VisitanteMapper
     {
         var hoy = DateTime.Today;
         var edad = hoy.Year - fechaNacimiento.Year;
-        if (fechaNacimiento.Date > hoy.AddYears(-edad))
+        if(fechaNacimiento.Date > hoy.AddYears(-edad))
         {
             edad--;
         }

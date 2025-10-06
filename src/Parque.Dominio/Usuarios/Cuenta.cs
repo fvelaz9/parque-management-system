@@ -33,7 +33,7 @@ public class Cuenta
 
     public void AsignarVisitante(DateTime fechaNacimiento)
     {
-        if (Visitante != null)
+        if(Visitante != null)
         {
             throw new ExcepcionDominio("Esta cuenta ya tiene un visitante asignado");
         }
@@ -108,7 +108,7 @@ public class Cuenta
 
     public void AgregarRol(Rol rol)
     {
-        if (_roles.Contains(rol))
+        if(_roles.Contains(rol))
         {
             throw new ExcepcionDominio($"La cuenta ya tiene el rol {rol}");
         }
