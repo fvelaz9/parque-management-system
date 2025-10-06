@@ -276,7 +276,7 @@ public class ServicioCuentaTest
         // Assert
         Assert.IsNotNull(resultado);
         Assert.AreEqual("Carlos", resultado.Nombre);
-        Assert.AreEqual("Rodríguez", resultado.Apellido);
+        Assert.AreEqual("López", resultado.Apellido);
         Assert.IsTrue(resultado.Roles.Contains(Rol.Operador.ToString()));
         Assert.AreEqual(1, resultado.Roles.Count());
         Assert.IsNull(resultado.Visitante);

@@ -23,6 +23,10 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
     public CuentaDto CrearCuentaPorAdmin(RegistrarCuentaDto dto)
     {
         var cuenta = CrearCuentaBase(dto.Nombre, dto.Apellido, dto.Email, dto.Password, dto.Rol);
+        if(dto.Rol == Rol.Visitante && dto.FechaNacimiento.HasValue)
+        {
+            cuenta.AsignarVisitante(dto.FechaNacimiento.Value);
+        }
 
         _cuentaRepo.Agregar(cuenta);
         return cuenta.ToDto();
