@@ -82,4 +82,43 @@ public class EventoControllerTest
         Assert.IsNotNull(response);
         Assert.IsInstanceOfType(response, typeof(CreateEventoResponse));
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void CrearConTituloNull()
+    {
+        var request = new CreateEventoRequest
+        {
+            Titulo = " ",
+            AforoMaximo = 10
+        };
+
+        _controller!.Crear(request);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void CrearConAforoMaximo0()
+    {
+        var request = new CreateEventoRequest
+        {
+            Titulo = "Test Event",
+            AforoMaximo = 0
+        };
+
+        _controller!.Crear(request);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void CrearAforoNegativo()
+    {
+        var request = new CreateEventoRequest
+        {
+            Titulo = "Test Event",
+            AforoMaximo = -5
+        };
+
+        _controller!.Crear(request);
+    }
 }
