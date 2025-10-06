@@ -485,4 +485,23 @@ public class ServicioCuentaTest
         Assert.AreEqual(NivelMembresia.Premium, cuenta.Visitante!.NivelMembresia);
         mockRepo.Verify(r => r.Editar(cuenta), Times.Once);
     }
+
+    [TestMethod]
+    public void CambiarNivelMembresia_CuentaSinVisitante_LanzaExcepcion()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Pedro", "Admin", new Email("pedro@admin.com"), "admin123", Rol.Administrador);
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionDominio>(
+            () => servicio.CambiarNivelMembresia(cuenta.Id, NivelMembresia.Premium));
+
+        Assert.AreEqual("Solo las cuentas con perfil de visitante tienen nivel de membresía.", ex.Message);
+    }
 }
