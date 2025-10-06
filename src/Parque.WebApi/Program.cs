@@ -30,10 +30,6 @@ builder.Services.AddDbContext<AppContexto>(options =>
                 maxRetryDelay: TimeSpan.FromSeconds(30),
                 errorNumbersToAdd: null);
         }));
-
-// Instancia Db anterior 
-// builder.Services.AddDbContext<AppContexto>(options => options.UseSqlServer("name=ConnectionStrings:DefaultConnection"));
-
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
