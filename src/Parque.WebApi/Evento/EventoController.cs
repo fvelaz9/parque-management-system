@@ -52,4 +52,10 @@ public class EventoController(IServicioEvento servicioEvento) : ControllerBase
         Dominio.Evento evento = servicioEvento.ObtenerEventoPorId(eventoId);
         return new EventoOutDto(evento);
     }
+
+    [HttpDelete("{eventoId}")]
+    public void Eliminar(int eventoId)
+    {
+        servicioEvento.EliminarEventoPorId(eventoId);
+    }
 }
