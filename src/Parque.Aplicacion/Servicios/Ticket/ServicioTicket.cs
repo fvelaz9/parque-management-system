@@ -10,6 +10,11 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
 
     public Dominio.Ticket CrearTicketGeneral(int cuentaId, DateTime fechaVisita)
     {
+        if (fechaVisita <= DateTime.Now)
+        {
+            throw new ArgumentException("La fecha de visita debe ser futura");
+        }
+
         Dominio.Ticket ticket = new Dominio.Ticket
         {
             CuentaId = cuentaId,
