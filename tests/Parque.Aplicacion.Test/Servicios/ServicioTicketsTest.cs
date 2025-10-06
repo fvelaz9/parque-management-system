@@ -37,6 +37,16 @@ public class ServicioTicketsTest
     }
 
     [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CrearTicketGeneralConFechaInvalida()
+    {
+        var cuentaId = 123;
+        DateTime fechaVisita = DateTime.Now.AddMinutes(-5);
+
+        _servicio.CrearTicketGeneral(cuentaId, fechaVisita);
+    }
+
+    [TestMethod]
     public void ListarTickets_DeberiaRetornarTodosLosTickets()
     {
         // Arrange
