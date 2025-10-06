@@ -371,4 +371,32 @@ public class ServicioCuentaTest
         Assert.IsNotNull(resultado.Visitante);
         Assert.AreEqual(NivelMembresia.VIP.ToString(), resultado.Visitante.NivelMembresia);
     }
+
+    [TestMethod]
+    public void CrearCuentaPorAdmin_EmailDuplicado_LanzaExcepcion()
+    {
+        // Arrange
+        var cuentaExistente = Cuenta.Crear("Usuario", "Existente",
+            new Email("duplicado@test.com"), "password123", Rol.Visitante);
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuentaExistente);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var dto = new RegistrarCuentaDto(
+            "Nuevo",
+            "Usuario",
+            "duplicado@test.com",
+            "password123",
+            Rol.Administrador,
+            null,
+            null);
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionDominio>(
+            () => servicio.CrearCuentaPorAdmin(dto));
+
+        Assert.AreEqual("Ya existe una cuenta con este email.", ex.Message);
+    }
 }
