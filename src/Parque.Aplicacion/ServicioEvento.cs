@@ -36,11 +36,19 @@ public class ServicioEvento : IServicioEvento
 
     public void EliminarEventoPorId(int eventoId)
     {
-        Evento evento = _repositorioEvento.Encontrar(e => e.Id == eventoId);
-        if (evento != null)
+        if (eventoId <= 0)
         {
-            _repositorioEvento.Eliminar(e => e.Id == eventoId);
+            throw new Exception("El ID debe ser mayor a cero.");
         }
+
+        Evento evento = _repositorioEvento.Encontrar(e => e.Id == eventoId);
+
+        if (evento == null)
+        {
+            throw new Exception($"No se encontró un evento con ID {eventoId}.");
+        }
+
+        _repositorioEvento.Eliminar(e => e.Id == eventoId);
     }
 
     public Evento ObtenerEventoPorId(int eventoId)
