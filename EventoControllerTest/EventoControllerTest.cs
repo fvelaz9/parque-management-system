@@ -121,4 +121,37 @@ public class EventoControllerTest
 
         _controller!.Crear(request);
     }
+
+    [TestMethod]
+    public void ListarEventos()
+    {
+        var eventos = new List<Evento>
+        {
+            new Evento("Event 1", "Dojpug", DateTime.Now, DateTime.Now.AddHours(1), 50, 0, EstadoEvento.Programado),
+            new Evento("Event 2", "ghuogpi", DateTime.Now, DateTime.Now.AddHours(2), 100, 10, EstadoEvento.Cancelado)
+        };
+
+        _servicioEventoMock!.Setup(s => s.ListarEventos()).Returns(eventos);
+
+        var result = _controller!.Listar();
+
+        _servicioEventoMock.VerifyAll();
+        Assert.IsNotNull(result);
+        Assert.AreEqual(2, result.Count);
+        Assert.IsInstanceOfType(result, typeof(List<EventoOutDto>));
+    }
+
+    [TestMethod]
+    public void ListaSinEventos()
+    {
+        var eventos = new List<Evento>();
+
+        _servicioEventoMock!.Setup(s => s.ListarEventos()).Returns(eventos);
+
+        var result = _controller!.Listar();
+
+        _servicioEventoMock.VerifyAll();
+        Assert.IsNotNull(result);
+        Assert.AreEqual(0, result.Count);
+    }
 }
