@@ -5,7 +5,7 @@ using Parque.Dominio.Atracciones;
 using Parque.WebApi.Evento;
 using Parque.WebApi.Evento.Modelos;
 
-namespace EventoControllerTest;
+namespace Parque.WebApi.Test;
 
 [TestClass]
 public class EventoControllerTest
@@ -63,7 +63,7 @@ public class EventoControllerTest
             Atracciones = _atraccionesTest!.ToList()
         };
 
-        var expectedEvento = new Evento(
+        var expectedEvento = new Dominio.Evento(
             request.Titulo,
             request.Descripcion,
             request.Inicio,
@@ -73,7 +73,7 @@ public class EventoControllerTest
             request.Estado);
         expectedEvento.Atracciones = _atraccionesTest!;
 
-        _servicioEventoMock!.Setup(s => s.AgregarEvento(It.IsAny<Evento>()))
+        _servicioEventoMock!.Setup(s => s.AgregarEvento(It.IsAny<Parque.Dominio.Evento>()))
             .Returns(expectedEvento);
 
         var response = _controller!.Crear(request);
@@ -125,10 +125,10 @@ public class EventoControllerTest
     [TestMethod]
     public void ListarEventos()
     {
-        var eventos = new List<Evento>
+        var eventos = new List<Dominio.Evento>
         {
-            new Evento("Event 1", "Dojpug", DateTime.Now, DateTime.Now.AddHours(1), 50, 0, EstadoEvento.Programado),
-            new Evento("Event 2", "ghuogpi", DateTime.Now, DateTime.Now.AddHours(2), 100, 10, EstadoEvento.Cancelado)
+            new Dominio.Evento("Event 1", "Dojpug", DateTime.Now, DateTime.Now.AddHours(1), 50, 0, EstadoEvento.Programado),
+            new Dominio.Evento("Event 2", "ghuogpi", DateTime.Now, DateTime.Now.AddHours(2), 100, 10, EstadoEvento.Cancelado)
         };
 
         _servicioEventoMock!.Setup(s => s.ListarEventos()).Returns(eventos);
@@ -144,7 +144,7 @@ public class EventoControllerTest
     [TestMethod]
     public void ListaSinEventos()
     {
-        var eventos = new List<Evento>();
+        var eventos = new List<Dominio.Evento>();
 
         _servicioEventoMock!.Setup(s => s.ListarEventos()).Returns(eventos);
 
@@ -159,7 +159,7 @@ public class EventoControllerTest
     public void EliminarEvento()
     {
         var eventoId = 1;
-        var eventoExistente = new Evento(
+        var eventoExistente = new Dominio.Evento(
             "Evento a eliminar",
             "Descripción",
             DateTime.Now,
@@ -184,7 +184,7 @@ public class EventoControllerTest
         var eventoId = 999;
 
         _servicioEventoMock!.Setup(s => s.ObtenerEventoPorId(eventoId))
-            .Returns((Evento)null);
+            .Returns((Dominio.Evento)null!);
 
         _controller!.Eliminar(eventoId);
     }

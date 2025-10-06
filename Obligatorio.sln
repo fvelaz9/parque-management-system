@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parque.Infraestructura.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parque.Aplicacion.Test", "Parque.Aplicacion.Test\Parque.Aplicacion.Test.csproj", "{3977E2B8-6D7E-4D17-84D2-20C78C039C24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventoControllerTest", "EventoControllerTest\EventoControllerTest.csproj", "{3203E319-D6ED-4892-8DE8-103F968E50BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Parque.WebApi.Test", "Parque.WebApi.Test\Parque.WebApi.Test.csproj", "{3203E319-D6ED-4892-8DE8-103F968E50BB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
