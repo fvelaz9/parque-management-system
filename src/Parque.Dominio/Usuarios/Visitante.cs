@@ -27,12 +27,23 @@ public class Visitante
 
         if(fecha < fechaMinima)
         {
-            throw new ExcepcionDominio("La edad máxima son 125 años");
+            throw new ExcepcionDominio("La edad max es 125.");
         }
 
         if(fecha > DateTime.UtcNow)
         {
             throw new ExcepcionDominio("La fecha de nacimiento no puede ser en el futuro");
         }
+    }
+
+    public void ActualizarFecha(DateTime fecha)
+    {
+        ValidarFecha(fecha);
+        FechaNacimiento = fecha;
+    }
+
+    public void AsignarMembresia(NivelMembresia nivel)
+    {
+        NivelMembresia = nivel;
     }
 }

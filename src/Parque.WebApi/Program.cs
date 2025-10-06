@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Parque.Aplicacion.Servicios;
 using Parque.Infraestructura;
+using Parque.Infraestructura.Repositorios;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 builder.Services.AddSingleton<IServicioFechaHora, ServicioFechaHora>();
+
+builder.Services.AddScoped<IServicioCuenta, ServicioCuenta>();
+
+builder.Services.AddScoped(typeof(IRepositorio<>), typeof(Repositorio<>));
 
 builder.Services.AddDbContext<AppContexto>(options => options.UseSqlServer("name=ConnectionStrings:DefaultConnection"));
 
