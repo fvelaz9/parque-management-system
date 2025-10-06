@@ -47,6 +47,27 @@ public class ServicioTicketsTest
     }
 
     [TestMethod]
+    public void CrearTicketEventoEspecialValido()
+    {
+        var cuentaId = 1;
+        var fechaVisita = DateTime.Now.AddDays(3);
+        var eventoId = 10;
+        Evento evento = new Evento("Festival", "Música", DateTime.Now, DateTime.Now.AddDays(10), 100, 50, EstadoEvento.Programado);
+
+        _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
+            .Returns(evento);
+        _repositorioMock.Setup(r => r.ObtenerTodos()).Returns(new List<Ticket>());
+
+        Ticket ticket = _servicio.CrearTicketEventoEspecial(cuentaId, fechaVisita, eventoId);
+
+        Assert.IsNotNull(ticket);
+        Assert.AreEqual(cuentaId, ticket.CuentaId);
+        Assert.AreEqual(eventoId, ticket.EventoId);
+        Assert.AreEqual(TipoTicket.EventoEspecial, ticket.TipoEntrada);
+        _repositorioMock.Verify(r => r.Agregar(It.IsAny<Ticket>()), Times.Once);
+    }
+
+    [TestMethod]
     public void ListarTickets_DeberiaRetornarTodosLosTickets()
     {
         // Arrange
