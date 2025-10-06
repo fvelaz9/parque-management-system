@@ -165,7 +165,7 @@ public class EventoControllerTest
             DateTime.Now,
             DateTime.Now.AddHours(2),
             100,
-            0,
+            10,
             EstadoEvento.Programado);
 
         _servicioEventoMock!.Setup(s => s.ObtenerEventoPorId(eventoId))
@@ -179,13 +179,105 @@ public class EventoControllerTest
 
     [TestMethod]
     [ExpectedException(typeof(Exception))]
-    public void EliminarCuandoNoExiste()
+    public void EliminarEventoNoExistente()
     {
         var eventoId = 999;
 
         _servicioEventoMock!.Setup(s => s.ObtenerEventoPorId(eventoId))
-            .Returns((Dominio.Evento)null!);
+            .Throws(new Exception($"No se encontró un evento con ID {eventoId}."));
 
         _controller!.Eliminar(eventoId);
+    }
+
+    [TestMethod]
+    public void ObtenerPorIdEvento()
+    {
+        var eventoId = 1;
+        var expectedEvento = new Dominio.Evento("Evento", "dsfsa",
+            DateTime.Now, DateTime.Now.AddHours(1), 100, 0, EstadoEvento.Programado);
+
+        _servicioEventoMock!.Setup(s => s.ObtenerEventoPorId(eventoId)).Returns(expectedEvento);
+        var result = _controller!.ObtenerPorId(eventoId);
+        _servicioEventoMock.VerifyAll();
+        Assert.IsNotNull(result);
+        Assert.IsInstanceOfType(result, typeof(EventoOutDto));
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void ObtenerPorIdNoExistente()
+    {
+        var eventoId = 999;
+        Dominio.Evento? nullEvento = null;
+
+        _servicioEventoMock!.Setup(s => s.ObtenerEventoPorId(eventoId))
+            .Throws(new Exception($"No se encontró un evento con ID {eventoId}."));
+
+        _controller!.ObtenerPorId(eventoId);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void ActualizarNull()
+    {
+        var eventoId = 1;
+
+        _controller!.Actualizar(eventoId, null!);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(Exception))]
+    public void ActualizarNoExistente()
+    {
+        var eventoId = 999;
+        var request = new UpdateEventoRequest
+        {
+            Titulo = "Usdfadale"
+        };
+
+        _servicioEventoMock!.Setup(s => s.ObtenerEventoPorId(eventoId))
+                           .Throws(new Exception($"No se encontró un evento con ID {eventoId}."));
+
+        _controller!.Actualizar(eventoId, request);
+    }
+
+    [TestMethod]
+    public void ActualizarEvento()
+    {
+        var eventoId = 1;
+        var request = new UpdateEventoRequest
+        {
+            Titulo = "hkslha",
+            Descripcion = "adfads",
+            Inicio = DateTime.Now.AddDays(1),
+            Fin = DateTime.Now.AddDays(1).AddHours(3),
+            AforoMaximo = 200,
+            CostoAdicional = 25,
+            Estado = EstadoEvento.Cancelado
+        };
+
+        var existingEvento = new Dominio.Evento(
+            "adfs",
+            "dfgs",
+            DateTime.Now,
+            DateTime.Now.AddHours(1),
+            100,
+            0,
+            EstadoEvento.Programado);
+
+        _servicioEventoMock!.Setup(s => s.ObtenerEventoPorId(eventoId))
+                           .Returns(existingEvento);
+        _servicioEventoMock.Setup(s => s.ActualizarEvento(It.IsAny<Dominio.Evento>()));
+
+        _controller!.Actualizar(eventoId, request);
+
+        _servicioEventoMock.VerifyAll();
+        Assert.AreEqual(request.Titulo, existingEvento.Titulo);
+        Assert.AreEqual(request.Descripcion, existingEvento.Descripcion);
+        Assert.AreEqual(request.Inicio.Value, existingEvento.Inicio);
+        Assert.AreEqual(request.Fin.Value, existingEvento.Fin);
+        Assert.AreEqual(request.AforoMaximo.Value, existingEvento.AforoMaximo);
+        Assert.AreEqual(request.CostoAdicional.Value, existingEvento.CostoAdicional);
+        Assert.AreEqual(request.Estado.Value, existingEvento.Estado);
     }
 }
