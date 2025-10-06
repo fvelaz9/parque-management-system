@@ -31,13 +31,23 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
             AsignarPerfilVisitante(cuenta, dto);
         }
 
-        if(dto.NivelMembresia.HasValue && cuenta.Visitante != null)
-        {
-            cuenta.Visitante.AsignarMembresia(dto.NivelMembresia.Value);
-        }
-
         _cuentaRepo.Agregar(cuenta);
         return cuenta.ToDto();
+    }
+
+    public void ModificarPerfil(Guid cuentaId, ModificarPerfilDto dto)
+    {
+        var cuenta = ObtenerCuenta(cuentaId);
+
+        ActualizarDatosPersonales(cuenta, dto);
+        ActualizarFechaVisitante(cuenta, dto.FechaNacimiento);
+
+        _cuentaRepo.Editar(cuenta);
+    }
+
+    public void CambiarNivelMembresia(Guid cuentaId, NivelMembresia nuevoNivel)
+    {
+        throw new NotImplementedException();
     }
 
     private void AsignarPerfilVisitante(Cuenta cuenta, RegistrarCuentaDto dto)
@@ -68,16 +78,6 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
     {
         var emailObj = new Email(email);
         return Cuenta.Crear(nombre, apellido, emailObj, password, rolInicial);
-    }
-
-    public void ModificarPerfil(Guid cuentaId, ModificarPerfilDto dto)
-    {
-        var cuenta = ObtenerCuenta(cuentaId);
-
-        ActualizarDatosPersonales(cuenta, dto);
-        ActualizarFechaVisitante(cuenta, dto.FechaNacimiento);
-
-        _cuentaRepo.Editar(cuenta);
     }
 
     private Cuenta ObtenerCuenta(Guid cuentaId)

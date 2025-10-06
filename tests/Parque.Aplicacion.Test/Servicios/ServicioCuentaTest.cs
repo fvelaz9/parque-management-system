@@ -464,4 +464,25 @@ public class ServicioCuentaTest
 
         Assert.AreEqual("La fecha de nacimiento es requerida para visitantes.", ex.Message);
     }
+
+    [TestMethod]
+    public void CambiarNivelMembresia_VisitanteAPremium_CambiaCorrectamente()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Ana", "García", new Email("ana@test.com"), "password123", Rol.Visitante);
+        cuenta.AsignarVisitante(new DateTime(1990, 1, 1));
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+
+        // Act
+        servicio.CambiarNivelMembresia(cuenta.Id, NivelMembresia.Premium);
+
+        // Assert
+        Assert.AreEqual(NivelMembresia.Premium, cuenta.Visitante!.NivelMembresia);
+        mockRepo.Verify(r => r.Editar(cuenta), Times.Once);
+    }
 }
