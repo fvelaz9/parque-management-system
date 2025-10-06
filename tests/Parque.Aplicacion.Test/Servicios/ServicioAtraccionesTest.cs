@@ -166,4 +166,48 @@ public class ServicioAtraccionesTest
         // Act
         _servicio.RegistrarEgreso(Guid.NewGuid(), 1);
     }
+
+    [TestMethod]
+    public void ObtenerAforoActual_AtraccionExiste_DeberiaRetornarAforoCorrectamente()
+    {
+        // Arrange
+        var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.MontañaRusa, 12, 24, "Test");
+        var registros = new List<RegistroVisita>
+        {
+            new() { AtraccionId = 1, FechaIngreso = DateTime.Now, FechaEgreso = null },
+            new() { AtraccionId = 1, FechaIngreso = DateTime.Now, FechaEgreso = null },
+            new() { AtraccionId = 1, FechaIngreso = DateTime.Now, FechaEgreso = DateTime.Now },
+            new() { AtraccionId = 2, FechaIngreso = DateTime.Now, FechaEgreso = null }
+        };
+
+        _mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
+            .Returns(atraccion);
+        _mockRepoRegistros.Setup(r => r.ObtenerTodos()).Returns(registros);
+
+        // Act
+        var resultado = _servicio.ObtenerAforoActual(1);
+
+        // Assert
+        Assert.AreEqual("Montaña Rusa", resultado.NombreAtraccion);
+        Assert.AreEqual(2, resultado.AforoActual);
+        Assert.AreEqual(24, resultado.CapacidadMaxima);
+        Assert.AreEqual(22, resultado.Disponible);
+    }
+
+    [TestMethod]
+    public void ObtenerAforoActual_SinVisitantes_DeberiaRetornarAforoCero()
+    {
+        // Arrange
+        var atraccion = new AtraccionParque("Simulador VR", TipoAtraccion.Simulador, 8, 12, "Test");
+        _mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
+            .Returns(atraccion);
+        _mockRepoRegistros.Setup(r => r.ObtenerTodos()).Returns(new List<RegistroVisita>());
+
+        // Act
+        var resultado = _servicio.ObtenerAforoActual(1);
+
+        // Assert
+        Assert.AreEqual(0, resultado.AforoActual);
+        Assert.AreEqual(12, resultado.Disponible);
+    }
 }
