@@ -7,8 +7,6 @@ using Parque.Infraestructura.Repositorios;
 namespace Parque.Aplicacion.Servicios;
 public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
 {
-    private readonly IRepositorio<Cuenta> _cuentaRepo = cuentaRepo;
-
     public CuentaDto RegistrarVisitante(RegistrarVisitanteDto dto)
     {
         ValidarEmailUnico(dto.Email);
@@ -16,7 +14,7 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
         var cuenta = CrearCuentaBase(dto.Nombre, dto.Apellido, dto.Email, dto.Password, Rol.Visitante);
         cuenta.AsignarVisitante(dto.FechaNacimiento);
 
-        _cuentaRepo.Agregar(cuenta);
+        cuentaRepo.Agregar(cuenta);
         return cuenta.ToDto();
     }
 
@@ -31,7 +29,7 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
             AsignarPerfilVisitante(cuenta, dto);
         }
 
-        _cuentaRepo.Agregar(cuenta);
+        cuentaRepo.Agregar(cuenta);
         return cuenta.ToDto();
     }
 
@@ -42,7 +40,7 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
         ActualizarDatosPersonales(cuenta, dto);
         ActualizarFechaVisitante(cuenta, dto.FechaNacimiento);
 
-        _cuentaRepo.Editar(cuenta);
+        cuentaRepo.Editar(cuenta);
     }
 
     public void CambiarNivelMembresia(Guid cuentaId, NivelMembresia nuevoNivel)
@@ -55,7 +53,7 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
         }
 
         cuenta.Visitante.AsignarMembresia(nuevoNivel);
-        _cuentaRepo.Editar(cuenta);
+        cuentaRepo.Editar(cuenta);
     }
 
     public CuentaDto ObtenerPorId(Guid id)
@@ -66,7 +64,7 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
 
     public CuentaDto ObtenerPorEmail(string email)
     {
-        var cuenta = _cuentaRepo.Encontrar(c => c.Email.Valor == email)
+        var cuenta = cuentaRepo.Encontrar(c => c.Email.Valor == email)
             ?? throw new ExcepcionEntidadNoEncontrada($"Cuenta con email {email} no encontrada.");
 
         return cuenta.ToDto();
@@ -89,7 +87,7 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
 
     private void ValidarEmailUnico(string email)
     {
-        var cuentaExistente = _cuentaRepo.Encontrar(c => c.Email.Valor == email);
+        var cuentaExistente = cuentaRepo.Encontrar(c => c.Email.Valor == email);
         if(cuentaExistente != null)
         {
             throw new ExcepcionDominio("Ya existe una cuenta con este email.");
@@ -104,7 +102,7 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
 
     private Cuenta ObtenerCuenta(Guid cuentaId)
     {
-        return _cuentaRepo.Encontrar(c => c.Id == cuentaId)
+        return cuentaRepo.Encontrar(c => c.Id == cuentaId)
             ?? throw new ExcepcionEntidadNoEncontrada("Cuenta no encontrada");
     }
 
