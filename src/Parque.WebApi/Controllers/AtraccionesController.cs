@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Parque.Aplicacion.DTOS;
 using Parque.Aplicacion.Servicios.Atracciones;
 using Parque.Dominio.Atracciones;
 
@@ -53,5 +54,19 @@ public class AtraccionesController(IServicioAtracciones service) : ControllerBas
     {
         _service.EliminarAtraccion(id);
         return NoContent();
+    }
+
+    [HttpPost("{id}/ingresos")]
+    public IActionResult RegistrarIngresos(int id, [FromBody] RegistroIngresoDto dto)
+    {
+        try
+        {
+            var registro = _service.RegistrarIngreso(dto.Identificador, id);
+            return Ok(registro);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { mensaje = ex.Message });
+        }
     }
 }

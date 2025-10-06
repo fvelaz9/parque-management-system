@@ -2,9 +2,10 @@
 using Parque.Dominio.Atracciones;
 using Parque.Infraestructura.Repositorios;
 
-public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio) : IServicioAtracciones
+public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRepositorio<RegistroVisita> repositorio2) : IServicioAtracciones
 {
     private readonly IRepositorio<AtraccionParque> _repositorio = repositorio;
+    private readonly IRepositorio<RegistroVisita> _repositorioRegistros = repositorio2;
 
     public AtraccionParque CrearAtraccion(string nombre, TipoAtraccion tipo, int edadMinima, int capacidad, string descripcion)
     {
@@ -39,4 +40,20 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio) : IS
 
     public void EliminarAtraccion(int id) =>
         _repositorio.Eliminar(a => a.Id == id);
+    public RegistroVisita RegistrarIngreso(Guid identificador, int idAtraccion)
+    {
+        var atraccion = _repositorio.Encontrar(a => a.Id == idAtraccion);
+        if(atraccion == null)
+        {
+            throw new ArgumentException("Atraccion no encontrado");
+        }
+        
+        var registro = new RegistroVisita
+        {
+            AtraccionId = idAtraccion, IdEntrada = identificador, FechaIngreso = DateTime.Now
+        };
+        
+        _repositorioRegistros.Agregar(registro);
+        return registro;
+    }
 }

@@ -9,12 +9,14 @@ namespace Parque.Aplicacion.Test.Servicios;
 public class ServicioAtraccionesTest
 {
     private readonly Mock<IRepositorio<AtraccionParque>> _mockRepo;
+    private readonly Mock<IRepositorio<RegistroVisita>> _mockRepoRegistro;
     private readonly ServicioAtracciones _servicio;
 
     public ServicioAtraccionesTest()
     {
         _mockRepo = new Mock<IRepositorio<AtraccionParque>>();
-        _servicio = new ServicioAtracciones(_mockRepo.Object);
+        _mockRepoRegistro = new Mock<IRepositorio<RegistroVisita>>();
+        _servicio = new ServicioAtracciones(_mockRepo.Object, _mockRepoRegistro.Object);
     }
 
     [TestMethod]
