@@ -8,7 +8,6 @@ public interface IServicioCuenta
     CuentaDto CrearCuentaPorAdmin(RegistrarCuentaDto dto);
     void ModificarPerfil(Guid cuentaId, ModificarPerfilDto dto);
     void CambiarNivelMembresia(Guid cuentaId, NivelMembresia nuevoNivel);
-
-    // CuentaDto ObtenerPorId(Guid id);
-    // CuentaDto ObtenerPorEmail(string email);
+    CuentaDto ObtenerPorId(Guid id);
+    CuentaDto ObtenerPorEmail(string email);
 }

@@ -58,6 +58,20 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
         _cuentaRepo.Editar(cuenta);
     }
 
+    public CuentaDto ObtenerPorId(Guid id)
+    {
+        var cuenta = ObtenerCuenta(id);
+        return cuenta.ToDto();
+    }
+
+    public CuentaDto ObtenerPorEmail(string email)
+    {
+        var cuenta = _cuentaRepo.Encontrar(c => c.Email.Valor == email)
+            ?? throw new ExcepcionEntidadNoEncontrada($"Cuenta con email {email} no encontrada.");
+
+        return cuenta.ToDto();
+    }
+
     private void AsignarPerfilVisitante(Cuenta cuenta, RegistrarCuentaDto dto)
     {
         if(!dto.FechaNacimiento.HasValue)

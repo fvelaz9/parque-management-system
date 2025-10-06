@@ -563,4 +563,206 @@ public class ServicioCuentaTest
         // Assert
         Assert.AreEqual(NivelMembresia.Estandar, cuenta.Visitante.NivelMembresia);
     }
+
+    [TestMethod]
+    public void ObtenerPorId_CuentaExistente_RetornaCuentaDto()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        cuenta.AsignarVisitante(new DateTime(1990, 1, 1));
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+
+        // Act
+        var resultado = servicio.ObtenerPorId(cuenta.Id);
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(cuenta.Id, resultado.Id);
+        Assert.AreEqual(cuenta.Nombre, resultado.Nombre);
+        Assert.AreEqual(cuenta.Apellido, resultado.Apellido);
+        Assert.AreEqual(cuenta.Email.Valor, resultado.Email);
+        Assert.IsNotNull(resultado.Visitante);
+    }
+
+    [TestMethod]
+    public void ObtenerPorId_CuentaAdministrador_RetornaAdminSinVisitante()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("María", "Admin", new Email("maria@admin.com"), "admin123", Rol.Administrador);
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+
+        // Act
+        var resultado = servicio.ObtenerPorId(cuenta.Id);
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(cuenta.Id, resultado.Id);
+        Assert.AreEqual("María", resultado.Nombre);
+        Assert.AreEqual("Admin", resultado.Apellido);
+        Assert.IsTrue(resultado.Roles.Contains(Rol.Administrador.ToString()));
+        Assert.IsNull(resultado.Visitante);
+    }
+
+    [TestMethod]
+    public void ObtenerPorId_CuentaNoExiste_LanzaExcepcion()
+    {
+        // Arrange
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns((Cuenta)null!);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var idInexistente = Guid.NewGuid();
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionEntidadNoEncontrada>(
+            () => servicio.ObtenerPorId(idInexistente));
+
+        Assert.AreEqual("Cuenta no encontrada", ex.Message);
+    }
+
+    [TestMethod]
+    public void ObtenerPorId_VisitantePremium_RetornaConNivelCorrecto()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Luis", "Premium", new Email("luis@premium.com"), "password123", Rol.Visitante);
+        cuenta.AsignarVisitante(new DateTime(1985, 5, 20));
+        cuenta.Visitante!.AsignarMembresia(NivelMembresia.Premium);
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+
+        // Act
+        var resultado = servicio.ObtenerPorId(cuenta.Id);
+
+        // Assert
+        Assert.IsNotNull(resultado.Visitante);
+        Assert.AreEqual(NivelMembresia.Premium.ToString(), resultado.Visitante.NivelMembresia);
+    }
+
+    [TestMethod]
+    public void ObtenerPorEmail_CuentaExistente_RetornaCuentaDto()
+    {
+        // Arrange
+        var email = "ana@test.com";
+        var cuenta = Cuenta.Crear("Ana", "García", new Email(email), "password123", Rol.Visitante);
+        cuenta.AsignarVisitante(new DateTime(1992, 3, 15));
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+
+        // Act
+        var resultado = servicio.ObtenerPorEmail(email);
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(cuenta.Id, resultado.Id);
+        Assert.AreEqual("Ana", resultado.Nombre);
+        Assert.AreEqual("García", resultado.Apellido);
+        Assert.AreEqual(email, resultado.Email);
+    }
+
+    [TestMethod]
+    public void ObtenerPorEmail_EmailNoExiste_LanzaExcepcion()
+    {
+        // Arrange
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns((Cuenta)null!);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var emailInexistente = "noexiste@test.com";
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionEntidadNoEncontrada>(
+            () => servicio.ObtenerPorEmail(emailInexistente));
+
+        Assert.AreEqual($"Cuenta con email {emailInexistente} no encontrada.", ex.Message);
+    }
+
+    [TestMethod]
+    public void ObtenerPorEmail_OperadorExistente_RetornaOperadorSinVisitante()
+    {
+        // Arrange
+        var email = "carlos@operador.com";
+        var cuenta = Cuenta.Crear("Carlos", "Operador", new Email(email), "password123", Rol.Operador);
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+
+        // Act
+        var resultado = servicio.ObtenerPorEmail(email);
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual("Carlos", resultado.Nombre);
+        Assert.IsTrue(resultado.Roles.Contains(Rol.Operador.ToString()));
+        Assert.IsNull(resultado.Visitante);
+    }
+
+    [TestMethod]
+    public void ObtenerPorEmail_EmailConMayusculas_BuscaCorrectamente()
+    {
+        // Arrange
+        var emailOriginal = "sofia@test.com";
+        var emailConMayusculas = "SOFIA@TEST.COM";
+        var cuenta = Cuenta.Crear("Sofía", "Martín", new Email(emailOriginal), "password123", Rol.Visitante);
+        cuenta.AsignarVisitante(new DateTime(1988, 7, 10));
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+
+        // Act
+        var resultado = servicio.ObtenerPorEmail(emailConMayusculas);
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual("Sofía", resultado.Nombre);
+        Assert.AreEqual(emailOriginal, resultado.Email);
+    }
+
+    [TestMethod]
+    public void ObtenerPorEmail_VisitanteVIP_RetornaConNivelCorrecto()
+    {
+        // Arrange
+        var email = "vip@test.com";
+        var cuenta = Cuenta.Crear("Roberto", "VIP", new Email(email), "password123", Rol.Visitante);
+        cuenta.AsignarVisitante(new DateTime(1980, 12, 25));
+        cuenta.Visitante!.AsignarMembresia(NivelMembresia.VIP);
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+
+        // Act
+        var resultado = servicio.ObtenerPorEmail(email);
+
+        // Assert
+        Assert.IsNotNull(resultado.Visitante);
+        Assert.AreEqual(NivelMembresia.VIP.ToString(), resultado.Visitante.NivelMembresia);
+    }
 }
