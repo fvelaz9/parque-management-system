@@ -45,4 +45,11 @@ public class EventoController(IServicioEvento servicioEvento) : ControllerBase
     {
         return servicioEvento.ListarEventos().Select(e => new EventoOutDto(e)).ToList();
     }
+
+    [HttpGet("{eventoId}")]
+    public EventoOutDto ObtenerPorId(int eventoId)
+    {
+        Dominio.Evento evento = servicioEvento.ObtenerEventoPorId(eventoId);
+        return new EventoOutDto(evento);
+    }
 }
