@@ -32,9 +32,8 @@ public class EventoController(IServicioEvento servicioEvento) : ControllerBase
             request.Fin,
             request.AforoMaximo,
             request.CostoAdicional,
-            request.Estado
-        );
-
+            request.Estado);
+        evento.Atracciones = request.Atracciones;
         evento = servicioEvento.AgregarEvento(evento);
 
         return new CreateEventoResponse(evento);
