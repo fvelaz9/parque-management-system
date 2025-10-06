@@ -94,7 +94,7 @@ public class VisitanteTest
         var ex = Assert.ThrowsException<ExcepcionDominio>(() =>
             visitante.ActualizarFecha(fechaMuyAntigua));
 
-        Assert.AreEqual("La edad máxima son 125 años", ex.Message);
+        Assert.AreEqual("La edad máxima son 125 años.", ex.Message);
     }
 
     [TestMethod]
@@ -102,7 +102,7 @@ public class VisitanteTest
     {
         // Arrange
         var visitante = Visitante.Crear(DateTime.UtcNow.AddYears(-25));
-        var fechaLimite = DateTime.UtcNow.AddYears(-125).AddDays(1); // Justo dentro del límite
+        var fechaLimite = DateTime.UtcNow.AddYears(-125).AddDays(1);
 
         // Act
         visitante.ActualizarFecha(fechaLimite);
