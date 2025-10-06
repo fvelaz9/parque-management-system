@@ -50,7 +50,7 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRep
         
         var registro = new RegistroVisita
         {
-            AtraccionId = idAtraccion, IdEntrada = identificador, FechaIngreso = DateTime.Now
+            AtraccionId = idAtraccion, Identificador = identificador, FechaIngreso = DateTime.Now
         };
         
         _repositorioRegistros.Agregar(registro);

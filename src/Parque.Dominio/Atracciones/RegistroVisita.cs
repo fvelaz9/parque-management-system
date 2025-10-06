@@ -4,7 +4,7 @@ public class RegistroVisita
 {
     public int Id { get; set; }
     public int AtraccionId { get; set; }
-    public Guid IdEntrada { get; set; } // QR del ticket o NFC de la pulsera
+    public Guid Identificador { get; set; } // QR del ticket o NFC de la pulsera
     public DateTime FechaIngreso { get; set; }
     public DateTime? FechaEgreso { get; set; }
 }
