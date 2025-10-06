@@ -399,4 +399,69 @@ public class ServicioCuentaTest
 
         Assert.AreEqual("Ya existe una cuenta con este email.", ex.Message);
     }
+
+    [TestMethod]
+    public void CrearCuentaPorAdmin_EmailInvalido_LanzaExcepcion()
+    {
+        // Arrange
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var dto = new RegistrarCuentaDto(
+            "Nombre",
+            "Apellido",
+            "email-invalido",
+            "password123",
+            Rol.Operador,
+            null,
+            null);
+
+        // Act & Assert
+        Assert.ThrowsException<ExcepcionDominio>(
+            () => servicio.CrearCuentaPorAdmin(dto));
+    }
+
+    [TestMethod]
+    public void CrearCuentaPorAdmin_PasswordVacio_LanzaExcepcion()
+    {
+        // Arrange
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var dto = new RegistrarCuentaDto(
+            "Nombre",
+            "Apellido",
+            "test@test.com",
+            string.Empty,
+            Rol.Administrador,
+            null,
+            null);
+
+        // Act & Assert
+        Assert.ThrowsException<ExcepcionDominio>(
+            () => servicio.CrearCuentaPorAdmin(dto));
+    }
+
+    [TestMethod]
+    public void CrearCuentaPorAdmin_VisitanteSinFechaNacimiento_LanzaExcepcion()
+    {
+        // Arrange
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns((Cuenta)null!);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var dto = new RegistrarCuentaDto(
+            "Pedro",
+            "Martínez",
+            "pedro@test.com",
+            "password123",
+            Rol.Visitante,
+            null,
+            null);
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionDominio>(
+            () => servicio.CrearCuentaPorAdmin(dto));
+
+        Assert.AreEqual("La fecha de nacimiento es requerida para visitantes.", ex.Message);
+    }
 }
