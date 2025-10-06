@@ -344,4 +344,31 @@ public class ServicioCuentaTest
         Assert.IsNotNull(resultado.Visitante);
         Assert.AreEqual(NivelMembresia.Premium.ToString(), resultado.Visitante.NivelMembresia);
     }
+
+    [TestMethod]
+    public void CrearCuentaPorAdmin_VisitanteVIP_CreaCuentaConNivelCorrecto()
+    {
+        // Arrange
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns((Cuenta)null!);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var fechaNacimiento = new DateTime(1988, 7, 10);
+        var dto = new RegistrarCuentaDto(
+            "Sofía",
+            "Martín",
+            "sofia@vip.com",
+            "vip123",
+            Rol.Visitante,
+            fechaNacimiento,
+            NivelMembresia.VIP);
+
+        // Act
+        var resultado = servicio.CrearCuentaPorAdmin(dto);
+
+        // Assert
+        Assert.IsNotNull(resultado.Visitante);
+        Assert.AreEqual(NivelMembresia.VIP.ToString(), resultado.Visitante.NivelMembresia);
+    }
 }

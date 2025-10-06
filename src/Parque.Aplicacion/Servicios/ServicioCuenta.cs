@@ -27,6 +27,12 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
         {
             cuenta.AsignarVisitante(dto.FechaNacimiento.Value);
         }
+
+        if(dto.NivelMembresia.HasValue && cuenta.Visitante != null)
+        {
+            cuenta.Visitante.AsignarMembresia(dto.NivelMembresia.Value);
+        }
+
         _cuentaRepo.Agregar(cuenta);
         return cuenta.ToDto();
     }

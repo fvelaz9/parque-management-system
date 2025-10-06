@@ -41,4 +41,9 @@ public class Visitante
         ValidarFecha(fecha);
         FechaNacimiento = fecha;
     }
+
+    public void AsignarMembresia(NivelMembresia nivel)
+    {
+        NivelMembresia = nivel;
+    }
 }
