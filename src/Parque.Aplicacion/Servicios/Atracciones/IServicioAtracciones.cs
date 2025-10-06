@@ -13,4 +13,5 @@ public interface IServicioAtracciones
     RegistroVisita RegistrarIngreso(Guid identificador, int atraccionId);
     RegistroVisita RegistrarEgreso(Guid identificador, int atraccionId);
     List<ReporteAtraccionDto> ObtenerReporteUso(DateTime fechaInicio, DateTime fechaFin);
+    AforoAtraccionDto ObtenerAforoActual(int atraccionId);
 }

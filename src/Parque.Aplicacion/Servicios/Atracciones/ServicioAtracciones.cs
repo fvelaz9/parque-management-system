@@ -81,9 +81,27 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRep
         foreach (var reporte in registros)
         {
             var atraccion = _repositorio.Encontrar(a => a.Id == reporte.AtraccionId);
-            reporte.NombreAtraccion = atraccion?.Nombre ?? "Desconocida";
+            if (atraccion == null)
+            {
+                reporte.NombreAtraccion = "Desconocida";
+            }
+            else
+            {
+                reporte.NombreAtraccion = atraccion.Nombre;
+            }
         }
 
         return registros.OrderByDescending(r => r.CantidadVisitas).ToList();
+    }
+
+    public AforoAtraccionDto ObtenerAforoActual(int atraccionId)
+    {
+        var atraccion = _repositorio.Encontrar(d => d.Id == atraccionId);
+        if(atraccion == null)
+        {
+            return null;
+        }
+
+        return null;
     }
 }
