@@ -21,17 +21,7 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
     {
         ValidarFechaFutura(fechaVisita);
         ValidarEventoParaTicketEspecial(TipoTicket.EventoEspecial, eventoId);
-        Dominio.Ticket ticket = new Dominio.Ticket()
-        {
-            CuentaId = cuentaId,
-            FechaVisita = fechaVisita,
-            EventoId = eventoId,
-            TipoEntrada = TipoTicket.EventoEspecial,
-            Codigo = Guid.NewGuid(),
-            FechaEmision = DateTime.Now,
-            EsValido = true
-        };
-
+        Dominio.Ticket ticket = ConstruirTicket(cuentaId, fechaVisita, eventoId, TipoTicket.EventoEspecial);
         _repositorio.Agregar(ticket);
         return ticket;
     }
