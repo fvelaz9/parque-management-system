@@ -22,6 +22,7 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
 
     public CuentaDto CrearCuentaPorAdmin(RegistrarCuentaDto dto)
     {
+        ValidarEmailUnico(dto.Email);
         var cuenta = CrearCuentaBase(dto.Nombre, dto.Apellido, dto.Email, dto.Password, dto.Rol);
         if(dto.Rol == Rol.Visitante && dto.FechaNacimiento.HasValue)
         {
