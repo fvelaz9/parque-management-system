@@ -1,5 +1,5 @@
-using Parque.Dominio;
-namespace Parque.Aplicacion;
+﻿using Parque.Dominio;
+namespace Parque.Aplicacion.Servicios;
 
 public interface IServicioEvento
 {

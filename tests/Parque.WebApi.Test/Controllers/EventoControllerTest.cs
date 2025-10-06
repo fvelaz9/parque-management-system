@@ -2,8 +2,8 @@
 using Parque.Aplicacion;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
-using Parque.WebApi.Evento;
-using Parque.WebApi.Evento.Modelos;
+using Parque.WebApi.Controllers.Evento;
+using Parque.WebApi.Controllers.Evento.Modelos;
 
 namespace Parque.WebApi.Test.Controllers;
 

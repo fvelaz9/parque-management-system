@@ -1,8 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Parque.Aplicacion;
-using Parque.WebApi.Evento.Modelos;
+using Parque.WebApi.Controllers.Evento.Modelos;
 
-namespace Parque.WebApi.Evento;
+namespace Parque.WebApi.Controllers.Evento;
 [ApiController]
 [Route("api/evento")]
 public class EventoController(IServicioEvento servicioEvento) : ControllerBase
@@ -10,17 +10,17 @@ public class EventoController(IServicioEvento servicioEvento) : ControllerBase
     [HttpPost]
     public CreateEventoResponse Crear(CreateEventoRequest request)
     {
-        if (request == null)
+        if(request == null)
         {
             throw new Exception("Request no puede ser null");
         }
 
-        if (string.IsNullOrEmpty(request.Titulo))
+        if(string.IsNullOrEmpty(request.Titulo))
         {
             throw new Exception("El título no puede ser vacío");
         }
 
-        if (request.AforoMaximo <= 0)
+        if(request.AforoMaximo <= 0)
         {
             throw new Exception("El aforo debe ser mayor a cero");
         }
@@ -61,44 +61,44 @@ public class EventoController(IServicioEvento servicioEvento) : ControllerBase
     [HttpPut("{eventoId}")]
     public void Actualizar(int eventoId, UpdateEventoRequest request)
     {
-        if (request == null)
+        if(request == null)
         {
             throw new Exception("El request no puede ser null");
         }
 
         Dominio.Evento eventoExistente = servicioEvento.ObtenerEventoPorId(eventoId);
 
-        if (!string.IsNullOrEmpty(request.Titulo))
+        if(!string.IsNullOrEmpty(request.Titulo))
         {
             eventoExistente.Titulo = request.Titulo;
         }
 
-        if (!string.IsNullOrEmpty(request.Descripcion))
+        if(!string.IsNullOrEmpty(request.Descripcion))
         {
             eventoExistente.Descripcion = request.Descripcion;
         }
 
-        if (request.Inicio.HasValue)
+        if(request.Inicio.HasValue)
         {
             eventoExistente.Inicio = request.Inicio.Value;
         }
 
-        if (request.Fin.HasValue)
+        if(request.Fin.HasValue)
         {
             eventoExistente.Fin = request.Fin.Value;
         }
 
-        if (request.AforoMaximo.HasValue)
+        if(request.AforoMaximo.HasValue)
         {
             eventoExistente.AforoMaximo = request.AforoMaximo.Value;
         }
 
-        if (request.CostoAdicional.HasValue)
+        if(request.CostoAdicional.HasValue)
         {
             eventoExistente.CostoAdicional = request.CostoAdicional.Value;
         }
 
-        if (request.Estado.HasValue)
+        if(request.Estado.HasValue)
         {
             eventoExistente.Estado = request.Estado.Value;
         }

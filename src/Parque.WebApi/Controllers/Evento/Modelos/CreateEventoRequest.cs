@@ -1,7 +1,7 @@
-using Parque.Dominio;
+﻿using Parque.Dominio;
 using Parque.Dominio.Atracciones;
 
-namespace Parque.WebApi.Evento.Modelos;
+namespace Parque.WebApi.Controllers.Evento.Modelos;
 
 public class CreateEventoRequest
 {
