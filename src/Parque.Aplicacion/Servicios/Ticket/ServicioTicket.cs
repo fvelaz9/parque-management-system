@@ -19,6 +19,7 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
 
     public Dominio.Ticket CrearTicketEventoEspecial(int cuentaId, DateTime fechaVisita, int eventoId)
     {
+        ValidarFechaFutura(fechaVisita);
         Dominio.Ticket ticket = new Dominio.Ticket()
         {
             CuentaId = cuentaId,
