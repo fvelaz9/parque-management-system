@@ -1,5 +1,5 @@
 ﻿using Moq;
-using Parque.Aplicacion;
+using Parque.Aplicacion.Servicios;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
 using Parque.WebApi.Controllers.Evento;

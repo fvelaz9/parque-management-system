@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Parque.Aplicacion;
+using Parque.Aplicacion.Servicios;
 using Parque.WebApi.Controllers.Evento.Modelos;
 
 namespace Parque.WebApi.Controllers.Evento;
