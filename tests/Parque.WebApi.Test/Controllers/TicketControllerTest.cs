@@ -215,4 +215,27 @@ public class TicketControllerTest
         Assert.AreEqual(400, badRequest.StatusCode);
     }
 
+    [TestMethod]
+    public void UpdateConValidRequest()
+    {
+        var request = new UpdateTicketDto
+        {
+            CuentaId = 1,
+            FechaVisita = DateTime.Now.AddDays(3),
+            EventoId = 5,
+            TipoEntrada = TipoTicket.General
+        };
+
+        _servicioMock!.Setup(s => s.ModificarTicket(
+            1,
+            request.CuentaId,
+            request.FechaVisita,
+            request.EventoId,
+            request.TipoEntrada));
+
+        var result = _controller!.Update(1, request);
+
+        Assert.IsInstanceOfType(result, typeof(NoContentResult));
+        _servicioMock.VerifyAll();
+    }
 }
