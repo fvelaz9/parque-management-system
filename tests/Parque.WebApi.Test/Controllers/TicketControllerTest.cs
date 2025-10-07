@@ -162,4 +162,25 @@ public class TicketControllerTest
         Assert.AreEqual(expectedTicket, created.Value);
         _servicioMock.VerifyAll();
     }
+
+    [TestMethod]
+    public void CreateConExcepcionDelServicio()
+    {
+        var request = new CrearTicketDto
+        {
+            CuentaId = 1,
+            FechaVisita = DateTime.Now.AddDays(1),
+            TipoEntrada = TipoTicket.General
+        };
+
+        _servicioMock!.Setup(s => s.CrearTicketGeneral(request.CuentaId, request.FechaVisita))
+            .Throws(new ArgumentException("Fecha inválida"));
+
+        var result = _controller!.Create(request);
+
+        var badRequest = result as BadRequestObjectResult;
+        Assert.IsNotNull(badRequest);
+        Assert.AreEqual(400, badRequest.StatusCode);
+        _servicioMock.VerifyAll();
+    }
 }
