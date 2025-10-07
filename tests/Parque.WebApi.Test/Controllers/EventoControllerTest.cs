@@ -25,19 +25,22 @@ public class EventoControllerTest
                 TipoAtraccion.MontañaRusa,
                 12,
                 50,
-                "Una emocionante montaña rusa con caídas vertiginosas") { Id = 1 },
+                "Una emocionante montaña rusa con caídas vertiginosas")
+            { Id = 1 },
             new AtraccionParque(
                 "Carrusel Familiar",
                 TipoAtraccion.Espectaculo,
                 3,
                 80,
-                "Un carrusel clásico para toda la familia") { Id = 2 },
+                "Un carrusel clásico para toda la familia")
+            { Id = 2 },
             new AtraccionParque(
                 "Simulador del Terror",
                 TipoAtraccion.Simulador,
                 16,
                 30,
-                "Un Simulador oscuro lleno de sustos y sorpresas") { Id = 3 }
+                "Un Simulador oscuro lleno de sustos y sorpresas")
+            { Id = 3 }
         ];
     }
 

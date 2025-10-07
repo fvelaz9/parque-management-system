@@ -6,6 +6,7 @@ using Parque.Dominio;
 using Parque.WebApi.Controllers;
 
 namespace Parque.WebApi.Test.Controllers;
+
 [TestClass]
 public class TicketControllerTest
 {
@@ -22,10 +23,12 @@ public class TicketControllerTest
     [TestMethod]
     public void GetAllValido()
     {
-        List<Ticket> tickets =
+        var cuentaId1 = Guid.NewGuid();
+        var cuentaId2 = Guid.NewGuid();
+        List<Dominio.Ticket> tickets =
         [
-            new Ticket { Id = 1, CuentaId = 1 },
-            new Ticket { Id = 2, CuentaId = 2 }
+            new Dominio.Ticket(cuentaId1, DateTime.Today.AddDays(1), 1, TipoTicket.General),
+            new Dominio.Ticket(cuentaId2, DateTime.Today.AddDays(2), 2, TipoTicket.General)
         ];
 
         _servicioMock!.Setup(s => s.ListarTickets()).Returns(tickets);
@@ -35,7 +38,7 @@ public class TicketControllerTest
         var okResult = result as OkObjectResult;
         Assert.IsNotNull(okResult);
         Assert.AreEqual(200, okResult.StatusCode);
-        var returnedTickets = okResult.Value as IEnumerable<Ticket>;
+        var returnedTickets = okResult.Value as IEnumerable<Dominio.Ticket>;
         Assert.AreEqual(2, returnedTickets!.Count());
         _servicioMock.VerifyAll();
     }
@@ -43,7 +46,8 @@ public class TicketControllerTest
     [TestMethod]
     public void GetByIdconTicketExistente()
     {
-        var ticket = new Ticket { Id = 1 };
+        var cuentaId = Guid.NewGuid();
+        var ticket = new Dominio.Ticket(cuentaId, DateTime.Today.AddDays(1), 1, TipoTicket.General);
         _servicioMock!.Setup(s => s.BuscarTicket(1)).Returns(ticket);
 
         var result = _controller!.GetById(1);
@@ -57,7 +61,7 @@ public class TicketControllerTest
     [TestMethod]
     public void GetByIdConTicketDoesNoExistente()
     {
-        _servicioMock!.Setup(s => s.BuscarTicket(1)).Returns((Ticket)null);
+        _servicioMock!.Setup(s => s.BuscarTicket(1)).Returns((Dominio.Ticket?)null);
 
         var result = _controller!.GetById(1);
 
@@ -68,8 +72,12 @@ public class TicketControllerTest
     [TestMethod]
     public void GetByCodigoConTicketExistente()
     {
+        var cuentaId = Guid.NewGuid();
         var codigo = Guid.NewGuid();
-        var ticket = new Ticket { Codigo = codigo };
+        var ticket = new Dominio.Ticket(cuentaId, DateTime.Today.AddDays(1), 1, TipoTicket.General)
+        {
+            Codigo = codigo
+        };
 
         _servicioMock!.Setup(s => s.BuscarTicketPorCodigo(codigo)).Returns(ticket);
 
@@ -85,7 +93,7 @@ public class TicketControllerTest
     public void GetByCodigoConTicketNotExistente()
     {
         var codigo = Guid.NewGuid();
-        _servicioMock!.Setup(s => s.BuscarTicketPorCodigo(codigo)).Returns((Ticket)null);
+        _servicioMock!.Setup(s => s.BuscarTicketPorCodigo(codigo)).Returns((Dominio.Ticket?)null);
 
         var result = _controller!.GetByCodigo(codigo);
 
@@ -105,14 +113,15 @@ public class TicketControllerTest
     [TestMethod]
     public void CreateGeneralTicketValido()
     {
+        var cuentaId = Guid.NewGuid();
         var request = new CrearTicketDto
         {
-            CuentaId = 1,
+            CuentaId = cuentaId,
             FechaVisita = DateTime.Now.AddDays(2),
             TipoEntrada = TipoTicket.General
         };
 
-        var expectedTicket = new Ticket { Id = 10, CuentaId = 1 };
+        var expectedTicket = new Dominio.Ticket(cuentaId, request.FechaVisita, 0, TipoTicket.General);
         _servicioMock!.Setup(s => s.CrearTicketGeneral(request.CuentaId, request.FechaVisita))
             .Returns(expectedTicket);
 
@@ -128,9 +137,10 @@ public class TicketControllerTest
     [TestMethod]
     public void CreateConTicketEspecialNoValido()
     {
+        var cuentaId = Guid.NewGuid();
         var request = new CrearTicketDto
         {
-            CuentaId = 1,
+            CuentaId = cuentaId,
             FechaVisita = DateTime.Now.AddDays(1),
             TipoEntrada = TipoTicket.EventoEspecial,
             EventoId = null
@@ -143,15 +153,16 @@ public class TicketControllerTest
     [TestMethod]
     public void CreateTicketEspecialValido()
     {
+        var cuentaId = Guid.NewGuid();
         var request = new CrearTicketDto
         {
-            CuentaId = 2,
+            CuentaId = cuentaId,
             FechaVisita = DateTime.Now.AddDays(3),
             TipoEntrada = TipoTicket.EventoEspecial,
             EventoId = 5
         };
 
-        var expectedTicket = new Ticket { Id = 20, CuentaId = 2, EventoId = 5 };
+        var expectedTicket = new Dominio.Ticket(cuentaId, request.FechaVisita, 5, TipoTicket.EventoEspecial);
         _servicioMock!.Setup(s => s.CrearTicketEventoEspecial(request.CuentaId, request.FechaVisita, request.EventoId.Value))
             .Returns(expectedTicket);
 
@@ -166,9 +177,10 @@ public class TicketControllerTest
     [TestMethod]
     public void CreateConExcepcionDelServicio()
     {
+        var cuentaId = Guid.NewGuid();
         var request = new CrearTicketDto
         {
-            CuentaId = 1,
+            CuentaId = cuentaId,
             FechaVisita = DateTime.Now.AddDays(1),
             TipoEntrada = TipoTicket.General
         };
@@ -187,9 +199,10 @@ public class TicketControllerTest
     [TestMethod]
     public void CreateConServiceThrowsInvalidOperationException()
     {
+        var cuentaId = Guid.NewGuid();
         var request = new CrearTicketDto
         {
-            CuentaId = 1,
+            CuentaId = cuentaId,
             FechaVisita = DateTime.Now.AddDays(1),
             TipoEntrada = TipoTicket.EventoEspecial,
             EventoId = 3
@@ -218,9 +231,10 @@ public class TicketControllerTest
     [TestMethod]
     public void UpdateConValidRequest()
     {
+        var cuentaId = Guid.NewGuid();
         var request = new UpdateTicketDto
         {
-            CuentaId = 1,
+            CuentaId = cuentaId,
             FechaVisita = DateTime.Now.AddDays(3),
             EventoId = 5,
             TipoEntrada = TipoTicket.General
@@ -242,9 +256,10 @@ public class TicketControllerTest
     [TestMethod]
     public void UpdateExcepcionDelServicio()
     {
+        var cuentaId = Guid.NewGuid();
         var request = new UpdateTicketDto
         {
-            CuentaId = 1,
+            CuentaId = cuentaId,
             FechaVisita = DateTime.Now.AddDays(3),
             EventoId = 5,
             TipoEntrada = TipoTicket.General

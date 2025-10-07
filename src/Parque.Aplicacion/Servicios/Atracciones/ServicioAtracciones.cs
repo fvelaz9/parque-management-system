@@ -44,37 +44,6 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRep
 
     public void EliminarAtraccion(int id) =>
         _repositorio.Eliminar(a => a.Id == id);
-    public RegistroVisita RegistrarIngreso(Guid identificador, int idAtraccion)
-    {
-        var atraccion = _repositorio.Encontrar(a => a.Id == idAtraccion);
-        if(atraccion == null)
-        {
-            throw new ArgumentException("Atraccion no encontrada");
-        }
-
-        var registro = new RegistroVisita
-        {
-            AtraccionId = idAtraccion,
-            Identificador = identificador,
-            FechaIngreso = DateTime.Now
-        };
-        _repositorioRegistros.Agregar(registro);
-        return registro;
-    }
-
-    public RegistroVisita RegistrarEgreso(Guid identificador, int idAtraccion)
-    {
-        var registro = _repositorioRegistros.Encontrar(a => a.Identificador == identificador && a.AtraccionId == idAtraccion && a.FechaEgreso == null);
-
-        if(registro == null)
-        {
-            throw new ArgumentException("No hay ingreso registrado o ya se registró el egreso");
-        }
-
-        registro.FechaEgreso = DateTime.Now;
-        _repositorioRegistros.Editar(registro);
-        return registro;
-    }
 
     public List<ReporteAtraccionDto> ObtenerReporteUso(DateTime fechaInicio, DateTime fechaFin)
     {
