@@ -38,4 +38,20 @@ public class TicketControllerTest
         Assert.AreEqual(2, returnedTickets!.Count());
         _servicioMock.VerifyAll();
     }
+
+    [TestMethod]
+    public void GetByIdconTicketExistente()
+    {
+        var ticket = new Ticket { Id = 1 };
+        _servicioMock!.Setup(s => s.BuscarTicket(1)).Returns(ticket);
+
+        var result = _controller!.GetById(1);
+
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.AreEqual(ticket, okResult.Value);
+        _servicioMock.VerifyAll();
+    }
+
+
 }
