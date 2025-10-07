@@ -27,7 +27,6 @@ public class ServicioIncidencia(IRepositorio<Incidencia> repoIncidencias, IRepos
             FechaResolucionEstimada = request.FechaResolucionEstimada,
             AtraccionId = atraccion.Id,
         };
-        
         repoIncidencias.Agregar(incidencia);
         atraccion.Estado = EstadoAtraccion.FueraDeServicio;
         repoAtracciones.Editar(atraccion);

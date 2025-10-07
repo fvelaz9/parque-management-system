@@ -22,6 +22,5 @@ public class Incidencia
     }
 
     public bool EstaActiva() => DateTime.Now < FechaResolucionEstimada;
-    
     public bool EstaDisponible() => DateTime.Now >= FechaResolucionEstimada;
 }

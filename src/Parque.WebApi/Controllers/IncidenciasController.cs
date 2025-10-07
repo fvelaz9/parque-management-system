@@ -39,7 +39,7 @@ public class IncidenciasController : ControllerBase
         }
         catch (ArgumentException ex)
         {
-            return BadRequest(new { mensaje = ex.Message });  
+            return BadRequest(new { mensaje = ex.Message });
         }
     }
 }
