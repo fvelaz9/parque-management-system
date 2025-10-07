@@ -238,4 +238,31 @@ public class TicketControllerTest
         Assert.IsInstanceOfType(result, typeof(NoContentResult));
         _servicioMock.VerifyAll();
     }
+
+    [TestMethod]
+    public void UpdateExcepcionDelServicio()
+    {
+        var request = new UpdateTicketDto
+        {
+            CuentaId = 1,
+            FechaVisita = DateTime.Now.AddDays(3),
+            EventoId = 5,
+            TipoEntrada = TipoTicket.General
+        };
+
+        _servicioMock!.Setup(s => s.ModificarTicket(
+                1,
+                request.CuentaId,
+                request.FechaVisita,
+                request.EventoId,
+                request.TipoEntrada))
+            .Throws(new ArgumentException("Ticket no encontrado"));
+
+        var result = _controller!.Update(1, request);
+
+        var badRequest = result as BadRequestObjectResult;
+        Assert.IsNotNull(badRequest);
+        Assert.AreEqual(400, badRequest.StatusCode);
+        _servicioMock.VerifyAll();
+    }
 }
