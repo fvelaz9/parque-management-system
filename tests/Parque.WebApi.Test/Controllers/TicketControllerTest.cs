@@ -124,4 +124,19 @@ public class TicketControllerTest
         Assert.AreEqual(expectedTicket, created.Value);
         _servicioMock.VerifyAll();
     }
+
+    [TestMethod]
+    public void CreateConTicketEspecialNoValido()
+    {
+        var request = new CrearTicketDto
+        {
+            CuentaId = 1,
+            FechaVisita = DateTime.Now.AddDays(1),
+            TipoEntrada = TipoTicket.EventoEspecial,
+            EventoId = null
+        };
+
+        var result = _controller!.Create(request);
+        Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
+    }
 }
