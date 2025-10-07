@@ -8,7 +8,7 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
     private readonly IRepositorio<Dominio.Ticket> _repositorio = repositorio;
     private readonly IRepositorio<Evento> _repositorioEvento = repositorioEvento;
 
-    public Dominio.Ticket CrearTicket(int cuentaId, DateTime fechaVisita, int? eventoId, TipoTicket tipoTicket)
+    public Dominio.Ticket CrearTicket(Guid cuentaId, DateTime fechaVisita, int? eventoId, TipoTicket tipoTicket)
     {
         ValidarFechaFutura(fechaVisita);
         ValidarEventoParaTicketEspecial(tipoTicket, eventoId);
@@ -46,7 +46,7 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
         return _repositorio.Encontrar(t => t.Codigo == codigo);
     }
 
-    public void ModificarTicket(int id, int cuentaId, DateTime fechaVisita, int? eventoId, TipoTicket tipoTicket)
+    public void ModificarTicket(int id, Guid cuentaId, DateTime fechaVisita, int? eventoId, TipoTicket tipoTicket)
     {
         var ticket = _repositorio.Encontrar(t => t.Id == id);
         if(ticket == null)

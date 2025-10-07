@@ -130,4 +130,22 @@ public class Cuenta
 
         _roles.Remove(rol);
     }
+    
+    public int ObtenerEdadVisitante()
+    {
+        if(Visitante == null)
+        {
+            throw new ExcepcionDominio("Esta cuenta no tiene un visitante asignado");
+        }
+
+        var hoy = DateTime.UtcNow;
+        var edad = hoy.Year - Visitante.FechaNacimiento.Year;
+
+        if (Visitante.FechaNacimiento.Date > hoy.AddYears(-edad))
+        {
+            edad--;
+        }
+
+        return edad;
+    }
 }

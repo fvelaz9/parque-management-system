@@ -2,6 +2,7 @@ using Parque.Aplicacion.DTOS;
 using Parque.Aplicacion.Servicios.Incidencias;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
+using Parque.Dominio.Usuarios;
 using Parque.Infraestructura.Repositorios;
 
 namespace Parque.Aplicacion.Servicios.Acceso;
@@ -12,6 +13,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
     public ValidarAccesoResponse ValidarAcceso(ValidarAccesoRequest request)
     {
         var ticket = repoTickets.Encontrar(d => d.Codigo == request.CodigoTicket);
+        
         if(ticket == null)
         {
             return new ValidarAccesoResponse { AccesoPermitido = false, Mensaje = "El ticket no fue encontrado" };
@@ -43,7 +45,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             };
         }
 
-        if (request.EdadVisitante < atraccion.EdadMinima)
+        if (request.CuentaVisitante.ObtenerEdadVisitante() < atraccion.EdadMinima)
         {
             return new ValidarAccesoResponse
             {
@@ -78,6 +80,16 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             };
         }
 
+        if(ticket.CuentaId != request.CuentaVisitante.Id)
+        {
+            return new ValidarAccesoResponse
+            {
+                AccesoPermitido = false,
+                Mensaje = "El cuenta no fue encontrada",
+                NombreAtraccion = atraccion.Nombre
+            };
+        }
+
         // ACCESO PERMITIDO, falta traer al usuario
         return new ValidarAccesoResponse
         {
@@ -88,14 +100,14 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
         };
     }
 
-    public RegistroVisita RegistrarIngreso(Guid codigoTicket, int atraccionId, int edadVisitante)
+    public RegistroVisita RegistrarIngreso(Guid codigoTicket, int atraccionId, Cuenta cuentaVisitante)
     {
         // Primero validar acceso
         var validacion = ValidarAcceso(new ValidarAccesoRequest
         {
             CodigoTicket = codigoTicket,
             AtraccionId = atraccionId,
-            EdadVisitante = edadVisitante
+            CuentaVisitante = cuentaVisitante
         });
 
         if (!validacion.AccesoPermitido)
