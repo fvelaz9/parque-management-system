@@ -206,4 +206,13 @@ public class TicketControllerTest
         _servicioMock.VerifyAll();
     }
 
+    [TestMethod]
+    public void UpdateConRequestNull()
+    {
+        var result = _controller!.Update(1, null);
+        var badRequest = result as BadRequestObjectResult;
+        Assert.IsNotNull(badRequest);
+        Assert.AreEqual(400, badRequest.StatusCode);
+    }
+
 }
