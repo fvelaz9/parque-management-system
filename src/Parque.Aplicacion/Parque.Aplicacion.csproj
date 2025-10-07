@@ -5,10 +5,6 @@
     <ProjectReference Include="..\Parque.Infraestructura\Parque.Infraestructura.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Servicios\Incidencias\" />
-  </ItemGroup>
-
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
