@@ -62,4 +62,12 @@ public class ServicioSesion(IRepositorio<Sesion> sesionRepo, IRepositorio<Cuenta
 
         return false;
     }
+
+    public void EliminarSesion(string token)
+    {
+        var sesion = sesionRepo.Encontrar(s => s.Token == token)
+            ?? throw new ExcepcionDominio("Token inválido");
+
+        sesionRepo.Eliminar(s => s.Id == sesion.Id);
+    }
 }

@@ -34,6 +34,9 @@ public class SesionController(IServicioSesion servicioSesion) : ControllerBase
     [AuthorizationFilter("any")]
     public IActionResult Logout()
     {
+        var token = Request.Headers["Authorization"].ToString();
+        servicioSesion.EliminarSesion(token);
+
         return Ok(new ResponseDto
         {
             ExecutionSuccessful = true,
