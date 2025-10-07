@@ -139,4 +139,27 @@ public class TicketControllerTest
         var result = _controller!.Create(request);
         Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
     }
+
+    [TestMethod]
+    public void CreateTicketEspecialValido()
+    {
+        var request = new CrearTicketDto
+        {
+            CuentaId = 2,
+            FechaVisita = DateTime.Now.AddDays(3),
+            TipoEntrada = TipoTicket.EventoEspecial,
+            EventoId = 5
+        };
+
+        var expectedTicket = new Ticket { Id = 20, CuentaId = 2, EventoId = 5 };
+        _servicioMock!.Setup(s => s.CrearTicketEventoEspecial(request.CuentaId, request.FechaVisita, request.EventoId.Value))
+            .Returns(expectedTicket);
+
+        var result = _controller!.Create(request);
+
+        var created = result as CreatedAtActionResult;
+        Assert.IsNotNull(created);
+        Assert.AreEqual(expectedTicket, created.Value);
+        _servicioMock.VerifyAll();
+    }
 }
