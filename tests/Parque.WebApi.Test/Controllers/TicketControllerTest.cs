@@ -22,11 +22,11 @@ public class TicketControllerTest
     [TestMethod]
     public void GetAllValido()
     {
-        List<Ticket> tickets = new List<Ticket>
-        {
+        List<Ticket> tickets =
+        [
             new Ticket { Id = 1, CuentaId = 1 },
             new Ticket { Id = 2, CuentaId = 2 }
-        };
+        ];
 
         _servicioMock!.Setup(s => s.ListarTickets()).Returns(tickets);
 
@@ -69,7 +69,7 @@ public class TicketControllerTest
     public void GetByCodigoConTicketExistente()
     {
         var codigo = Guid.NewGuid();
-        Ticket ticket = new Ticket { Codigo = codigo };
+        var ticket = new Ticket { Codigo = codigo };
 
         _servicioMock!.Setup(s => s.BuscarTicketPorCodigo(codigo)).Returns(ticket);
 

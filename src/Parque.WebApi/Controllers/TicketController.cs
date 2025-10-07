@@ -34,7 +34,7 @@ public class TicketController(IServicioTicket service) : ControllerBase
     [HttpPost]
     public IActionResult Create([FromBody] CrearTicketDto request)
     {
-        if (request == null)
+        if(request == null)
         {
             return BadRequest("El request no puede ser nulo.");
         }
@@ -43,13 +43,13 @@ public class TicketController(IServicioTicket service) : ControllerBase
         {
             Dominio.Ticket creado;
 
-            if (request.TipoEntrada == TipoTicket.General)
+            if(request.TipoEntrada == TipoTicket.General)
             {
                 creado = _service.CrearTicketGeneral(request.CuentaId, request.FechaVisita);
             }
-            else if (request.TipoEntrada == TipoTicket.EventoEspecial)
+            else if(request.TipoEntrada == TipoTicket.EventoEspecial)
             {
-                if (!request.EventoId.HasValue)
+                if(!request.EventoId.HasValue)
                 {
                     return BadRequest("Debe especificar el eventoId para tickets de evento especial.");
                 }
@@ -63,15 +63,15 @@ public class TicketController(IServicioTicket service) : ControllerBase
 
             return CreatedAtAction(nameof(GetById), new { id = creado.Id }, creado);
         }
-        catch (ArgumentException ex)
+        catch(ArgumentException ex)
         {
             return BadRequest(new { mensaje = ex.Message });
         }
-        catch (InvalidOperationException ex)
+        catch(InvalidOperationException ex)
         {
             return Conflict(new { mensaje = ex.Message });
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
             return StatusCode(500, new { mensaje = $"Error interno: {ex.Message}" });
         }

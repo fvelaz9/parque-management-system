@@ -52,11 +52,11 @@ public class ServicioTicketsTest
         var cuentaId = 1;
         var fechaVisita = DateTime.Now.AddDays(3);
         var eventoId = 10;
-        Evento evento = new Evento("Festival", "Música", DateTime.Now, DateTime.Now.AddDays(10), 100, 50, EstadoEvento.Programado);
+        var evento = new Evento("Festival", "Música", DateTime.Now, DateTime.Now.AddDays(10), 100, 50, EstadoEvento.Programado);
 
         _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
             .Returns(evento);
-        _repositorioMock.Setup(r => r.ObtenerTodos()).Returns(new List<Ticket>());
+        _repositorioMock.Setup(r => r.ObtenerTodos()).Returns([]);
 
         Ticket ticket = _servicio.CrearTicketEventoEspecial(cuentaId, fechaVisita, eventoId);
 
