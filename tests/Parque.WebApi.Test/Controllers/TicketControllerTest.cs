@@ -265,4 +265,15 @@ public class TicketControllerTest
         Assert.AreEqual(400, badRequest.StatusCode);
         _servicioMock.VerifyAll();
     }
+
+    [TestMethod]
+    public void DeleteValido()
+    {
+        _servicioMock!.Setup(s => s.EliminarTicket(1));
+
+        var result = _controller!.Delete(1);
+
+        Assert.IsInstanceOfType(result, typeof(NoContentResult));
+        _servicioMock.VerifyAll();
+    }
 }
