@@ -1,6 +1,6 @@
 namespace Parque.Aplicacion.DTOS;
 
-public class ValidarAccesoRespuesta
+public class ValidarAccesoResponse
 {
     public bool AccesoPermitido { get; set; }
     public string Mensaje { get; set; } = string.Empty;

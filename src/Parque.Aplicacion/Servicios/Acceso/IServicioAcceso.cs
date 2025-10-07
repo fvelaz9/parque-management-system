@@ -5,7 +5,7 @@ namespace Parque.Aplicacion.Servicios.Acceso;
 
 public interface IServicioAcceso
 {
-    ValidarAccesoRespuesta ValidarAcceso(ValidarAccesoRequest request);
+    ValidarAccesoResponse ValidarAcceso(ValidarAccesoRequest request);
     RegistroVisita RegistrarIngreso(Guid codigoTicket, int atraccionId, int edadVisitante);
     RegistroVisita RegistrarEgreso(Guid codigoTicket, int atraccionId);
 }

@@ -9,23 +9,23 @@ namespace Parque.Aplicacion.Servicios.Acceso;
 public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepositorio<Dominio.Ticket> repoTickets,
     IRepositorio<RegistroVisita> repoRegistros, IRepositorio<Incidencia> repoIncidencias) : IServicioAcceso
 {
-    public ValidarAccesoRespuesta ValidarAcceso(ValidarAccesoRequest request)
+    public ValidarAccesoResponse ValidarAcceso(ValidarAccesoRequest request)
     {
         var ticket = repoTickets.Encontrar(d => d.Codigo == request.CodigoTicket);
         if(ticket == null)
         {
-            return new ValidarAccesoRespuesta { AccesoPermitido = false, Mensaje = "El ticket no fue encontrado" };
+            return new ValidarAccesoResponse { AccesoPermitido = false, Mensaje = "El ticket no fue encontrado" };
         }
 
         var atraccion = repoAtracciones.Encontrar(y => y.Id == request.AtraccionId);
         if(atraccion == null)
         {
-            return new ValidarAccesoRespuesta { AccesoPermitido = false, Mensaje = "Atracción no encontrada" };
+            return new ValidarAccesoResponse { AccesoPermitido = false, Mensaje = "Atracción no encontrada" };
         }
 
         if(ticket.FechaVisita.Date != DateTime.Today)
         {
-            return new ValidarAccesoRespuesta
+            return new ValidarAccesoResponse
             {
                 AccesoPermitido = false,
                 Mensaje = $"Ticket válido solo para {ticket.FechaVisita:dd/MM/yyyy}"
@@ -35,7 +35,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
         // ACA SE MANEJARIA LA SITUACION LIMITE DE ATRACCION EN EVENTO ESPECIAL
         if (ticket.TipoEntrada == TipoTicket.EventoEspecial)
         {
-            return new ValidarAccesoRespuesta
+            return new ValidarAccesoResponse
             {
                 AccesoPermitido = false,
                 Mensaje = "Ticket de evento especial no válido para esta atracción",
@@ -45,7 +45,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
 
         if (request.EdadVisitante < atraccion.EdadMinima)
         {
-            return new ValidarAccesoRespuesta
+            return new ValidarAccesoResponse
             {
                 AccesoPermitido = false,
                 Mensaje = $"Edad mínima requerida: {atraccion.EdadMinima} años",
@@ -56,7 +56,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
         var incidencias = repoIncidencias.Encontrar(d => d.AtraccionId == request.AtraccionId);
         if (incidencias != null && !incidencias.EstaDisponible())
         {
-            return new ValidarAccesoRespuesta
+            return new ValidarAccesoResponse
             {
                 AccesoPermitido = false,
                 Mensaje = "Atracción temporalmente fuera de servicio",
@@ -70,7 +70,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
 
         if (visitantesActuales >= atraccion.Capacidad)
         {
-            return new ValidarAccesoRespuesta
+            return new ValidarAccesoResponse
             {
                 AccesoPermitido = false,
                 Mensaje = $"Aforo completo ({atraccion.Capacidad} personas)",
@@ -79,7 +79,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
         }
 
         // ACCESO PERMITIDO, falta traer al usuario
-        return new ValidarAccesoRespuesta
+        return new ValidarAccesoResponse
         {
             AccesoPermitido = true,
             Mensaje = "Acceso permitido",
