@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
 using Parque.Dominio.Usuarios;
@@ -28,5 +28,10 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
                 .IsRequired()
                 .HasMaxLength(100);
         });
+
+        modelBuilder.Entity<Evento>()
+            .HasMany(e => e.Atracciones)
+            .WithMany()
+            .UsingEntity(j => j.ToTable("EventoAtracciones"));
     }
 }
