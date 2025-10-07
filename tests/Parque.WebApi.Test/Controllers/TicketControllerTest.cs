@@ -53,5 +53,15 @@ public class TicketControllerTest
         _servicioMock.VerifyAll();
     }
 
+    [TestMethod]
+    public void GetByIdConTicketDoesNoExistente()
+    {
+        _servicioMock!.Setup(s => s.BuscarTicket(1)).Returns((Ticket)null);
+
+        var result = _controller!.GetById(1);
+
+        Assert.IsInstanceOfType(result, typeof(NotFoundResult));
+        _servicioMock.VerifyAll();
+    }
 
 }
