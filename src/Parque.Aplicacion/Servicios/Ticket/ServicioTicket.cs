@@ -8,22 +8,20 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
     private readonly IRepositorio<Dominio.Ticket> _repositorio = repositorio;
     private readonly IRepositorio<Evento> _repositorioEvento = repositorioEvento;
 
-    public Dominio.Ticket CrearTicket(int cuentaId, DateTime fechaVisita, int? eventoId, TipoTicket tipoTicket)
+    public Dominio.Ticket CrearTicketGeneral(int cuentaId, DateTime fechaVisita)
     {
         ValidarFechaFutura(fechaVisita);
-        ValidarEventoParaTicketEspecial(tipoTicket, eventoId);
+        Dominio.Ticket ticket = ConstruirTicket(cuentaId, fechaVisita, null, TipoTicket.General);
 
-        var ticket = new Dominio.Ticket
-        {
-            CuentaId = cuentaId,
-            FechaVisita = fechaVisita,
-            EventoId = eventoId,
-            TipoEntrada = tipoTicket,
-            Codigo = Guid.NewGuid(),
-            FechaEmision = DateTime.Now,
-            EsValido = true
-        };
+        _repositorio.Agregar(ticket);
+        return ticket;
+    }
 
+    public Dominio.Ticket CrearTicketEventoEspecial(int cuentaId, DateTime fechaVisita, int eventoId)
+    {
+        ValidarFechaFutura(fechaVisita);
+        ValidarEventoParaTicketEspecial(TipoTicket.EventoEspecial, eventoId);
+        Dominio.Ticket ticket = ConstruirTicket(cuentaId, fechaVisita, eventoId, TipoTicket.EventoEspecial);
         _repositorio.Agregar(ticket);
         return ticket;
     }
@@ -98,5 +96,19 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
                 throw new InvalidOperationException("Aforo completo para este evento");
             }
         }
+    }
+
+    private Dominio.Ticket ConstruirTicket(int cuentaId, DateTime fechaVisita, int? eventoId, TipoTicket tipo)
+    {
+        return new Dominio.Ticket
+        {
+            CuentaId = cuentaId,
+            FechaVisita = fechaVisita,
+            EventoId = eventoId,
+            TipoEntrada = tipo,
+            Codigo = Guid.NewGuid(),
+            FechaEmision = DateTime.Now,
+            EsValido = true
+        };
     }
 }
