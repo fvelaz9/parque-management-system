@@ -8,7 +8,7 @@ using Parque.Infraestructura.Repositorios;
 namespace Parque.Aplicacion.Servicios.Acceso;
 
 public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepositorio<Dominio.Ticket> repoTickets,
-    IRepositorio<RegistroVisita> repoRegistros, IRepositorio<Incidencia> repoIncidencias) : IServicioAcceso
+    IRepositorio<RegistroVisita> repoRegistros, IRepositorio<Incidencia> repoIncidencias, IRepositorio<Cuenta> repoCuentas, IRepositorio<Evento> repoEvento) : IServicioAcceso
 {
     public ValidarAccesoResponse ValidarAcceso(ValidarAccesoRequest request)
     {
@@ -34,13 +34,23 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             };
         }
 
-        // ACA SE MANEJARIA LA SITUACION LIMITE DE ATRACCION EN EVENTO ESPECIAL
+        // ACA SE MANEJARIA LA SITUACION LIMITE DE ATRACCION EN EVENTO ESPECIAL APARITR DE ACA AGREGAR COSA DE EVENTO
         if (ticket.TipoEntrada == TipoTicket.EventoEspecial)
+        {
+            var errorEvento = VerificarEvento(ticket, atraccion, request.AtraccionId);
+            if (errorEvento != null)
+            {
+                return errorEvento;
+            }
+        }
+
+        var cuenta = repoCuentas.Encontrar(d => d.Id == request.CuentaVisitante.Id);
+        if(cuenta == null)
         {
             return new ValidarAccesoResponse
             {
                 AccesoPermitido = false,
-                Mensaje = "Ticket de evento especial no válido para esta atracción",
+                Mensaje = "Cuenta no encontrada",
                 NombreAtraccion = atraccion.Nombre
             };
         }
@@ -90,7 +100,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             };
         }
 
-        // ACCESO PERMITIDO, falta traer al usuario
+        // ACCESO PERMITIDO
         return new ValidarAccesoResponse
         {
             AccesoPermitido = true,
@@ -98,6 +108,74 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             NombreAtraccion = atraccion.Nombre,
             NombreVisitante = "Visitante"
         };
+    }
+
+    private ValidarAccesoResponse? VerificarEvento(Dominio.Ticket ticket, AtraccionParque atraccion, int atraccionId)
+    {
+        // 1. Verificar que el ticket tenga un EventoId
+        if (ticket.EventoId == null)
+        {
+            return new ValidarAccesoResponse
+            {
+                AccesoPermitido = false,
+                Mensaje = "Ticket de evento especial sin evento asociado",
+                NombreAtraccion = atraccion.Nombre
+            };
+        }
+
+        // 2. Buscar el evento asociado al ticket
+        var evento = repoEvento.Encontrar(e => e.Id == ticket.EventoId.Value);
+        
+        if (evento == null)
+        {
+            return new ValidarAccesoResponse
+            {
+                AccesoPermitido = false,
+                Mensaje = "No se encontró el evento asociado al ticket",
+                NombreAtraccion = atraccion.Nombre
+            };
+        }
+
+        // 3. Validar que la atracción esté incluida en el evento
+        var atraccionIncluidaEnEvento = evento.Atracciones.Any(a => a.Id == atraccionId);
+
+        if (!atraccionIncluidaEnEvento)
+        {
+            var atraccionesPermitidas = string.Join(", ", evento.Atracciones.Select(a => a.Nombre));
+            return new ValidarAccesoResponse
+            {
+                AccesoPermitido = false,
+                Mensaje = $"Esta atracción no forma parte del evento '{evento.Titulo}'. " +
+                         $"Atracciones incluidas: {atraccionesPermitidas}",
+                NombreAtraccion = atraccion.Nombre
+            };
+        }
+
+        // 4. Validar que el evento esté activo (dentro del rango de fechas)
+        if (DateTime.Today < evento.Inicio.Date || DateTime.Today > evento.Fin.Date)
+        {
+            return new ValidarAccesoResponse
+            {
+                AccesoPermitido = false,
+                Mensaje = $"Evento '{evento.Titulo}' no está activo. " +
+                         $"Válido desde {evento.Inicio:dd/MM/yyyy} hasta {evento.Fin:dd/MM/yyyy}",
+                NombreAtraccion = atraccion.Nombre
+            };
+        }
+
+        // 5. Validar que la fecha del ticket coincida con el rango del evento
+        if (ticket.FechaVisita.Date < evento.Inicio.Date || ticket.FechaVisita.Date > evento.Fin.Date)
+        {
+            return new ValidarAccesoResponse
+            {
+                AccesoPermitido = false,
+                Mensaje = $"Fecha del ticket fuera del rango del evento. " +
+                         $"Evento válido desde {evento.Inicio:dd/MM/yyyy} hasta {evento.Fin:dd/MM/yyyy}",
+                NombreAtraccion = atraccion.Nombre
+            };
+        }
+
+        return null;
     }
 
     public RegistroVisita RegistrarIngreso(Guid codigoTicket, int atraccionId, Cuenta cuentaVisitante)

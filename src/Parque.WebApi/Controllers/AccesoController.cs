@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Parque.Aplicacion.DTOS;
 using Parque.Aplicacion.Servicios.Acceso;
+using Parque.Dominio.Usuarios;
 
 namespace Parque.WebApi.Controllers;
 
@@ -34,11 +35,11 @@ public class AccesoController : ControllerBase
     }
 
     [HttpPost("{id}/ingresos")]
-    public IActionResult RegistrarIngresos(int id, [FromBody] ValidarAccesoRequest dto, int edad)
+    public IActionResult RegistrarIngresos(int id, [FromBody] ValidarAccesoRequest dto, Cuenta cuentaVisitante )
     {
         try
         {
-            var registro = _servicio.RegistrarIngreso(dto.CodigoTicket, id, edad);
+            var registro = _servicio.RegistrarIngreso(dto.CodigoTicket, id, cuentaVisitante);
             return Ok(registro);
         }
         catch(ArgumentException ex)
