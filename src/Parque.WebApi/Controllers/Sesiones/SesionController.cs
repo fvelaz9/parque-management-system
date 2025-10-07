@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Parque.Aplicacion.Mappers;
 using Parque.Aplicacion.Servicios;
-using Parque.Dominio.Usuarios;
 using Parque.WebApi.Controllers.Sesiones.Models;
 using Parque.WebApi.Filtros;
 
