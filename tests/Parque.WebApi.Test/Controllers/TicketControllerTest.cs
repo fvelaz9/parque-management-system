@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Parque.Aplicacion.DTOS;
 using Parque.Aplicacion.Servicios.Ticket;
 using Parque.Dominio;
 using Parque.WebApi.Controllers;
@@ -99,5 +100,28 @@ public class TicketControllerTest
         var badRequest = result as BadRequestObjectResult;
         Assert.IsNotNull(badRequest);
         Assert.AreEqual(400, badRequest.StatusCode);
+    }
+
+    [TestMethod]
+    public void CreateGeneralTicketValido()
+    {
+        var request = new CrearTicketDto
+        {
+            CuentaId = 1,
+            FechaVisita = DateTime.Now.AddDays(2),
+            TipoEntrada = TipoTicket.General
+        };
+
+        var expectedTicket = new Ticket { Id = 10, CuentaId = 1 };
+        _servicioMock!.Setup(s => s.CrearTicketGeneral(request.CuentaId, request.FechaVisita))
+            .Returns(expectedTicket);
+
+        var result = _controller!.Create(request);
+
+        var created = result as CreatedAtActionResult;
+        Assert.IsNotNull(created);
+        Assert.AreEqual(nameof(_controller.GetById), created.ActionName);
+        Assert.AreEqual(expectedTicket, created.Value);
+        _servicioMock.VerifyAll();
     }
 }
