@@ -91,4 +91,13 @@ public class TicketControllerTest
         Assert.IsInstanceOfType(result, typeof(NotFoundResult));
         _servicioMock.VerifyAll();
     }
+
+    [TestMethod]
+    public void CreateConRequestNull()
+    {
+        var result = _controller!.Create(null);
+        var badRequest = result as BadRequestObjectResult;
+        Assert.IsNotNull(badRequest);
+        Assert.AreEqual(400, badRequest.StatusCode);
+    }
 }
