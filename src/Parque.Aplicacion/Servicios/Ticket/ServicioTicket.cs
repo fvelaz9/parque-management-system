@@ -7,9 +7,8 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
 {
     private readonly IRepositorio<Dominio.Ticket> _repositorio = repositorio;
     private readonly IRepositorio<Evento> _repositorioEvento = repositorioEvento;
-
-    public Dominio.Ticket CrearTicket(Guid cuentaId, DateTime fechaVisita, int? eventoId, TipoTicket tipoTicket)
-    public Dominio.Ticket CrearTicketGeneral(int cuentaId, DateTime fechaVisita)
+    
+    public Dominio.Ticket CrearTicketGeneral(Guid cuentaId, DateTime fechaVisita)
     {
         ValidarFechaFutura(fechaVisita);
         Dominio.Ticket ticket = ConstruirTicket(cuentaId, fechaVisita, null, TipoTicket.General);
@@ -18,7 +17,7 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
         return ticket;
     }
 
-    public Dominio.Ticket CrearTicketEventoEspecial(int cuentaId, DateTime fechaVisita, int eventoId)
+    public Dominio.Ticket CrearTicketEventoEspecial(Guid cuentaId, DateTime fechaVisita, int eventoId)
     {
         ValidarFechaFutura(fechaVisita);
         ValidarEventoParaTicketEspecial(TipoTicket.EventoEspecial, eventoId);
@@ -99,7 +98,7 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
         }
     }
 
-    private Dominio.Ticket ConstruirTicket(int cuentaId, DateTime fechaVisita, int? eventoId, TipoTicket tipo)
+    private Dominio.Ticket ConstruirTicket(Guid cuentaId, DateTime fechaVisita, int? eventoId, TipoTicket tipo)
     {
         return new Dominio.Ticket
         {

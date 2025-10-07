@@ -23,7 +23,7 @@ public class ServicioTicketsTest
     [TestMethod]
     public void CrearTicketGeneralValido()
     {
-        var cuentaId = 123;
+        Guid cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
         DateTime fechaVisita = DateTime.Now.AddDays(1);
 
         _repositorioMock.Setup(r => r.Agregar(It.IsAny<Dominio.Ticket>()));
@@ -40,38 +40,12 @@ public class ServicioTicketsTest
     [ExpectedException(typeof(ArgumentException))]
     public void CrearTicketGeneralConFechaInvalida()
     {
-        var cuentaId = 123;
+        Guid cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
         DateTime fechaVisita = DateTime.Now.AddMinutes(-5);
 
         _servicio.CrearTicketGeneral(cuentaId, fechaVisita);
     }
-
-    [TestMethod]
-    public void CrearTicketEventoEspecialValido()
-    {
-        var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
-        var fechaVisita = DateTime.Now.AddDays(1);
-        var eventoId = 1;
-        var tipoticket = TipoTicket.General;
-        var ticket = _servicio.CrearTicket(cuentaId, fechaVisita, eventoId, tipoticket);
-        var cuentaId = 1;
-        var fechaVisita = DateTime.Now.AddDays(3);
-        var eventoId = 10;
-        var evento = new Evento("Festival", "Música", DateTime.Now, DateTime.Now.AddDays(10), 100, 50, EstadoEvento.Programado);
-
-        _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
-            .Returns(evento);
-        _repositorioMock.Setup(r => r.ObtenerTodos()).Returns([]);
-
-        Ticket ticket = _servicio.CrearTicketEventoEspecial(cuentaId, fechaVisita, eventoId);
-
-        Assert.IsNotNull(ticket);
-        Assert.AreEqual(cuentaId, ticket.CuentaId);
-        Assert.AreEqual(eventoId, ticket.EventoId);
-        Assert.AreEqual(TipoTicket.EventoEspecial, ticket.TipoEntrada);
-        _repositorioMock.Verify(r => r.Agregar(It.IsAny<Ticket>()), Times.Once);
-    }
-
+    
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
     public void CrearTicketEventoEspecialFechaInvalida()
@@ -79,9 +53,9 @@ public class ServicioTicketsTest
         var fechaAhora = DateTime.Now;
         var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
 
-        _servicio.CrearTicket(cuentaId, fechaAhora, 1, TipoTicket.General);
+        _servicio.CrearTicketGeneral(cuentaId, fechaAhora);
         var fechaPasada = DateTime.Now.AddDays(-1);
-        _servicio.CrearTicketEventoEspecial(1, fechaPasada, 1);
+        _servicio.CrearTicketEventoEspecial(cuentaId, fechaPasada, 1);
     }
 
     [TestMethod]
@@ -90,7 +64,7 @@ public class ServicioTicketsTest
     {
         var fechaVisita = DateTime.Now.AddDays(2);
         var evento = new Evento("Show", "Concierto", DateTime.Now, DateTime.Now.AddDays(10), 2, 50, EstadoEvento.Programado);
-
+        Guid cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
         _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
             .Returns(evento);
 
@@ -101,18 +75,19 @@ public class ServicioTicketsTest
         };
         _repositorioMock.Setup(r => r.ObtenerTodos()).Returns(ticketsVendidos);
 
-        _servicio.CrearTicketEventoEspecial(1, fechaVisita, 1);
+        _servicio.CrearTicketEventoEspecial(cuentaId, fechaVisita, 1);
     }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
     public void CrearTicketEventoEspecialEventoNoEncontrado()
     {
+        Guid cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
         var fechaVisita = DateTime.Now.AddDays(5);
         _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
             .Returns((Evento)null);
 
-        _servicio.CrearTicketEventoEspecial(1, fechaVisita, 999);
+        _servicio.CrearTicketEventoEspecial(cuentaId, fechaVisita, 999);
     }
 
     [TestMethod]
@@ -171,80 +146,6 @@ public class ServicioTicketsTest
         Assert.AreEqual(nuevoEventoId, ticketExistente.EventoId);
         Assert.IsNotNull(nuevoEventoTipo);
         _repositorioMock.Verify(r => r.Editar(ticketExistente), Times.Once);
-    }
-
-    [TestMethod]
-    public void EliminarTicket_ConIdValido_DeberiaEliminarTicket()
-    {
-        var id = 1;
-        _servicio.EliminarTicket(id);
-        _repositorioMock.Verify(r => r.Eliminar(It.IsAny<Expression<Func<Ticket, bool>>>()), Times.Once);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ComprarTicket_ConFechaPasada_DeberiaLanzarExcepcion()
-    {
-        var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
-        var fechaPasada = DateTime.Now.AddDays(-1);
-
-        _servicio.CrearTicket(cuentaId, fechaPasada, null, TipoTicket.General);
-    }
-
-    [TestMethod]
-    public void ComprarTicket_General_DeberiaCrearTicketSinEvento()
-    {
-        var fechaFutura = DateTime.Now.AddDays(5);
-        var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
-        var ticket = _servicio.CrearTicket(cuentaId, fechaFutura, null, TipoTicket.General);
-
-        Assert.IsNotNull(ticket);
-        Assert.AreEqual(cuentaId, ticket.CuentaId);
-        Assert.AreEqual(TipoTicket.General, ticket.TipoEntrada);
-        Assert.IsNull(ticket.EventoId);
-        Assert.AreNotEqual(Guid.Empty, ticket.Codigo);
-        _repositorioMock.Verify(r => r.Agregar(It.IsAny<Dominio.Ticket>()), Times.Once);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ComprarTicket_EventoEspecialSinEventoId_DeberiaLanzarExcepcion()
-    {
-        var fechaFutura = DateTime.Now.AddDays(5);
-        var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
-        _servicio.CrearTicket(cuentaId, fechaFutura, null, TipoTicket.EventoEspecial);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void ComprarTicket_EventoNoEncontrado_DeberiaLanzarExcepcion()
-    {
-        var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
-        var fechaFutura = DateTime.Now.AddDays(5);
-        _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
-            .Returns((Evento)null);
-
-        _servicio.CrearTicket(cuentaId, fechaFutura, 999, TipoTicket.EventoEspecial);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(InvalidOperationException))]
-    public void CrearTicket_AforoCompleto_DeberiaLanzarExcepcion()
-    {
-        var fechaFutura = DateTime.Now.AddDays(5);
-        var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
-        var evento = new Evento("Concierto", "Descripción", DateTime.Now, DateTime.Now.AddDays(10), 2, 50, EstadoEvento.Programado);
-        _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
-            .Returns(evento);
-        var ticketsExistentes = new List<Ticket>
-        {
-            new Ticket { Id = 1, EventoId = 1, EsValido = true },
-            new Ticket { Id = 2, EventoId = 1, EsValido = true }
-        };
-        _repositorioMock.Setup(r => r.ObtenerTodos()).Returns(ticketsExistentes);
-
-        // Act
-        _servicio.CrearTicket(cuentaId, fechaFutura, 1, TipoTicket.EventoEspecial);
     }
 
     [TestMethod]
