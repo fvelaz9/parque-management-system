@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Parque.Aplicacion.DTOS;
-using Parque.Aplicacion.Servicios.Acceso;
 using Parque.Aplicacion.Servicios.Atracciones;
 using Parque.Dominio.Atracciones;
 

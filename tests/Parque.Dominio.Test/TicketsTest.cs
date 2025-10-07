@@ -114,7 +114,7 @@ public class TicketsTest
     public void Codigo_DeberiaSerUnicoPorTicket()
     {
         var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
-        var cuentaId2 = new Guid("12345678-1234-1234-1234-123456754454589abc");
+        var cuentaId2 = new Guid("12345678-1234-1234-1234-123456777abc");
         var ticket1 = new Ticket(cuentaId, DateTime.Now.AddDays(1), 1, TipoTicket.General);
         var ticket2 = new Ticket(cuentaId2, DateTime.Now.AddDays(1), 2, TipoTicket.General);
 

@@ -10,21 +10,16 @@ namespace Parque.WebApi.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/acceso")]
-public class AccesoController : ControllerBase
+public class AccesoController(IServicioAcceso servicio) : ControllerBase
 {
-    private readonly IServicioAcceso _servicio;
-
-    public AccesoController(IServicioAcceso servicio)
-    {
-        _servicio = servicio;
-    }
+    private readonly IServicioAcceso _servicio = servicio;
 
     [HttpPost("validar")]
     public IActionResult ValidarAcceso([FromBody] ValidarAccesoRequest request)
     {
         var resultado = _servicio.ValidarAcceso(request);
 
-        if (resultado.AccesoPermitido)
+        if(resultado.AccesoPermitido)
         {
             return Ok(resultado);
         }
@@ -35,7 +30,7 @@ public class AccesoController : ControllerBase
     }
 
     [HttpPost("{id}/ingresos")]
-    public IActionResult RegistrarIngresos(int id, [FromBody] ValidarAccesoRequest dto, Cuenta cuentaVisitante )
+    public IActionResult RegistrarIngresos(int id, [FromBody] ValidarAccesoRequest dto, Cuenta cuentaVisitante)
     {
         try
         {
@@ -56,7 +51,7 @@ public class AccesoController : ControllerBase
             var registro = _servicio.RegistrarEgreso(codigoTicket, atraccionId);
             return Ok(new { mensaje = "Egreso registrado exitosamente", registro });
         }
-        catch (ArgumentException ex)
+        catch(ArgumentException ex)
         {
             return BadRequest(new { mensaje = ex.Message });
         }
