@@ -7,8 +7,7 @@ using Parque.Dominio.Atracciones;
 using Parque.Dominio.Usuarios;
 using Parque.Infraestructura.Repositorios;
 
-namespace Parque.Aplicacion.Test.Servicios.Acceso;
-
+namespace Parque.Aplicacion.Test.Servicios;
 [TestClass]
 public class ServicioAccesoTest
 {
