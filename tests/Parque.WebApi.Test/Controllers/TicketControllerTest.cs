@@ -4,8 +4,6 @@ using Parque.Aplicacion.DTOS;
 using Parque.Aplicacion.Servicios.Ticket;
 using Parque.Dominio;
 using Parque.WebApi.Controllers;
-using System;
-using System.Collections.Generic;
 
 namespace Parque.WebApi.Test.Controllers;
 
@@ -76,9 +74,9 @@ public class TicketControllerTest
     {
         var cuentaId = Guid.NewGuid();
         var codigo = Guid.NewGuid();
-        var ticket = new Dominio.Ticket(cuentaId, DateTime.Today.AddDays(1), 1, TipoTicket.General) 
-        { 
-            Codigo = codigo 
+        var ticket = new Dominio.Ticket(cuentaId, DateTime.Today.AddDays(1), 1, TipoTicket.General)
+        {
+            Codigo = codigo
         };
 
         _servicioMock!.Setup(s => s.BuscarTicketPorCodigo(codigo)).Returns(ticket);

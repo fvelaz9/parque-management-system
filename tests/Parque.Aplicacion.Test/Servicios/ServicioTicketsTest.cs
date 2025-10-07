@@ -23,7 +23,7 @@ public class ServicioTicketsTest
     [TestMethod]
     public void CrearTicketGeneralValido()
     {
-        Guid cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
+        var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
         DateTime fechaVisita = DateTime.Now.AddDays(1);
 
         _repositorioMock.Setup(r => r.Agregar(It.IsAny<Dominio.Ticket>()));
@@ -40,12 +40,12 @@ public class ServicioTicketsTest
     [ExpectedException(typeof(ArgumentException))]
     public void CrearTicketGeneralConFechaInvalida()
     {
-        Guid cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
+        var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
         DateTime fechaVisita = DateTime.Now.AddMinutes(-5);
 
         _servicio.CrearTicketGeneral(cuentaId, fechaVisita);
     }
-    
+
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
     public void CrearTicketEventoEspecialFechaInvalida()
@@ -64,7 +64,7 @@ public class ServicioTicketsTest
     {
         var fechaVisita = DateTime.Now.AddDays(2);
         var evento = new Evento("Show", "Concierto", DateTime.Now, DateTime.Now.AddDays(10), 2, 50, EstadoEvento.Programado);
-        Guid cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
+        var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
         _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
             .Returns(evento);
 
@@ -82,7 +82,7 @@ public class ServicioTicketsTest
     [ExpectedException(typeof(ArgumentException))]
     public void CrearTicketEventoEspecialEventoNoEncontrado()
     {
-        Guid cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
+        var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
         var fechaVisita = DateTime.Now.AddDays(5);
         _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
             .Returns((Evento)null);

@@ -7,7 +7,7 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
 {
     private readonly IRepositorio<Dominio.Ticket> _repositorio = repositorio;
     private readonly IRepositorio<Evento> _repositorioEvento = repositorioEvento;
-    
+
     public Dominio.Ticket CrearTicketGeneral(Guid cuentaId, DateTime fechaVisita)
     {
         ValidarFechaFutura(fechaVisita);
