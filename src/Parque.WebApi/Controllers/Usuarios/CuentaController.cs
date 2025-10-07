@@ -20,4 +20,11 @@ public class CuentaController(IServicioCuenta servicioCuenta) : ControllerBase
             Message = "Visitante registrado exitosamente"
         });
     }
+
+    [HttpPost]
+    [AuthorizationFilter("Administrador")]
+    public IActionResult CrearCuenta([FromBody] RegistrarCuentaDto dto)
+    {
+        throw new NotImplementedException();
+    }
 }

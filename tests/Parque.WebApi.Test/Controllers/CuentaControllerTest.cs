@@ -2,6 +2,7 @@
 using Moq;
 using Parque.Aplicacion.DTOs.Usuarios;
 using Parque.Aplicacion.Servicios;
+using Parque.Dominio.Usuarios;
 using Parque.WebApi.Controllers.Usuarios;
 using Parque.WebApi.Filtros;
 
@@ -129,4 +130,49 @@ public class CuentaControllerTest
         Assert.IsNotNull(cuentaResponse);
         Assert.AreEqual(expectedId, cuentaResponse.Id);
     }
+
+    #region CrearCuenta Tests
+
+    [TestMethod]
+    public void CrearCuenta_CuandoDatosValidos_DeberiaRetornarCreated()
+    {
+        // Arrange
+        var dto = new RegistrarCuentaDto(
+            "Admin",
+            "Sistema",
+            "admin@parque.com",
+            "AdminPass123!",
+            Rol.Administrador,
+            null,
+            null);
+
+        var cuentaCreada = new CuentaDto(
+            Guid.NewGuid(),
+            "Admin",
+            "Sistema",
+            "admin@parque.com",
+            ["Administrador"],
+            null);
+
+        _serviceMock!.Setup(s => s.CrearCuentaPorAdmin(dto)).Returns(cuentaCreada);
+
+        // Act
+        var result = _controller!.CrearCuenta(dto);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(CreatedResult));
+        var createdResult = result as CreatedResult;
+        Assert.IsNotNull(createdResult);
+        Assert.AreEqual($"/api/cuentas/{cuentaCreada.Id}", createdResult.Location);
+
+        var response = createdResult.Value as ResponseDto;
+        Assert.IsNotNull(response);
+        Assert.IsTrue(response.ExecutionSuccessful);
+        Assert.AreEqual("Cuenta creada exitosamente", response.Message);
+        Assert.AreEqual(cuentaCreada, response.Content);
+
+        _serviceMock.VerifyAll();
+    }
+
+    #endregion
 }
