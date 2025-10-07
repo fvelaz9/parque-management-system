@@ -85,7 +85,7 @@ public class ServicioTicketsTest
         var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
         var fechaVisita = DateTime.Now.AddDays(5);
         _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
-            .Returns((Evento)null);
+            .Returns(default(Evento));
 
         _servicio.CrearTicketEventoEspecial(cuentaId, fechaVisita, 999);
     }
@@ -132,7 +132,7 @@ public class ServicioTicketsTest
         _repositorioMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Ticket, bool>>>()))
             .Returns(ticketExistente);
 
-        var cuentaId2 = new Guid("12345678-1234-1234-1234-123456789ab2c");
+        var cuentaId2 = new Guid("12345678-1234-1234-1234-123456789abc");
         var nuevaFechaVisita = DateTime.Now.AddDays(2);
         var nuevoEventoId = 2;
         var nuevoEventoTipo = TipoTicket.EventoEspecial;

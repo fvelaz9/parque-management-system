@@ -143,8 +143,18 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
 
     private ValidarAccesoResponse? ValidarReglasAccesoUsuario(AtraccionParque atraccion, Dominio.Ticket ticket, ValidarAccesoRequest request)
     {
+        if(request.CuentaVisitante?.Id == null)
+        {
+            return new ValidarAccesoResponse
+            {
+                AccesoPermitido = false,
+                Mensaje = "Cuenta no encontrada",
+                NombreAtraccion = atraccion.Nombre
+            };
+        }
+
         var cuenta = repoCuentas.Encontrar(d => d.Id == request.CuentaVisitante.Id);
-        if(cuenta == null)
+        if (cuenta == null)
         {
             return new ValidarAccesoResponse
             {
