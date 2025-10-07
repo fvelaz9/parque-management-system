@@ -31,22 +31,6 @@ public class SesionController(IServicioSesion servicioSesion) : ControllerBase
         });
     }
 
-    [HttpGet("perfil")]
-    [AuthorizationFilter("any")]
-    public IActionResult ObtenerPerfil()
-    {
-        // El usuario fue agregado al HttpContext.Items por el AuthorizationFilter
-        var cuenta = HttpContext.Items["user"] as Cuenta
-            ?? throw new InvalidOperationException("Usuario no encontrado");
-
-        return Ok(new ResponseDto
-        {
-            Content = cuenta.ToDto(),
-            ExecutionSuccessful = true,
-            Message = "Perfil obtenido correctamente"
-        });
-    }
-
     [HttpPost("logout")]
     [AuthorizationFilter("any")]
     public IActionResult Logout()
