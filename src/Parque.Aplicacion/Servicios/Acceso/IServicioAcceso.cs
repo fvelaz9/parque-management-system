@@ -1,9 +1,10 @@
 using Parque.Aplicacion.DTOS;
+using Parque.Dominio.Atracciones;
 
 namespace Parque.Aplicacion.Servicios.Acceso;
 
 public interface IServicioAcceso
 {
     ValidarAccesoRespuesta ValidarAcceso(ValidarAccesoRequest request);
-    void RegistrarIngreso(Guid codigoTicket, int atraccionId);
+    RegistroVisita RegistrarIngreso(Guid codigoTicket, int atraccionId);
 }

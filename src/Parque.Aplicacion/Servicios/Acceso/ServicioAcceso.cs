@@ -88,7 +88,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
         };
     }
 
-    public void RegistrarIngreso(Guid codigoTicket, int atraccionId)
+    public RegistroVisita RegistrarIngreso(Guid codigoTicket, int atraccionId)
     {
         var ticket = repoTickets.Encontrar(t => t.Codigo == codigoTicket);
         if (ticket == null)
@@ -104,5 +104,6 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
         };
 
         repoRegistros.Agregar(registro);
+        return registro;
     }
 }
