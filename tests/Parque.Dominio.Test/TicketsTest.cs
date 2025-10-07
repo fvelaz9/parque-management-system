@@ -155,12 +155,12 @@ public class TicketsTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
     public void Constructor_FechaPasada_DeberiaLanzarExcepcion()
     {
         var cuentaId = Guid.NewGuid();
         var fechaPasada = DateTime.Now.AddDays(-1);
 
-        var ticket = new Ticket(cuentaId, fechaPasada, 1, TipoTicket.General);
+        Assert.ThrowsException<ArgumentException>(
+            () => new Ticket(cuentaId, fechaPasada, 1, TipoTicket.General));
     }
 }
