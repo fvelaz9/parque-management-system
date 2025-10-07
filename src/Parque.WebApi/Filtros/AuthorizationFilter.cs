@@ -6,10 +6,10 @@ using Parque.Dominio.Excepciones;
 
 namespace Parque.WebApi.Filtros;
 
-public class AuthorizationFilter(string role) : Attribute, IAuthorizationFilter
+public class AuthorizationFilter(string rol) : Attribute, IAuthorizationFilter
 {
     private const string AUTHORIZATION_HEADER = "Authorization";
-    private readonly string _role = role ?? throw new ArgumentNullException(nameof(role));
+    private readonly string _rol = rol ?? throw new ArgumentNullException(nameof(rol));
 
     public void OnAuthorization(AuthorizationFilterContext context)
     {
@@ -44,7 +44,7 @@ public class AuthorizationFilter(string role) : Attribute, IAuthorizationFilter
 
         try
         {
-            if (!servicioSesion.ValidarSesion(token, _role))
+            if (!servicioSesion.ValidarSesion(token, _rol))
             {
                 context.Result = new ObjectResult(new ResponseDto
                 {

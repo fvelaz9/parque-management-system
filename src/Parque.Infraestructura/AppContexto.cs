@@ -13,6 +13,7 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
     public DbSet<Ticket> Tickets { get; set; }
     public DbSet<AtraccionParque> Atracciones { get; set; }
     public DbSet<RegistroVisita> RegistrosVisitas { get; set; }
+    public DbSet<Sesion> Sesiones { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -33,5 +34,17 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
             .HasMany(e => e.Atracciones)
             .WithMany()
             .UsingEntity(j => j.ToTable("EventoAtracciones"));
+
+        modelBuilder.Entity<Sesion>(builder =>
+        {
+            builder.HasKey(s => s.Id);
+            builder.Property(s => s.Token)
+                .IsRequired()
+                .HasMaxLength(200);
+            builder.HasIndex(s => s.Token)
+                .IsUnique();
+            builder.Property(s => s.UsuarioId)
+                .IsRequired();
+        });
     }
 }
