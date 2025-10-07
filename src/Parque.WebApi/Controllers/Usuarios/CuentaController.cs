@@ -25,6 +25,13 @@ public class CuentaController(IServicioCuenta servicioCuenta) : ControllerBase
     [AuthorizationFilter("Administrador")]
     public IActionResult CrearCuenta([FromBody] RegistrarCuentaDto dto)
     {
-        throw new NotImplementedException();
+        var cuenta = servicioCuenta.CrearCuentaPorAdmin(dto);
+
+        return Created($"/api/cuentas/{cuenta.Id}", new ResponseDto
+        {
+            Content = cuenta,
+            ExecutionSuccessful = true,
+            Message = "Cuenta creada exitosamente"
+        });
     }
 }

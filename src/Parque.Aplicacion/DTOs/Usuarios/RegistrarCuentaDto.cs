@@ -1,7 +1,6 @@
-using Parque.Dominio.Usuarios;
+﻿using Parque.Dominio.Usuarios;
 
 namespace Parque.Aplicacion.DTOs.Usuarios;
-
 public record RegistrarCuentaDto(
     string Nombre,
     string Apellido,
