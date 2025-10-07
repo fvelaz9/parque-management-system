@@ -6,14 +6,9 @@ namespace Parque.WebApi.Controllers;
 
 [ApiController]
 [Route("api/incidencias")]
-public class IncidenciasController : ControllerBase
+public class IncidenciasController(IServicioIncidencia servicio) : ControllerBase
 {
-    private readonly IServicioIncidencia _servicio;
-
-    public IncidenciasController(IServicioIncidencia servicio)
-    {
-        _servicio = servicio;
-    }
+    private readonly IServicioIncidencia _servicio = servicio;
 
     [HttpPost]
     public IActionResult CrearIncidencia([FromBody] CrearIncidenciaRequest request)
@@ -23,7 +18,7 @@ public class IncidenciasController : ControllerBase
             var incidencia = _servicio.CrearIncidencia(request);
             return Ok(incidencia);
         }
-        catch (ArgumentException ex)
+        catch(ArgumentException ex)
         {
             return BadRequest(new { mensaje = ex.Message });
         }
@@ -37,7 +32,7 @@ public class IncidenciasController : ControllerBase
             var disponible = _servicio.EstaDisponible(atraccionId);
             return Ok(new { atraccionId, disponible });
         }
-        catch (ArgumentException ex)
+        catch(ArgumentException ex)
         {
             return BadRequest(new { mensaje = ex.Message });
         }
