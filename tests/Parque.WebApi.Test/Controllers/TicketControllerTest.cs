@@ -64,4 +64,19 @@ public class TicketControllerTest
         _servicioMock.VerifyAll();
     }
 
+    [TestMethod]
+    public void GetByCodigoConTicketExistente()
+    {
+        var codigo = Guid.NewGuid();
+        Ticket ticket = new Ticket { Codigo = codigo };
+
+        _servicioMock!.Setup(s => s.BuscarTicketPorCodigo(codigo)).Returns(ticket);
+
+        var result = _controller!.GetByCodigo(codigo);
+
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.AreEqual(ticket, okResult.Value);
+        _servicioMock.VerifyAll();
+    }
 }
