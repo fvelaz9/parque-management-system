@@ -153,4 +153,14 @@ public class TicketsTest
 
         Assert.AreEqual(0, ticket.EventoId);
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void Constructor_FechaPasada_DeberiaLanzarExcepcion()
+    {
+        var cuentaId = Guid.NewGuid();
+        var fechaPasada = DateTime.Now.AddDays(-1);
+
+        Ticket ticket = new Ticket(cuentaId, fechaPasada, 1, TipoTicket.General);
+    }
 }
