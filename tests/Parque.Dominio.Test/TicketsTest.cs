@@ -161,6 +161,6 @@ public class TicketsTest
         var cuentaId = Guid.NewGuid();
         var fechaPasada = DateTime.Now.AddDays(-1);
 
-        Ticket ticket = new Ticket(cuentaId, fechaPasada, 1, TipoTicket.General);
+        var ticket = new Ticket(cuentaId, fechaPasada, 1, TipoTicket.General);
     }
 }
