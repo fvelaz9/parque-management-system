@@ -183,4 +183,27 @@ public class TicketControllerTest
         Assert.AreEqual(400, badRequest.StatusCode);
         _servicioMock.VerifyAll();
     }
+
+    [TestMethod]
+    public void CreateConServiceThrowsInvalidOperationException()
+    {
+        var request = new CrearTicketDto
+        {
+            CuentaId = 1,
+            FechaVisita = DateTime.Now.AddDays(1),
+            TipoEntrada = TipoTicket.EventoEspecial,
+            EventoId = 3
+        };
+
+        _servicioMock!.Setup(s => s.CrearTicketEventoEspecial(request.CuentaId, request.FechaVisita, request.EventoId.Value))
+            .Throws(new InvalidOperationException("Aforo completo"));
+
+        var result = _controller!.Create(request);
+
+        var conflict = result as ConflictObjectResult;
+        Assert.IsNotNull(conflict);
+        Assert.AreEqual(409, conflict.StatusCode);
+        _servicioMock.VerifyAll();
+    }
+
 }
