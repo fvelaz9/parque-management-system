@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Parque.Aplicacion.DTOS;
+using Parque.Aplicacion.Servicios.Acceso;
 using Parque.Aplicacion.Servicios.Atracciones;
 using Parque.Dominio.Atracciones;
 
@@ -7,9 +8,9 @@ namespace Parque.WebApi.Controllers;
 
 [ApiController]
 [Route("api/atracciones")]
-public class AtraccionesController(IServicioAtracciones service) : ControllerBase
+public class AtraccionesController(IServicioAtracciones servicioAtracciones) : ControllerBase
 {
-    private readonly IServicioAtracciones _service = service;
+    private readonly IServicioAtracciones _service = servicioAtracciones;
 
     [HttpGet]
     public IActionResult GetAll()
@@ -54,34 +55,6 @@ public class AtraccionesController(IServicioAtracciones service) : ControllerBas
     {
         _service.EliminarAtraccion(id);
         return NoContent();
-    }
-
-    [HttpPost("{id}/ingresos")]
-    public IActionResult RegistrarIngresos(int id, [FromBody] RegistroIngresoDto dto)
-    {
-        try
-        {
-            var registro = _service.RegistrarIngreso(dto.Identificador, id);
-            return Ok(registro);
-        }
-        catch(ArgumentException ex)
-        {
-            return BadRequest(new { mensaje = ex.Message });
-        }
-    }
-
-    [HttpPost("{id}/egresos")]
-    public IActionResult RegistrarEgreso(int id, [FromBody] RegistroIngresoDto dto)
-    {
-        try
-        {
-            var registro = _service.RegistrarEgreso(dto.Identificador, id);
-            return Ok(registro);
-        }
-        catch(ArgumentException ex)
-        {
-            return BadRequest(new { mensaje = ex.Message });
-        }
     }
 
     [HttpGet("atracciones")]

@@ -25,7 +25,7 @@ public class AccesoController : ControllerBase
     public IActionResult ValidarAcceso([FromBody] ValidarAccesoRequest request)
     {
         var resultado = _servicio.ValidarAcceso(request);
-        
+
         if (resultado.AccesoPermitido)
         {
             return Ok(resultado);
@@ -37,11 +37,11 @@ public class AccesoController : ControllerBase
     }
 
     [HttpPost("{id}/ingresos")]
-    public IActionResult RegistrarIngresos(int id, [FromBody] RegistroIngresoDto dto)
+    public IActionResult RegistrarIngresos(int id, [FromBody] ValidarAccesoRequest dto, int edad)
     {
         try
         {
-            var registro = _servicio.RegistrarIngreso(dto.Identificador, id);
+            var registro = _servicio.RegistrarIngreso(dto.CodigoTicket, id, edad);
             return Ok(registro);
         }
         catch(ArgumentException ex)

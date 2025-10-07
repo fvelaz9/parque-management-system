@@ -6,7 +6,7 @@ using Parque.Infraestructura.Repositorios;
 
 namespace Parque.Aplicacion.Servicios.Acceso;
 
-public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepositorio<Dominio.Ticket> repoTickets, 
+public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepositorio<Dominio.Ticket> repoTickets,
     IRepositorio<RegistroVisita> repoRegistros, IRepositorio<Incidencia> repoIncidencias) : IServicioAcceso
 {
     public ValidarAccesoRespuesta ValidarAcceso(ValidarAccesoRequest request)
@@ -31,7 +31,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
                 Mensaje = $"Ticket válido solo para {ticket.FechaVisita:dd/MM/yyyy}"
             };
         }
-        
+
         // ACA SE MANEJARIA LA SITUACION LIMITE DE ATRACCION EN EVENTO ESPECIAL
         if (ticket.TipoEntrada == TipoTicket.EventoEspecial)
         {
@@ -42,7 +42,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
                 NombreAtraccion = atraccion.Nombre
             };
         }
-        
+
         if (request.EdadVisitante < atraccion.EdadMinima)
         {
             return new ValidarAccesoRespuesta
@@ -63,7 +63,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
                 NombreAtraccion = atraccion.Nombre
             };
         }
-        
+
         // 7. Validar aforo (visitantes dentro actualmente)
         var visitantesActuales = repoRegistros.ObtenerTodos()
             .Count(r => r.AtraccionId == request.AtraccionId && r.FechaEgreso == null);
@@ -77,33 +77,56 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
                 NombreAtraccion = atraccion.Nombre
             };
         }
-        
+
         // ACCESO PERMITIDO, falta traer al usuario
         return new ValidarAccesoRespuesta
         {
             AccesoPermitido = true,
             Mensaje = "Acceso permitido",
             NombreAtraccion = atraccion.Nombre,
-            NombreVisitante = "Visitante"  
+            NombreVisitante = "Visitante"
         };
     }
 
-    public RegistroVisita RegistrarIngreso(Guid codigoTicket, int atraccionId)
+    public RegistroVisita RegistrarIngreso(Guid codigoTicket, int atraccionId, int edadVisitante)
     {
-        var ticket = repoTickets.Encontrar(t => t.Codigo == codigoTicket);
-        if (ticket == null)
+        // Primero validar acceso
+        var validacion = ValidarAcceso(new ValidarAccesoRequest
         {
-            throw new ArgumentException("Ticket no encontrado");
+            CodigoTicket = codigoTicket,
+            AtraccionId = atraccionId,
+            EdadVisitante = edadVisitante
+        });
+
+        if (!validacion.AccesoPermitido)
+        {
+            throw new ArgumentException(validacion.Mensaje);
         }
+
+        var ticket = repoTickets.Encontrar(t => t.Codigo == codigoTicket);
 
         var registro = new RegistroVisita
         {
             AtraccionId = atraccionId,
             Identificador = codigoTicket,
-            FechaIngreso = DateTime.Today
+            FechaIngreso = DateTime.Now
         };
 
         repoRegistros.Agregar(registro);
+        return registro;
+    }
+
+    public RegistroVisita RegistrarEgreso(Guid codigoTicket, int atraccionId)
+    {
+        var registro = repoRegistros.Encontrar(a => a.Identificador == codigoTicket && a.AtraccionId == atraccionId && a.FechaEgreso == null);
+
+        if(registro == null)
+        {
+            throw new ArgumentException("No hay ingreso registrado o ya se registró el egreso");
+        }
+
+        registro.FechaEgreso = DateTime.Now;
+        repoRegistros.Editar(registro);
         return registro;
     }
 }
