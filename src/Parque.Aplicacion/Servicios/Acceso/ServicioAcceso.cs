@@ -154,7 +154,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
         }
 
         var cuenta = repoCuentas.Encontrar(d => d.Id == request.CuentaVisitante.Id);
-        if (cuenta == null)
+        if(cuenta == null)
         {
             return new ValidarAccesoResponse
             {
