@@ -13,7 +13,7 @@ public class Ticket
 
     public Ticket(Guid cuentaId, DateTime fechaVisita, int eventoId, TipoTicket tipoEntrada)
     {
-        if(fechaVisita <= DateTime.Now)
+        if(fechaVisita.Date < DateTime.Today)
         {
             throw new ArgumentException("La fecha de visita debe ser futura");
         }
