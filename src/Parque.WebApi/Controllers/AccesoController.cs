@@ -18,9 +18,6 @@ public class AccesoController : ControllerBase
         _servicio = servicio;
     }
 
-    /// <summary>
-    /// Valida si un visitante puede acceder a una atracción (escaneo QR/NFC).
-    /// </summary>
     [HttpPost("validar")]
     public IActionResult ValidarAcceso([FromBody] ValidarAccesoRequest request)
     {
@@ -45,6 +42,20 @@ public class AccesoController : ControllerBase
             return Ok(registro);
         }
         catch(ArgumentException ex)
+        {
+            return BadRequest(new { mensaje = ex.Message });
+        }
+    }
+
+    [HttpPost("atraccion/{atraccionId}/egreso/{codigoTicket}")]
+    public IActionResult RegistrarEgreso(int atraccionId, Guid codigoTicket)
+    {
+        try
+        {
+            var registro = _servicio.RegistrarEgreso(codigoTicket, atraccionId);
+            return Ok(new { mensaje = "Egreso registrado exitosamente", registro });
+        }
+        catch (ArgumentException ex)
         {
             return BadRequest(new { mensaje = ex.Message });
         }
