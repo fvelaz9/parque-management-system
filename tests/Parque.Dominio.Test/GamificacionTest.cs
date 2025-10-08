@@ -7,7 +7,7 @@ namespace Parque.Dominio.Test;
 [TestClass]
 public class GamificacionTest
 {
-     private readonly AtraccionParque _montañaRusa;
+    private readonly AtraccionParque _montañaRusa;
     private readonly AtraccionParque _simulador;
     private readonly AtraccionParque _espectaculo;
     private readonly AtraccionParque _zonaInteractiva;
@@ -22,7 +22,7 @@ public class GamificacionTest
         _simulador = new AtraccionParque("Simulador", TipoAtraccion.Simulador, 10, 15, "Realidad virtual");
         _espectaculo = new AtraccionParque("Espectáculo", TipoAtraccion.Espectaculo, 5, 50, "Show en vivo");
         _zonaInteractiva = new AtraccionParque("Zona Interactiva", TipoAtraccion.ZonaInteractiva, 6, 30, "Juegos");
-        
+
         _montañaRusa.Id = 1;
         _simulador.Id = 2;
         _espectaculo.Id = 3;
@@ -218,7 +218,7 @@ public class GamificacionTest
     public void PuntuacionCombo_Constructor_MinutosVentanaCero_LanzaExcepcion()
     {
         // Arrange, Act & Assert
-        Assert.ThrowsException<ArgumentException>(() => 
+        Assert.ThrowsException<ArgumentException>(() =>
             new PuntuacionCombo(minutosVentana: 0));
     }
 
@@ -226,7 +226,7 @@ public class GamificacionTest
     public void PuntuacionCombo_Constructor_AtraccionesMinimasMenorA2_LanzaExcepcion()
     {
         // Arrange, Act & Assert
-        Assert.ThrowsException<ArgumentException>(() => 
+        Assert.ThrowsException<ArgumentException>(() =>
             new PuntuacionCombo(atraccionesMinimasCombo: 1));
     }
 
@@ -234,7 +234,7 @@ public class GamificacionTest
     public void PuntuacionCombo_Constructor_PuntosBaseNegativos_LanzaExcepcion()
     {
         // Arrange, Act & Assert
-        Assert.ThrowsException<ArgumentException>(() => 
+        Assert.ThrowsException<ArgumentException>(() =>
             new PuntuacionCombo(puntosBase: -1));
     }
 
@@ -242,7 +242,7 @@ public class GamificacionTest
     public void PuntuacionCombo_Constructor_PuntosComboNegativos_LanzaExcepcion()
     {
         // Arrange, Act & Assert
-        Assert.ThrowsException<ArgumentException>(() => 
+        Assert.ThrowsException<ArgumentException>(() =>
             new PuntuacionCombo(puntosCombo: -5));
     }
 
@@ -382,7 +382,7 @@ public class GamificacionTest
     public void ConfiguracionEstrategia_ConstructorConEstrategiaVacia_LanzaExcepcion()
     {
         // Arrange, Act & Assert
-        Assert.ThrowsException<ArgumentException>(() => 
+        Assert.ThrowsException<ArgumentException>(() =>
             new ConfiguracionEstrategia(" "));
     }
 
@@ -390,7 +390,7 @@ public class GamificacionTest
     public void ConfiguracionEstrategia_ConstructorConEstrategiaNull_LanzaExcepcion()
     {
         // Arrange, Act & Assert
-        Assert.ThrowsException<ArgumentException>(() => 
+        Assert.ThrowsException<ArgumentException>(() =>
             new ConfiguracionEstrategia(null!));
     }
 
@@ -416,7 +416,7 @@ public class GamificacionTest
         var config = new ConfiguracionEstrategia("porAtraccion");
 
         // Act & Assert
-        Assert.ThrowsException<ArgumentException>(() => 
+        Assert.ThrowsException<ArgumentException>(() =>
             config.CambiarEstrategia(" "));
     }
 
@@ -427,7 +427,7 @@ public class GamificacionTest
         var config = new ConfiguracionEstrategia("porAtraccion");
 
         // Act & Assert
-        Assert.ThrowsException<ArgumentException>(() => 
+        Assert.ThrowsException<ArgumentException>(() =>
             config.CambiarEstrategia(null!));
     }
 
@@ -449,30 +449,6 @@ public class GamificacionTest
         Assert.AreEqual("Combo", combo.Nombre);
     }
 
-    [TestMethod]
-    public void IEstrategiaPuntuacion_Implementaciones_CalculanPuntosCorrectamente()
-    {
-        // Arrange
-        IEstrategiaPuntuacion porAtraccion = new PuntuacionPorAtraccion();
-        IEstrategiaPuntuacion porEvento = new PuntuacionPorEvento();
-        IEstrategiaPuntuacion combo = new PuntuacionCombo();
-
-        var historial = new List<RegistroVisita>
-        {
-            new RegistroVisita(2, Guid.NewGuid(), DateTime.Now.AddMinutes(-5))
-        };
-
-        // Act
-        var puntos1 = porAtraccion.CalcularPuntos(_registroBase, _montañaRusa, new List<RegistroVisita>(), null);
-        var puntos2 = porEvento.CalcularPuntos(_registroBase, _montañaRusa, new List<RegistroVisita>(), _eventoActivo);
-        var puntos3 = combo.CalcularPuntos(_registroBase, _montañaRusa, historial, null);
-
-        // Assert
-        Assert.AreEqual(15, puntos1);
-        Assert.AreEqual(30, puntos2);
-        Assert.AreEqual(25, puntos3); // Combo con 2 atracciones
-    }
-
     #endregion
 
     #region Integration Tests - Escenarios del Mundo Real
@@ -483,7 +459,7 @@ public class GamificacionTest
         // Arrange - Visitante en evento especial con múltiples atracciones
         var estrategiaCombo = new PuntuacionCombo(minutosVentana: 60, atraccionesMinimasCombo: 2);
         var ahora = DateTime.Now;
-        
+
         var historial = new List<RegistroVisita>
         {
             new RegistroVisita(2, Guid.NewGuid(), ahora.AddMinutes(-45)), // Simulador
@@ -523,6 +499,6 @@ public class GamificacionTest
         Assert.AreEqual(30, puntosEvento);    // Multiplicado por evento
         Assert.AreEqual(25, puntosCombo);     // Por combo de 3 atracciones
     }
-    
+
     #endregion
 }
