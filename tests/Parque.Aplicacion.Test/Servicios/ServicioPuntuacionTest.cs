@@ -7,7 +7,7 @@ using Parque.Dominio.Gamificacion;
 using Parque.Dominio.Usuarios;
 using Parque.Infraestructura.Repositorios;
 
-namespace Parque.Aplicacion.Test.Servicios.Puntuacion;
+namespace Parque.Aplicacion.Test.Servicios;
 
 [TestClass]
 public class ServicioPuntuacionTest
