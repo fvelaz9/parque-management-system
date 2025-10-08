@@ -164,4 +164,76 @@ public class VisitanteTest
         // Assert
         Assert.AreEqual(NivelMembresia.Estandar, visitante.NivelMembresia);
     }
+
+    [TestMethod]
+    public void Constructor_ConParametros_InicializaCorrectamente()
+    {
+        var visitanteId = Guid.NewGuid();
+        var fecha = new DateTime(2025, 10, 8, 14, 30, 0);
+        var puntos = 50;
+
+        var puntuacion = new PuntuacionVisitante(visitanteId, fecha, puntos);
+
+        Assert.AreEqual(visitanteId, puntuacion.VisitanteId);
+        Assert.AreEqual(new DateTime(2025, 10, 8), puntuacion.Fecha);
+        Assert.AreEqual(50, puntuacion.PuntosDiarios);
+        Assert.AreEqual(50, puntuacion.PuntosTotales);
+    }
+
+    [TestMethod]
+    public void Constructor_SinParametros_CreaInstanciaVacia()
+    {
+        var puntuacion = new PuntuacionVisitante();
+
+        Assert.IsNotNull(puntuacion);
+        Assert.AreEqual(Guid.Empty, puntuacion.VisitanteId);
+        Assert.AreEqual(default(DateTime), puntuacion.Fecha);
+        Assert.AreEqual(0, puntuacion.PuntosDiarios);
+        Assert.AreEqual(0, puntuacion.PuntosTotales);
+    }
+
+    [TestMethod]
+    public void AgregarPuntos_IncrementaPuntosDiariosYTotales()
+    {
+        var puntuacion = new PuntuacionVisitante(Guid.NewGuid(), DateTime.Today, 30);
+
+        puntuacion.AgregarPuntos(20);
+
+        Assert.AreEqual(50, puntuacion.PuntosDiarios);
+        Assert.AreEqual(50, puntuacion.PuntosTotales);
+    }
+
+    [TestMethod]
+    public void RestablecerPuntosDiarios_PonePuntosDiariosEnCero()
+    {
+        var puntuacion = new PuntuacionVisitante(Guid.NewGuid(), DateTime.Today, 100);
+        puntuacion.AgregarPuntos(50);
+
+        puntuacion.RestablecerPuntosDiarios();
+
+        Assert.AreEqual(0, puntuacion.PuntosDiarios);
+        Assert.AreEqual(150, puntuacion.PuntosTotales);
+    }
+
+    [TestMethod]
+    public void Id_SetYGet_FuncionaCorrectamente()
+    {
+        var puntuacion = new PuntuacionVisitante();
+
+        puntuacion.Id = 42;
+
+        Assert.AreEqual(42, puntuacion.Id);
+    }
+
+    [TestMethod]
+    public void Constructor_NormalizaFechaASoloFecha()
+    {
+        var visitanteId = Guid.NewGuid();
+        var fechaConHora = new DateTime(2025, 10, 8, 15, 30, 45);
+
+        var puntuacion = new PuntuacionVisitante(visitanteId, fechaConHora, 10);
+
+        Assert.AreEqual(new DateTime(2025, 10, 8), puntuacion.Fecha);
+        Assert.AreEqual(TimeSpan.Zero, puntuacion.Fecha.TimeOfDay);
+    }
 }

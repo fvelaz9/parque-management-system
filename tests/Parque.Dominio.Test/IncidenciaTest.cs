@@ -72,7 +72,9 @@ public class IncidenciaTest
     public void EstaActiva_DeberiaRetornarVerdaderoSiNoHaLlegadoFechaFin()
     {
         var incidencia = new Incidencia("Test", DateTime.Now, DateTime.Now.AddHours(1), 1);
+        incidencia.Disponible = true;
         Assert.IsTrue(incidencia.EstaActiva());
+        Assert.IsTrue(incidencia.Disponible);
     }
 
     [TestMethod]
