@@ -13,21 +13,18 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
 {
     public void CalcularYRegistrarPuntos(int registroVisitaId)
     {
-        // 1. Obtener el registro de visita
         var registro = repoRegistros.Encontrar(r => r.Id == registroVisitaId);
         if(registro == null)
         {
             throw new InvalidOperationException($"Registro de visita con ID {registroVisitaId} no encontrado");
         }
 
-        // 2. Obtener la atracción
         var atraccion = repoAtracciones.Encontrar(a => a.Id == registro.AtraccionId);
         if(atraccion == null)
         {
             throw new InvalidOperationException($"Atracción con ID {registro.AtraccionId} no encontrada");
         }
 
-        // 3. Resolver el visitante a través de Ticket -> Cuenta
         var ticket = repoTickets.Encontrar(t => t.Codigo == registro.Identificador);
         if(ticket == null)
         {
@@ -42,47 +39,123 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
 
         var visitanteId = cuenta.Visitante.Id;
 
-        // 4. Obtener historial diario del visitante (registros del mismo día)
         var fechaRegistro = registro.FechaIngreso.Date;
         var historialDiario = repoRegistros
             .ObtenerTodos()
             .Where(r => r.Identificador == registro.Identificador
                         && r.FechaIngreso.Date == fechaRegistro
-                        && r.Id != registroVisitaId) // Excluir el registro actual
+                        && r.Id != registroVisitaId)
             .OrderBy(r => r.FechaIngreso)
             .ToList();
 
-        // 5. Obtener evento activo (si existe)
         var eventoActivo = repoEventos
             .ObtenerTodos()
             .FirstOrDefault(e => e.Estado == EstadoEvento.Activo
                                  && e.Inicio <= DateTime.Now
                                  && e.Fin >= DateTime.Now);
 
-        // 6. Obtener la estrategia activa
         var estrategiaActiva = ObtenerEstrategiaActivaInterno();
 
-        // 7. Calcular puntos usando la estrategia
         var puntos = estrategiaActiva.CalcularPuntos(registro, atraccion, historialDiario, eventoActivo);
 
-        // 8. Registrar o actualizar puntuación del visitante
         var puntuacion = repoPuntuaciones
             .ObtenerTodos()
             .FirstOrDefault(p => p.VisitanteId == visitanteId && p.Fecha == fechaRegistro);
 
         if(puntuacion == null)
         {
-            // Crear nueva puntuación
             puntuacion = new PuntuacionVisitante(visitanteId, fechaRegistro, puntos);
             repoPuntuaciones.Agregar(puntuacion);
         }
         else
         {
-            // Actualizar puntuación existente
             puntuacion.AgregarPuntos(puntos);
 
             repoPuntuaciones.Editar(puntuacion);
         }
+    }
+
+    public List<RankingVisitanteDto> ObtenerRankingDiario(DateTime? fecha, int top)
+    {
+        if (top <= 0)
+        {
+            throw new ArgumentException("El parámetro 'top' debe ser mayor a 0", nameof(top));
+        }
+
+        var fechaConsulta = DateTime.Today;
+        if (fecha != null)
+        {
+            fechaConsulta = fecha.Value.Date;
+        }
+
+        var ranking = repoPuntuaciones
+            .ObtenerTodos()
+            .Where(p => p.Fecha == fechaConsulta)
+            .OrderByDescending(p => p.PuntosDiarios)
+            .Take(top)
+            .Select((p, index) => new RankingVisitanteDto
+            {
+                VisitanteId = p.VisitanteId,
+                PuntosDiarios = p.PuntosDiarios,
+                PuntosTotales = p.PuntosTotales,
+                Posicion = index + 1
+            })
+            .ToList();
+
+        return ranking;
+    }
+
+    public List<EstrategiaDto> ListarEstrategias()
+    {
+        var estrategiaActivaNombre = ObtenerEstrategiaActiva();
+
+        var estrategiasDto = estrategias.Select(e => new EstrategiaDto
+        {
+            Nombre = e.Nombre,
+            EsActiva = e.Nombre == estrategiaActivaNombre
+        }).ToList();
+
+        return estrategiasDto;
+    }
+
+    public void CambiarEstrategiaActiva(string nombreEstrategia)
+    {
+        var estrategia = estrategias.FirstOrDefault(e => e.Nombre == nombreEstrategia);
+        if (estrategia == null)
+        {
+            throw new ArgumentException($"Estrategia '{nombreEstrategia}' no encontrada", nameof(nombreEstrategia));
+        }
+
+        var configuracion = repoConfiguracion.ObtenerTodos().FirstOrDefault();
+        if (configuracion == null)
+        {
+            configuracion = new ConfiguracionEstrategia(nombreEstrategia);
+            repoConfiguracion.Agregar(configuracion);
+        }
+        else
+        {
+            configuracion.CambiarEstrategia(nombreEstrategia);
+            repoConfiguracion.Editar(configuracion);
+        }
+    }
+
+    public string ObtenerEstrategiaActiva()
+    {
+        var configuracion = repoConfiguracion.ObtenerTodos().FirstOrDefault();
+        if (configuracion == null)
+        {
+            var estrategiaPorDefecto = estrategias.FirstOrDefault();
+            if (estrategiaPorDefecto == null)
+            {
+                throw new InvalidOperationException("No hay estrategias de puntuación registradas");
+            }
+
+            configuracion = new ConfiguracionEstrategia(estrategiaPorDefecto.Nombre);
+            repoConfiguracion.Agregar(configuracion);
+            return estrategiaPorDefecto.Nombre;
+        }
+
+        return configuracion.EstrategiaActiva;
     }
 
     private IEstrategiaPuntuacion ObtenerEstrategiaActivaInterno()
@@ -96,21 +169,5 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
         }
 
         return estrategia;
-    }
-
-    public List<RankingVisitanteDto> ObtenerRankingDiario(DateTime? fecha, int top)
-    {
-    }
-
-    public List<EstrategiaDto> ListarEstrategias()
-    {
-    }
-
-    public void CambiarEstrategiaActiva(string nombreEstrategia)
-    {
-    }
-
-    public string ObtenerEstrategiaActiva()
-    {
     }
 }
