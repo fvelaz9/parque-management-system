@@ -37,6 +37,11 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
     {
         var cuenta = ObtenerCuenta(cuentaId);
 
+        if(!string.IsNullOrWhiteSpace(dto.Email))
+        {
+            ValidarEmailUnicoParaActualizacion(dto.Email, cuentaId);
+        }
+
         ActualizarDatosPersonales(cuenta, dto);
         ActualizarFechaVisitante(cuenta, dto.FechaNacimiento);
 
@@ -89,6 +94,16 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
     {
         var cuentaExistente = cuentaRepo.Encontrar(c => c.Email.Valor == email);
         if(cuentaExistente != null)
+        {
+            throw new ExcepcionDominio("Ya existe una cuenta con este email.");
+        }
+    }
+
+    private void ValidarEmailUnicoParaActualizacion(string email, Guid cuentaId)
+    {
+        var cuentaExistente = cuentaRepo.Encontrar(c => c.Email.Valor == email);
+
+        if(cuentaExistente != null && cuentaExistente.Id != cuentaId)
         {
             throw new ExcepcionDominio("Ya existe una cuenta con este email.");
         }
