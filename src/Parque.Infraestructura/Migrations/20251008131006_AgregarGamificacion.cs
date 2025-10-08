@@ -11,13 +11,31 @@ namespace Parque.Infraestructura.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // Add a temporary column for the new type
+            migrationBuilder.AddColumn<Guid>(
+                name: "CuentaId_Temp",
+                table: "Tickets",
+                type: "uniqueidentifier",
+                nullable: true);
+
+            // Drop the old column
+            migrationBuilder.DropColumn(
+                name: "CuentaId",
+                table: "Tickets");
+
+            // Rename the temporary column to CuentaId
+            migrationBuilder.RenameColumn(
+                name: "CuentaId_Temp",
+                table: "Tickets",
+                newName: "CuentaId");
+
+            // Make the column non-nullable with a default value
             migrationBuilder.AlterColumn<Guid>(
                 name: "CuentaId",
                 table: "Tickets",
                 type: "uniqueidentifier",
                 nullable: false,
-                oldClrType: typeof(int),
-                oldType: "int");
+                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
 
             migrationBuilder.CreateTable(
                 name: "ConfiguracionesEstrategia",
@@ -65,13 +83,31 @@ namespace Parque.Infraestructura.Migrations
             migrationBuilder.DropTable(
                 name: "PuntuacionesVisitantes");
 
+            // Add a temporary column for the old type
+            migrationBuilder.AddColumn<int>(
+                name: "CuentaId_Temp",
+                table: "Tickets",
+                type: "int",
+                nullable: true);
+
+            // Drop the GUID column
+            migrationBuilder.DropColumn(
+                name: "CuentaId",
+                table: "Tickets");
+
+            // Rename the temporary column back
+            migrationBuilder.RenameColumn(
+                name: "CuentaId_Temp",
+                table: "Tickets",
+                newName: "CuentaId");
+
+            // Make the column non-nullable
             migrationBuilder.AlterColumn<int>(
                 name: "CuentaId",
                 table: "Tickets",
                 type: "int",
                 nullable: false,
-                oldClrType: typeof(Guid),
-                oldType: "uniqueidentifier");
+                defaultValue: 0);
         }
     }
 }
