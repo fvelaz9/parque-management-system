@@ -5,19 +5,14 @@ using Parque.Dominio.Usuarios;
 
 namespace Parque.WebApi.Controllers;
 
-/// <summary>
-/// Controlador para validar acceso a atracciones.
-/// </summary>
 [ApiController]
 [Route("api/acceso")]
 public class AccesoController(IServicioAcceso servicio) : ControllerBase
 {
-    private readonly IServicioAcceso _servicio = servicio;
-
     [HttpPost("validar")]
     public IActionResult ValidarAcceso([FromBody] ValidarAccesoRequest request)
     {
-        var resultado = _servicio.ValidarAcceso(request);
+        var resultado = servicio.ValidarAcceso(request);
 
         if(resultado.AccesoPermitido)
         {
@@ -34,7 +29,7 @@ public class AccesoController(IServicioAcceso servicio) : ControllerBase
     {
         try
         {
-            var registro = _servicio.RegistrarIngreso(dto.CodigoTicket, id, cuentaVisitante);
+            var registro = servicio.RegistrarIngreso(dto.CodigoTicket, id, cuentaVisitante);
             return Ok(registro);
         }
         catch(ArgumentException ex)
@@ -48,7 +43,7 @@ public class AccesoController(IServicioAcceso servicio) : ControllerBase
     {
         try
         {
-            var registro = _servicio.RegistrarEgreso(codigoTicket, atraccionId);
+            var registro = servicio.RegistrarEgreso(codigoTicket, atraccionId);
             return Ok(new { mensaje = "Egreso registrado exitosamente", registro });
         }
         catch(ArgumentException ex)

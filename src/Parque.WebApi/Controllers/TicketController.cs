@@ -9,25 +9,23 @@ namespace Parque.WebApi.Controllers;
 [Route("api/tickets")]
 public class TicketController(IServicioTicket service) : ControllerBase
 {
-    private readonly IServicioTicket _service = service;
-
     [HttpGet]
     public IActionResult GetAll()
     {
-        return Ok(_service.ListarTickets());
+        return Ok(service.ListarTickets());
     }
 
     [HttpGet("{id:int}")]
     public IActionResult GetById(int id)
     {
-        var ticket = _service.BuscarTicket(id);
+        var ticket = service.BuscarTicket(id);
         return ticket == null ? NotFound() : Ok(ticket);
     }
 
     [HttpGet("codigo/{codigo:guid}")]
     public IActionResult GetByCodigo(Guid codigo)
     {
-        var ticket = _service.BuscarTicketPorCodigo(codigo);
+        var ticket = service.BuscarTicketPorCodigo(codigo);
         return ticket == null ? NotFound() : Ok(ticket);
     }
 
@@ -45,7 +43,7 @@ public class TicketController(IServicioTicket service) : ControllerBase
 
             if(request.TipoEntrada == TipoTicket.General)
             {
-                creado = _service.CrearTicketGeneral(request.CuentaId, request.FechaVisita);
+                creado = service.CrearTicketGeneral(request.CuentaId, request.FechaVisita);
             }
             else if(request.TipoEntrada == TipoTicket.EventoEspecial)
             {
@@ -54,7 +52,7 @@ public class TicketController(IServicioTicket service) : ControllerBase
                     return BadRequest("Debe especificar el eventoId para tickets de evento especial.");
                 }
 
-                creado = _service.CrearTicketEventoEspecial(request.CuentaId, request.FechaVisita, request.EventoId.Value);
+                creado = service.CrearTicketEventoEspecial(request.CuentaId, request.FechaVisita, request.EventoId.Value);
             }
             else
             {
@@ -87,7 +85,7 @@ public class TicketController(IServicioTicket service) : ControllerBase
 
         try
         {
-            _service.ModificarTicket(
+            service.ModificarTicket(
                 id,
                 request.CuentaId,
                 request.FechaVisita,
@@ -105,7 +103,7 @@ public class TicketController(IServicioTicket service) : ControllerBase
     [HttpDelete("{id:int}")]
     public IActionResult Delete(int id)
     {
-        _service.EliminarTicket(id);
+        service.EliminarTicket(id);
         return NoContent();
     }
 }

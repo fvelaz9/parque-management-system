@@ -8,25 +8,23 @@ namespace Parque.WebApi.Controllers;
 [Route("api/atracciones")]
 public class AtraccionesController(IServicioAtracciones servicioAtracciones) : ControllerBase
 {
-    private readonly IServicioAtracciones _service = servicioAtracciones;
-
     [HttpGet]
     public IActionResult GetAll()
     {
-        return Ok(_service.ListarAtracciones());
+        return Ok(servicioAtracciones.ListarAtracciones());
     }
 
     [HttpGet("{id}")]
     public IActionResult GetById(int id)
     {
-        var atraccion = _service.BuscarAtraccion(id);
+        var atraccion = servicioAtracciones.BuscarAtraccion(id);
         return atraccion == null ? NotFound() : Ok(atraccion);
     }
 
     [HttpPost]
     public IActionResult Create([FromBody] AtraccionParque atraccion)
     {
-        var creada = _service.CrearAtraccion(
+        var creada = servicioAtracciones.CrearAtraccion(
             atraccion.Nombre,
             atraccion.Tipo,
             atraccion.EdadMinima,
@@ -38,7 +36,7 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
     [HttpPut("{id}")]
     public IActionResult Update(int id, [FromBody] AtraccionParque atraccion)
     {
-        _service.ModificarAtraccion(
+        servicioAtracciones.ModificarAtraccion(
             id,
             atraccion.Nombre,
             atraccion.Tipo,
@@ -51,7 +49,7 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        _service.EliminarAtraccion(id);
+        servicioAtracciones.EliminarAtraccion(id);
         return NoContent();
     }
 
@@ -63,7 +61,7 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
             return BadRequest(new { mensaje = "La fecha 'desde' no puede ser mayor a 'hasta'" });
         }
 
-        var reporte = _service.ObtenerReporteUso(desde, hasta);
+        var reporte = servicioAtracciones.ObtenerReporteUso(desde, hasta);
         return Ok(reporte);
     }
 
@@ -72,7 +70,7 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
     {
         try
         {
-            var aforo = _service.ObtenerAforoActual(id);
+            var aforo = servicioAtracciones.ObtenerAforoActual(id);
             return Ok(aforo);
         }
         catch(ArgumentException ex)

@@ -9,14 +9,12 @@ namespace Parque.WebApi.Controllers;
 [Produces("application/json")]
 public class GamificacionController(IServicioPuntuacion servicioPuntuacion) : ControllerBase
 {
-    private readonly IServicioPuntuacion _servicioPuntuacion = servicioPuntuacion;
-
     [HttpPost("calcular-puntos/{registroVisitaId}")]
     public IActionResult CalcularPuntos(int registroVisitaId)
     {
         try
         {
-            _servicioPuntuacion.CalcularYRegistrarPuntos(registroVisitaId);
+            servicioPuntuacion.CalcularYRegistrarPuntos(registroVisitaId);
             return Ok(new { mensaje = "Puntos calculados y registrados exitosamente" });
         }
         catch(InvalidOperationException ex)
@@ -39,7 +37,7 @@ public class GamificacionController(IServicioPuntuacion servicioPuntuacion) : Co
                 return BadRequest(new { error = "El parámetro 'top' debe ser mayor a 0" });
             }
 
-            var ranking = _servicioPuntuacion.ObtenerRankingDiario(fecha, top);
+            var ranking = servicioPuntuacion.ObtenerRankingDiario(fecha, top);
             return Ok(new
             {
                 fecha = fecha?.Date ?? DateTime.Today,
@@ -58,7 +56,7 @@ public class GamificacionController(IServicioPuntuacion servicioPuntuacion) : Co
     {
         try
         {
-            var estrategias = _servicioPuntuacion.ListarEstrategias();
+            var estrategias = servicioPuntuacion.ListarEstrategias();
             return Ok(new { estrategias = estrategias });
         }
         catch(Exception ex)
@@ -77,7 +75,7 @@ public class GamificacionController(IServicioPuntuacion servicioPuntuacion) : Co
                 return BadRequest(new { error = "El request o el nombre de la estrategia es requerido" });
             }
 
-            _servicioPuntuacion.CambiarEstrategiaActiva(request.NombreEstrategia);
+            servicioPuntuacion.CambiarEstrategiaActiva(request.NombreEstrategia);
             return Ok(new { mensaje = "Estrategia cambiada exitosamente", nuevaEstrategia = request.NombreEstrategia });
         }
         catch(ArgumentException ex)
@@ -95,7 +93,7 @@ public class GamificacionController(IServicioPuntuacion servicioPuntuacion) : Co
     {
         try
         {
-            var estrategiaActiva = _servicioPuntuacion.ObtenerEstrategiaActiva();
+            var estrategiaActiva = servicioPuntuacion.ObtenerEstrategiaActiva();
             return Ok(new { estrategiaActiva = estrategiaActiva });
         }
         catch(Exception ex)
