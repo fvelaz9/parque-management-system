@@ -1,4 +1,6 @@
-﻿namespace Parque.Dominio.Test;
+﻿using Parque.Dominio.Atracciones;
+
+namespace Parque.Dominio.Test;
 
 [TestClass]
 public class EventosTest
@@ -21,27 +23,71 @@ public class EventosTest
     }
 
     [TestMethod]
-    public void Constructor_Evento_PropiedadesInicializadas()
+    public void Set_Descripcion_ActualizaCorrectamente()
     {
-        var evento = new Evento("Concierto", "Rock", DateTime.Now, DateTime.Now.AddHours(2), 100, 50.0f, EstadoEvento.Programado);
+        var evento = new Evento("Evento", "Desc original", DateTime.Now, DateTime.Now.AddHours(1), 100, 0, EstadoEvento.Programado);
 
-        Assert.AreEqual("Concierto", evento.Titulo);
-        Assert.AreEqual(100, evento.AforoMaximo);
-        Assert.AreEqual(50.0f, evento.CostoAdicional);
-        Assert.AreEqual(EstadoEvento.Programado, evento.Estado);
+        evento.Descripcion = "Nueva descripción";
+
+        Assert.AreEqual("Nueva descripción", evento.Descripcion);
     }
 
     [TestMethod]
-    public void Set_Propiedades_Evento_SeActualizan()
+    public void Set_Inicio_ActualizaCorrectamente()
     {
-        var evento = new Evento("Original", "Desc", DateTime.Now, DateTime.Now.AddHours(1), 50, 25.0f, EstadoEvento.Programado);
-        evento.Titulo = "Nuevo Titulo";
-        evento.AforoMaximo = 200;
-        evento.Estado = EstadoEvento.Cancelado;
+        var evento = new Evento("Evento", "Desc", DateTime.Now, DateTime.Now.AddHours(1), 100, 0, EstadoEvento.Programado);
+        var nuevoInicio = DateTime.Now.AddDays(1);
 
-        Assert.AreEqual("Nuevo Titulo", evento.Titulo);
-        Assert.AreEqual(200, evento.AforoMaximo);
-        Assert.AreEqual(EstadoEvento.Cancelado, evento.Estado);
+        evento.Inicio = nuevoInicio;
+
+        Assert.AreEqual(nuevoInicio, evento.Inicio);
+    }
+
+    [TestMethod]
+    public void Set_Fin_ActualizaCorrectamente()
+    {
+        var evento = new Evento("Evento", "Desc", DateTime.Now, DateTime.Now.AddHours(1), 100, 0, EstadoEvento.Programado);
+        var nuevoFin = DateTime.Now.AddDays(2);
+
+        evento.Fin = nuevoFin;
+
+        Assert.AreEqual(nuevoFin, evento.Fin);
+    }
+
+    [TestMethod]
+    public void Set_CostoAdicional_ActualizaCorrectamente()
+    {
+        var evento = new Evento("Evento", "Desc", DateTime.Now, DateTime.Now.AddHours(1), 100, 0, EstadoEvento.Programado);
+
+        evento.CostoAdicional = 75.5f;
+
+        Assert.AreEqual(75.5f, evento.CostoAdicional);
+    }
+
+    [TestMethod]
+    public void Set_Atracciones_ActualizaCorrectamente()
+    {
+        var evento = new Evento("Evento", "Desc", DateTime.Now, DateTime.Now.AddHours(1), 100, 0, EstadoEvento.Programado);
+        var nuevaLista = new List<AtraccionParque>
+        {
+            new AtraccionParque("Atraccion1", TipoAtraccion.MontañaRusa, 12, 20, "Desc1")
+        };
+
+        evento.Atracciones = nuevaLista;
+
+        Assert.AreEqual(1, evento.Atracciones.Count);
+        Assert.AreEqual("Atraccion1", evento.Atracciones[0].Nombre);
+    }
+
+    [TestMethod]
+    public void Get_Id_RetornaValorCorrecto()
+    {
+        var evento = new Evento("Evento", "Desc", DateTime.Now, DateTime.Now.AddHours(1), 100, 0, EstadoEvento.Programado);
+        evento.Id = 5;
+
+        var id = evento.Id;
+
+        Assert.AreEqual(5, id);
     }
 
     [TestMethod]
