@@ -12,7 +12,7 @@ public class PuntuacionPorEvento : IEstrategiaPuntuacion
     {
         var puntos = PUNTOS_BASE;
 
-        if (eventoActivo != null && 
+        if(eventoActivo != null &&
             eventoActivo.Estado == EstadoEvento.Programado &&
             eventoActivo.Atracciones.Any(a => a.Id == atraccion.Id))
         {

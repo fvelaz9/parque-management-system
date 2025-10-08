@@ -5,16 +5,16 @@ namespace Parque.Dominio.Gamificacion;
 public class PuntuacionCombo : IEstrategiaPuntuacion
 {
     public string Nombre => "Combo";
-    
+
     private readonly int _puntosBase;
     private readonly int _puntosCombo;
     private readonly int _minutosVentana;
     private readonly int _atraccionesMinimasCombo;
-    
+
     public PuntuacionCombo(
-        int minutosVentana = 10, 
+        int minutosVentana = 10,
         int atraccionesMinimasCombo = 3,
-        int puntosBase = 8, 
+        int puntosBase = 8,
         int puntosCombo = 25)
     {
         if(minutosVentana <= 0)
@@ -48,18 +48,18 @@ public class PuntuacionCombo : IEstrategiaPuntuacion
     {
         var atraccionesDistintas = historialDiario
             .Where(h => (registro.FechaIngreso - h.FechaIngreso).TotalMinutes <= _minutosVentana)
-            .Where(h => h.AtraccionId != registro.AtraccionId) 
+            .Where(h => h.AtraccionId != registro.AtraccionId)
             .Select(h => h.AtraccionId)
             .Distinct()
             .Count();
 
         var totalAtracciones = atraccionesDistintas + 1;
 
-        if (totalAtracciones >= _atraccionesMinimasCombo)
+        if(totalAtracciones >= _atraccionesMinimasCombo)
         {
-            return _puntosCombo; 
+            return _puntosCombo;
         }
 
-        return _puntosBase;   
+        return _puntosBase;
     }
 }

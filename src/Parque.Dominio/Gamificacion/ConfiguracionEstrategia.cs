@@ -5,12 +5,12 @@ public class ConfiguracionEstrategia
     public int Id { get; set; }
     public string EstrategiaActiva { get; set; } = string.Empty;
     public DateTime FechaModificacion { get; set; }
-    
-    public ConfiguracionEstrategia() 
+
+    public ConfiguracionEstrategia()
     {
         FechaModificacion = DateTime.UtcNow;
     }
-    
+
     public ConfiguracionEstrategia(string estrategiaInicial)
     {
         if(string.IsNullOrWhiteSpace(estrategiaInicial))

@@ -19,7 +19,7 @@ public enum EstadoEvento
     /// El evento ha finalizado.
     /// </summary>
     Finalizado = 3,
-    
+
     /// <summary>
     /// El evento ha finalizado.
     /// </summary>

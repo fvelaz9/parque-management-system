@@ -16,7 +16,9 @@ public class PuntuacionVisitante
         PuntosTotales = puntos;
     }
 
-    public PuntuacionVisitante() { }
+    public PuntuacionVisitante()
+    {
+    }
 
     public void AgregarPuntos(int puntos)
     {
