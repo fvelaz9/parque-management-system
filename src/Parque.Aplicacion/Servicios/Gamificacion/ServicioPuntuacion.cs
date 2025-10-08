@@ -77,13 +77,13 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
 
     public List<RankingVisitanteDto> ObtenerRankingDiario(DateTime? fecha, int top)
     {
-        if (top <= 0)
+        if(top <= 0)
         {
             throw new ArgumentException("El parámetro 'top' debe ser mayor a 0", nameof(top));
         }
 
         var fechaConsulta = DateTime.Today;
-        if (fecha != null)
+        if(fecha != null)
         {
             fechaConsulta = fecha.Value.Date;
         }
@@ -121,13 +121,13 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
     public void CambiarEstrategiaActiva(string nombreEstrategia)
     {
         var estrategia = estrategias.FirstOrDefault(e => e.Nombre == nombreEstrategia);
-        if (estrategia == null)
+        if(estrategia == null)
         {
             throw new ArgumentException($"Estrategia '{nombreEstrategia}' no encontrada", nameof(nombreEstrategia));
         }
 
         var configuracion = repoConfiguracion.ObtenerTodos().FirstOrDefault();
-        if (configuracion == null)
+        if(configuracion == null)
         {
             configuracion = new ConfiguracionEstrategia(nombreEstrategia);
             repoConfiguracion.Agregar(configuracion);
@@ -142,10 +142,10 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
     public string ObtenerEstrategiaActiva()
     {
         var configuracion = repoConfiguracion.ObtenerTodos().FirstOrDefault();
-        if (configuracion == null)
+        if(configuracion == null)
         {
             var estrategiaPorDefecto = estrategias.FirstOrDefault();
-            if (estrategiaPorDefecto == null)
+            if(estrategiaPorDefecto == null)
             {
                 throw new InvalidOperationException("No hay estrategias de puntuación registradas");
             }
