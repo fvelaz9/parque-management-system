@@ -48,7 +48,7 @@ public class GamificacionTest
         var estrategia = new PuntuacionPorAtraccion();
 
         // Act
-        var puntos = estrategia.CalcularPuntos(_registroBase, _montañaRusa, new List<RegistroVisita>(), null);
+        var puntos = estrategia.CalcularPuntos(_registroBase, _montañaRusa, [], null);
 
         // Assert
         Assert.AreEqual(15, puntos);
@@ -61,7 +61,7 @@ public class GamificacionTest
         var estrategia = new PuntuacionPorAtraccion();
 
         // Act
-        var puntos = estrategia.CalcularPuntos(_registroBase, _simulador, new List<RegistroVisita>(), null);
+        var puntos = estrategia.CalcularPuntos(_registroBase, _simulador, [], null);
 
         // Assert
         Assert.AreEqual(12, puntos);
@@ -70,13 +70,10 @@ public class GamificacionTest
     [TestMethod]
     public void PuntuacionPorAtraccion_CalcularPuntos_Espectaculo_Retorna10()
     {
-        // Arrange
         var estrategia = new PuntuacionPorAtraccion();
 
-        // Act
-        var puntos = estrategia.CalcularPuntos(_registroBase, _espectaculo, new List<RegistroVisita>(), null);
+        var puntos = estrategia.CalcularPuntos(_registroBase, _espectaculo, [], null);
 
-        // Assert
         Assert.AreEqual(10, puntos);
     }
 
@@ -87,7 +84,7 @@ public class GamificacionTest
         var estrategia = new PuntuacionPorAtraccion();
 
         // Act
-        var puntos = estrategia.CalcularPuntos(_registroBase, _zonaInteractiva, new List<RegistroVisita>(), null);
+        var puntos = estrategia.CalcularPuntos(_registroBase, _zonaInteractiva, [], null);
 
         // Assert
         Assert.AreEqual(8, puntos);
@@ -101,7 +98,7 @@ public class GamificacionTest
         var atraccionDesconocida = new AtraccionParque("Desconocida", (TipoAtraccion)999, 10, 20, "Desc");
 
         // Act
-        var puntos = estrategia.CalcularPuntos(_registroBase, atraccionDesconocida, new List<RegistroVisita>(), null);
+        var puntos = estrategia.CalcularPuntos(_registroBase, atraccionDesconocida, [], null);
 
         // Assert
         Assert.AreEqual(10, puntos);
@@ -128,7 +125,7 @@ public class GamificacionTest
         var estrategia = new PuntuacionPorEvento();
 
         // Act
-        var puntos = estrategia.CalcularPuntos(_registroBase, _montañaRusa, new List<RegistroVisita>(), _eventoActivo);
+        var puntos = estrategia.CalcularPuntos(_registroBase, _montañaRusa, [], _eventoActivo);
 
         // Assert
         Assert.AreEqual(30, puntos); // 10 * 3
@@ -141,7 +138,7 @@ public class GamificacionTest
         var estrategia = new PuntuacionPorEvento();
 
         // Act
-        var puntos = estrategia.CalcularPuntos(_registroBase, _montañaRusa, new List<RegistroVisita>(), null);
+        var puntos = estrategia.CalcularPuntos(_registroBase, _montañaRusa, [], null);
 
         // Assert
         Assert.AreEqual(10, puntos);
@@ -154,7 +151,7 @@ public class GamificacionTest
         var estrategia = new PuntuacionPorEvento();
 
         // Act
-        var puntos = estrategia.CalcularPuntos(_registroBase, _simulador, new List<RegistroVisita>(), _eventoActivo);
+        var puntos = estrategia.CalcularPuntos(_registroBase, _simulador, [], _eventoActivo);
 
         // Assert
         Assert.AreEqual(10, puntos);
@@ -169,7 +166,7 @@ public class GamificacionTest
         eventoCancelado.Atracciones.Add(_montañaRusa);
 
         // Act
-        var puntos = estrategia.CalcularPuntos(_registroBase, _montañaRusa, new List<RegistroVisita>(), eventoCancelado);
+        var puntos = estrategia.CalcularPuntos(_registroBase, _montañaRusa, [], eventoCancelado);
 
         // Assert
         Assert.AreEqual(10, puntos);
@@ -184,7 +181,7 @@ public class GamificacionTest
         eventoFinalizado.Atracciones.Add(_montañaRusa);
 
         // Act
-        var puntos = estrategia.CalcularPuntos(_registroBase, _montañaRusa, new List<RegistroVisita>(), eventoFinalizado);
+        var puntos = estrategia.CalcularPuntos(_registroBase, _montañaRusa, [], eventoFinalizado);
 
         // Assert
         Assert.AreEqual(10, puntos);
@@ -241,7 +238,6 @@ public class GamificacionTest
     [TestMethod]
     public void PuntuacionCombo_Constructor_PuntosComboNegativos_LanzaExcepcion()
     {
-        // Arrange, Act & Assert
         Assert.ThrowsException<ArgumentException>(() =>
             new PuntuacionCombo(puntosCombo: -5));
     }
@@ -249,15 +245,11 @@ public class GamificacionTest
     [TestMethod]
     public void PuntuacionCombo_CalcularPuntos_SinCombo_RetornaPuntosBase()
     {
-        // Arrange
         var estrategia = new PuntuacionCombo(atraccionesMinimasCombo: 3);
-        var historial = new List<RegistroVisita>();
 
-        // Act
-        var puntos = estrategia.CalcularPuntos(_registroBase, _montañaRusa, historial, null);
+        var puntos = estrategia.CalcularPuntos(_registroBase, _montañaRusa, [], null);
 
-        // Assert
-        Assert.AreEqual(8, puntos); // Puntos base por defecto
+        Assert.AreEqual(8, puntos);
     }
 
     [TestMethod]
@@ -490,8 +482,8 @@ public class GamificacionTest
         };
 
         // Act
-        var puntosAtraccion = porAtraccion.CalcularPuntos(_registroBase, _montañaRusa, new List<RegistroVisita>(), _eventoActivo);
-        var puntosEvento = porEvento.CalcularPuntos(_registroBase, _montañaRusa, new List<RegistroVisita>(), _eventoActivo);
+        var puntosAtraccion = porAtraccion.CalcularPuntos(_registroBase, _montañaRusa, [], _eventoActivo);
+        var puntosEvento = porEvento.CalcularPuntos(_registroBase, _montañaRusa, [], _eventoActivo);
         var puntosCombo = combo.CalcularPuntos(_registroBase, _montañaRusa, historialCombo, _eventoActivo);
 
         // Assert
