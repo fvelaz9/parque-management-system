@@ -33,7 +33,6 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             };
         }
 
-        // entrada
         if(ticket.TipoEntrada == TipoTicket.EventoEspecial)
         {
             var errorEvento = VerificarEvento(ticket, atraccion, request.AtraccionId);
@@ -43,7 +42,6 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             }
         }
 
-        // usuario
         var validacion = ValidarReglasAccesoUsuario(atraccion, ticket, request);
         if(validacion != null)
         {
@@ -63,7 +61,6 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             return visitantesActuales;
         }
 
-        // ACCESO PERMITIDO
         return new ValidarAccesoResponse
         {
             AccesoPermitido = true,
@@ -75,7 +72,6 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
 
     private ValidarAccesoResponse? VerificarEvento(Dominio.Ticket ticket, AtraccionParque atraccion, int atraccionId)
     {
-        // 1. Verificar que el ticket tenga un EventoId
         if(ticket.EventoId == null)
         {
             return new ValidarAccesoResponse
@@ -86,7 +82,6 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             };
         }
 
-        // 2. Buscar el evento asociado al ticket
         var evento = repoEvento.Encontrar(e => e.Id == ticket.EventoId.Value);
 
         if(evento == null)
@@ -99,7 +94,6 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             };
         }
 
-        // 3. Validar que la atracción esté incluida en el evento
         var atraccionIncluidaEnEvento = evento.Atracciones.Any(a => a.Id == atraccionId);
 
         if(!atraccionIncluidaEnEvento)
@@ -114,7 +108,6 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             };
         }
 
-        // 4. Validar que el evento esté activo (dentro del rango de fechas)
         if(DateTime.Today < evento.Inicio.Date || DateTime.Today > evento.Fin.Date)
         {
             return new ValidarAccesoResponse
@@ -126,7 +119,6 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             };
         }
 
-        // 5. Validar que la fecha del ticket coincida con el rango del evento
         if(ticket.FechaVisita.Date < evento.Inicio.Date || ticket.FechaVisita.Date > evento.Fin.Date)
         {
             return new ValidarAccesoResponse
