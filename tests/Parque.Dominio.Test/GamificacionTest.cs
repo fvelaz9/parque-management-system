@@ -455,7 +455,6 @@ public class GamificacionTest
         var historial = new List<RegistroVisita>
         {
             new RegistroVisita(2, Guid.NewGuid(), ahora.AddMinutes(-45)), // Simulador
-            new RegistroVisita(3, Guid.NewGuid(), ahora.AddMinutes(-30))  // Espectáculo
         };
 
         var registroActual = new RegistroVisita(1, Guid.NewGuid(), ahora); // Montaña Rusa en evento
