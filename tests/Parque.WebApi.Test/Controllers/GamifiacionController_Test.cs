@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Parque.Aplicacion.DTOS.Gamificacion;
 using Parque.Aplicacion.Servicios.Gamificacion;
