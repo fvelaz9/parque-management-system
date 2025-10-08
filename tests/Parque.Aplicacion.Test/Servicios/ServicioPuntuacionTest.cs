@@ -379,7 +379,7 @@ public class ServicioPuntuacionTest
     [ExpectedException(typeof(InvalidOperationException))]
     public void ObtenerEstrategiaActiva_SinEstrategiasRegistradas_LanzaExcepcion()
     {
-        var configuracionesVacias = new List<ConfiguracionEstrategia> { };
+        var configuracionesVacias = new List<ConfiguracionEstrategia>();
 
         var servicioSinEstrategias = new ServicioPuntuacion(
             _repoAtraccionesMock!.Object,
