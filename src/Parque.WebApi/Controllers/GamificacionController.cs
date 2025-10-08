@@ -72,9 +72,9 @@ public class GamificacionController(IServicioPuntuacion servicioPuntuacion) : Co
     {
         try
         {
-            if(string.IsNullOrWhiteSpace(request.NombreEstrategia))
+            if(request == null || string.IsNullOrWhiteSpace(request.NombreEstrategia))
             {
-                return BadRequest(new { error = "El nombre de la estrategia es requerido" });
+                return BadRequest(new { error = "El request o el nombre de la estrategia es requerido" });
             }
 
             _servicioPuntuacion.CambiarEstrategiaActiva(request.NombreEstrategia);
