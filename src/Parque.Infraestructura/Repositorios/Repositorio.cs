@@ -1,4 +1,5 @@
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Parque.Infraestructura.Repositorios;
 
@@ -41,5 +42,30 @@ public class Repositorio<T>(AppContexto contexto) : IRepositorio<T>
     public List<T> Obtener(Expression<Func<T, bool>> predicado)
     {
         return _contexto.Set<T>().Where(predicado).ToList();
+    }
+
+    // Métodos con eager loading
+    public T? EncontrarConRelaciones(Expression<Func<T, bool>> predicado, params string[] includeProperties)
+    {
+        IQueryable<T> query = _contexto.Set<T>();
+
+        foreach(var includeProperty in includeProperties)
+        {
+            query = query.Include(includeProperty);
+        }
+
+        return query.FirstOrDefault(predicado);
+    }
+
+    public List<T> ObtenerConRelaciones(Expression<Func<T, bool>> predicado, params string[] includeProperties)
+    {
+        IQueryable<T> query = _contexto.Set<T>();
+
+        foreach(var includeProperty in includeProperties)
+        {
+            query = query.Include(includeProperty);
+        }
+
+        return query.Where(predicado).ToList();
     }
 }

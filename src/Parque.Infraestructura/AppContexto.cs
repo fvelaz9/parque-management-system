@@ -32,6 +32,12 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
                 .IsRequired()
                 .HasMaxLength(100);
 
+            // Configurar la relación con Visitante
+            builder.HasOne(c => c.Visitante)
+                .WithOne()
+                .HasForeignKey<Cuenta>("VisitanteId")
+                .IsRequired(false);
+
             // Mapear la colección de Roles
             builder.Property<HashSet<Rol>>("_roles")
                 .HasColumnName("Roles")
