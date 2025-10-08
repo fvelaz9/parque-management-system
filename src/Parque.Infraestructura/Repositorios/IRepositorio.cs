@@ -1,4 +1,4 @@
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace Parque.Infraestructura.Repositorios;
 
@@ -10,4 +10,6 @@ public interface IRepositorio<T>
     void Eliminar(Expression<Func<T, bool>> predicate);
     List<T> ObtenerTodos();
     List<T> Obtener(Expression<Func<T, bool>> predicate);
+    T? EncontrarConRelaciones(Expression<Func<T, bool>> predicado, params string[] includeProperties);
+    List<T> ObtenerConRelaciones(Expression<Func<T, bool>> predicado, params string[] includeProperties);
 }

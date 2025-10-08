@@ -118,8 +118,10 @@ public class ServicioCuentaTest
         cuenta.AsignarVisitante(new DateTime(1990, 1, 1));
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
-        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+        mockRepo.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Cuenta, bool>>>(), It.IsAny<string[]>()))
             .Returns(cuenta);
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns((Cuenta)null!);
 
         var servicio = new ServicioCuenta(mockRepo.Object);
         var dto = new ModificarPerfilDto("Carlos", "Gómez", "carlos@test.com", new DateTime(1985, 5, 15));
@@ -146,7 +148,7 @@ public class ServicioCuentaTest
         var fechaOriginal = cuenta.Visitante!.FechaNacimiento;
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
-        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+        mockRepo.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Cuenta, bool>>>(), It.IsAny<string[]>()))
             .Returns(cuenta);
 
         var servicio = new ServicioCuenta(mockRepo.Object);
@@ -169,7 +171,7 @@ public class ServicioCuentaTest
         Cuenta? cuenta = null;
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
-        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+        mockRepo.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Cuenta, bool>>>(), It.IsAny<string[]>()))
             .Returns(cuenta);
 
         var servicio = new ServicioCuenta(mockRepo.Object);
@@ -187,7 +189,7 @@ public class ServicioCuentaTest
         var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123", Rol.Visitante);
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
-        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+        mockRepo.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Cuenta, bool>>>(), It.IsAny<string[]>()))
             .Returns(cuenta);
 
         var servicio = new ServicioCuenta(mockRepo.Object);
@@ -208,7 +210,7 @@ public class ServicioCuentaTest
         var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123", Rol.Visitante);
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
-        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+        mockRepo.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Cuenta, bool>>>(), It.IsAny<string[]>()))
             .Returns(cuenta);
 
         var servicio = new ServicioCuenta(mockRepo.Object);
@@ -473,7 +475,7 @@ public class ServicioCuentaTest
         cuenta.AsignarVisitante(new DateTime(1990, 1, 1));
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
-        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+        mockRepo.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Cuenta, bool>>>(), It.IsAny<string[]>()))
             .Returns(cuenta);
 
         var servicio = new ServicioCuenta(mockRepo.Object);
@@ -493,7 +495,7 @@ public class ServicioCuentaTest
         var cuenta = Cuenta.Crear("Pedro", "Admin", new Email("pedro@admin.com"), "admin123", Rol.Administrador);
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
-        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+        mockRepo.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Cuenta, bool>>>(), It.IsAny<string[]>()))
             .Returns(cuenta);
 
         var servicio = new ServicioCuenta(mockRepo.Object);
@@ -511,7 +513,7 @@ public class ServicioCuentaTest
     {
         // Arrange
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
-        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+        mockRepo.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Cuenta, bool>>>(), It.IsAny<string[]>()))
             .Returns((Cuenta)null!);
 
         var servicio = new ServicioCuenta(mockRepo.Object);
@@ -532,7 +534,7 @@ public class ServicioCuentaTest
         cuenta.AsignarVisitante(new DateTime(1985, 5, 20));
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
-        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+        mockRepo.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Cuenta, bool>>>(), It.IsAny<string[]>()))
             .Returns(cuenta);
 
         var servicio = new ServicioCuenta(mockRepo.Object);
@@ -553,7 +555,7 @@ public class ServicioCuentaTest
         cuenta.Visitante!.AsignarMembresia(NivelMembresia.Premium);
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
-        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+        mockRepo.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Cuenta, bool>>>(), It.IsAny<string[]>()))
             .Returns(cuenta);
 
         var servicio = new ServicioCuenta(mockRepo.Object);
@@ -573,7 +575,7 @@ public class ServicioCuentaTest
         cuenta.AsignarVisitante(new DateTime(1990, 1, 1));
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
-        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+        mockRepo.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Cuenta, bool>>>(), It.IsAny<string[]>()))
             .Returns(cuenta);
 
         var servicio = new ServicioCuenta(mockRepo.Object);
@@ -597,7 +599,7 @@ public class ServicioCuentaTest
         var cuenta = Cuenta.Crear("María", "Admin", new Email("maria@admin.com"), "admin123", Rol.Administrador);
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
-        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+        mockRepo.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Cuenta, bool>>>(), It.IsAny<string[]>()))
             .Returns(cuenta);
 
         var servicio = new ServicioCuenta(mockRepo.Object);
@@ -619,7 +621,7 @@ public class ServicioCuentaTest
     {
         // Arrange
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
-        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+        mockRepo.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Cuenta, bool>>>(), It.IsAny<string[]>()))
             .Returns((Cuenta)null!);
 
         var servicio = new ServicioCuenta(mockRepo.Object);
@@ -641,7 +643,7 @@ public class ServicioCuentaTest
         cuenta.Visitante!.AsignarMembresia(NivelMembresia.Premium);
 
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
-        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+        mockRepo.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Cuenta, bool>>>(), It.IsAny<string[]>()))
             .Returns(cuenta);
 
         var servicio = new ServicioCuenta(mockRepo.Object);
@@ -765,5 +767,77 @@ public class ServicioCuentaTest
         // Assert
         Assert.IsNotNull(resultado.Visitante);
         Assert.AreEqual(NivelMembresia.VIP.ToString(), resultado.Visitante.NivelMembresia);
+    }
+
+    [TestMethod]
+    public void ModificarPerfil_EmailDuplicadoOtraCuenta_LanzaExcepcion()
+    {
+        // Arrange
+        var cuenta1 = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "pass123", Rol.Visitante);
+        var cuenta2 = Cuenta.Crear("María", "López", new Email("maria@test.com"), "pass456", Rol.Visitante);
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Cuenta, bool>>>(), It.IsAny<string[]>()))
+            .Returns(cuenta1);
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta2);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var dto = new ModificarPerfilDto(null, null, "maria@test.com", null); // Email ya usado por cuenta2
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ExcepcionDominio>(
+            () => servicio.ModificarPerfil(cuenta1.Id, dto));
+
+        Assert.AreEqual("Ya existe una cuenta con este email.", ex.Message);
+    }
+
+    [TestMethod]
+    public void ModificarPerfil_MismoEmailPropiaCuenta_NoLanzaExcepcion()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "pass123", Rol.Visitante);
+        cuenta.AsignarVisitante(new DateTime(1990, 1, 1));
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Cuenta, bool>>>(), It.IsAny<string[]>()))
+            .Returns(cuenta);
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var dto = new ModificarPerfilDto("Juan Carlos", null, "juan@test.com", null); // Mismo email
+
+        // Act - No debe lanzar excepción
+        servicio.ModificarPerfil(cuenta.Id, dto);
+
+        // Assert
+        Assert.AreEqual("juan@test.com", cuenta.Email.Valor);
+        Assert.AreEqual("Juan Carlos", cuenta.Nombre);
+        mockRepo.Verify(r => r.Editar(cuenta), Times.Once);
+    }
+
+    [TestMethod]
+    public void ModificarPerfil_EmailNuevoUnico_ActualizaCorrectamente()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "pass123", Rol.Visitante);
+        cuenta.AsignarVisitante(new DateTime(1990, 1, 1));
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Cuenta, bool>>>(), It.IsAny<string[]>()))
+            .Returns(cuenta);
+        mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns((Cuenta)null!);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+        var dto = new ModificarPerfilDto(null, null, "nuevo@test.com", null);
+
+        // Act
+        servicio.ModificarPerfil(cuenta.Id, dto);
+
+        // Assert
+        Assert.AreEqual("nuevo@test.com", cuenta.Email.Valor);
+        mockRepo.Verify(r => r.Editar(cuenta), Times.Once);
     }
 }
