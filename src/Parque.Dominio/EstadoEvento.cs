@@ -6,17 +6,22 @@ namespace Parque.Dominio;
 public enum EstadoEvento
 {
     /// <summary>
-    /// El evento está programado y activo.
+    /// El evento estï¿½ programado y activo.
     /// </summary>
-    Programado,
+    Programado = 1,
 
     /// <summary>
     /// El evento ha sido cancelado.
     /// </summary>
-    Cancelado,
+    Activo = 2,
 
     /// <summary>
     /// El evento ha finalizado.
     /// </summary>
-    Finalizado
+    Finalizado = 3,
+    
+    /// <summary>
+    /// El evento ha finalizado.
+    /// </summary>
+    Cancelado = 4
 }
