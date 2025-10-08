@@ -36,11 +36,25 @@ public class CuentaController(IServicioCuenta servicioCuenta) : ControllerBase
         });
     }
 
-    [HttpPut("{id:guid}/perfil")]
+    [HttpPut("perfil")]
     [AuthorizationFilter("any")]
-    public IActionResult ModificarPerfil(Guid id, [FromBody] ModificarPerfilDto dto)
+    public IActionResult ModificarPerfil([FromBody] ModificarPerfilDto dto)
     {
-        servicioCuenta.ModificarPerfil(id, dto);
+        // Obtener el usuario autenticado del contexto
+        var usuarioAutenticado = HttpContext.Items["user"] as Cuenta;
+
+        if(usuarioAutenticado == null)
+        {
+            return Unauthorized(new ResponseDto
+            {
+                Content = null,
+                ExecutionSuccessful = false,
+                Message = "No se pudo identificar al usuario autenticado"
+            });
+        }
+
+        // Usar el ID del usuario autenticado directamente
+        servicioCuenta.ModificarPerfil(usuarioAutenticado.Id, dto);
 
         return Ok(new ResponseDto
         {

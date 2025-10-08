@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Parque.Aplicacion.DTOs.Usuarios;
 using Parque.Aplicacion.Servicios;
+using Parque.Dominio.Excepciones;
 using Parque.Dominio.Usuarios;
 using Parque.WebApi.Controllers.Usuarios;
 using Parque.WebApi.Filtros;
@@ -19,6 +21,11 @@ public class CuentaControllerTest
     {
         _serviceMock = new Mock<IServicioCuenta>(MockBehavior.Strict);
         _controller = new CuentaController(_serviceMock.Object);
+
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext()
+        };
     }
 
     [TestMethod]
@@ -219,7 +226,7 @@ public class CuentaControllerTest
         _serviceMock.Verify(s => s.CrearCuentaPorAdmin(It.IsAny<RegistrarCuentaDto>()), Times.Once);
     }
 
-        [TestMethod]
+    [TestMethod]
     public void CrearCuenta_VisitanteConMembresiaPremium_DeberiaCrearCuentaConVisitante()
     {
         // Arrange
@@ -311,4 +318,211 @@ public class CuentaControllerTest
     }
 
     #endregion
+
+    #region ModificarPerfil Tests
+
+    [TestMethod]
+    public void ModificarPerfil_UsuarioModificaSuPropioPerfil_DeberiaRetornarOk()
+    {
+        // Arrange
+        var cuentaId = Guid.NewGuid();
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "pass123", Rol.Visitante);
+        typeof(Cuenta).GetProperty("Id")!.SetValue(cuenta, cuentaId);
+
+        // Simular que el usuario autenticado es el mismo que quiere modificar
+        _controller!.HttpContext.Items["user"] = cuenta;
+
+        var dto = new ModificarPerfilDto("Juan Carlos", "Pérez González", null, null);
+        _serviceMock!.Setup(s => s.ModificarPerfil(cuentaId, dto));
+
+        // Act
+        var result = _controller.ModificarPerfil(dto);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = result as OkObjectResult;
+        var response = okResult?.Value as ResponseDto;
+
+        Assert.IsNotNull(response);
+        Assert.IsTrue(response.ExecutionSuccessful);
+        Assert.AreEqual("Perfil modificado exitosamente", response.Message);
+
+        _serviceMock.Verify(s => s.ModificarPerfil(cuentaId, dto), Times.Once);
+    }
+
+    [TestMethod]
+    public void ModificarPerfil_UsuarioNoAutenticado_DeberiaRetornarUnauthorized()
+    {
+        // Arrange
+        var cuentaId = Guid.NewGuid();
+        _controller!.HttpContext.Items["user"] = null; // Usuario no autenticado
+
+        var dto = new ModificarPerfilDto("Test", null, null, null);
+
+        // Act
+        var result = _controller.ModificarPerfil(dto);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(UnauthorizedObjectResult));
+        var unauthorizedResult = result as UnauthorizedObjectResult;
+        var response = unauthorizedResult?.Value as ResponseDto;
+
+        Assert.IsNotNull(response);
+        Assert.IsFalse(response.ExecutionSuccessful);
+        Assert.AreEqual("No se pudo identificar al usuario autenticado", response.Message);
+
+        _serviceMock!.Verify(s => s.ModificarPerfil(It.IsAny<Guid>(), It.IsAny<ModificarPerfilDto>()), Times.Never);
+    }
+
+    #endregion
+
+    [TestMethod]
+    public void CambiarNivelMembresia_APremium_RetornaOk()
+    {
+        // Arrange
+        var mockServicio = new Mock<IServicioCuenta>();
+        var controller = new CuentaController(mockServicio.Object);
+
+        var cuentaId = Guid.NewGuid();
+        var nuevoNivel = NivelMembresia.Premium;
+
+        // Act
+        var resultado = controller.CambiarNivelMembresia(cuentaId, nuevoNivel) as OkObjectResult;
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(200, resultado.StatusCode);
+
+        var response = resultado.Value as ResponseDto;
+        Assert.IsNotNull(response);
+        Assert.IsTrue(response.ExecutionSuccessful);
+        Assert.AreEqual("Nivel de membresía actualizado exitosamente", response.Message);
+
+        mockServicio.Verify(s => s.CambiarNivelMembresia(cuentaId, nuevoNivel), Times.Once);
+    }
+
+    [TestMethod]
+    public void CambiarNivelMembresia_AVIP_RetornaOk()
+    {
+        // Arrange
+        var mockServicio = new Mock<IServicioCuenta>();
+        var controller = new CuentaController(mockServicio.Object);
+
+        var cuentaId = Guid.NewGuid();
+        var nuevoNivel = NivelMembresia.VIP;
+
+        // Act
+        var resultado = controller.CambiarNivelMembresia(cuentaId, nuevoNivel) as OkObjectResult;
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(200, resultado.StatusCode);
+        mockServicio.Verify(s => s.CambiarNivelMembresia(cuentaId, nuevoNivel), Times.Once);
+    }
+
+    [TestMethod]
+    public void CambiarNivelMembresia_AEstandar_RetornaOk()
+    {
+        // Arrange
+        var mockServicio = new Mock<IServicioCuenta>();
+        var controller = new CuentaController(mockServicio.Object);
+
+        var cuentaId = Guid.NewGuid();
+        var nuevoNivel = NivelMembresia.Estandar;
+
+        // Act
+        var resultado = controller.CambiarNivelMembresia(cuentaId, nuevoNivel) as OkObjectResult;
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(200, resultado.StatusCode);
+        mockServicio.Verify(s => s.CambiarNivelMembresia(cuentaId, nuevoNivel), Times.Once);
+    }
+
+    [TestMethod]
+    public void CambiarNivelMembresia_CuentaSinVisitante_LanzaExcepcion()
+    {
+        // Arrange
+        var mockServicio = new Mock<IServicioCuenta>();
+        mockServicio.Setup(s => s.CambiarNivelMembresia(It.IsAny<Guid>(), It.IsAny<NivelMembresia>()))
+            .Throws(new ExcepcionDominio("Solo las cuentas con perfil de visitante tienen nivel de membresía."));
+
+        var controller = new CuentaController(mockServicio.Object);
+        var cuentaId = Guid.NewGuid();
+
+        // Act & Assert
+        Assert.ThrowsException<ExcepcionDominio>(
+            () => controller.CambiarNivelMembresia(cuentaId, NivelMembresia.Premium));
+    }
+
+    [TestMethod]
+    public void CambiarNivelMembresia_CuentaNoExiste_LanzaExcepcion()
+    {
+        // Arrange
+        var mockServicio = new Mock<IServicioCuenta>();
+        mockServicio.Setup(s => s.CambiarNivelMembresia(It.IsAny<Guid>(), It.IsAny<NivelMembresia>()))
+            .Throws(new ExcepcionEntidadNoEncontrada("Cuenta no encontrada"));
+
+        var controller = new CuentaController(mockServicio.Object);
+        var cuentaId = Guid.NewGuid();
+
+        // Act & Assert
+        Assert.ThrowsException<ExcepcionEntidadNoEncontrada>(
+            () => controller.CambiarNivelMembresia(cuentaId, NivelMembresia.Premium));
+    }
+
+    [TestMethod]
+    public void RegistrarVisitante_DatosValidos_RetornaCreated()
+    {
+        // Arrange
+        var mockServicio = new Mock<IServicioCuenta>();
+        var cuentaDto = new CuentaDto(
+            Guid.NewGuid(),
+            "Juan",
+            "Pérez",
+            "juan@test.com",
+            ["Visitante"],
+            null);
+
+        mockServicio.Setup(s => s.RegistrarVisitante(It.IsAny<RegistrarVisitanteDto>()))
+            .Returns(cuentaDto);
+
+        var controller = new CuentaController(mockServicio.Object);
+        var dto = new RegistrarVisitanteDto("Juan", "Pérez", "juan@test.com", "pass123", DateTime.Now);
+
+        // Act
+        var resultado = controller.RegistrarVisitante(dto) as CreatedResult;
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(201, resultado.StatusCode);
+        Assert.AreEqual($"/api/cuentas/{cuentaDto.Id}", resultado.Location);
+    }
+
+    [TestMethod]
+    public void CrearCuenta_Administrador_RetornaCreated()
+    {
+        // Arrange
+        var mockServicio = new Mock<IServicioCuenta>();
+        var cuentaDto = new CuentaDto(
+            Guid.NewGuid(),
+            "Juan",
+            "Pérez",
+            "juan.perez@email.com",
+            ["Visitante"],
+            null);
+
+        mockServicio.Setup(s => s.CrearCuentaPorAdmin(It.IsAny<RegistrarCuentaDto>()))
+            .Returns(cuentaDto);
+
+        var controller = new CuentaController(mockServicio.Object);
+        var dto = new RegistrarCuentaDto("Admin", "Sistema", "admin@test.com", "pass123", Rol.Administrador, null, null);
+
+        // Act
+        var resultado = controller.CrearCuenta(dto) as CreatedResult;
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(201, resultado.StatusCode);
+    }
 }
