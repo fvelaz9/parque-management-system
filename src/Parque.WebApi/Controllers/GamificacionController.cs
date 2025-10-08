@@ -15,7 +15,7 @@ public class GamificacionController : ControllerBase
     {
         _servicioPuntuacion = servicioPuntuacion;
     }
-    
+
     [HttpPost("calcular-puntos/{registroVisitaId}")]
     public IActionResult CalcularPuntos(int registroVisitaId)
     {
@@ -45,12 +45,9 @@ public class GamificacionController : ControllerBase
             }
 
             var ranking = _servicioPuntuacion.ObtenerRankingDiario(fecha, top);
-            
-            return Ok(new 
-            { 
-                fecha = fecha?.Date ?? DateTime.Today,
-                totalVisitantes = ranking.Count,
-                ranking = ranking
+            return Ok(new
+            {
+                fecha = fecha?.Date ?? DateTime.Today, totalVisitantes = ranking.Count, ranking = ranking
             });
         }
         catch (Exception ex)
@@ -84,11 +81,10 @@ public class GamificacionController : ControllerBase
             }
 
             _servicioPuntuacion.CambiarEstrategiaActiva(request.NombreEstrategia);
-            
-            return Ok(new 
+            return Ok(
+                new 
             { 
-                mensaje = "Estrategia cambiada exitosamente",
-                nuevaEstrategia = request.NombreEstrategia
+                mensaje = "Estrategia cambiada exitosamente", nuevaEstrategia = request.NombreEstrategia
             });
         }
         catch (ArgumentException ex)

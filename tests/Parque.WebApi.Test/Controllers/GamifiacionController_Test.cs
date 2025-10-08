@@ -10,7 +10,7 @@ namespace Parque.WebApi.Test.Controllers;
 [TestClass]
 public class GamifiacionController_Test
 {
-     private Mock<IServicioPuntuacion>? _serviceMock;
+    private Mock<IServicioPuntuacion>? _serviceMock;
     private GamificacionController? _controller;
 
     [TestInitialize]
