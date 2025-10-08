@@ -1,4 +1,4 @@
-using Parque.Aplicacion.DTOS.Gamificacion;
+﻿using Parque.Aplicacion.DTOS.Gamificacion;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
 using Parque.Dominio.Gamificacion;
@@ -37,7 +37,7 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
             throw new InvalidOperationException($"Cuenta con ID {ticket.CuentaId} no encontrada");
         }
 
-        var visitanteId = cuenta.Visitante.Id;
+        var visitanteId = cuenta.Visitante!.Id;
 
         var fechaRegistro = registro.FechaIngreso.Date;
         var historialDiario = repoRegistros

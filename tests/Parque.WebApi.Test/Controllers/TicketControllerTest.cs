@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Parque.Aplicacion.DTOS;
 using Parque.Aplicacion.Servicios.Ticket;
@@ -104,7 +104,7 @@ public class TicketControllerTest
     [TestMethod]
     public void CreateConRequestNull()
     {
-        var result = _controller!.Create(null);
+        var result = _controller!.Create(null!);
         var badRequest = result as BadRequestObjectResult;
         Assert.IsNotNull(badRequest);
         Assert.AreEqual(400, badRequest.StatusCode);
@@ -222,7 +222,7 @@ public class TicketControllerTest
     [TestMethod]
     public void UpdateConRequestNull()
     {
-        var result = _controller!.Update(1, null);
+        var result = _controller!.Update(1, null!);
         var badRequest = result as BadRequestObjectResult;
         Assert.IsNotNull(badRequest);
         Assert.AreEqual(400, badRequest.StatusCode);
