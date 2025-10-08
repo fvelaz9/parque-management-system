@@ -9,7 +9,8 @@ namespace Parque.Aplicacion.Servicios.Gamificacion;
 
 public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, IRepositorio<Dominio.Ticket> repoTickets,
     IRepositorio<RegistroVisita> repoRegistros, IRepositorio<PuntuacionVisitante> repoPuntuaciones, IRepositorio<Cuenta> repoCuentas,
-    IRepositorio<Evento> repoEventos, IRepositorio<ConfiguracionEstrategia> repoConfiguracion, IEnumerable<IEstrategiaPuntuacion> estrategias) : IServicioPuntuacion
+    IRepositorio<Evento> repoEventos, IRepositorio<ConfiguracionEstrategia> repoConfiguracion, IEnumerable<IEstrategiaPuntuacion> estrategias,
+    IServicioFechaHora servicioFechaHora) : IServicioPuntuacion
 {
     public void CalcularYRegistrarPuntos(int registroVisitaId)
     {
@@ -48,11 +49,12 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
             .OrderBy(r => r.FechaIngreso)
             .ToList();
 
+        var fechaActual = servicioFechaHora.ObtenerFechaActual();
         var eventoActivo = repoEventos
             .ObtenerTodos()
             .FirstOrDefault(e => e.Estado == EstadoEvento.Activo
-                                 && e.Inicio <= DateTime.Now
-                                 && e.Fin >= DateTime.Now);
+                                 && e.Inicio <= fechaActual
+                                 && e.Fin >= fechaActual);
 
         var estrategiaActiva = ObtenerEstrategiaActivaInterno();
 
@@ -82,11 +84,7 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
             throw new ArgumentException("El parámetro 'top' debe ser mayor a 0", nameof(top));
         }
 
-        var fechaConsulta = DateTime.Today;
-        if(fecha != null)
-        {
-            fechaConsulta = fecha.Value.Date;
-        }
+        var fechaConsulta = fecha?.Date ?? servicioFechaHora.ObtenerFechaActual().Date;
 
         var ranking = repoPuntuaciones
             .ObtenerTodos()
