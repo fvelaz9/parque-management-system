@@ -75,7 +75,7 @@ public class GamificacionController : ControllerBase
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(request?.NombreEstrategia))
+            if (string.IsNullOrWhiteSpace(request.NombreEstrategia))
             {
                 return BadRequest(new { error = "El nombre de la estrategia es requerido" });
             }
