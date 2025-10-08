@@ -60,8 +60,6 @@ public class ServicioPuntuacionTest
         _estrategiaMock?.VerifyAll();
     }
 
-    #region CalcularYRegistrarPuntos Tests
-
     [TestMethod]
     [ExpectedException(typeof(InvalidOperationException))]
     public void CalcularYRegistrarPuntos_RegistroNoExiste_LanzaExcepcion()
@@ -218,10 +216,6 @@ public class ServicioPuntuacionTest
             p => p.VisitanteId == visitante.Id)), Times.Once);
     }
 
-    #endregion
-
-    #region ObtenerRankingDiario Tests
-
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
     public void ObtenerRankingDiario_TopMenorOIgualACero_LanzaExcepcion()
@@ -302,10 +296,6 @@ public class ServicioPuntuacionTest
         Assert.AreEqual(3, resultado[2].Posicion);
     }
 
-    #endregion
-
-    #region ListarEstrategias Tests
-
     [TestMethod]
     public void ListarEstrategias_RetornaTodasConIndicadorActiva()
     {
@@ -319,10 +309,6 @@ public class ServicioPuntuacionTest
         Assert.AreEqual("TestStrategy", resultado[0].Nombre);
         Assert.IsTrue(resultado[0].EsActiva);
     }
-
-    #endregion
-
-    #region CambiarEstrategiaActiva Tests
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
@@ -362,10 +348,6 @@ public class ServicioPuntuacionTest
             c => c.EstrategiaActiva == "TestStrategy")), Times.Once);
     }
 
-    #endregion
-
-    #region ObtenerEstrategiaActiva Tests
-
     [TestMethod]
     public void ObtenerEstrategiaActiva_SinConfiguracion_CreaYRetornaPrimeraEstrategia()
     {
@@ -397,7 +379,8 @@ public class ServicioPuntuacionTest
     [ExpectedException(typeof(InvalidOperationException))]
     public void ObtenerEstrategiaActiva_SinEstrategiasRegistradas_LanzaExcepcion()
     {
-        var configuracionesVacias = new List<ConfiguracionEstrategia>();
+        var configuracionesVacias = new List<ConfiguracionEstrategia> { };
+
         var servicioSinEstrategias = new ServicioPuntuacion(
             _repoAtraccionesMock!.Object,
             _repoTicketsMock!.Object,
@@ -407,10 +390,9 @@ public class ServicioPuntuacionTest
             _repoEventosMock!.Object,
             _repoConfiguracionMock!.Object,
             new List<IEstrategiaPuntuacion>());
+
         _repoConfiguracionMock.Setup(r => r.ObtenerTodos()).Returns(configuracionesVacias);
 
         servicioSinEstrategias.ObtenerEstrategiaActiva();
     }
-
-    #endregion
 }
