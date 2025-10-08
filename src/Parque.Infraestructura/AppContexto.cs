@@ -36,7 +36,6 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
             .HasMany(e => e.Atracciones)
             .WithMany()
             .UsingEntity(j => j.ToTable("EventoAtracciones"));
-        
         modelBuilder.Entity<PuntuacionVisitante>(entity =>
         {
             entity.HasKey(e => e.Id);
