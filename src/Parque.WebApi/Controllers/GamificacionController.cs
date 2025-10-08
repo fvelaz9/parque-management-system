@@ -7,14 +7,9 @@ namespace Parque.WebApi.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-public class GamificacionController : ControllerBase
+public class GamificacionController(IServicioPuntuacion servicioPuntuacion) : ControllerBase
 {
-    private readonly IServicioPuntuacion _servicioPuntuacion;
-
-    public GamificacionController(IServicioPuntuacion servicioPuntuacion)
-    {
-        _servicioPuntuacion = servicioPuntuacion;
-    }
+    private readonly IServicioPuntuacion _servicioPuntuacion = servicioPuntuacion;
 
     [HttpPost("calcular-puntos/{registroVisitaId}")]
     public IActionResult CalcularPuntos(int registroVisitaId)
@@ -24,11 +19,11 @@ public class GamificacionController : ControllerBase
             _servicioPuntuacion.CalcularYRegistrarPuntos(registroVisitaId);
             return Ok(new { mensaje = "Puntos calculados y registrados exitosamente" });
         }
-        catch (InvalidOperationException ex)
+        catch(InvalidOperationException ex)
         {
             return BadRequest(new { error = ex.Message });
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
             return StatusCode(500, new { error = "Error interno del servidor", detalle = ex.Message });
         }
@@ -39,7 +34,7 @@ public class GamificacionController : ControllerBase
     {
         try
         {
-            if (top <= 0)
+            if(top <= 0)
             {
                 return BadRequest(new { error = "El parámetro 'top' debe ser mayor a 0" });
             }
@@ -47,10 +42,12 @@ public class GamificacionController : ControllerBase
             var ranking = _servicioPuntuacion.ObtenerRankingDiario(fecha, top);
             return Ok(new
             {
-                fecha = fecha?.Date ?? DateTime.Today, totalVisitantes = ranking.Count, ranking = ranking
+                fecha = fecha?.Date ?? DateTime.Today,
+                totalVisitantes = ranking.Count,
+                ranking = ranking
             });
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
             return StatusCode(500, new { error = "Error interno del servidor", detalle = ex.Message });
         }
@@ -64,7 +61,7 @@ public class GamificacionController : ControllerBase
             var estrategias = _servicioPuntuacion.ListarEstrategias();
             return Ok(new { estrategias = estrategias });
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
             return StatusCode(500, new { error = "Error interno del servidor", detalle = ex.Message });
         }
@@ -75,7 +72,7 @@ public class GamificacionController : ControllerBase
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(request.NombreEstrategia))
+            if(string.IsNullOrWhiteSpace(request.NombreEstrategia))
             {
                 return BadRequest(new { error = "El nombre de la estrategia es requerido" });
             }
@@ -83,11 +80,11 @@ public class GamificacionController : ControllerBase
             _servicioPuntuacion.CambiarEstrategiaActiva(request.NombreEstrategia);
             return Ok(new { mensaje = "Estrategia cambiada exitosamente", nuevaEstrategia = request.NombreEstrategia });
         }
-        catch (ArgumentException ex)
+        catch(ArgumentException ex)
         {
             return BadRequest(new { error = ex.Message });
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
             return StatusCode(500, new { error = "Error interno del servidor", detalle = ex.Message });
         }
@@ -101,7 +98,7 @@ public class GamificacionController : ControllerBase
             var estrategiaActiva = _servicioPuntuacion.ObtenerEstrategiaActiva();
             return Ok(new { estrategiaActiva = estrategiaActiva });
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
             return StatusCode(500, new { error = "Error interno del servidor", detalle = ex.Message });
         }
