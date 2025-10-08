@@ -54,7 +54,7 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
                     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                     c => c.ToHashSet()));
         });
-      
+
         modelBuilder.Entity<Evento>()
             .HasMany(e => e.Atracciones)
             .WithMany()
@@ -70,19 +70,20 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
                 .IsUnique();
             builder.Property(s => s.UsuarioId)
                 .IsRequired();
-          
-        modelBuilder.Entity<PuntuacionVisitante>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.VisitanteId).IsRequired();
-            entity.Property(e => e.Fecha).IsRequired();
-            entity.HasIndex(e => new { e.VisitanteId, e.Fecha }).IsUnique();
-        });
-          
-        modelBuilder.Entity<ConfiguracionEstrategia>(entity =>
-        {
-            entity.HasKey(e => e.Id);
-            entity.Property(e => e.EstrategiaActiva).IsRequired().HasMaxLength(50);
+
+            modelBuilder.Entity<PuntuacionVisitante>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.VisitanteId).IsRequired();
+                entity.Property(e => e.Fecha).IsRequired();
+                entity.HasIndex(e => new { e.VisitanteId, e.Fecha }).IsUnique();
+            });
+
+            modelBuilder.Entity<ConfiguracionEstrategia>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.EstrategiaActiva).IsRequired().HasMaxLength(50);
+            });
         });
     }
 }

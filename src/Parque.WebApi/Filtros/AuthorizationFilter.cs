@@ -15,7 +15,7 @@ public class AuthorizationFilter(string rol) : Attribute, IAuthorizationFilter
     {
         var token = context.HttpContext.Request.Headers[AUTHORIZATION_HEADER].ToString();
 
-        if (string.IsNullOrWhiteSpace(token))
+        if(string.IsNullOrWhiteSpace(token))
         {
             context.Result = new ObjectResult(new ResponseDto
             {
@@ -29,7 +29,7 @@ public class AuthorizationFilter(string rol) : Attribute, IAuthorizationFilter
         }
 
         var servicioSesion = GetServicioSesion(context);
-        if (servicioSesion == null)
+        if(servicioSesion == null)
         {
             context.Result = new ObjectResult(new ResponseDto
             {
@@ -44,7 +44,7 @@ public class AuthorizationFilter(string rol) : Attribute, IAuthorizationFilter
 
         try
         {
-            if (!servicioSesion.ValidarSesion(token, _rol))
+            if(!servicioSesion.ValidarSesion(token, _rol))
             {
                 context.Result = new ObjectResult(new ResponseDto
                 {
@@ -61,7 +61,7 @@ public class AuthorizationFilter(string rol) : Attribute, IAuthorizationFilter
             var usuario = servicioSesion.ObtenerUsuarioSesion(token);
             context.HttpContext.Items["user"] = usuario;
         }
-        catch (ExcepcionDominio ex)
+        catch(ExcepcionDominio ex)
         {
             // Errores de negocio (token inválido, usuario no encontrado, etc.)
             context.Result = new ObjectResult(new ResponseDto
@@ -73,7 +73,7 @@ public class AuthorizationFilter(string rol) : Attribute, IAuthorizationFilter
                 StatusCode = (int)HttpStatusCode.Unauthorized
             };
         }
-        catch (Exception)
+        catch(Exception)
         {
             // Errores inesperados
             context.Result = new ObjectResult(new ResponseDto

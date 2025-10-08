@@ -151,187 +151,188 @@ namespace Parque.Infraestructura.Migrations
                         .IsUnique();
 
                     b.ToTable("Sesiones");
-                    
-            modelBuilder.Entity("Parque.Dominio.Gamificacion.ConfiguracionEstrategia", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("EstrategiaActiva")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<DateTime>("FechaModificacion")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ConfiguracionesEstrategia");
-                });
-
-            modelBuilder.Entity("Parque.Dominio.Ticket", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<Guid>("Codigo")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CuentaId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("EsValido")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("EventoId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("FechaEmision")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("FechaVisita")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("TipoEntrada")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Tickets");
-                });
-
-            modelBuilder.Entity("Parque.Dominio.Usuarios.Cuenta", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Apellido")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)")
-                        .HasColumnName("Password");
-
-                    b.Property<Guid?>("VisitanteId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("_roles")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Roles");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VisitanteId");
-
-                    b.ToTable("Cuentas");
-                });
-
-            modelBuilder.Entity("Parque.Dominio.Usuarios.PuntuacionVisitante", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("Fecha")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("PuntosDiarios")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PuntosTotales")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("VisitanteId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("VisitanteId", "Fecha")
-                        .IsUnique();
-
-                    b.ToTable("PuntuacionesVisitantes");
-                });
-
-            modelBuilder.Entity("Parque.Dominio.Usuarios.Visitante", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("FechaNacimiento")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("NivelMembresia")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Visitantes");
-                });
-
-            modelBuilder.Entity("AtraccionParqueEvento", b =>
-                {
-                    b.HasOne("Parque.Dominio.Atracciones.AtraccionParque", null)
-                        .WithMany()
-                        .HasForeignKey("AtraccionesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Parque.Dominio.Evento", null)
-                        .WithMany()
-                        .HasForeignKey("EventoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Parque.Dominio.Usuarios.Cuenta", b =>
-                {
-                    b.HasOne("Parque.Dominio.Usuarios.Visitante", "Visitante")
-                        .WithMany()
-                        .HasForeignKey("VisitanteId");
-
-                    b.OwnsOne("Parque.Dominio.Usuarios.Email", "Email", b1 =>
+                    modelBuilder.Entity("Parque.Dominio.Gamificacion.ConfiguracionEstrategia", b =>
                         {
-                            b1.Property<Guid>("CuentaId")
-                                .HasColumnType("uniqueidentifier");
+                            b.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
 
-                            b1.Property<string>("Valor")
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                            b.Property<string>("EstrategiaActiva")
                                 .IsRequired()
-                                .HasColumnType("nvarchar(max)")
-                                .HasColumnName("Email");
+                                .HasMaxLength(50)
+                                .HasColumnType("nvarchar(50)");
 
-                            b1.HasKey("CuentaId");
+                            b.Property<DateTime>("FechaModificacion")
+                                .HasColumnType("datetime2");
 
-                            b1.ToTable("Cuentas");
+                            b.HasKey("Id");
 
-                            b1.WithOwner()
-                                .HasForeignKey("CuentaId");
+                            b.ToTable("ConfiguracionesEstrategia");
                         });
 
-                    b.Navigation("Email")
-                        .IsRequired();
+                    modelBuilder.Entity("Parque.Dominio.Ticket", b =>
+                        {
+                            b.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
 
-                    b.Navigation("Visitante");
-                });
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                            b.Property<Guid>("Codigo")
+                                .HasColumnType("uniqueidentifier");
+
+                            b.Property<Guid>("CuentaId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b.Property<bool>("EsValido")
+                                .HasColumnType("bit");
+
+                            b.Property<int?>("EventoId")
+                                .HasColumnType("int");
+
+                            b.Property<DateTime>("FechaEmision")
+                                .HasColumnType("datetime2");
+
+                            b.Property<DateTime>("FechaVisita")
+                                .HasColumnType("datetime2");
+
+                            b.Property<int>("TipoEntrada")
+                                .HasColumnType("int");
+
+                            b.HasKey("Id");
+
+                            b.ToTable("Tickets");
+                        });
+
+                    modelBuilder.Entity("Parque.Dominio.Usuarios.Cuenta", b =>
+                        {
+                            b.Property<Guid>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("uniqueidentifier");
+
+                            b.Property<string>("Apellido")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b.Property<string>("Nombre")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)");
+
+                            b.Property<string>("Password")
+                                .IsRequired()
+                                .HasMaxLength(100)
+                                .HasColumnType("nvarchar(100)")
+                                .HasColumnName("Password");
+
+                            b.Property<Guid?>("VisitanteId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b.Property<string>("_roles")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("Roles");
+
+                            b.HasKey("Id");
+
+                            b.HasIndex("VisitanteId");
+
+                            b.ToTable("Cuentas");
+                        });
+
+                    modelBuilder.Entity("Parque.Dominio.Usuarios.PuntuacionVisitante", b =>
+                        {
+                            b.Property<int>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("int");
+
+                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                            b.Property<DateTime>("Fecha")
+                                .HasColumnType("datetime2");
+
+                            b.Property<int>("PuntosDiarios")
+                                .HasColumnType("int");
+
+                            b.Property<int>("PuntosTotales")
+                                .HasColumnType("int");
+
+                            b.Property<Guid>("VisitanteId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b.HasKey("Id");
+
+                            b.HasIndex("VisitanteId", "Fecha")
+                                .IsUnique();
+
+                            b.ToTable("PuntuacionesVisitantes");
+                        });
+
+                    modelBuilder.Entity("Parque.Dominio.Usuarios.Visitante", b =>
+                        {
+                            b.Property<Guid>("Id")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("uniqueidentifier");
+
+                            b.Property<DateTime>("FechaNacimiento")
+                                .HasColumnType("datetime2");
+
+                            b.Property<int>("NivelMembresia")
+                                .HasColumnType("int");
+
+                            b.HasKey("Id");
+
+                            b.ToTable("Visitantes");
+                        });
+
+                    modelBuilder.Entity("AtraccionParqueEvento", b =>
+                        {
+                            b.HasOne("Parque.Dominio.Atracciones.AtraccionParque", null)
+                                .WithMany()
+                                .HasForeignKey("AtraccionesId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
+
+                            b.HasOne("Parque.Dominio.Evento", null)
+                                .WithMany()
+                                .HasForeignKey("EventoId")
+                                .OnDelete(DeleteBehavior.Cascade)
+                                .IsRequired();
+                        });
+
+                    modelBuilder.Entity("Parque.Dominio.Usuarios.Cuenta", b =>
+                        {
+                            b.HasOne("Parque.Dominio.Usuarios.Visitante", "Visitante")
+                                .WithMany()
+                                .HasForeignKey("VisitanteId");
+
+                            b.OwnsOne("Parque.Dominio.Usuarios.Email", "Email", b1 =>
+                                {
+                                    b1.Property<Guid>("CuentaId")
+                                        .HasColumnType("uniqueidentifier");
+
+                                    b1.Property<string>("Valor")
+                                        .IsRequired()
+                                        .HasColumnType("nvarchar(max)")
+                                        .HasColumnName("Email");
+
+                                    b1.HasKey("CuentaId");
+
+                                    b1.ToTable("Cuentas");
+
+                                    b1.WithOwner()
+                                        .HasForeignKey("CuentaId");
+                                });
+
+                            b.Navigation("Email")
+                                .IsRequired();
+
+                            b.Navigation("Visitante");
+                        });
 #pragma warning restore 612, 618
+                });
         }
     }
 }
