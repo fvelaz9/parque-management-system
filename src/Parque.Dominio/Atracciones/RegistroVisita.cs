@@ -14,7 +14,6 @@ public class RegistroVisita
         FechaIngreso = fechaIngreso;
     }
 
-    // Constructor sin parámetros para Entity Framework
     public RegistroVisita()
     {
     }

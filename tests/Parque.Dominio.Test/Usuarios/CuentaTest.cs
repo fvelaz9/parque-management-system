@@ -476,4 +476,25 @@ public class CuentaTest
 
         Assert.AreEqual("La cuenta no tiene el rol Operador", ex.Message);
     }
+
+    [TestMethod]
+    public void ObtenerEdadVisitante_SinVisitante_LanzaExcepcion()
+    {
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123", Rol.Visitante);
+
+        var ex = Assert.ThrowsException<ExcepcionDominio>(() => cuenta.ObtenerEdadVisitante());
+        Assert.AreEqual("Esta cuenta no tiene un visitante asignado", ex.Message);
+    }
+
+    [TestMethod]
+    public void ObtenerEdadVisitante_CalculoEdadCorrecto_BordeCumpleaños()
+    {
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        var fechaNacimiento = DateTime.UtcNow.AddYears(-30).AddDays(1);
+        cuenta.AsignarVisitante(fechaNacimiento);
+
+        var edad = cuenta.ObtenerEdadVisitante();
+
+        Assert.AreEqual(29, edad);
+    }
 }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
+using Parque.Dominio.Gamificacion;
 using Parque.Dominio.Usuarios;
 
 namespace Parque.Infraestructura;
@@ -15,6 +16,8 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
     public DbSet<AtraccionParque> Atracciones { get; set; }
     public DbSet<RegistroVisita> RegistrosVisitas { get; set; }
     public DbSet<Sesion> Sesiones { get; set; }
+    public DbSet<PuntuacionVisitante> PuntuacionesVisitantes { get; set; }
+    public DbSet<ConfiguracionEstrategia> ConfiguracionesEstrategia { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -51,7 +54,7 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
                     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
                     c => c.ToHashSet()));
         });
-
+      
         modelBuilder.Entity<Evento>()
             .HasMany(e => e.Atracciones)
             .WithMany()
@@ -67,6 +70,19 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
                 .IsUnique();
             builder.Property(s => s.UsuarioId)
                 .IsRequired();
+          
+        modelBuilder.Entity<PuntuacionVisitante>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.VisitanteId).IsRequired();
+            entity.Property(e => e.Fecha).IsRequired();
+            entity.HasIndex(e => new { e.VisitanteId, e.Fecha }).IsUnique();
+        });
+          
+        modelBuilder.Entity<ConfiguracionEstrategia>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.EstrategiaActiva).IsRequired().HasMaxLength(50);
         });
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Parque.Infraestructura;
 
@@ -11,9 +12,11 @@ using Parque.Infraestructura;
 namespace Parque.Infraestructura.Migrations
 {
     [DbContext(typeof(AppContexto))]
-    partial class AppContextoModelSnapshot : ModelSnapshot
+    [Migration("20251008131006_AgregarGamificacion")]
+    partial class AgregarGamificacion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -131,27 +134,6 @@ namespace Parque.Infraestructura.Migrations
                     b.ToTable("Eventos");
                 });
 
-            modelBuilder.Entity("Parque.Dominio.Sesion", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<Guid>("UsuarioId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Token")
-                        .IsUnique();
-
-                    b.ToTable("Sesiones");
-                    
             modelBuilder.Entity("Parque.Dominio.Gamificacion.ConfiguracionEstrategia", b =>
                 {
                     b.Property<int>("Id")
@@ -229,11 +211,6 @@ namespace Parque.Infraestructura.Migrations
 
                     b.Property<Guid?>("VisitanteId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("_roles")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Roles");
 
                     b.HasKey("Id");
 
