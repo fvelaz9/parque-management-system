@@ -31,8 +31,7 @@ builder.Services.AddScoped<IEstrategiaPuntuacion, PuntuacionCombo>(sp =>
         minutosVentana: 10,
         atraccionesMinimasCombo: 3,
         puntosBase: 8,
-        puntosCombo: 25
-    ));
+        puntosCombo: 25));
 
 builder.Services.AddScoped<IEstrategiaPuntuacion, PuntuacionPorEvento>(sp =>
     new PuntuacionPorEvento());
