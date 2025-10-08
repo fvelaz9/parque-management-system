@@ -389,7 +389,7 @@ public class ServicioPuntuacionTest
             _repoCuentasMock!.Object,
             _repoEventosMock!.Object,
             _repoConfiguracionMock!.Object,
-            new List<IEstrategiaPuntuacion>());
+            []);
 
         _repoConfiguracionMock.Setup(r => r.ObtenerTodos()).Returns(configuracionesVacias);
 
