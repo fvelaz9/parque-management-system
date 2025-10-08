@@ -5,15 +5,12 @@ namespace Parque.Aplicacion.Servicios.Ticket;
 
 public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositorio<Evento> repositorioEvento) : IServicioTicket
 {
-    private readonly IRepositorio<Dominio.Ticket> _repositorio = repositorio;
-    private readonly IRepositorio<Evento> _repositorioEvento = repositorioEvento;
-
     public Dominio.Ticket CrearTicketGeneral(Guid cuentaId, DateTime fechaVisita)
     {
         ValidarFechaFutura(fechaVisita);
         Dominio.Ticket ticket = ConstruirTicket(cuentaId, fechaVisita, null, TipoTicket.General);
 
-        _repositorio.Agregar(ticket);
+        repositorio.Agregar(ticket);
         return ticket;
     }
 
@@ -22,15 +19,15 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
         ValidarFechaFutura(fechaVisita);
         ValidarEventoParaTicketEspecial(TipoTicket.EventoEspecial, eventoId);
         Dominio.Ticket ticket = ConstruirTicket(cuentaId, fechaVisita, eventoId, TipoTicket.EventoEspecial);
-        _repositorio.Agregar(ticket);
+        repositorio.Agregar(ticket);
         return ticket;
     }
 
-    public IEnumerable<Dominio.Ticket> ListarTickets() => _repositorio.ObtenerTodos();
+    public IEnumerable<Dominio.Ticket> ListarTickets() => repositorio.ObtenerTodos();
 
     public Dominio.Ticket BuscarTicket(int id)
     {
-        var ticket = _repositorio.Encontrar(t => t.Id == id);
+        var ticket = repositorio.Encontrar(t => t.Id == id);
         if(ticket == null)
         {
             throw new ArgumentException("Ticket no encontrado");
@@ -41,12 +38,12 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
 
     public Dominio.Ticket? BuscarTicketPorCodigo(Guid codigo)
     {
-        return _repositorio.Encontrar(t => t.Codigo == codigo);
+        return repositorio.Encontrar(t => t.Codigo == codigo);
     }
 
     public void ModificarTicket(int id, Guid cuentaId, DateTime fechaVisita, int? eventoId, TipoTicket tipoTicket)
     {
-        var ticket = _repositorio.Encontrar(t => t.Id == id);
+        var ticket = repositorio.Encontrar(t => t.Id == id);
         if(ticket == null)
         {
             throw new ArgumentException("Ticket no encontrado");
@@ -57,12 +54,12 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
         ticket.EventoId = eventoId;
         ticket.TipoEntrada = tipoTicket;
 
-        _repositorio.Editar(ticket);
+        repositorio.Editar(ticket);
     }
 
     public void EliminarTicket(int id)
     {
-        _repositorio.Eliminar(t => t.Id == id);
+        repositorio.Eliminar(t => t.Id == id);
     }
 
     private void ValidarFechaFutura(DateTime fechaVisita)
@@ -82,13 +79,13 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
                 throw new ArgumentException("Evento requerido para entradas especiales");
             }
 
-            var evento = _repositorioEvento.Encontrar(e => e.Id == eventoId.Value);
+            var evento = repositorioEvento.Encontrar(e => e.Id == eventoId.Value);
             if(evento == null)
             {
                 throw new ArgumentException("Evento no encontrado");
             }
 
-            var ticketsVendidos = _repositorio.ObtenerTodos()
+            var ticketsVendidos = repositorio.ObtenerTodos()
                 .Count(t => t.EventoId == eventoId.Value && t.EsValido);
 
             if(ticketsVendidos >= evento.AforoMaximo)
