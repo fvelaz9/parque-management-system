@@ -2,6 +2,7 @@
 using Parque.Aplicacion.Servicios;
 using Parque.Aplicacion.Servicios.Atracciones;
 using Parque.Aplicacion.Servicios.Ticket;
+using Parque.Dominio.Usuarios;
 using Parque.Infraestructura;
 using Parque.Infraestructura.Repositorios;
 using Parque.WebApi.Filtros;
@@ -31,6 +32,31 @@ builder.Services.AddScoped<IServicioSesion, ServicioSesion>();
 builder.Services.AddDbContext<AppContexto>(options => options.UseSqlServer("name=ConnectionStrings:DefaultConnection"));
 
 var app = builder.Build();
+
+// Crear un admin inicial si no existe
+using(var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppContexto>();
+    var repo = scope.ServiceProvider.GetRequiredService<IRepositorio<Cuenta>>();
+
+    // Verificar si ya existe un administrador
+    var todasLasCuentas = repo.ObtenerTodos();
+    var adminExistente = todasLasCuentas.FirstOrDefault(c => c.Roles.Contains(Rol.Administrador));
+
+    if(adminExistente == null)
+    {
+        var adminEmail = new Email("admin@admin.com");
+        var adminInicial = Cuenta.Crear(
+            "Administrador",
+            "Sistema",
+            adminEmail,
+            "Admin123!",
+            Rol.Administrador);
+
+        repo.Agregar(adminInicial);
+        Console.WriteLine("Admin inicial creado: admin@admin.com / Admin123!");
+    }
+}
 
 app.UseHttpsRedirection();
 app.UseAuthorization();

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
 using Parque.Dominio.Usuarios;
@@ -18,16 +19,31 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        modelBuilder.Entity<Cuenta>(builder =>
+
+        modelBuilder.Entity<Cuenta>(static builder =>
         {
             builder.OwnsOne(u => u.Email, email =>
             {
                 email.Property(e => e.Valor).HasColumnName("Email").IsRequired();
             });
+
             builder.Property(u => u.Password)
                 .HasColumnName("Password")
                 .IsRequired()
                 .HasMaxLength(100);
+
+            // Mapear la colección de Roles
+            builder.Property<HashSet<Rol>>("_roles")
+                .HasColumnName("Roles")
+                .HasConversion(
+                    roles => string.Join(",", roles.Select(r => ((int)r).ToString())),
+                    rolesString => rolesString.Split(',', StringSplitOptions.RemoveEmptyEntries)
+                                              .Select(r => (Rol)int.Parse(r))
+                                              .ToHashSet())
+                .Metadata.SetValueComparer(new ValueComparer<HashSet<Rol>>(
+                    (c1, c2) => c1!.SetEquals(c2!),
+                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+                    c => c.ToHashSet()));
         });
 
         modelBuilder.Entity<Evento>()
