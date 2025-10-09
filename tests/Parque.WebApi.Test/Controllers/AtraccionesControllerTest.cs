@@ -174,4 +174,36 @@ public class AtraccionesController_Test
         Assert.IsNotNull(notFoundResult);
         _serviceMock.Verify(s => s.ObtenerAforoActual(999), Times.Once);
     }
+
+    [TestMethod]
+    public void ReporteUsoAtracciones_FechasValidas_DeberiaRetornarOk()
+    {
+        var desde = new DateTime(2025, 1, 1);
+        var hasta = new DateTime(2025, 12, 31);
+        var reporte = new List<ReporteAtraccionDto>
+        {
+            new ReporteAtraccionDto
+            {
+                AtraccionId = 1,
+                NombreAtraccion = "Montaña Rusa",
+                CantidadVisitas = 100
+            },
+            new ReporteAtraccionDto
+            {
+                AtraccionId = 2,
+                NombreAtraccion = "Carrusel",
+                CantidadVisitas = 80
+            }
+        };
+
+        _serviceMock!.Setup(s => s.ObtenerReporteUso(desde, hasta)).Returns(reporte);
+
+        var result = _controller!.ReporteUsoAtracciones(desde, hasta);
+
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.AreEqual(reporte, okResult.Value);
+        _serviceMock.VerifyAll();
+    }
 }
