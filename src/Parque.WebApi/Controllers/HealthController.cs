@@ -11,7 +11,6 @@ public sealed class HealthController
     [HttpGet]
     public object Get()
     {
-        // Aquí puedes agregar chequeos personalizados (DB, servicios externos, etc.)
         return new
         {
             v = "1.0",

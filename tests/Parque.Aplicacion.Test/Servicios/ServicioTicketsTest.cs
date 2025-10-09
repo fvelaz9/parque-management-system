@@ -174,4 +174,16 @@ public class ServicioTicketsTest
         Assert.IsNull(resultado);
         _repositorioMock.VerifyAll();
     }
+
+    [TestMethod]
+    public void CrearBorrarTicker()
+    {
+        var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
+        DateTime fechaVisita = DateTime.Now.AddDays(1);
+        _repositorioMock.Setup(r => r.Agregar(It.IsAny<Dominio.Ticket>()));
+        var ticket = _servicio.CrearTicketGeneral(cuentaId, fechaVisita);
+        _repositorioMock.Verify(r => r.Agregar(It.IsAny<Dominio.Ticket>()), Times.Once);
+        _servicio.EliminarTicket(ticket.Id);
+        Assert.IsNotNull(ticket);
+    }
 }
