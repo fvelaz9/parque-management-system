@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Parque.Aplicacion.Servicios.Atracciones;
 using Parque.Dominio.Atracciones;
+using Parque.WebApi.Filtros;
 
 namespace Parque.WebApi.Controllers;
 
@@ -9,12 +10,14 @@ namespace Parque.WebApi.Controllers;
 public class AtraccionesController(IServicioAtracciones servicioAtracciones) : ControllerBase
 {
     [HttpGet]
+    [AuthorizationFilter("any")]
     public IActionResult GetAll()
     {
         return Ok(servicioAtracciones.ListarAtracciones());
     }
 
     [HttpGet("{id}")]
+    [AuthorizationFilter("any")]
     public IActionResult GetById(int id)
     {
         var atraccion = servicioAtracciones.BuscarAtraccion(id);
@@ -22,6 +25,7 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
     }
 
     [HttpPost]
+    [AuthorizationFilter("Administrador")]
     public IActionResult Create([FromBody] AtraccionParque atraccion)
     {
         var creada = servicioAtracciones.CrearAtraccion(
@@ -34,6 +38,7 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
     }
 
     [HttpPut("{id}")]
+    [AuthorizationFilter("Administrador")]
     public IActionResult Update(int id, [FromBody] AtraccionParque atraccion)
     {
         servicioAtracciones.ModificarAtraccion(
@@ -47,13 +52,15 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
     }
 
     [HttpDelete("{id}")]
+    [AuthorizationFilter("Administrador")]
     public IActionResult Delete(int id)
     {
         servicioAtracciones.EliminarAtraccion(id);
         return NoContent();
     }
 
-    [HttpGet("atracciones")]
+    [HttpGet("reporte-uso")]
+    [AuthorizationFilter("Administrador")]
     public IActionResult ReporteUsoAtracciones([FromQuery] DateTime desde, [FromQuery] DateTime hasta)
     {
         if(desde > hasta)
@@ -66,6 +73,7 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
     }
 
     [HttpGet("{id}/aforo")]
+    [AuthorizationFilter("any")]
     public IActionResult ObtenerAforo(int id)
     {
         try
