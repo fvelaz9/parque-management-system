@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Parque.Aplicacion.Servicios;
+using Parque.Aplicacion.Servicios.Atracciones;
 using Parque.WebApi.Controllers.Evento.Modelos;
 using Parque.WebApi.Filtros;
 
@@ -7,7 +8,7 @@ namespace Parque.WebApi.Controllers.Evento;
 
 [ApiController]
 [Route("api/eventos")]
-public class EventoController(IServicioEvento servicioEvento) : ControllerBase
+public class EventoController(IServicioEvento servicioEvento, IServicioAtracciones servicioAtraccion) : ControllerBase
 {
     [HttpPost]
     [AuthorizationFilter("Administrador")]
@@ -21,7 +22,8 @@ public class EventoController(IServicioEvento servicioEvento) : ControllerBase
             request.AforoMaximo,
             request.CostoAdicional,
             request.Estado);
-        evento.Atracciones = request.Atracciones;
+        var atracciones = servicioAtraccion.ObtenerPorIds(request.AtraccionIds);
+        evento.Atracciones = atracciones.ToList();
         evento = servicioEvento.AgregarEvento(evento);
 
         return CreatedAtAction(nameof(ObtenerPorId), new { eventoId = evento.Id }, new EventoOutDto(evento));

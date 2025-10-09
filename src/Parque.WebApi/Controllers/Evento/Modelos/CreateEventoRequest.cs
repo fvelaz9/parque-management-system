@@ -1,5 +1,4 @@
 ﻿using Parque.Dominio;
-using Parque.Dominio.Atracciones;
 
 namespace Parque.WebApi.Controllers.Evento.Modelos;
 
@@ -11,6 +10,6 @@ public class CreateEventoRequest
     public DateTime Fin { get; set; }
     public int AforoMaximo { get; set; }
     public float CostoAdicional { get; set; }
-    public List<AtraccionParque> Atracciones { get; set; } = [];
+    public List<int> AtraccionIds { get; set; } = [];
     public EstadoEvento Estado { get; set; }
 }

@@ -12,4 +12,5 @@ public interface IServicioAtracciones
     void EliminarAtraccion(int id);
     List<ReporteAtraccionDto> ObtenerReporteUso(DateTime fechaInicio, DateTime fechaFin);
     AforoAtraccionDto ObtenerAforoActual(int atraccionId);
+    IEnumerable<AtraccionParque> ObtenerPorIds(List<int> ids);
 }

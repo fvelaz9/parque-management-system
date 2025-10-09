@@ -22,6 +22,13 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRep
     public AtraccionParque? BuscarAtraccion(int id) =>
         _repositorio.Encontrar(a => a.Id == id);
 
+    public IEnumerable<AtraccionParque> ObtenerPorIds(List<int> ids)
+    {
+        return _repositorio.ObtenerTodos()
+            .Where(a => ids.Contains(a.Id))
+            .ToList();
+    }
+
     public AtraccionParque ModificarAtraccion(int id, string nombre, TipoAtraccion tipo, int edadMinima, int capacidad, string descripcion)
     {
         var atraccion = _repositorio.Encontrar(a => a.Id == id);
