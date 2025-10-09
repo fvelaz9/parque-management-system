@@ -1,0 +1,71 @@
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
+
+namespace Parque.Infraestructura.Repositorios;
+
+public class Repositorio<T>(AppContexto contexto) : IRepositorio<T>
+    where T : class
+{
+    private readonly AppContexto _contexto = contexto;
+    public void Agregar(T entidad)
+    {
+        _contexto.Add(entidad);
+        _contexto.SaveChanges();
+    }
+
+    public T? Encontrar(Expression<Func<T, bool>> predicado)
+    {
+        return _contexto.Set<T>().FirstOrDefault(predicado);
+    }
+
+    public void Editar(T entidad)
+    {
+        _contexto.Set<T>().Update(entidad);
+        _contexto.SaveChanges();
+    }
+
+    public void Eliminar(Expression<Func<T, bool>> predicado)
+    {
+        T? entidad = Encontrar(predicado);
+        if(entidad != null)
+        {
+            _contexto.Set<T>().Remove(entidad);
+            _contexto.SaveChanges();
+        }
+    }
+
+    public List<T> ObtenerTodos()
+    {
+        return _contexto.Set<T>().ToList();
+    }
+
+    public List<T> Obtener(Expression<Func<T, bool>> predicado)
+    {
+        return _contexto.Set<T>().Where(predicado).ToList();
+    }
+
+    // Métodos con eager loading
+    public T? EncontrarConRelaciones(Expression<Func<T, bool>> predicado, params string[] includeProperties)
+    {
+        IQueryable<T> query = _contexto.Set<T>();
+
+        foreach(var includeProperty in includeProperties)
+        {
+            query = query.Include(includeProperty);
+        }
+
+        return query.FirstOrDefault(predicado);
+    }
+
+    public List<T> ObtenerConRelaciones(Expression<Func<T, bool>> predicado, params string[] includeProperties)
+    {
+        IQueryable<T> query = _contexto.Set<T>();
+
+        foreach(var includeProperty in includeProperties)
+        {
+            query = query.Include(includeProperty);
+        }
+
+        return query.Where(predicado).ToList();
+    }
+}
