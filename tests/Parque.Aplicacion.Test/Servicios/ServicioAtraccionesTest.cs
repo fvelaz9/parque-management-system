@@ -191,4 +191,30 @@ public class ServicioAtraccionesTest
         Assert.AreEqual("Montaña Rusa", resultado[0].NombreAtraccion);
         Assert.AreEqual("Desconocida", resultado[1].NombreAtraccion);
     }
+
+    [TestMethod]
+    public void ObtenerPorIds_IdsValidos_RetornaAtraccionesCorrespondientes()
+    {
+        // Arrange
+        var atracciones = new List<AtraccionParque>
+        {
+            new AtraccionParque("Montaña Rusa", TipoAtraccion.MontañaRusa, 12, 24, "Rápida") { Id = 1 },
+            new AtraccionParque("Carrusel", TipoAtraccion.Simulador, 0, 30, "Clásico") { Id = 2 },
+            new AtraccionParque("Simulador VR", TipoAtraccion.Simulador, 8, 12, "Virtual") { Id = 3 },
+            new AtraccionParque("Rueda", TipoAtraccion.Simulador, 0, 40, "Familiar") { Id = 4 }
+        };
+
+        _mockRepo.Setup(r => r.ObtenerTodos()).Returns(atracciones);
+
+        var idsABuscar = new List<int> { 1, 3 };
+
+        // Act
+        var resultado = _servicio.ObtenerPorIds(idsABuscar);
+
+        // Assert
+        Assert.AreEqual(2, resultado.Count());
+        Assert.IsTrue(resultado.Any(a => a.Id == 1 && a.Nombre == "Montaña Rusa"));
+        Assert.IsTrue(resultado.Any(a => a.Id == 3 && a.Nombre == "Simulador VR"));
+        Assert.IsFalse(resultado.Any(a => a.Id == 2 || a.Id == 4));
+    }
 }
