@@ -21,10 +21,22 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             return new ValidarAccesoResponse { AccesoPermitido = false, Mensaje = "El ticket no fue encontrado" };
         }
 
+        if(!ticket.EsValido)
+        {
+            return new ValidarAccesoResponse { AccesoPermitido = false, Mensaje = "El ticket no es válido" };
+        }
+
         var atraccion = repoAtracciones.Encontrar(y => y.Id == request.AtraccionId);
         if(atraccion == null)
         {
             return new ValidarAccesoResponse { AccesoPermitido = false, Mensaje = "Atracción no encontrada" };
+        }
+
+        // Buscar la cuenta del visitante
+        var cuentaVisitante = repoCuentas.Encontrar(c => c.Id == request.CuentaVisitanteId);
+        if(cuentaVisitante == null)
+        {
+            return new ValidarAccesoResponse { AccesoPermitido = false, Mensaje = "Cuenta no encontrada" };
         }
 
         var fechaActual = servicioFechaHora.ObtenerFechaActual().Date;
@@ -46,20 +58,19 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             }
         }
 
-        var validacion = ValidarReglasAccesoUsuario(atraccion, ticket, request);
+        var validacion = ValidarReglasAccesoUsuario(atraccion, ticket, cuentaVisitante);
         if(validacion != null)
         {
             return validacion;
         }
 
-        var incidencias = ValidarIncidencias(request, atraccion);
+        var incidencias = ValidarIncidencias(request.AtraccionId, atraccion);
         if(incidencias != null)
         {
             return incidencias;
         }
 
-        var visitantesActuales = ValidarCapacidad(request, atraccion);
-
+        var visitantesActuales = ValidarCapacidad(request.AtraccionId, atraccion);
         if(visitantesActuales != null)
         {
             return visitantesActuales;
@@ -70,7 +81,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             AccesoPermitido = true,
             Mensaje = "Acceso permitido",
             NombreAtraccion = atraccion.Nombre,
-            NombreVisitante = "Visitante"
+            NombreVisitante = $"{cuentaVisitante.Nombre} {cuentaVisitante.Apellido}"
         };
     }
 
@@ -139,30 +150,9 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
         return null;
     }
 
-    private ValidarAccesoResponse? ValidarReglasAccesoUsuario(AtraccionParque atraccion, Dominio.Ticket ticket, ValidarAccesoRequest request)
+    private ValidarAccesoResponse? ValidarReglasAccesoUsuario(AtraccionParque atraccion, Dominio.Ticket ticket, Cuenta cuentaVisitante)
     {
-        if(request.CuentaVisitante?.Id == null)
-        {
-            return new ValidarAccesoResponse
-            {
-                AccesoPermitido = false,
-                Mensaje = "Cuenta no encontrada",
-                NombreAtraccion = atraccion.Nombre
-            };
-        }
-
-        var cuenta = repoCuentas.Encontrar(d => d.Id == request.CuentaVisitante.Id);
-        if(cuenta == null)
-        {
-            return new ValidarAccesoResponse
-            {
-                AccesoPermitido = false,
-                Mensaje = "Cuenta no encontrada",
-                NombreAtraccion = atraccion.Nombre
-            };
-        }
-
-        if(request.CuentaVisitante.ObtenerEdadVisitante() < atraccion.EdadMinima)
+        if(cuentaVisitante.ObtenerEdadVisitante() < atraccion.EdadMinima)
         {
             return new ValidarAccesoResponse
             {
@@ -172,7 +162,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             };
         }
 
-        if(ticket.CuentaId != request.CuentaVisitante.Id)
+        if(ticket.CuentaId != cuentaVisitante.Id)
         {
             return new ValidarAccesoResponse
             {
@@ -185,16 +175,20 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
         return null;
     }
 
-    private ValidarAccesoResponse? ValidarIncidencias(ValidarAccesoRequest request, AtraccionParque atraccion)
+    private ValidarAccesoResponse? ValidarIncidencias(int atraccionId, AtraccionParque atraccion)
     {
-        var incidencias = repoIncidencias.Encontrar(d => d.AtraccionId == request.AtraccionId);
-        var fechaActual = servicioFechaHora.ObtenerFechaActual();
-        if(incidencias != null && !incidencias.EstaDisponible(fechaActual))
+        var incidencias = repoIncidencias.ObtenerTodos()
+            .Where(i => i.AtraccionId == atraccionId && i.EstaActiva(servicioFechaHora.ObtenerFechaActual()))
+            .ToList();
+
+        if(incidencias.Any())
         {
+            var incidencia = incidencias.First();
             return new ValidarAccesoResponse
             {
                 AccesoPermitido = false,
-                Mensaje = "Atracción temporalmente fuera de servicio",
+                Mensaje = $"Atracción fuera de servicio. {incidencia.Descripcion}. " +
+                         $"Resolución estimada: {incidencia.FechaResolucionEstimada:dd/MM/yyyy HH:mm}",
                 NombreAtraccion = atraccion.Nombre
             };
         }
@@ -202,10 +196,10 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
         return null;
     }
 
-    private ValidarAccesoResponse? ValidarCapacidad(ValidarAccesoRequest request, AtraccionParque atraccion)
+    private ValidarAccesoResponse? ValidarCapacidad(int atraccionId, AtraccionParque atraccion)
     {
         var visitantesActuales = repoRegistros.ObtenerTodos()
-            .Count(r => r.AtraccionId == request.AtraccionId && r.FechaEgreso == null);
+            .Count(r => r.AtraccionId == atraccionId && r.FechaEgreso == null);
 
         if(visitantesActuales >= atraccion.Capacidad)
         {
@@ -226,7 +220,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
         {
             CodigoTicket = codigoTicket,
             AtraccionId = atraccionId,
-            CuentaVisitante = cuentaVisitante
+            CuentaVisitanteId = cuentaVisitante.Id
         });
 
         if(!validacion.AccesoPermitido)

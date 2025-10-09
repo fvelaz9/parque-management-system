@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Parque.Aplicacion.Servicios;
+using Parque.Aplicacion.Servicios.Acceso;
 using Parque.Aplicacion.Servicios.Atracciones;
 using Parque.Aplicacion.Servicios.Gamificacion;
 using Parque.Aplicacion.Servicios.Ticket;
@@ -29,6 +30,7 @@ builder.Services.AddScoped<IServicioAtracciones, ServicioAtracciones>();
 builder.Services.AddScoped<IServicioTicket, ServicioTicket>();
 builder.Services.AddScoped<IServicioEvento, ServicioEvento>();
 builder.Services.AddScoped<IServicioSesion, ServicioSesion>();
+builder.Services.AddScoped<IServicioAcceso, ServicioAcceso>();
 
 builder.Services.AddScoped<IEstrategiaPuntuacion, PuntuacionPorAtraccion>(sp =>
     new PuntuacionPorAtraccion());
