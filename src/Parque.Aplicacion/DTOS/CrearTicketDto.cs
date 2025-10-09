@@ -1,6 +1,6 @@
 ﻿using Parque.Dominio;
 
-namespace Parque.Aplicacion.DTOS;
+namespace Parque.Aplicacion.DTOs;
 
 public class CrearTicketDto
 {

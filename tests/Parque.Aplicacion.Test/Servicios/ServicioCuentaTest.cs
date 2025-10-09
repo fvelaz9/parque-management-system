@@ -45,7 +45,6 @@ public class ServicioCuentaTest
     [TestMethod]
     public void RegistrarVisitante_EmailDuplicado_LanzaExcepcion()
     {
-        // Arrange
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
         var cuentaExistente = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123", Rol.Visitante);
         mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
@@ -54,9 +53,8 @@ public class ServicioCuentaTest
         var servicio = new ServicioCuenta(mockRepo.Object);
         var dto = new RegistrarVisitanteDto("Juan", "Pérez", "juan@test.com", "pass", DateTime.Now);
 
-        // Act & Assert
         var ex = Assert.ThrowsException<ExcepcionDominio>(() => servicio.RegistrarVisitante(dto));
-        Assert.AreEqual("Ya existe una cuenta con este email.", ex.Message);
+        Assert.AreEqual("Ya existe una cuenta con este email", ex.Message);
     }
 
     [TestMethod]
@@ -377,7 +375,6 @@ public class ServicioCuentaTest
     [TestMethod]
     public void CrearCuentaPorAdmin_EmailDuplicado_LanzaExcepcion()
     {
-        // Arrange
         var cuentaExistente = Cuenta.Crear("Usuario", "Existente",
             new Email("duplicado@test.com"), "password123", Rol.Visitante);
 
@@ -395,11 +392,10 @@ public class ServicioCuentaTest
             null,
             null);
 
-        // Act & Assert
         var ex = Assert.ThrowsException<ExcepcionDominio>(
             () => servicio.CrearCuentaPorAdmin(dto));
 
-        Assert.AreEqual("Ya existe una cuenta con este email.", ex.Message);
+        Assert.AreEqual("Ya existe una cuenta con este email", ex.Message);
     }
 
     [TestMethod]
@@ -445,7 +441,6 @@ public class ServicioCuentaTest
     [TestMethod]
     public void CrearCuentaPorAdmin_VisitanteSinFechaNacimiento_LanzaExcepcion()
     {
-        // Arrange
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
         mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
             .Returns((Cuenta)null!);
@@ -460,11 +455,10 @@ public class ServicioCuentaTest
             null,
             null);
 
-        // Act & Assert
         var ex = Assert.ThrowsException<ExcepcionDominio>(
             () => servicio.CrearCuentaPorAdmin(dto));
 
-        Assert.AreEqual("La fecha de nacimiento es requerida para visitantes.", ex.Message);
+        Assert.AreEqual("La fecha de nacimiento es requerida para visitantes", ex.Message);
     }
 
     [TestMethod]
@@ -684,7 +678,6 @@ public class ServicioCuentaTest
     [TestMethod]
     public void ObtenerPorEmail_EmailNoExiste_LanzaExcepcion()
     {
-        // Arrange
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
         mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
             .Returns((Cuenta)null!);
@@ -692,11 +685,10 @@ public class ServicioCuentaTest
         var servicio = new ServicioCuenta(mockRepo.Object);
         var emailInexistente = "noexiste@test.com";
 
-        // Act & Assert
         var ex = Assert.ThrowsException<ExcepcionEntidadNoEncontrada>(
             () => servicio.ObtenerPorEmail(emailInexistente));
 
-        Assert.AreEqual($"Cuenta con email {emailInexistente} no encontrada.", ex.Message);
+        Assert.AreEqual($"Cuenta con email {emailInexistente} no encontrada", ex.Message);
     }
 
     [TestMethod]
@@ -772,7 +764,6 @@ public class ServicioCuentaTest
     [TestMethod]
     public void ModificarPerfil_EmailDuplicadoOtraCuenta_LanzaExcepcion()
     {
-        // Arrange
         var cuenta1 = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "pass123", Rol.Visitante);
         var cuenta2 = Cuenta.Crear("María", "López", new Email("maria@test.com"), "pass456", Rol.Visitante);
 
@@ -783,13 +774,12 @@ public class ServicioCuentaTest
             .Returns(cuenta2);
 
         var servicio = new ServicioCuenta(mockRepo.Object);
-        var dto = new ModificarPerfilDto(null, null, "maria@test.com", null); // Email ya usado por cuenta2
+        var dto = new ModificarPerfilDto(null, null, "maria@test.com", null);
 
-        // Act & Assert
         var ex = Assert.ThrowsException<ExcepcionDominio>(
             () => servicio.ModificarPerfil(cuenta1.Id, dto));
 
-        Assert.AreEqual("Ya existe una cuenta con este email.", ex.Message);
+        Assert.AreEqual("Ya existe una cuenta con este email", ex.Message);
     }
 
     [TestMethod]

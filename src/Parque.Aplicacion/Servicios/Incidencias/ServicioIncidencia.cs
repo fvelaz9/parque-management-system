@@ -1,4 +1,4 @@
-﻿using Parque.Aplicacion.DTOS;
+﻿using Parque.Aplicacion.DTOs;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
 using Parque.Dominio.Excepciones;

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Parque.Aplicacion.DTOS.Gamificacion;
+using Parque.Aplicacion.DTOs.Gamificacion;
 using Parque.Aplicacion.Servicios.Gamificacion;
 using Parque.WebApi.Filtros;
 

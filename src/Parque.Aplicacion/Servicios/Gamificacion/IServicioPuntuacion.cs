@@ -1,4 +1,4 @@
-using Parque.Aplicacion.DTOS.Gamificacion;
+﻿using Parque.Aplicacion.DTOs.Gamificacion;
 
 namespace Parque.Aplicacion.Servicios.Gamificacion;
 

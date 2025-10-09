@@ -1,4 +1,4 @@
-﻿using Parque.Aplicacion.DTOS;
+﻿using Parque.Aplicacion.DTOs;
 using Parque.Dominio;
 
 namespace Parque.Aplicacion.Servicios.Incidencias;

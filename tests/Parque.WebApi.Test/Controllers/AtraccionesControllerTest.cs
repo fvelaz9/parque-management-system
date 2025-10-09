@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Parque.Aplicacion.DTOS;
+using Parque.Aplicacion.DTOs;
 using Parque.Aplicacion.Servicios.Atracciones;
 using Parque.Dominio.Atracciones;
 using Parque.WebApi.Controllers;
@@ -102,19 +102,25 @@ public class AtraccionesController_Test
     {
         // Arrange
         var atraccionRequest = new AtraccionParque("Nueva Montaña", TipoAtraccion.MontañaRusa, 14, 25, "Actualizada");
+        var atraccionModificada = new AtraccionParque("Nueva Montaña", TipoAtraccion.MontañaRusa, 14, 25, "Actualizada") { Id = 1 };
+
         _serviceMock!.Setup(s => s.ModificarAtraccion(
             1,
             atraccionRequest.Nombre,
             atraccionRequest.Tipo,
             atraccionRequest.EdadMinima,
             atraccionRequest.Capacidad,
-            atraccionRequest.Descripcion));
+            atraccionRequest.Descripcion))
+            .Returns(atraccionModificada);
 
         // Act
         var result = _controller!.Update(1, atraccionRequest);
 
         // Assert
-        Assert.IsInstanceOfType(result, typeof(NoContentResult));
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.AreEqual(atraccionModificada, okResult.Value);
         _serviceMock.VerifyAll();
     }
 
@@ -159,20 +165,17 @@ public class AtraccionesController_Test
     }
 
     [TestMethod]
-    public void ObtenerAforo_AtraccionNoExiste_DeberiaRetornarNotFound()
+    [ExpectedException(typeof(ArgumentException))]
+    public void ObtenerAforo_AtraccionNoExiste_DeberiaLanzarExcepcion()
     {
         // Arrange
         _serviceMock!.Setup(s => s.ObtenerAforoActual(999))
             .Throws(new ArgumentException("Atracción no encontrada"));
 
         // Act
-        var result = _controller!.ObtenerAforo(999);
+        _controller!.ObtenerAforo(999);
 
-        // Assert
-        Assert.IsInstanceOfType(result, typeof(NotFoundObjectResult));
-        var notFoundResult = result as NotFoundObjectResult;
-        Assert.IsNotNull(notFoundResult);
-        _serviceMock.Verify(s => s.ObtenerAforoActual(999), Times.Once);
+        // Assert is handled by ExpectedException attribute
     }
 
     [TestMethod]

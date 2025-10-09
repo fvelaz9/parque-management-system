@@ -1,4 +1,4 @@
-﻿using Parque.Aplicacion.DTOS.Gamificacion;
+﻿using Parque.Aplicacion.DTOs.Gamificacion;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
 using Parque.Dominio.Gamificacion;
