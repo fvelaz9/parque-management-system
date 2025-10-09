@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Moq;
-using Parque.Aplicacion.DTOS;
+using Parque.Aplicacion.DTOs;
 using Parque.Aplicacion.Servicios;
 using Parque.Aplicacion.Servicios.Incidencias;
 using Parque.Dominio;

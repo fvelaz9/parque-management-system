@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Parque.Aplicacion.Servicios.Atracciones;
 using Parque.Dominio.Atracciones;
+using Parque.WebApi.Filtros;
 
 namespace Parque.WebApi.Controllers;
 
@@ -8,25 +9,26 @@ namespace Parque.WebApi.Controllers;
 [Route("api/atracciones")]
 public class AtraccionesController(IServicioAtracciones servicioAtracciones) : ControllerBase
 {
-    private readonly IServicioAtracciones _service = servicioAtracciones;
-
     [HttpGet]
+    [AuthorizationFilter("any")]
     public IActionResult GetAll()
     {
-        return Ok(_service.ListarAtracciones());
+        return Ok(servicioAtracciones.ListarAtracciones());
     }
 
     [HttpGet("{id}")]
+    [AuthorizationFilter("any")]
     public IActionResult GetById(int id)
     {
-        var atraccion = _service.BuscarAtraccion(id);
+        var atraccion = servicioAtracciones.BuscarAtraccion(id);
         return atraccion == null ? NotFound() : Ok(atraccion);
     }
 
     [HttpPost]
+    [AuthorizationFilter("Administrador")]
     public IActionResult Create([FromBody] AtraccionParque atraccion)
     {
-        var creada = _service.CrearAtraccion(
+        var creada = servicioAtracciones.CrearAtraccion(
             atraccion.Nombre,
             atraccion.Tipo,
             atraccion.EdadMinima,
@@ -36,26 +38,29 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
     }
 
     [HttpPut("{id}")]
+    [AuthorizationFilter("Administrador")]
     public IActionResult Update(int id, [FromBody] AtraccionParque atraccion)
     {
-        _service.ModificarAtraccion(
+        var modificada = servicioAtracciones.ModificarAtraccion(
             id,
             atraccion.Nombre,
             atraccion.Tipo,
             atraccion.EdadMinima,
             atraccion.Capacidad,
             atraccion.Descripcion);
-        return NoContent();
+        return Ok(modificada);
     }
 
     [HttpDelete("{id}")]
+    [AuthorizationFilter("Administrador")]
     public IActionResult Delete(int id)
     {
-        _service.EliminarAtraccion(id);
+        servicioAtracciones.EliminarAtraccion(id);
         return NoContent();
     }
 
-    [HttpGet("atracciones")]
+    [HttpGet("reporte-uso")]
+    [AuthorizationFilter("Administrador")]
     public IActionResult ReporteUsoAtracciones([FromQuery] DateTime desde, [FromQuery] DateTime hasta)
     {
         if(desde > hasta)
@@ -63,21 +68,15 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
             return BadRequest(new { mensaje = "La fecha 'desde' no puede ser mayor a 'hasta'" });
         }
 
-        var reporte = _service.ObtenerReporteUso(desde, hasta);
+        var reporte = servicioAtracciones.ObtenerReporteUso(desde, hasta);
         return Ok(reporte);
     }
 
     [HttpGet("{id}/aforo")]
+    [AuthorizationFilter("any")]
     public IActionResult ObtenerAforo(int id)
     {
-        try
-        {
-            var aforo = _service.ObtenerAforoActual(id);
-            return Ok(aforo);
-        }
-        catch(ArgumentException ex)
-        {
-            return NotFound(new { mensaje = ex.Message });
-        }
+        var aforo = servicioAtracciones.ObtenerAforoActual(id);
+        return Ok(aforo);
     }
 }

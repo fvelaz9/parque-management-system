@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Parque.Aplicacion.DTOS;
+using Parque.Aplicacion.DTOs;
 using Parque.Aplicacion.Servicios.Ticket;
 using Parque.Dominio;
+using Parque.Dominio.Usuarios;
 using Parque.WebApi.Controllers;
 
 namespace Parque.WebApi.Test.Controllers;
@@ -12,6 +14,7 @@ public class TicketControllerTest
 {
     private Mock<IServicioTicket>? _servicioMock;
     private TicketController? _controller;
+    private Cuenta? _usuarioAutenticado;
     private readonly DateTime _fechaActual = new(2025, 10, 8, 12, 0, 0);
 
     [TestInitialize]
@@ -19,76 +22,37 @@ public class TicketControllerTest
     {
         _servicioMock = new Mock<IServicioTicket>(MockBehavior.Strict);
         _controller = new TicketController(_servicioMock.Object);
+
+        // Crear usuario autenticado
+        _usuarioAutenticado = Cuenta.Crear("Juan", "Perez", new Email("juan@test.com"), "pass123", Rol.Visitante);
+        _usuarioAutenticado.AsignarVisitante(new DateTime(2000, 1, 1));
+
+        // Configurar HttpContext con usuario autenticado
+        var httpContext = new DefaultHttpContext();
+        httpContext.Items["user"] = _usuarioAutenticado;
+        _controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
+        };
     }
 
     [TestMethod]
-    public void GetAllValido()
+    public void GetByCodigo_ConTicketExistente_RetornaOk()
     {
-        var cuentaId1 = Guid.NewGuid();
-        var cuentaId2 = Guid.NewGuid();
-        var fechaVisita1 = new DateTime(2025, 10, 10, 14, 0, 0);
-        var fechaVisita2 = new DateTime(2025, 10, 11, 14, 0, 0);
-
-        List<Dominio.Ticket> tickets =
-        [
-            new Dominio.Ticket(cuentaId1, fechaVisita1, 1, TipoTicket.General, _fechaActual),
-            new Dominio.Ticket(cuentaId2, fechaVisita2, 2, TipoTicket.General, _fechaActual)
-        ];
-
-        _servicioMock!.Setup(s => s.ListarTickets()).Returns(tickets);
-
-        var result = _controller!.GetAll();
-
-        var okResult = result as OkObjectResult;
-        Assert.IsNotNull(okResult);
-        Assert.AreEqual(200, okResult.StatusCode);
-        var returnedTickets = okResult.Value as IEnumerable<Dominio.Ticket>;
-        Assert.AreEqual(2, returnedTickets!.Count());
-        _servicioMock.VerifyAll();
-    }
-
-    [TestMethod]
-    public void GetByIdconTicketExistente()
-    {
-        var cuentaId = Guid.NewGuid();
-        var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
-        var ticket = new Dominio.Ticket(cuentaId, fechaVisita, 1, TipoTicket.General, _fechaActual);
-        _servicioMock!.Setup(s => s.BuscarTicket(1)).Returns(ticket);
-
-        var result = _controller!.GetById(1);
-
-        var okResult = result as OkObjectResult;
-        Assert.IsNotNull(okResult);
-        Assert.AreEqual(ticket, okResult.Value);
-        _servicioMock.VerifyAll();
-    }
-
-    [TestMethod]
-    public void GetByIdConTicketDoesNoExistente()
-    {
-        _servicioMock!.Setup(s => s.BuscarTicket(1)).Returns((Dominio.Ticket?)null);
-
-        var result = _controller!.GetById(1);
-
-        Assert.IsInstanceOfType(result, typeof(NotFoundResult));
-        _servicioMock.VerifyAll();
-    }
-
-    [TestMethod]
-    public void GetByCodigoConTicketExistente()
-    {
-        var cuentaId = Guid.NewGuid();
+        // Arrange
         var codigo = Guid.NewGuid();
         var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
-        var ticket = new Dominio.Ticket(cuentaId, fechaVisita, 1, TipoTicket.General, _fechaActual)
+        var ticket = new Dominio.Ticket(_usuarioAutenticado!.Id, fechaVisita, 1, TipoTicket.General, _fechaActual)
         {
             Codigo = codigo
         };
 
         _servicioMock!.Setup(s => s.BuscarTicketPorCodigo(codigo)).Returns(ticket);
 
+        // Act
         var result = _controller!.GetByCodigo(codigo);
 
+        // Assert
         var okResult = result as OkObjectResult;
         Assert.IsNotNull(okResult);
         Assert.AreEqual(ticket, okResult.Value);
@@ -96,87 +60,85 @@ public class TicketControllerTest
     }
 
     [TestMethod]
-    public void GetByCodigoConTicketNotExistente()
+    public void GetByCodigo_ConTicketNoExistente_RetornaNotFound()
     {
+        // Arrange
         var codigo = Guid.NewGuid();
         _servicioMock!.Setup(s => s.BuscarTicketPorCodigo(codigo)).Returns((Dominio.Ticket?)null);
 
+        // Act
         var result = _controller!.GetByCodigo(codigo);
 
-        Assert.IsInstanceOfType(result, typeof(NotFoundResult));
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(NotFoundObjectResult));
         _servicioMock.VerifyAll();
     }
 
     [TestMethod]
-    public void CreateConRequestNull()
+    public void Create_TicketGeneralValido_RetornaCreated()
     {
-        var result = _controller!.Create(null!);
-        var badRequest = result as BadRequestObjectResult;
-        Assert.IsNotNull(badRequest);
-        Assert.AreEqual(400, badRequest.StatusCode);
-    }
-
-    [TestMethod]
-    public void CreateGeneralTicketValido()
-    {
-        var cuentaId = Guid.NewGuid();
+        // Arrange
         var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
         var request = new CrearTicketDto
         {
-            CuentaId = cuentaId,
             FechaVisita = fechaVisita,
             TipoEntrada = TipoTicket.General
         };
 
-        var expectedTicket = new Dominio.Ticket(cuentaId, request.FechaVisita, 0, TipoTicket.General, _fechaActual);
-        _servicioMock!.Setup(s => s.CrearTicketGeneral(request.CuentaId, request.FechaVisita))
+        var expectedTicket = new Dominio.Ticket(_usuarioAutenticado!.Id, request.FechaVisita, 0, TipoTicket.General, _fechaActual);
+        _servicioMock!.Setup(s => s.CrearTicketGeneral(_usuarioAutenticado.Id, request.FechaVisita))
             .Returns(expectedTicket);
 
+        // Act
         var result = _controller!.Create(request);
 
+        // Assert
         var created = result as CreatedAtActionResult;
         Assert.IsNotNull(created);
-        Assert.AreEqual(nameof(_controller.GetById), created.ActionName);
+        Assert.AreEqual(nameof(_controller.GetByCodigo), created.ActionName);
         Assert.AreEqual(expectedTicket, created.Value);
         _servicioMock.VerifyAll();
     }
 
     [TestMethod]
-    public void CreateConTicketEspecialNoValido()
+    public void Create_TicketEspecialSinEventoId_RetornaBadRequest()
     {
-        var cuentaId = Guid.NewGuid();
+        // Arrange
         var fechaVisita = new DateTime(2025, 10, 9, 14, 0, 0);
         var request = new CrearTicketDto
         {
-            CuentaId = cuentaId,
             FechaVisita = fechaVisita,
             TipoEntrada = TipoTicket.EventoEspecial,
             EventoId = null
         };
 
+        // Act
         var result = _controller!.Create(request);
+
+        // Assert
         Assert.IsInstanceOfType(result, typeof(BadRequestObjectResult));
     }
 
     [TestMethod]
-    public void CreateTicketEspecialValido()
+    public void Create_TicketEspecialValido_RetornaCreated()
     {
-        var cuentaId = Guid.NewGuid();
+        // Arrange
         var fechaVisita = new DateTime(2025, 10, 11, 14, 0, 0);
         var request = new CrearTicketDto
         {
-            CuentaId = cuentaId,
             FechaVisita = fechaVisita,
             TipoEntrada = TipoTicket.EventoEspecial,
             EventoId = 5
         };
 
-        var expectedTicket = new Dominio.Ticket(cuentaId, request.FechaVisita, 5, TipoTicket.EventoEspecial, _fechaActual);
-        _servicioMock!.Setup(s => s.CrearTicketEventoEspecial(request.CuentaId, request.FechaVisita, request.EventoId.Value))
+        var expectedTicket = new Dominio.Ticket(_usuarioAutenticado!.Id, request.FechaVisita, 5, TipoTicket.EventoEspecial, _fechaActual);
+        _servicioMock!.Setup(s => s.CrearTicketEventoEspecial(_usuarioAutenticado.Id, request.FechaVisita, request.EventoId.Value))
             .Returns(expectedTicket);
 
+        // Act
         var result = _controller!.Create(request);
 
+        // Assert
         var created = result as CreatedAtActionResult;
         Assert.IsNotNull(created);
         Assert.AreEqual(expectedTicket, created.Value);
@@ -184,124 +146,83 @@ public class TicketControllerTest
     }
 
     [TestMethod]
-    public void CreateConExcepcionDelServicio()
+    public void Create_SinUsuarioAutenticado_RetornaUnauthorized()
     {
-        var cuentaId = Guid.NewGuid();
+        // Arrange
+        _controller!.ControllerContext.HttpContext.Items["user"] = null;
+        var request = new CrearTicketDto
+        {
+            FechaVisita = new DateTime(2025, 10, 10, 14, 0, 0),
+            TipoEntrada = TipoTicket.General
+        };
+
+        // Act
+        var result = _controller.Create(request);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(UnauthorizedObjectResult));
+    }
+
+    [TestMethod]
+    public void Create_ExcepcionDelServicio_NoManejadaPorController()
+    {
+        // Arrange
         var fechaVisita = new DateTime(2025, 10, 9, 14, 0, 0);
         var request = new CrearTicketDto
         {
-            CuentaId = cuentaId,
             FechaVisita = fechaVisita,
             TipoEntrada = TipoTicket.General
         };
 
-        _servicioMock!.Setup(s => s.CrearTicketGeneral(request.CuentaId, request.FechaVisita))
+        _servicioMock!.Setup(s => s.CrearTicketGeneral(_usuarioAutenticado!.Id, request.FechaVisita))
             .Throws(new ArgumentException("Fecha inválida"));
 
-        var result = _controller!.Create(request);
-
-        var badRequest = result as BadRequestObjectResult;
-        Assert.IsNotNull(badRequest);
-        Assert.AreEqual(400, badRequest.StatusCode);
+        // Act & Assert
+        Assert.ThrowsException<ArgumentException>(() => _controller!.Create(request));
         _servicioMock.VerifyAll();
     }
 
     [TestMethod]
-    public void CreateConServiceThrowsInvalidOperationException()
+    public void ObtenerMisTickets_ConUsuarioAutenticado_RetornaTicketsDelUsuario()
     {
-        var cuentaId = Guid.NewGuid();
-        var fechaVisita = new DateTime(2025, 10, 9, 14, 0, 0);
-        var request = new CrearTicketDto
-        {
-            CuentaId = cuentaId,
-            FechaVisita = fechaVisita,
-            TipoEntrada = TipoTicket.EventoEspecial,
-            EventoId = 3
-        };
+        // Arrange
+        var fechaVisita1 = new DateTime(2025, 10, 10, 14, 0, 0);
+        var fechaVisita2 = new DateTime(2025, 10, 11, 14, 0, 0);
+        var otroUsuarioId = Guid.NewGuid();
 
-        _servicioMock!.Setup(s => s.CrearTicketEventoEspecial(request.CuentaId, request.FechaVisita, request.EventoId.Value))
-            .Throws(new InvalidOperationException("Aforo completo"));
+        List<Dominio.Ticket> todosLosTickets =
+        [
+            new Dominio.Ticket(_usuarioAutenticado!.Id, fechaVisita1, 1, TipoTicket.General, _fechaActual),
+            new Dominio.Ticket(_usuarioAutenticado.Id, fechaVisita2, 2, TipoTicket.General, _fechaActual),
+            new Dominio.Ticket(otroUsuarioId, fechaVisita1, 3, TipoTicket.General, _fechaActual)
+        ];
 
-        var result = _controller!.Create(request);
+        _servicioMock!.Setup(s => s.ListarTickets()).Returns(todosLosTickets);
 
-        var conflict = result as ConflictObjectResult;
-        Assert.IsNotNull(conflict);
-        Assert.AreEqual(409, conflict.StatusCode);
+        // Act
+        var result = _controller!.ObtenerMisTickets();
+
+        // Assert
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.AreEqual(200, okResult.StatusCode);
+        var returnedTickets = okResult.Value as IEnumerable<Dominio.Ticket>;
+        Assert.IsNotNull(returnedTickets);
+        Assert.AreEqual(2, returnedTickets.Count());
+        Assert.IsTrue(returnedTickets.All(t => t.CuentaId == _usuarioAutenticado.Id));
         _servicioMock.VerifyAll();
     }
 
     [TestMethod]
-    public void UpdateConRequestNull()
+    public void ObtenerMisTickets_SinUsuarioAutenticado_RetornaUnauthorized()
     {
-        var result = _controller!.Update(1, null!);
-        var badRequest = result as BadRequestObjectResult;
-        Assert.IsNotNull(badRequest);
-        Assert.AreEqual(400, badRequest.StatusCode);
-    }
+        // Arrange
+        _controller!.ControllerContext.HttpContext.Items["user"] = null;
 
-    [TestMethod]
-    public void UpdateConValidRequest()
-    {
-        var cuentaId = Guid.NewGuid();
-        var fechaVisita = new DateTime(2025, 10, 11, 14, 0, 0);
-        var request = new UpdateTicketDto
-        {
-            CuentaId = cuentaId,
-            FechaVisita = fechaVisita,
-            EventoId = 5,
-            TipoEntrada = TipoTicket.General
-        };
+        // Act
+        var result = _controller.ObtenerMisTickets();
 
-        _servicioMock!.Setup(s => s.ModificarTicket(
-            1,
-            request.CuentaId,
-            request.FechaVisita,
-            request.EventoId,
-            request.TipoEntrada));
-
-        var result = _controller!.Update(1, request);
-
-        Assert.IsInstanceOfType(result, typeof(NoContentResult));
-        _servicioMock.VerifyAll();
-    }
-
-    [TestMethod]
-    public void UpdateExcepcionDelServicio()
-    {
-        var cuentaId = Guid.NewGuid();
-        var fechaVisita = new DateTime(2025, 10, 11, 14, 0, 0);
-        var request = new UpdateTicketDto
-        {
-            CuentaId = cuentaId,
-            FechaVisita = fechaVisita,
-            EventoId = 5,
-            TipoEntrada = TipoTicket.General
-        };
-
-        _servicioMock!.Setup(s => s.ModificarTicket(
-                1,
-                request.CuentaId,
-                request.FechaVisita,
-                request.EventoId,
-                request.TipoEntrada))
-            .Throws(new ArgumentException("Ticket no encontrado"));
-
-        var result = _controller!.Update(1, request);
-
-        var badRequest = result as BadRequestObjectResult;
-        Assert.IsNotNull(badRequest);
-        Assert.AreEqual(400, badRequest.StatusCode);
-        _servicioMock.VerifyAll();
-    }
-
-    [TestMethod]
-    public void DeleteValido()
-    {
-        _servicioMock!.Setup(s => s.EliminarTicket(1));
-
-        var result = _controller!.Delete(1);
-
-        Assert.IsInstanceOfType(result, typeof(NoContentResult));
-        _servicioMock.VerifyAll();
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(UnauthorizedObjectResult));
     }
 }

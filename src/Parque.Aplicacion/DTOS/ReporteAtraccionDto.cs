@@ -1,4 +1,4 @@
-namespace Parque.Aplicacion.DTOS;
+﻿namespace Parque.Aplicacion.DTOs;
 
 public class ReporteAtraccionDto
 {

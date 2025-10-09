@@ -1,6 +1,8 @@
-﻿using Parque.Aplicacion.DTOS;
+﻿using Parque.Aplicacion.DTOs;
+using Parque.Aplicacion.Servicios.Gamificacion;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
+using Parque.Dominio.Excepciones;
 using Parque.Dominio.Usuarios;
 using Parque.Infraestructura.Repositorios;
 
@@ -8,7 +10,7 @@ namespace Parque.Aplicacion.Servicios.Acceso;
 
 public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepositorio<Dominio.Ticket> repoTickets,
     IRepositorio<RegistroVisita> repoRegistros, IRepositorio<Incidencia> repoIncidencias, IRepositorio<Cuenta> repoCuentas,
-    IRepositorio<Evento> repoEvento, IServicioFechaHora servicioFechaHora) : IServicioAcceso
+    IRepositorio<Evento> repoEvento, IServicioFechaHora servicioFechaHora, IServicioPuntuacion servicioPuntuacion) : IServicioAcceso
 {
     public ValidarAccesoResponse ValidarAcceso(ValidarAccesoRequest request)
     {
@@ -19,10 +21,21 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             return new ValidarAccesoResponse { AccesoPermitido = false, Mensaje = "El ticket no fue encontrado" };
         }
 
+        if(!ticket.EsValido)
+        {
+            return new ValidarAccesoResponse { AccesoPermitido = false, Mensaje = "El ticket no es válido" };
+        }
+
         var atraccion = repoAtracciones.Encontrar(y => y.Id == request.AtraccionId);
         if(atraccion == null)
         {
             return new ValidarAccesoResponse { AccesoPermitido = false, Mensaje = "Atracción no encontrada" };
+        }
+
+        var cuentaVisitante = repoCuentas.Encontrar(c => c.Id == request.CuentaVisitanteId);
+        if(cuentaVisitante == null)
+        {
+            return new ValidarAccesoResponse { AccesoPermitido = false, Mensaje = "Cuenta no encontrada" };
         }
 
         var fechaActual = servicioFechaHora.ObtenerFechaActual().Date;
@@ -35,7 +48,6 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             };
         }
 
-        // entrada
         if(ticket.TipoEntrada == TipoTicket.EventoEspecial)
         {
             var errorEvento = VerificarEvento(ticket, atraccion, request.AtraccionId);
@@ -45,39 +57,35 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             }
         }
 
-        // usuario
-        var validacion = ValidarReglasAccesoUsuario(atraccion, ticket, request);
+        var validacion = ValidarReglasAccesoUsuario(atraccion, ticket, cuentaVisitante);
         if(validacion != null)
         {
             return validacion;
         }
 
-        var incidencias = ValidarIncidencias(request, atraccion);
+        var incidencias = ValidarIncidencias(request.AtraccionId, atraccion);
         if(incidencias != null)
         {
             return incidencias;
         }
 
-        var visitantesActuales = ValidarCapacidad(request, atraccion);
-
+        var visitantesActuales = ValidarCapacidad(request.AtraccionId, atraccion);
         if(visitantesActuales != null)
         {
             return visitantesActuales;
         }
 
-        // ACCESO PERMITIDO
         return new ValidarAccesoResponse
         {
             AccesoPermitido = true,
             Mensaje = "Acceso permitido",
             NombreAtraccion = atraccion.Nombre,
-            NombreVisitante = "Visitante"
+            NombreVisitante = $"{cuentaVisitante.Nombre} {cuentaVisitante.Apellido}"
         };
     }
 
     private ValidarAccesoResponse? VerificarEvento(Dominio.Ticket ticket, AtraccionParque atraccion, int atraccionId)
     {
-        // 1. Verificar que el ticket tenga un EventoId
         if(ticket.EventoId == null)
         {
             return new ValidarAccesoResponse
@@ -88,7 +96,6 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             };
         }
 
-        // 2. Buscar el evento asociado al ticket
         var evento = repoEvento.Encontrar(e => e.Id == ticket.EventoId.Value);
 
         if(evento == null)
@@ -101,7 +108,6 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             };
         }
 
-        // 3. Validar que la atracción esté incluida en el evento
         var atraccionIncluidaEnEvento = evento.Atracciones.Any(a => a.Id == atraccionId);
 
         if(!atraccionIncluidaEnEvento)
@@ -116,7 +122,6 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             };
         }
 
-        // 4. Validar que el evento esté activo (dentro del rango de fechas)
         var fechaActual = servicioFechaHora.ObtenerFechaActual().Date;
         if(fechaActual < evento.Inicio.Date || fechaActual > evento.Fin.Date)
         {
@@ -129,7 +134,6 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             };
         }
 
-        // 5. Validar que la fecha del ticket coincida con el rango del evento
         if(ticket.FechaVisita.Date < evento.Inicio.Date || ticket.FechaVisita.Date > evento.Fin.Date)
         {
             return new ValidarAccesoResponse
@@ -144,30 +148,9 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
         return null;
     }
 
-    private ValidarAccesoResponse? ValidarReglasAccesoUsuario(AtraccionParque atraccion, Dominio.Ticket ticket, ValidarAccesoRequest request)
+    private ValidarAccesoResponse? ValidarReglasAccesoUsuario(AtraccionParque atraccion, Dominio.Ticket ticket, Cuenta cuentaVisitante)
     {
-        if(request.CuentaVisitante?.Id == null)
-        {
-            return new ValidarAccesoResponse
-            {
-                AccesoPermitido = false,
-                Mensaje = "Cuenta no encontrada",
-                NombreAtraccion = atraccion.Nombre
-            };
-        }
-
-        var cuenta = repoCuentas.Encontrar(d => d.Id == request.CuentaVisitante.Id);
-        if(cuenta == null)
-        {
-            return new ValidarAccesoResponse
-            {
-                AccesoPermitido = false,
-                Mensaje = "Cuenta no encontrada",
-                NombreAtraccion = atraccion.Nombre
-            };
-        }
-
-        if(request.CuentaVisitante.ObtenerEdadVisitante() < atraccion.EdadMinima)
+        if(cuentaVisitante.ObtenerEdadVisitante() < atraccion.EdadMinima)
         {
             return new ValidarAccesoResponse
             {
@@ -177,7 +160,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             };
         }
 
-        if(ticket.CuentaId != request.CuentaVisitante.Id)
+        if(ticket.CuentaId != cuentaVisitante.Id)
         {
             return new ValidarAccesoResponse
             {
@@ -190,16 +173,20 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
         return null;
     }
 
-    private ValidarAccesoResponse? ValidarIncidencias(ValidarAccesoRequest request, AtraccionParque atraccion)
+    private ValidarAccesoResponse? ValidarIncidencias(int atraccionId, AtraccionParque atraccion)
     {
-        var incidencias = repoIncidencias.Encontrar(d => d.AtraccionId == request.AtraccionId);
-        var fechaActual = servicioFechaHora.ObtenerFechaActual();
-        if(incidencias != null && !incidencias.EstaDisponible(fechaActual))
+        var incidencias = repoIncidencias.ObtenerTodos()
+            .Where(i => i.AtraccionId == atraccionId && i.EstaActiva(servicioFechaHora.ObtenerFechaActual()))
+            .ToList();
+
+        if(incidencias.Any())
         {
+            var incidencia = incidencias.First();
             return new ValidarAccesoResponse
             {
                 AccesoPermitido = false,
-                Mensaje = "Atracción temporalmente fuera de servicio",
+                Mensaje = $"Atracción fuera de servicio. {incidencia.Descripcion}. " +
+                         $"Resolución estimada: {incidencia.FechaResolucionEstimada:dd/MM/yyyy HH:mm}",
                 NombreAtraccion = atraccion.Nombre
             };
         }
@@ -207,10 +194,10 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
         return null;
     }
 
-    private ValidarAccesoResponse? ValidarCapacidad(ValidarAccesoRequest request, AtraccionParque atraccion)
+    private ValidarAccesoResponse? ValidarCapacidad(int atraccionId, AtraccionParque atraccion)
     {
         var visitantesActuales = repoRegistros.ObtenerTodos()
-            .Count(r => r.AtraccionId == request.AtraccionId && r.FechaEgreso == null);
+            .Count(r => r.AtraccionId == atraccionId && r.FechaEgreso == null);
 
         if(visitantesActuales >= atraccion.Capacidad)
         {
@@ -231,7 +218,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
         {
             CodigoTicket = codigoTicket,
             AtraccionId = atraccionId,
-            CuentaVisitante = cuentaVisitante
+            CuentaVisitanteId = cuentaVisitante.Id
         });
 
         if(!validacion.AccesoPermitido)
@@ -261,6 +248,37 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
 
         registro.FechaEgreso = servicioFechaHora.ObtenerFechaActual();
         repoRegistros.Editar(registro);
+
+        servicioPuntuacion.CalcularYRegistrarPuntos(registro.Id);
+
         return registro;
+    }
+
+    public AforoResponse ObtenerAforoAtraccion(int atraccionId)
+    {
+        var atraccion = repoAtracciones.Encontrar(a => a.Id == atraccionId);
+        if(atraccion == null)
+        {
+            throw new ExcepcionEntidadNoEncontrada("Atracción no encontrada");
+        }
+
+        var visitantesActuales = repoRegistros.ObtenerTodos()
+            .Count(r => r.AtraccionId == atraccionId && r.FechaEgreso == null);
+
+        var capacidadRestante = atraccion.Capacidad - visitantesActuales;
+        var porcentajeOcupacion = atraccion.Capacidad > 0
+            ? (visitantesActuales * 100.0) / atraccion.Capacidad
+            : 0;
+
+        return new AforoResponse
+        {
+            AtraccionId = atraccionId,
+            NombreAtraccion = atraccion.Nombre,
+            CapacidadTotal = atraccion.Capacidad,
+            VisitantesActuales = visitantesActuales,
+            CapacidadRestante = Math.Max(0, capacidadRestante),
+            PorcentajeOcupacion = Math.Round(porcentajeOcupacion, 2),
+            AforoCompleto = visitantesActuales >= atraccion.Capacidad
+        };
     }
 }

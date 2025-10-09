@@ -1,5 +1,7 @@
-﻿using Moq;
+﻿using Microsoft.AspNetCore.Mvc;
+using Moq;
 using Parque.Aplicacion.Servicios;
+using Parque.Aplicacion.Servicios.Atracciones;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
 using Parque.WebApi.Controllers.Evento;
@@ -11,13 +13,16 @@ namespace Parque.WebApi.Test.Controllers;
 public class EventoControllerTest
 {
     private Mock<IServicioEvento>? _servicioEventoMock;
+    private Mock<IServicioAtracciones>? _servicioAtraccionesMock;
     private EventoController? _controller;
     private List<AtraccionParque>? _atraccionesTest;
+
     [TestInitialize]
     public void Initialize()
     {
         _servicioEventoMock = new Mock<IServicioEvento>(MockBehavior.Strict);
-        _controller = new EventoController(_servicioEventoMock.Object);
+        _servicioAtraccionesMock = new Mock<IServicioAtracciones>(MockBehavior.Strict);
+        _controller = new EventoController(_servicioEventoMock.Object, _servicioAtraccionesMock.Object);
         _atraccionesTest =
         [
             new AtraccionParque(
@@ -45,10 +50,78 @@ public class EventoControllerTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(Exception))]
-    public void CrearConRequestNull()
+    [ExpectedException(typeof(ArgumentException))]
+    public void CrearConTituloNull()
     {
-        _controller!.Crear(null!);
+        var request = new CreateEventoRequest
+        {
+            Titulo = string.Empty,
+            Descripcion = "Test",
+            Inicio = DateTime.Now.AddDays(1),
+            Fin = DateTime.Now.AddDays(1).AddHours(2),
+            AforoMaximo = 10,
+            CostoAdicional = 0,
+            Estado = EstadoEvento.Programado,
+            AtraccionIds = [1]
+        };
+
+        _servicioAtraccionesMock!.Setup(s => s.ObtenerPorIds(It.IsAny<List<int>>()))
+            .Returns(_atraccionesTest!.Take(1));
+
+        _servicioEventoMock!.Setup(s => s.AgregarEvento(It.IsAny<Dominio.Evento>()))
+            .Throws(new ArgumentException("El título no puede estar vacío"));
+
+        _controller!.Crear(request);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CrearConAforoMaximo0()
+    {
+        var request = new CreateEventoRequest
+        {
+            Titulo = "Test Event",
+            Descripcion = "Test",
+            Inicio = DateTime.Now.AddDays(1),
+            Fin = DateTime.Now.AddDays(1).AddHours(2),
+            AforoMaximo = 0,
+            CostoAdicional = 0,
+            Estado = EstadoEvento.Programado,
+            AtraccionIds = [1]
+        };
+
+        _servicioAtraccionesMock!.Setup(s => s.ObtenerPorIds(It.IsAny<List<int>>()))
+            .Returns(_atraccionesTest!.Take(1));
+
+        _servicioEventoMock!.Setup(s => s.AgregarEvento(It.IsAny<Dominio.Evento>()))
+            .Throws(new ArgumentException("El aforo máximo debe ser mayor que 0"));
+
+        _controller!.Crear(request);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void CrearAforoNegativo()
+    {
+        var request = new CreateEventoRequest
+        {
+            Titulo = "Test Event",
+            Descripcion = "Test",
+            Inicio = DateTime.Now.AddDays(1),
+            Fin = DateTime.Now.AddDays(1).AddHours(2),
+            AforoMaximo = -5,
+            CostoAdicional = 0,
+            Estado = EstadoEvento.Programado,
+            AtraccionIds = [1]
+        };
+
+        _servicioAtraccionesMock!.Setup(s => s.ObtenerPorIds(It.IsAny<List<int>>()))
+            .Returns(_atraccionesTest!.Take(1));
+
+        _servicioEventoMock!.Setup(s => s.AgregarEvento(It.IsAny<Dominio.Evento>()))
+            .Throws(new ArgumentException("El aforo máximo debe ser mayor que 0"));
+
+        _controller!.Crear(request);
     }
 
     [TestMethod]
@@ -62,8 +135,8 @@ public class EventoControllerTest
             Fin = DateTime.Now.AddDays(7).AddHours(6),
             AforoMaximo = 500,
             CostoAdicional = 75,
-            Estado = EstadoEvento.Cancelado,
-            Atracciones = _atraccionesTest!.ToList()
+            Estado = EstadoEvento.Programado,
+            AtraccionIds = [1, 2, 3]
         };
 
         var expectedEvento = new Dominio.Evento(
@@ -73,56 +146,25 @@ public class EventoControllerTest
             request.Fin,
             request.AforoMaximo,
             request.CostoAdicional,
-            request.Estado);
+            request.Estado)
+        { Id = 1 };
         expectedEvento.Atracciones = _atraccionesTest!;
+
+        _servicioAtraccionesMock!.Setup(s => s.ObtenerPorIds(request.AtraccionIds))
+            .Returns(_atraccionesTest!);
 
         _servicioEventoMock!.Setup(s => s.AgregarEvento(It.IsAny<Dominio.Evento>()))
             .Returns(expectedEvento);
 
-        var response = _controller!.Crear(request);
+        var result = _controller!.Crear(request);
 
         _servicioEventoMock.VerifyAll();
-        Assert.IsNotNull(response);
-        Assert.IsInstanceOfType(response, typeof(CreateEventoResponse));
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(Exception))]
-    public void CrearConTituloNull()
-    {
-        var request = new CreateEventoRequest
-        {
-            Titulo = string.Empty,
-            AforoMaximo = 10
-        };
-
-        _controller!.Crear(request);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(Exception))]
-    public void CrearConAforoMaximo0()
-    {
-        var request = new CreateEventoRequest
-        {
-            Titulo = "Test Event",
-            AforoMaximo = 0
-        };
-
-        _controller!.Crear(request);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(Exception))]
-    public void CrearAforoNegativo()
-    {
-        var request = new CreateEventoRequest
-        {
-            Titulo = "Test Event",
-            AforoMaximo = -5
-        };
-
-        _controller!.Crear(request);
+        _servicioAtraccionesMock.VerifyAll();
+        Assert.IsNotNull(result);
+        var createdResult = result as CreatedAtActionResult;
+        Assert.IsNotNull(createdResult);
+        Assert.AreEqual(201, createdResult.StatusCode);
+        Assert.IsInstanceOfType(createdResult.Value, typeof(EventoOutDto));
     }
 
     [TestMethod]
@@ -140,8 +182,11 @@ public class EventoControllerTest
 
         _servicioEventoMock.VerifyAll();
         Assert.IsNotNull(result);
-        Assert.AreEqual(2, result.Count);
-        Assert.IsInstanceOfType(result, typeof(List<EventoOutDto>));
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        var eventosDto = okResult.Value as List<EventoOutDto>;
+        Assert.IsNotNull(eventosDto);
+        Assert.AreEqual(2, eventosDto.Count);
     }
 
     [TestMethod]
@@ -155,29 +200,27 @@ public class EventoControllerTest
 
         _servicioEventoMock.VerifyAll();
         Assert.IsNotNull(result);
-        Assert.AreEqual(0, result.Count);
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        var eventosDto = okResult.Value as List<EventoOutDto>;
+        Assert.IsNotNull(eventosDto);
+        Assert.AreEqual(0, eventosDto.Count);
     }
 
     [TestMethod]
     public void EliminarEvento()
     {
         var eventoId = 1;
-        var eventoExistente = new Dominio.Evento(
-            "Evento a eliminar",
-            "Descripción",
-            DateTime.Now,
-            DateTime.Now.AddHours(2),
-            100,
-            10,
-            EstadoEvento.Programado);
 
-        _servicioEventoMock!.Setup(s => s.ObtenerEventoPorId(eventoId))
-            .Returns(eventoExistente);
-        _servicioEventoMock.Setup(s => s.EliminarEventoPorId(eventoId));
+        _servicioEventoMock!.Setup(s => s.EliminarEventoPorId(eventoId));
 
-        _controller!.Eliminar(eventoId);
+        var result = _controller!.Eliminar(eventoId);
 
         _servicioEventoMock.VerifyAll();
+        Assert.IsNotNull(result);
+        var noContentResult = result as NoContentResult;
+        Assert.IsNotNull(noContentResult);
+        Assert.AreEqual(204, noContentResult.StatusCode);
     }
 
     [TestMethod]
@@ -186,7 +229,7 @@ public class EventoControllerTest
     {
         var eventoId = 999;
 
-        _servicioEventoMock!.Setup(s => s.ObtenerEventoPorId(eventoId))
+        _servicioEventoMock!.Setup(s => s.EliminarEventoPorId(eventoId))
             .Throws(new Exception($"No se encontró un evento con ID {eventoId}."));
 
         _controller!.Eliminar(eventoId);
@@ -200,10 +243,14 @@ public class EventoControllerTest
             DateTime.Now, DateTime.Now.AddHours(1), 100, 0, EstadoEvento.Programado);
 
         _servicioEventoMock!.Setup(s => s.ObtenerEventoPorId(eventoId)).Returns(expectedEvento);
+
         var result = _controller!.ObtenerPorId(eventoId);
+
         _servicioEventoMock.VerifyAll();
         Assert.IsNotNull(result);
-        Assert.IsInstanceOfType(result, typeof(EventoOutDto));
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.IsInstanceOfType(okResult.Value, typeof(EventoOutDto));
     }
 
     [TestMethod]
@@ -211,76 +258,10 @@ public class EventoControllerTest
     public void ObtenerPorIdNoExistente()
     {
         var eventoId = 999;
-        Dominio.Evento? nullEvento = null;
 
         _servicioEventoMock!.Setup(s => s.ObtenerEventoPorId(eventoId))
             .Throws(new Exception($"No se encontró un evento con ID {eventoId}."));
 
         _controller!.ObtenerPorId(eventoId);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(Exception))]
-    public void ActualizarNull()
-    {
-        var eventoId = 1;
-
-        _controller!.Actualizar(eventoId, null!);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(Exception))]
-    public void ActualizarNoExistente()
-    {
-        var eventoId = 999;
-        var request = new UpdateEventoRequest
-        {
-            Titulo = "Usdfadale"
-        };
-
-        _servicioEventoMock!.Setup(s => s.ObtenerEventoPorId(eventoId))
-                           .Throws(new Exception($"No se encontró un evento con ID {eventoId}."));
-
-        _controller!.Actualizar(eventoId, request);
-    }
-
-    [TestMethod]
-    public void ActualizarEvento()
-    {
-        var eventoId = 1;
-        var request = new UpdateEventoRequest
-        {
-            Titulo = "hkslha",
-            Descripcion = "adfads",
-            Inicio = DateTime.Now.AddDays(1),
-            Fin = DateTime.Now.AddDays(1).AddHours(3),
-            AforoMaximo = 200,
-            CostoAdicional = 25,
-            Estado = EstadoEvento.Cancelado
-        };
-
-        var existingEvento = new Dominio.Evento(
-            "adfs",
-            "dfgs",
-            DateTime.Now,
-            DateTime.Now.AddHours(1),
-            100,
-            0,
-            EstadoEvento.Programado);
-
-        _servicioEventoMock!.Setup(s => s.ObtenerEventoPorId(eventoId))
-                           .Returns(existingEvento);
-        _servicioEventoMock.Setup(s => s.ActualizarEvento(It.IsAny<Dominio.Evento>()));
-
-        _controller!.Actualizar(eventoId, request);
-
-        _servicioEventoMock.VerifyAll();
-        Assert.AreEqual(request.Titulo, existingEvento.Titulo);
-        Assert.AreEqual(request.Descripcion, existingEvento.Descripcion);
-        Assert.AreEqual(request.Inicio.Value, existingEvento.Inicio);
-        Assert.AreEqual(request.Fin.Value, existingEvento.Fin);
-        Assert.AreEqual(request.AforoMaximo.Value, existingEvento.AforoMaximo);
-        Assert.AreEqual(request.CostoAdicional.Value, existingEvento.CostoAdicional);
-        Assert.AreEqual(request.Estado.Value, existingEvento.Estado);
     }
 }

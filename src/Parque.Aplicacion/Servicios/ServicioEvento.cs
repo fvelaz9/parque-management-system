@@ -1,4 +1,5 @@
 ﻿using Parque.Dominio;
+using Parque.Dominio.Excepciones;
 using Parque.Infraestructura.Repositorios;
 
 namespace Parque.Aplicacion.Servicios;
@@ -8,21 +9,7 @@ public class ServicioEvento(IRepositorio<Evento> repositorioEvento) : IServicioE
     public Evento AgregarEvento(Evento evento)
     {
         ArgumentNullException.ThrowIfNull(evento);
-
-        if(evento.Inicio >= evento.Fin)
-        {
-            throw new ArgumentException("La fecha de inicio puede ser anterior a la fecha de fin.");
-        }
-
-        if(evento.AforoMaximo <= 0)
-        {
-            throw new ArgumentException("El aforo debe ser mayor a cero.");
-        }
-
-        if(evento.CostoAdicional < 0)
-        {
-            throw new ArgumentException("El costo adicional no puede ser negativo.");
-        }
+        ValidarDatosEvento(evento);
 
         repositorioEvento.Agregar(evento);
         return evento;
@@ -32,14 +19,14 @@ public class ServicioEvento(IRepositorio<Evento> repositorioEvento) : IServicioE
     {
         if(eventoId <= 0)
         {
-            throw new Exception("El ID debe ser mayor a cero.");
+            throw new ArgumentException("El ID debe ser mayor a cero");
         }
 
         Evento? evento = repositorioEvento.Encontrar(e => e.Id == eventoId);
 
         if(evento == null)
         {
-            throw new Exception($"No se encontró un evento con ID {eventoId}.");
+            throw new ExcepcionEntidadNoEncontrada($"No se encontró un evento con ID {eventoId}");
         }
 
         repositorioEvento.Eliminar(e => e.Id == eventoId);
@@ -49,13 +36,13 @@ public class ServicioEvento(IRepositorio<Evento> repositorioEvento) : IServicioE
     {
         if(eventoId <= 0)
         {
-            throw new Exception("El ID debe ser mayor a cero.");
+            throw new ArgumentException("El ID debe ser mayor a cero");
         }
 
         Evento? evento = repositorioEvento.Encontrar(e => e.Id == eventoId);
         if(evento == null)
         {
-            throw new Exception($"No se encontró un evento con ID {eventoId}.");
+            throw new ExcepcionEntidadNoEncontrada($"No se encontró un evento con ID {eventoId}");
         }
 
         return evento;
@@ -72,24 +59,39 @@ public class ServicioEvento(IRepositorio<Evento> repositorioEvento) : IServicioE
 
         if(evento.Id <= 0)
         {
-            throw new Exception("El ID del evento debe ser mayor a cero.");
+            throw new ArgumentException("El ID del evento debe ser mayor a cero");
+        }
+
+        ValidarDatosEvento(evento);
+
+        repositorioEvento.Editar(evento);
+    }
+
+    private static void ValidarDatosEvento(Evento evento)
+    {
+        if(string.IsNullOrWhiteSpace(evento.Titulo))
+        {
+            throw new ArgumentException("El título del evento es requerido");
+        }
+
+        if(string.IsNullOrWhiteSpace(evento.Descripcion))
+        {
+            throw new ArgumentException("La descripción del evento es requerida");
         }
 
         if(evento.Inicio >= evento.Fin)
         {
-            throw new ArgumentException("La fecha de inicio puede ser anterior a la fecha de fin.");
+            throw new ArgumentException("La fecha de inicio debe ser anterior a la fecha de fin");
         }
 
         if(evento.AforoMaximo <= 0)
         {
-            throw new ArgumentException("El aforo debe ser mayor a cero.");
+            throw new ArgumentException("El aforo debe ser mayor a cero");
         }
 
         if(evento.CostoAdicional < 0)
         {
-            throw new ArgumentException("El costo adicional no puede ser negativo.");
+            throw new ArgumentException("El costo adicional no puede ser negativo");
         }
-
-        repositorioEvento.Editar(evento);
     }
 }

@@ -5,6 +5,7 @@ using Parque.Dominio.Usuarios;
 using Parque.Infraestructura.Repositorios;
 
 namespace Parque.Aplicacion.Servicios;
+
 public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
 {
     public CuentaDto RegistrarVisitante(RegistrarVisitanteDto dto)
@@ -37,6 +38,8 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
     {
         var cuenta = ObtenerCuenta(cuentaId);
 
+        ValidarDatosModificacion(dto);
+
         if(!string.IsNullOrWhiteSpace(dto.Email))
         {
             ValidarEmailUnicoParaActualizacion(dto.Email, cuentaId);
@@ -54,7 +57,7 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
 
         if(cuenta.Visitante == null)
         {
-            throw new ExcepcionDominio("Solo las cuentas con perfil de visitante tienen nivel de membresía.");
+            throw new ExcepcionDominio("Solo las cuentas con perfil de visitante tienen nivel de membresía");
         }
 
         cuenta.Visitante.AsignarMembresia(nuevoNivel);
@@ -70,7 +73,7 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
     public CuentaDto ObtenerPorEmail(string email)
     {
         var cuenta = cuentaRepo.Encontrar(c => c.Email.Valor == email)
-            ?? throw new ExcepcionEntidadNoEncontrada($"Cuenta con email {email} no encontrada.");
+            ?? throw new ExcepcionEntidadNoEncontrada($"Cuenta con email {email} no encontrada");
 
         return cuenta.ToDto();
     }
@@ -79,7 +82,7 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
     {
         if(!dto.FechaNacimiento.HasValue)
         {
-            throw new ExcepcionDominio("La fecha de nacimiento es requerida para visitantes.");
+            throw new ExcepcionDominio("La fecha de nacimiento es requerida para visitantes");
         }
 
         cuenta.AsignarVisitante(dto.FechaNacimiento.Value);
@@ -95,7 +98,7 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
         var cuentaExistente = cuentaRepo.Encontrar(c => c.Email.Valor == email);
         if(cuentaExistente != null)
         {
-            throw new ExcepcionDominio("Ya existe una cuenta con este email.");
+            throw new ExcepcionDominio("Ya existe una cuenta con este email");
         }
     }
 
@@ -105,7 +108,25 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
 
         if(cuentaExistente != null && cuentaExistente.Id != cuentaId)
         {
-            throw new ExcepcionDominio("Ya existe una cuenta con este email.");
+            throw new ExcepcionDominio("Ya existe una cuenta con este email");
+        }
+    }
+
+    private static void ValidarDatosModificacion(ModificarPerfilDto dto)
+    {
+        if(dto.Nombre != null && string.IsNullOrWhiteSpace(dto.Nombre))
+        {
+            throw new ExcepcionDominio("El nombre no puede estar vacío");
+        }
+
+        if(dto.Apellido != null && string.IsNullOrWhiteSpace(dto.Apellido))
+        {
+            throw new ExcepcionDominio("El apellido no puede estar vacío");
+        }
+
+        if(dto.Email != null && string.IsNullOrWhiteSpace(dto.Email))
+        {
+            throw new ExcepcionDominio("El email no puede estar vacío");
         }
     }
 

@@ -1,6 +1,7 @@
-﻿using Parque.Aplicacion.DTOS;
+﻿using Parque.Aplicacion.DTOs;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
+using Parque.Dominio.Excepciones;
 using Parque.Infraestructura.Repositorios;
 
 namespace Parque.Aplicacion.Servicios.Incidencias;
@@ -10,6 +11,11 @@ public class ServicioIncidencia(IRepositorio<Incidencia> repoIncidencias, IRepos
 {
     public Incidencia CrearIncidencia(CrearIncidenciaRequest request)
     {
+        if(string.IsNullOrWhiteSpace(request.Descripcion))
+        {
+            throw new ArgumentException("La descripción de la incidencia es requerida");
+        }
+
         var atraccion = repoAtracciones.Encontrar(a => a.Id == request.AtraccionId);
         if(atraccion == null)
         {
@@ -33,6 +39,30 @@ public class ServicioIncidencia(IRepositorio<Incidencia> repoIncidencias, IRepos
         atraccion.Estado = EstadoAtraccion.FueraDeServicio;
         repoAtracciones.Editar(atraccion);
         return incidencia;
+    }
+
+    public void ResolverIncidencia(int incidenciaId)
+    {
+        var incidencia = repoIncidencias.Encontrar(i => i.Id == incidenciaId);
+        if(incidencia == null)
+        {
+            throw new ExcepcionEntidadNoEncontrada("Incidencia no encontrada");
+        }
+
+        repoIncidencias.Eliminar(i => i.Id == incidenciaId);
+
+        var atraccion = repoAtracciones.Encontrar(a => a.Id == incidencia.AtraccionId);
+        if(atraccion != null)
+        {
+            var incidenciasActivas = repoIncidencias.ObtenerTodos()
+                .Any(i => i.AtraccionId == incidencia.AtraccionId && i.EstaActiva(servicioFechaHora.ObtenerFechaActual()));
+
+            if(!incidenciasActivas)
+            {
+                atraccion.Estado = EstadoAtraccion.Disponible;
+                repoAtracciones.Editar(atraccion);
+            }
+        }
     }
 
     public bool EstaDisponible(int atraccionId)
