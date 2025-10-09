@@ -32,7 +32,6 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             return new ValidarAccesoResponse { AccesoPermitido = false, Mensaje = "Atracción no encontrada" };
         }
 
-        // Buscar la cuenta del visitante
         var cuentaVisitante = repoCuentas.Encontrar(c => c.Id == request.CuentaVisitanteId);
         if(cuentaVisitante == null)
         {
@@ -123,7 +122,6 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             };
         }
 
-        // 4. Validar que el evento esté activo (dentro del rango de fechas)
         var fechaActual = servicioFechaHora.ObtenerFechaActual().Date;
         if(fechaActual < evento.Inicio.Date || fechaActual > evento.Fin.Date)
         {

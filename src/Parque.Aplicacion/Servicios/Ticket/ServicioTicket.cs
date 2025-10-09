@@ -80,7 +80,7 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
     private void ValidarFechaFutura(DateTime fechaVisita)
     {
         var fechaActual = servicioFechaHora.ObtenerFechaActual();
-        if(fechaVisita.Date <= fechaActual.Date)
+        if(fechaVisita.Date < fechaActual.Date)
         {
             throw new ArgumentException("La fecha de visita debe ser futura");
         }
