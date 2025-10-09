@@ -163,4 +163,26 @@ public class RepositorioTest
         // Assert
         Assert.AreEqual(0, result.Count);
     }
+
+    [TestMethod]
+    public void EncontrarConRelaciones_RetornaEntidadTest()
+    {
+        var result = _repositorio!.EncontrarConRelaciones(
+            c => c.Nombre == "TestUserName",
+            "Relacion1");
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual("TestUserName", result.Nombre);
+    }
+
+    [TestMethod]
+    public void ObtenerConRelaciones_RetornaListaTest()
+    {
+        var result = _repositorio!.ObtenerConRelaciones(
+            c => c.Nombre == "TestUserName",
+            "Relacion1");
+
+        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual("TestUserName", result[0].Nombre);
+    }
 }
