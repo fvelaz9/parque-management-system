@@ -1,4 +1,4 @@
-namespace Parque.Aplicacion.DTOS.Gamificacion;
+﻿namespace Parque.Aplicacion.DTOs.Gamificacion;
 
 public class RankingVisitanteDto
 {

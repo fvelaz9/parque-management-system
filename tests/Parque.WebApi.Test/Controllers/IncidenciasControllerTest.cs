@@ -1,9 +1,10 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Parque.Aplicacion.DTOS;
+using Parque.Aplicacion.DTOs;
 using Parque.Aplicacion.Servicios.Incidencias;
 using Parque.Dominio;
 using Parque.WebApi.Controllers;
+
 namespace Parque.WebApi.Test.Controllers;
 
 [TestClass]
@@ -20,8 +21,9 @@ public class IncidenciasControllerTest
     }
 
     [TestMethod]
-    public void CrearIncidencia_Exitoso_ReturnsOk()
+    public void CrearIncidencia_Exitoso_ReturnsCreated()
     {
+        // Arrange
         var request = new CrearIncidenciaRequest
         {
             AtraccionId = 1,
@@ -38,18 +40,23 @@ public class IncidenciasControllerTest
 
         _servicioMock!.Setup(s => s.CrearIncidencia(request)).Returns(incidencia);
 
+        // Act
         var result = _controller!.CrearIncidencia(request);
 
-        var okResult = result as OkObjectResult;
-        Assert.IsNotNull(okResult);
-        Assert.AreEqual(200, okResult.StatusCode);
-        Assert.AreEqual(incidencia, okResult.Value);
+        // Assert
+        var createdResult = result as CreatedAtActionResult;
+        Assert.IsNotNull(createdResult);
+        Assert.AreEqual(201, createdResult.StatusCode);
+        Assert.AreEqual(nameof(_controller.VerificarDisponibilidad), createdResult.ActionName);
+        Assert.AreEqual(incidencia, createdResult.Value);
         _servicioMock.VerifyAll();
     }
 
     [TestMethod]
-    public void CrearIncidencia_ConExcepcion_ReturnsBadRequest()
+    [ExpectedException(typeof(ArgumentException))]
+    public void CrearIncidencia_ConExcepcion_LanzaExcepcion()
     {
+        // Arrange
         var request = new CrearIncidenciaRequest
         {
             AtraccionId = 999,
@@ -60,12 +67,10 @@ public class IncidenciasControllerTest
         _servicioMock!.Setup(s => s.CrearIncidencia(request))
             .Throws(new ArgumentException("Atraccion no encontrada"));
 
-        var result = _controller!.CrearIncidencia(request);
+        // Act
+        _controller!.CrearIncidencia(request);
 
-        var badRequestResult = result as BadRequestObjectResult;
-        Assert.IsNotNull(badRequestResult);
-        Assert.AreEqual(400, badRequestResult.StatusCode);
-        _servicioMock.VerifyAll();
+        // Assert
     }
 
     [TestMethod]
@@ -80,6 +85,16 @@ public class IncidenciasControllerTest
         var okResult = result as OkObjectResult;
         Assert.IsNotNull(okResult);
         Assert.AreEqual(200, okResult.StatusCode);
+
+        var value = okResult.Value;
+        Assert.IsNotNull(value);
+
+        var atraccionIdProp = value.GetType().GetProperty("atraccionId")?.GetValue(value);
+        var disponibleProp = value.GetType().GetProperty("disponible")?.GetValue(value);
+
+        Assert.AreEqual(atraccionId, atraccionIdProp);
+        Assert.AreEqual(true, disponibleProp);
+
         _servicioMock.VerifyAll();
     }
 
@@ -95,22 +110,50 @@ public class IncidenciasControllerTest
         var okResult = result as OkObjectResult;
         Assert.IsNotNull(okResult);
         Assert.AreEqual(200, okResult.StatusCode);
+
+        var value = okResult.Value;
+        Assert.IsNotNull(value);
+
+        var atraccionIdProp = value.GetType().GetProperty("atraccionId")?.GetValue(value);
+        var disponibleProp = value.GetType().GetProperty("disponible")?.GetValue(value);
+
+        Assert.AreEqual(atraccionId, atraccionIdProp);
+        Assert.AreEqual(false, disponibleProp);
+
         _servicioMock.VerifyAll();
     }
 
     [TestMethod]
-    public void VerificarDisponibilidad_ConExcepcion_ReturnsBadRequest()
+    [ExpectedException(typeof(ArgumentException))]
+    public void VerificarDisponibilidad_ConExcepcion_LanzaExcepcion()
     {
+        // Arrange
         var atraccionId = 999;
 
         _servicioMock!.Setup(s => s.EstaDisponible(atraccionId))
             .Throws(new ArgumentException("Atraccion no encontrada"));
 
-        var result = _controller!.VerificarDisponibilidad(atraccionId);
+        // Act
+        _controller!.VerificarDisponibilidad(atraccionId);
 
-        var badRequestResult = result as BadRequestObjectResult;
-        Assert.IsNotNull(badRequestResult);
-        Assert.AreEqual(400, badRequestResult.StatusCode);
+        // Assert
+    }
+
+    [TestMethod]
+    public void ResolverIncidencia_Exitoso_ReturnsNoContent()
+    {
+        // Arrange
+        var incidenciaId = 1;
+        _servicioMock!.Setup(s => s.ResolverIncidencia(incidenciaId));
+
+        // Act
+        var result = _controller!.ResolverIncidencia(incidenciaId);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(NoContentResult));
+        var noContentResult = result as NoContentResult;
+        Assert.IsNotNull(noContentResult);
+        Assert.AreEqual(204, noContentResult.StatusCode);
         _servicioMock.VerifyAll();
     }
 }

@@ -3,6 +3,7 @@ using Moq;
 using Parque.Aplicacion.Servicios;
 using Parque.Aplicacion.Servicios.Ticket;
 using Parque.Dominio;
+using Parque.Dominio.Excepciones;
 using Parque.Infraestructura.Repositorios;
 
 namespace Parque.Aplicacion.Test.Servicios;
@@ -88,7 +89,7 @@ public class ServicioTicketsTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(ExcepcionEntidadNoEncontrada))]
     public void CrearTicketEventoEspecialEventoNoEncontrado()
     {
         var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
@@ -143,15 +144,21 @@ public class ServicioTicketsTest
         _repositorioMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Ticket, bool>>>()))
             .Returns(ticketExistente);
 
+        var fechaInicioEvento = new DateTime(2025, 10, 8, 10, 0, 0);
+        var fechaFinEvento = new DateTime(2025, 10, 18, 10, 0, 0);
+        var evento = new Evento("Show", "Concierto", fechaInicioEvento, fechaFinEvento, 100, 50, EstadoEvento.Programado) { Id = 2 };
+        _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
+            .Returns(evento);
+
+        _repositorioMock.Setup(r => r.ObtenerTodos()).Returns([]);
+
         var cuentaId2 = new Guid("12345678-1234-1234-1234-123456789abc");
         var nuevaFechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
         var nuevoEventoId = 2;
         var nuevoEventoTipo = TipoTicket.EventoEspecial;
 
-        // Act
         _servicio.ModificarTicket(1, cuentaId2, nuevaFechaVisita, nuevoEventoId, nuevoEventoTipo);
 
-        // Assert
         Assert.AreEqual(cuentaId2, ticketExistente.CuentaId);
         Assert.AreEqual(nuevaFechaVisita, ticketExistente.FechaVisita);
         Assert.AreEqual(nuevoEventoId, ticketExistente.EventoId);
@@ -180,10 +187,20 @@ public class ServicioTicketsTest
     {
         var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
         DateTime fechaVisita = DateTime.Now.AddDays(1);
+
         _repositorioMock.Setup(r => r.Agregar(It.IsAny<Dominio.Ticket>()));
+
         var ticket = _servicio.CrearTicketGeneral(cuentaId, fechaVisita);
+
         _repositorioMock.Verify(r => r.Agregar(It.IsAny<Dominio.Ticket>()), Times.Once);
+
+        _repositorioMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns(ticket);
+        _repositorioMock.Setup(r => r.Eliminar(It.IsAny<Expression<Func<Ticket, bool>>>()));
+
         _servicio.EliminarTicket(ticket.Id);
+
         Assert.IsNotNull(ticket);
+        _repositorioMock.Verify(r => r.Eliminar(It.IsAny<Expression<Func<Ticket, bool>>>()), Times.Once);
     }
 }

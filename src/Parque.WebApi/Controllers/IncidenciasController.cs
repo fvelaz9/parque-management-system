@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Parque.Aplicacion.DTOS;
+using Parque.Aplicacion.DTOs;
 using Parque.Aplicacion.Servicios.Incidencias;
+using Parque.WebApi.Filtros;
 
 namespace Parque.WebApi.Controllers;
 
@@ -8,33 +9,29 @@ namespace Parque.WebApi.Controllers;
 [Route("api/incidencias")]
 public class IncidenciasController(IServicioIncidencia servicio) : ControllerBase
 {
-    private readonly IServicioIncidencia _servicio = servicio;
-
     [HttpPost]
+    [AuthorizationFilter("Operador")]
     public IActionResult CrearIncidencia([FromBody] CrearIncidenciaRequest request)
     {
-        try
-        {
-            var incidencia = _servicio.CrearIncidencia(request);
-            return Ok(incidencia);
-        }
-        catch(ArgumentException ex)
-        {
-            return BadRequest(new { mensaje = ex.Message });
-        }
+        var incidencia = servicio.CrearIncidencia(request);
+        return CreatedAtAction(nameof(VerificarDisponibilidad),
+            new { atraccionId = incidencia.AtraccionId },
+            incidencia);
+    }
+
+    [HttpDelete("{incidenciaId}")]
+    [AuthorizationFilter("Operador")]
+    public IActionResult ResolverIncidencia(int incidenciaId)
+    {
+        servicio.ResolverIncidencia(incidenciaId);
+        return NoContent();
     }
 
     [HttpGet("atraccion/{atraccionId}/disponible")]
+    [AuthorizationFilter("Operador")]
     public IActionResult VerificarDisponibilidad(int atraccionId)
     {
-        try
-        {
-            var disponible = _servicio.EstaDisponible(atraccionId);
-            return Ok(new { atraccionId, disponible });
-        }
-        catch(ArgumentException ex)
-        {
-            return BadRequest(new { mensaje = ex.Message });
-        }
+        var disponible = servicio.EstaDisponible(atraccionId);
+        return Ok(new { atraccionId, disponible });
     }
 }

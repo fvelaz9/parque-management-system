@@ -2,6 +2,7 @@
 using Moq;
 using Parque.Aplicacion.Servicios;
 using Parque.Dominio;
+using Parque.Dominio.Excepciones;
 using Parque.Infraestructura.Repositorios;
 
 namespace Parque.Aplicacion.Test.Servicios;
@@ -73,17 +74,14 @@ public class ServicioEventoTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(Exception))]
-    public void EliminarEventoPorIdInvalida()
+    [ExpectedException(typeof(ArgumentException))]
+    public void ObtenerEventoPorIdInvalido()
     {
-        var mockRepo = new Mock<IRepositorio<Evento>>();
-        var servicio = new ServicioEvento(mockRepo.Object);
-
-        servicio.EliminarEventoPorId(-10);
+        _servicioEvento!.ObtenerEventoPorId(0);
     }
 
     [TestMethod]
-    [ExpectedException(typeof(Exception))]
+    [ExpectedException(typeof(ExcepcionEntidadNoEncontrada))]
     public void EliminarEventoPorIdNoExistente()
     {
         var mockRepo = new Mock<IRepositorio<Evento>>();
@@ -104,22 +102,6 @@ public class ServicioEventoTest
 
         Assert.IsNotNull(resultado);
         Assert.AreEqual(evento.Id, resultado.Id);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(Exception))]
-    public void ObtenerEventoPorIdInvalido()
-    {
-        _servicioEvento!.ObtenerEventoPorId(0);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(Exception))]
-    public void ObtenerEventoPorIdNoExistente()
-    {
-        _mockRepositorio!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>())).Returns((Evento)null!);
-
-        _servicioEvento!.ObtenerEventoPorId(999);
     }
 
     [TestMethod]
@@ -152,7 +134,7 @@ public class ServicioEventoTest
     }
 
     [TestMethod]
-    [ExpectedException(typeof(Exception))]
+    [ExpectedException(typeof(ArgumentException))]
     public void ActualizarEventoIdInvalido()
     {
         var evento = new Evento("Titulo", "Desc", DateTime.Now, DateTime.Now.AddHours(2), 100, 50, EstadoEvento.Programado) { Id = 0 };

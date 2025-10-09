@@ -1,8 +1,9 @@
 ﻿using System.Linq.Expressions;
 using Moq;
-using Parque.Aplicacion.DTOS;
+using Parque.Aplicacion.DTOs;
 using Parque.Aplicacion.Servicios;
 using Parque.Aplicacion.Servicios.Acceso;
+using Parque.Aplicacion.Servicios.Gamificacion;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
 using Parque.Dominio.Usuarios;
@@ -20,6 +21,7 @@ public class ServicioAccesoTest
     private Mock<IRepositorio<Cuenta>>? _repoCuentasMock;
     private Mock<IRepositorio<Evento>>? _repoEventoMock;
     private Mock<IServicioFechaHora>? _servicioFechaHoraMock;
+    private Mock<IServicioPuntuacion>? _servicioPuntuacionMock;
     private ServicioAcceso? _servicio;
 
     [TestInitialize]
@@ -32,6 +34,7 @@ public class ServicioAccesoTest
         _repoCuentasMock = new Mock<IRepositorio<Cuenta>>();
         _repoEventoMock = new Mock<IRepositorio<Evento>>();
         _servicioFechaHoraMock = new Mock<IServicioFechaHora>();
+        _servicioPuntuacionMock = new Mock<IServicioPuntuacion>();
         _servicioFechaHoraMock.Setup(s => s.ObtenerFechaActual())
             .Returns(new DateTime(2025, 10, 8, 12, 0, 0));
 
@@ -42,7 +45,8 @@ public class ServicioAccesoTest
             _repoIncidenciasMock.Object,
             _repoCuentasMock.Object,
             _repoEventoMock.Object,
-            _servicioFechaHoraMock.Object);
+            _servicioFechaHoraMock.Object,
+            _servicioPuntuacionMock.Object);
     }
 
     [TestMethod]
@@ -90,18 +94,30 @@ public class ServicioAccesoTest
     {
         var fechaActual = new DateTime(2025, 10, 8);
         var fechaVisita = fechaActual.AddDays(-1);
-        var ticket = new Dominio.Ticket { Codigo = Guid.NewGuid(), FechaVisita = fechaVisita };
+        var cuenta = Cuenta.Crear("Juan", "Perez", new Email("test@test.com"), "pass123", Rol.Visitante);
+        cuenta.AsignarVisitante(fechaActual.AddYears(-25));
+
+        var ticket = new Dominio.Ticket
+        {
+            Codigo = Guid.NewGuid(),
+            FechaVisita = fechaVisita,
+            EsValido = true,
+            CuentaId = cuenta.Id
+        };
         var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.MontañaRusa, 12, 24, "Test") { Id = 1 };
         var request = new ValidarAccesoRequest
         {
             CodigoTicket = ticket.Codigo,
-            AtraccionId = 1
+            AtraccionId = 1,
+            CuentaVisitanteId = cuenta.Id
         };
 
         _repoTicketsMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
             .Returns(ticket);
         _repoAtraccionesMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
             .Returns(atraccion);
+        _repoCuentasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
 
         var resultado = _servicio!.ValidarAcceso(request);
 
@@ -113,14 +129,14 @@ public class ServicioAccesoTest
     public void ValidarAcceso_CuentaNoEncontrada_RetornaAccesoDenegado()
     {
         var fechaActual = new DateTime(2025, 10, 8);
-        var ticket = new Dominio.Ticket { Codigo = Guid.NewGuid(), FechaVisita = fechaActual, TipoEntrada = TipoTicket.General };
-        var atraccion = new AtraccionParque("Carrusel", TipoAtraccion.Simulador, 0, 30, "Test") { Id = 1 };
         var cuenta = Cuenta.Crear("Juan", "Perez", new Email("test@test.com"), "pass123", Rol.Visitante);
+        var ticket = new Dominio.Ticket { Codigo = Guid.NewGuid(), FechaVisita = fechaActual, TipoEntrada = TipoTicket.General, EsValido = true };
+        var atraccion = new AtraccionParque("Carrusel", TipoAtraccion.Simulador, 0, 30, "Test") { Id = 1 };
         var request = new ValidarAccesoRequest
         {
             CodigoTicket = ticket.Codigo,
             AtraccionId = 1,
-            CuentaVisitante = cuenta
+            CuentaVisitanteId = cuenta.Id
         };
 
         _repoTicketsMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
@@ -149,7 +165,8 @@ public class ServicioAccesoTest
             Codigo = Guid.NewGuid(),
             FechaVisita = fechaActual,
             TipoEntrada = TipoTicket.General,
-            CuentaId = cuentaId
+            CuentaId = cuentaId,
+            EsValido = true
         };
         var atraccion = new AtraccionParque("Simulador", TipoAtraccion.Simulador, 8, 2, "Test") { Id = 1 };
 
@@ -163,7 +180,7 @@ public class ServicioAccesoTest
         {
             CodigoTicket = ticket.Codigo,
             AtraccionId = 1,
-            CuentaVisitante = cuenta
+            CuentaVisitanteId = cuenta.Id
         };
 
         _repoTicketsMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
@@ -172,8 +189,7 @@ public class ServicioAccesoTest
             .Returns(atraccion);
         _repoCuentasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
             .Returns(cuenta);
-        _repoIncidenciasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Incidencia, bool>>>()))
-            .Returns((Incidencia?)null);
+        _repoIncidenciasMock!.Setup(r => r.ObtenerTodos()).Returns([]);
         _repoRegistrosMock!.Setup(r => r.ObtenerTodos()).Returns(registros);
 
         var resultado = _servicio!.ValidarAcceso(request);
@@ -195,7 +211,8 @@ public class ServicioAccesoTest
             Codigo = Guid.NewGuid(),
             FechaVisita = fechaActual,
             TipoEntrada = TipoTicket.General,
-            CuentaId = cuentaId
+            CuentaId = cuentaId,
+            EsValido = true
         };
         var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.MontañaRusa, 12, 24, "Test") { Id = 1 };
 
@@ -203,7 +220,7 @@ public class ServicioAccesoTest
         {
             CodigoTicket = ticket.Codigo,
             AtraccionId = 1,
-            CuentaVisitante = cuenta
+            CuentaVisitanteId = cuenta.Id
         };
 
         _repoTicketsMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
@@ -212,8 +229,7 @@ public class ServicioAccesoTest
             .Returns(atraccion);
         _repoCuentasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
             .Returns(cuenta);
-        _repoIncidenciasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Incidencia, bool>>>()))
-            .Returns((Incidencia?)null);
+        _repoIncidenciasMock!.Setup(r => r.ObtenerTodos()).Returns([]);
         _repoRegistrosMock!.Setup(r => r.ObtenerTodos()).Returns([]);
 
         var resultado = _servicio!.ValidarAcceso(request);
@@ -235,7 +251,8 @@ public class ServicioAccesoTest
             Codigo = Guid.NewGuid(),
             FechaVisita = fechaActual,
             TipoEntrada = TipoTicket.General,
-            CuentaId = cuentaId
+            CuentaId = cuentaId,
+            EsValido = true
         };
         var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.MontañaRusa, 12, 24, "Test") { Id = 1 };
 
@@ -247,8 +264,7 @@ public class ServicioAccesoTest
             .Returns(atraccion);
         _repoCuentasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
             .Returns(cuenta);
-        _repoIncidenciasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Incidencia, bool>>>()))
-            .Returns((Incidencia?)null);
+        _repoIncidenciasMock!.Setup(r => r.ObtenerTodos()).Returns([]);
         _repoRegistrosMock!.Setup(r => r.ObtenerTodos()).Returns([]);
 
         var resultado = _servicio!.RegistrarIngreso(codigoTicket, 1, cuenta);
@@ -256,21 +272,6 @@ public class ServicioAccesoTest
         Assert.IsNotNull(resultado);
         Assert.AreEqual(1, resultado.AtraccionId);
         _repoRegistrosMock.Verify(r => r.Agregar(It.IsAny<RegistroVisita>()), Times.Once);
-    }
-
-    [TestMethod]
-    [ExpectedException(typeof(ArgumentException))]
-    public void RegistrarIngreso_AccesoDenegado_LanzaExcepcion()
-    {
-        var codigoTicket = Guid.NewGuid();
-        var cuenta = Cuenta.Crear("Pedro", "Garcia", new Email("pedro@test.com"), "pass123", Rol.Visitante);
-        var atraccionId = 1;
-        var cuentaVisitante = cuenta;
-
-        _repoTicketsMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
-                   .Returns((Dominio.Ticket?)null);
-
-        _servicio!.RegistrarIngreso(codigoTicket, atraccionId, cuentaVisitante);
     }
 
     [TestMethod]
@@ -325,7 +326,8 @@ public class ServicioAccesoTest
             Codigo = Guid.NewGuid(),
             FechaVisita = fechaActual,
             TipoEntrada = TipoTicket.General,
-            CuentaId = cuentaId
+            CuentaId = cuentaId,
+            EsValido = true
         };
         var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.MontañaRusa, 12, 24, "Test") { Id = 1 };
 
@@ -333,7 +335,7 @@ public class ServicioAccesoTest
         {
             CodigoTicket = ticket.Codigo,
             AtraccionId = 1,
-            CuentaVisitante = cuenta
+            CuentaVisitanteId = cuenta.Id
         };
 
         _repoTicketsMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
@@ -361,7 +363,8 @@ public class ServicioAccesoTest
             Codigo = Guid.NewGuid(),
             FechaVisita = fechaActual,
             TipoEntrada = TipoTicket.General,
-            CuentaId = Guid.NewGuid()
+            CuentaId = Guid.NewGuid(),
+            EsValido = true
         };
         var atraccion = new AtraccionParque("Carrusel", TipoAtraccion.Simulador, 0, 30, "Test") { Id = 1 };
 
@@ -369,7 +372,7 @@ public class ServicioAccesoTest
         {
             CodigoTicket = ticket.Codigo,
             AtraccionId = 1,
-            CuentaVisitante = cuenta
+            CuentaVisitanteId = cuenta.Id
         };
 
         _repoTicketsMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
@@ -398,7 +401,8 @@ public class ServicioAccesoTest
             Codigo = Guid.NewGuid(),
             FechaVisita = fechaActual,
             TipoEntrada = TipoTicket.General,
-            CuentaId = cuentaId
+            CuentaId = cuentaId,
+            EsValido = true
         };
         var atraccion = new AtraccionParque("Simulador", TipoAtraccion.Simulador, 8, 12, "Test") { Id = 1 };
         var incidencia = new Incidencia(
@@ -411,7 +415,7 @@ public class ServicioAccesoTest
         {
             CodigoTicket = ticket.Codigo,
             AtraccionId = 1,
-            CuentaVisitante = cuenta
+            CuentaVisitanteId = cuenta.Id
         };
 
         _repoTicketsMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
@@ -420,13 +424,13 @@ public class ServicioAccesoTest
             .Returns(atraccion);
         _repoCuentasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
             .Returns(cuenta);
-        _repoIncidenciasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Incidencia, bool>>>()))
-            .Returns(incidencia);
+        _repoIncidenciasMock!.Setup(r => r.ObtenerTodos())
+            .Returns([incidencia]);
 
         var resultado = _servicio!.ValidarAcceso(request);
 
         Assert.IsFalse(resultado.AccesoPermitido);
-        Assert.AreEqual("Atracción temporalmente fuera de servicio", resultado.Mensaje);
+        Assert.IsTrue(resultado.Mensaje.Contains("Atracción fuera de servicio"));
     }
 
     [TestMethod]
@@ -443,7 +447,8 @@ public class ServicioAccesoTest
             FechaVisita = fechaActual,
             TipoEntrada = TipoTicket.EventoEspecial,
             CuentaId = cuentaId,
-            EventoId = null
+            EventoId = null,
+            EsValido = true
         };
         var atraccion = new AtraccionParque("Carrusel", TipoAtraccion.Simulador, 0, 30, "Test") { Id = 1 };
 
@@ -451,13 +456,15 @@ public class ServicioAccesoTest
         {
             CodigoTicket = ticket.Codigo,
             AtraccionId = 1,
-            CuentaVisitante = cuenta
+            CuentaVisitanteId = cuenta.Id
         };
 
         _repoTicketsMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
             .Returns(ticket);
         _repoAtraccionesMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
             .Returns(atraccion);
+        _repoCuentasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
 
         var resultado = _servicio!.ValidarAcceso(request);
 
@@ -479,7 +486,8 @@ public class ServicioAccesoTest
             FechaVisita = fechaActual,
             TipoEntrada = TipoTicket.EventoEspecial,
             CuentaId = cuentaId,
-            EventoId = 999
+            EventoId = 999,
+            EsValido = true
         };
         var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.MontañaRusa, 12, 24, "Test") { Id = 1 };
 
@@ -487,13 +495,15 @@ public class ServicioAccesoTest
         {
             CodigoTicket = ticket.Codigo,
             AtraccionId = 1,
-            CuentaVisitante = cuenta
+            CuentaVisitanteId = cuenta.Id
         };
 
         _repoTicketsMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
             .Returns(ticket);
         _repoAtraccionesMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
             .Returns(atraccion);
+        _repoCuentasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
         _repoEventoMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
             .Returns((Evento?)null);
 

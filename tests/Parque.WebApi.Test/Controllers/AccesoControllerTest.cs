@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
-using Parque.Aplicacion.DTOS;
+using Parque.Aplicacion.DTOs;
 using Parque.Aplicacion.Servicios.Acceso;
 using Parque.Dominio.Atracciones;
 using Parque.Dominio.Usuarios;
-using Parque.WebApi.Controllers;
+using Parque.WebApi.Controllers.Acceso;
+using Parque.WebApi.Controllers.Acceso.Models;
+
 namespace Parque.WebApi.Test.Controllers;
 
 [TestClass]
@@ -26,7 +28,8 @@ public class AccesoControllerTest
         var request = new ValidarAccesoRequest
         {
             CodigoTicket = Guid.NewGuid(),
-            AtraccionId = 1
+            AtraccionId = 1,
+            CuentaVisitanteId = Guid.NewGuid()
         };
         var response = new ValidarAccesoResponse
         {
@@ -35,7 +38,7 @@ public class AccesoControllerTest
             NombreAtraccion = "Montaña Rusa"
         };
 
-        _servicioMock!.Setup(s => s.ValidarAcceso(request)).Returns(response);
+        _servicioMock!.Setup(s => s.ValidarAcceso(It.IsAny<ValidarAccesoRequest>())).Returns(response);
 
         var result = _controller!.ValidarAcceso(request);
 
@@ -52,7 +55,8 @@ public class AccesoControllerTest
         var request = new ValidarAccesoRequest
         {
             CodigoTicket = Guid.NewGuid(),
-            AtraccionId = 1
+            AtraccionId = 1,
+            CuentaVisitanteId = Guid.NewGuid()
         };
         var response = new ValidarAccesoResponse
         {
@@ -61,7 +65,7 @@ public class AccesoControllerTest
             NombreAtraccion = "Montaña Rusa"
         };
 
-        _servicioMock!.Setup(s => s.ValidarAcceso(request)).Returns(response);
+        _servicioMock!.Setup(s => s.ValidarAcceso(It.IsAny<ValidarAccesoRequest>())).Returns(response);
 
         var result = _controller!.ValidarAcceso(request);
 
@@ -73,16 +77,15 @@ public class AccesoControllerTest
     }
 
     [TestMethod]
-    public void RegistrarIngresos_Exitoso_ReturnsOk()
+    public void RegistrarIngreso_Exitoso_ReturnsOk()
     {
         var codigoTicket = Guid.NewGuid();
         var cuenta = Cuenta.Crear("Juan", "Perez", new Email("test@test.com"), "pass123", Rol.Visitante);
         cuenta.AsignarVisitante(DateTime.Today.AddYears(-25));
 
-        var dto = new ValidarAccesoRequest
+        var request = new RegistrarIngresoRequest
         {
             CodigoTicket = codigoTicket,
-            AtraccionId = 1,
             CuentaVisitante = cuenta
         };
 
@@ -95,43 +98,54 @@ public class AccesoControllerTest
 
         _servicioMock!.Setup(s => s.RegistrarIngreso(codigoTicket, 1, cuenta)).Returns(registro);
 
-        var result = _controller!.RegistrarIngresos(1, dto);
+        var result = _controller!.RegistrarIngreso(1, request);
 
         var okResult = result as OkObjectResult;
         Assert.IsNotNull(okResult);
         Assert.AreEqual(200, okResult.StatusCode);
-        Assert.AreEqual(registro, okResult.Value);
+
+        var value = okResult.Value;
+        Assert.IsNotNull(value);
+
+        var mensajeProp = value.GetType().GetProperty("mensaje")?.GetValue(value);
+        var registroProp = value.GetType().GetProperty("registro")?.GetValue(value) as RegistroVisita;
+        var fechaIngresoProp = value.GetType().GetProperty("fechaIngreso")?.GetValue(value);
+
+        Assert.AreEqual("Ingreso registrado exitosamente", mensajeProp);
+        Assert.AreEqual(registro, registroProp);
+        Assert.AreEqual(registro.FechaIngreso, fechaIngresoProp);
+
         _servicioMock.VerifyAll();
     }
 
     [TestMethod]
-    public void RegistrarIngresos_ConExcepcion_ReturnsBadRequest()
+    [ExpectedException(typeof(ArgumentException))]
+    public void RegistrarIngreso_ConExcepcion_LanzaExcepcion()
     {
         var codigoTicket = Guid.NewGuid();
         var cuenta = Cuenta.Crear("Maria", "Lopez", new Email("maria@test.com"), "pass123", Rol.Visitante);
 
-        var dto = new ValidarAccesoRequest
+        var request = new RegistrarIngresoRequest
         {
             CodigoTicket = codigoTicket,
-            AtraccionId = 1,
             CuentaVisitante = cuenta
         };
 
         _servicioMock!.Setup(s => s.RegistrarIngreso(codigoTicket, 1, cuenta))
             .Throws(new ArgumentException("Acceso denegado"));
 
-        var result = _controller!.RegistrarIngresos(1, dto);
-
-        var badRequestResult = result as BadRequestObjectResult;
-        Assert.IsNotNull(badRequestResult);
-        Assert.AreEqual(400, badRequestResult.StatusCode);
-        _servicioMock.VerifyAll();
+        _controller!.RegistrarIngreso(1, request);
     }
 
     [TestMethod]
     public void RegistrarEgreso_Exitoso_ReturnsOk()
     {
         var codigoTicket = Guid.NewGuid();
+        var request = new RegistrarEgresoRequest
+        {
+            CodigoTicket = codigoTicket
+        };
+
         var registro = new RegistroVisita
         {
             AtraccionId = 1,
@@ -142,27 +156,39 @@ public class AccesoControllerTest
 
         _servicioMock!.Setup(s => s.RegistrarEgreso(codigoTicket, 1)).Returns(registro);
 
-        var result = _controller!.RegistrarEgreso(1, codigoTicket);
+        var result = _controller!.RegistrarEgreso(1, request);
 
         var okResult = result as OkObjectResult;
         Assert.IsNotNull(okResult);
         Assert.AreEqual(200, okResult.StatusCode);
+
+        var value = okResult.Value;
+        Assert.IsNotNull(value);
+
+        var mensajeProp = value.GetType().GetProperty("mensaje")?.GetValue(value);
+        var registroProp = value.GetType().GetProperty("registro")?.GetValue(value) as RegistroVisita;
+        var tiempoVisitaProp = value.GetType().GetProperty("tiempoVisitaMinutos")?.GetValue(value);
+
+        Assert.AreEqual("Egreso registrado exitosamente. Puntos calculados.", mensajeProp);
+        Assert.AreEqual(registro, registroProp);
+        Assert.IsNotNull(tiempoVisitaProp);
+
         _servicioMock.VerifyAll();
     }
 
     [TestMethod]
-    public void RegistrarEgreso_ConExcepcion_ReturnsBadRequest()
+    [ExpectedException(typeof(ArgumentException))]
+    public void RegistrarEgreso_ConExcepcion_LanzaExcepcion()
     {
         var codigoTicket = Guid.NewGuid();
+        var request = new RegistrarEgresoRequest
+        {
+            CodigoTicket = codigoTicket
+        };
 
         _servicioMock!.Setup(s => s.RegistrarEgreso(codigoTicket, 1))
             .Throws(new ArgumentException("No hay ingreso registrado"));
 
-        var result = _controller!.RegistrarEgreso(1, codigoTicket);
-
-        var badRequestResult = result as BadRequestObjectResult;
-        Assert.IsNotNull(badRequestResult);
-        Assert.AreEqual(400, badRequestResult.StatusCode);
-        _servicioMock.VerifyAll();
+        _controller!.RegistrarEgreso(1, request);
     }
 }
