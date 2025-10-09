@@ -1,4 +1,4 @@
-using Parque.Aplicacion.DTOS;
+﻿using Parque.Aplicacion.DTOS;
 using Parque.Dominio;
 
 namespace Parque.Aplicacion.Servicios.Incidencias;
@@ -6,5 +6,6 @@ namespace Parque.Aplicacion.Servicios.Incidencias;
 public interface IServicioIncidencia
 {
     Incidencia CrearIncidencia(CrearIncidenciaRequest request);
+    void ResolverIncidencia(int incidenciaId);
     bool EstaDisponible(int atraccionId);
 }
