@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Parque.Aplicacion.Servicios;
 using Parque.Dominio.Excepciones;
@@ -143,7 +142,7 @@ public class AuthorizationFilterTest
     [ExpectedException(typeof(ArgumentNullException))]
     public void Constructor_ConRolNulo_DeberiaLanzarExcepcion()
     {
-        var filter = new AuthorizationFilter(null!);
+        _ = new AuthorizationFilter(null!);
     }
 
     private static AuthorizationFilterContext CreateAuthorizationContext(string? token, IServicioSesion? servicioSesion)
@@ -165,9 +164,8 @@ public class AuthorizationFilterTest
         var actionContext = new ActionContext(
             httpContext,
             new RouteData(),
-            new ActionDescriptor()
-        );
+            new ActionDescriptor());
 
-        return new AuthorizationFilterContext(actionContext, new List<IFilterMetadata>());
+        return new AuthorizationFilterContext(actionContext, []);
     }
 }

@@ -1,6 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Reflection;
 
 namespace Parque.Infraestructura.test;
 

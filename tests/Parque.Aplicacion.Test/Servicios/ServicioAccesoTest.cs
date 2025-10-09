@@ -66,7 +66,8 @@ public class ServicioAccesoTest
     [TestMethod]
     public void ValidarAcceso_AtraccionNoEncontrada_RetornaAccesoDenegado()
     {
-        var ticket = new Dominio.Ticket { Codigo = Guid.NewGuid(), FechaVisita = DateTime.Today };
+        var fechaActual = new DateTime(2025, 10, 8);
+        var ticket = new Dominio.Ticket { Codigo = Guid.NewGuid(), FechaVisita = fechaActual };
         var request = new ValidarAccesoRequest
         {
             CodigoTicket = ticket.Codigo,
@@ -87,7 +88,8 @@ public class ServicioAccesoTest
     [TestMethod]
     public void ValidarAcceso_FechaTicketInvalida_RetornaAccesoDenegado()
     {
-        var fechaVisita = DateTime.Today.AddDays(-1);
+        var fechaActual = new DateTime(2025, 10, 8);
+        var fechaVisita = fechaActual.AddDays(-1);
         var ticket = new Dominio.Ticket { Codigo = Guid.NewGuid(), FechaVisita = fechaVisita };
         var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.MontañaRusa, 12, 24, "Test") { Id = 1 };
         var request = new ValidarAccesoRequest
@@ -110,7 +112,8 @@ public class ServicioAccesoTest
     [TestMethod]
     public void ValidarAcceso_CuentaNoEncontrada_RetornaAccesoDenegado()
     {
-        var ticket = new Dominio.Ticket { Codigo = Guid.NewGuid(), FechaVisita = DateTime.Today, TipoEntrada = TipoTicket.General };
+        var fechaActual = new DateTime(2025, 10, 8);
+        var ticket = new Dominio.Ticket { Codigo = Guid.NewGuid(), FechaVisita = fechaActual, TipoEntrada = TipoTicket.General };
         var atraccion = new AtraccionParque("Carrusel", TipoAtraccion.Simulador, 0, 30, "Test") { Id = 1 };
         var cuenta = Cuenta.Crear("Juan", "Perez", new Email("test@test.com"), "pass123", Rol.Visitante);
         var request = new ValidarAccesoRequest
@@ -136,14 +139,15 @@ public class ServicioAccesoTest
     [TestMethod]
     public void ValidarAcceso_AforoCompleto_RetornaAccesoDenegado()
     {
+        var fechaActual = new DateTime(2025, 10, 8);
         var cuenta = Cuenta.Crear("Juan", "Perez", new Email("test@test.com"), "pass123", Rol.Visitante);
-        cuenta.AsignarVisitante(DateTime.Today.AddYears(-25));
+        cuenta.AsignarVisitante(fechaActual.AddYears(-25));
         var cuentaId = cuenta.Id;
 
         var ticket = new Dominio.Ticket
         {
             Codigo = Guid.NewGuid(),
-            FechaVisita = DateTime.Today,
+            FechaVisita = fechaActual,
             TipoEntrada = TipoTicket.General,
             CuentaId = cuentaId
         };
@@ -181,14 +185,15 @@ public class ServicioAccesoTest
     [TestMethod]
     public void ValidarAcceso_TodoValido_RetornaAccesoPermitido()
     {
+        var fechaActual = new DateTime(2025, 10, 8);
         var cuenta = Cuenta.Crear("Juan", "Perez", new Email("test@test.com"), "pass123", Rol.Visitante);
-        cuenta.AsignarVisitante(DateTime.Today.AddYears(-25));
+        cuenta.AsignarVisitante(fechaActual.AddYears(-25));
         var cuentaId = cuenta.Id;
 
         var ticket = new Dominio.Ticket
         {
             Codigo = Guid.NewGuid(),
-            FechaVisita = DateTime.Today,
+            FechaVisita = fechaActual,
             TipoEntrada = TipoTicket.General,
             CuentaId = cuentaId
         };
@@ -200,16 +205,6 @@ public class ServicioAccesoTest
             AtraccionId = 1,
             CuentaVisitante = cuenta
         };
-        var fechaActual = new DateTime(2025, 10, 8, 12, 0, 0);
-        var fechaVisita = new DateTime(2025, 10, 8, 14, 0, 0);
-        var ticket = new Dominio.Ticket(cuentaId, fechaVisita, 1, TipoTicket.General, fechaActual);
-
-        _repoTicketsMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
-            .Returns(ticket);
-        _repoAtraccionesMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
-            .Returns((AtraccionParque?)null);
-
-        var result = _servicio!.ValidarAcceso(request);
 
         _repoTicketsMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
             .Returns(ticket);
@@ -219,7 +214,42 @@ public class ServicioAccesoTest
             .Returns(cuenta);
         _repoIncidenciasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Incidencia, bool>>>()))
             .Returns((Incidencia?)null);
-        _repoRegistrosMock!.Setup(r => r.ObtenerTodos()).Returns(new List<RegistroVisita>());
+        _repoRegistrosMock!.Setup(r => r.ObtenerTodos()).Returns([]);
+
+        var resultado = _servicio!.ValidarAcceso(request);
+
+        Assert.IsTrue(resultado.AccesoPermitido);
+        Assert.AreEqual("Acceso permitido", resultado.Mensaje);
+    }
+
+    [TestMethod]
+    public void RegistrarIngreso_TodoValido_CreaRegistro()
+    {
+        var fechaActual = new DateTime(2025, 10, 8);
+        var cuenta = Cuenta.Crear("Juan", "Perez", new Email("test@test.com"), "pass123", Rol.Visitante);
+        cuenta.AsignarVisitante(fechaActual.AddYears(-25));
+        var cuentaId = cuenta.Id;
+
+        var ticket = new Dominio.Ticket
+        {
+            Codigo = Guid.NewGuid(),
+            FechaVisita = fechaActual,
+            TipoEntrada = TipoTicket.General,
+            CuentaId = cuentaId
+        };
+        var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.MontañaRusa, 12, 24, "Test") { Id = 1 };
+
+        var codigoTicket = ticket.Codigo;
+
+        _repoTicketsMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
+            .Returns(ticket);
+        _repoAtraccionesMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
+            .Returns(atraccion);
+        _repoCuentasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
+        _repoIncidenciasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Incidencia, bool>>>()))
+            .Returns((Incidencia?)null);
+        _repoRegistrosMock!.Setup(r => r.ObtenerTodos()).Returns([]);
 
         var resultado = _servicio!.RegistrarIngreso(codigoTicket, 1, cuenta);
 
@@ -234,6 +264,8 @@ public class ServicioAccesoTest
     {
         var codigoTicket = Guid.NewGuid();
         var cuenta = Cuenta.Crear("Pedro", "Garcia", new Email("pedro@test.com"), "pass123", Rol.Visitante);
+        var atraccionId = 1;
+        var cuentaVisitante = cuenta;
 
         _repoTicketsMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
                    .Returns((Dominio.Ticket?)null);
@@ -283,14 +315,15 @@ public class ServicioAccesoTest
     [TestMethod]
     public void ValidarAcceso_EdadMenorARequerida_RetornaAccesoDenegado()
     {
+        var fechaActual = new DateTime(2025, 10, 8);
         var cuenta = Cuenta.Crear("Niño", "Perez", new Email("nino@test.com"), "pass123", Rol.Visitante);
-        cuenta.AsignarVisitante(DateTime.Today.AddYears(-5));
+        cuenta.AsignarVisitante(fechaActual.AddYears(-5));
         var cuentaId = cuenta.Id;
 
         var ticket = new Dominio.Ticket
         {
             Codigo = Guid.NewGuid(),
-            FechaVisita = DateTime.Today,
+            FechaVisita = fechaActual,
             TipoEntrada = TipoTicket.General,
             CuentaId = cuentaId
         };
@@ -319,13 +352,14 @@ public class ServicioAccesoTest
     [TestMethod]
     public void ValidarAcceso_TicketNoPerteneceCuenta_RetornaAccesoDenegado()
     {
+        var fechaActual = new DateTime(2025, 10, 8);
         var cuenta = Cuenta.Crear("Juan", "Perez", new Email("test@test.com"), "pass123", Rol.Visitante);
-        cuenta.AsignarVisitante(DateTime.Today.AddYears(-25));
+        cuenta.AsignarVisitante(fechaActual.AddYears(-25));
 
         var ticket = new Dominio.Ticket
         {
             Codigo = Guid.NewGuid(),
-            FechaVisita = DateTime.Today,
+            FechaVisita = fechaActual,
             TipoEntrada = TipoTicket.General,
             CuentaId = Guid.NewGuid()
         };
@@ -354,25 +388,24 @@ public class ServicioAccesoTest
     [TestMethod]
     public void ValidarAcceso_AtraccionConIncidencia_RetornaAccesoDenegado()
     {
+        var fechaActual = new DateTime(2025, 10, 8, 12, 0, 0);
         var cuenta = Cuenta.Crear("Maria", "Lopez", new Email("maria@test.com"), "pass123", Rol.Visitante);
-        cuenta.AsignarVisitante(DateTime.Today.AddYears(-20));
+        cuenta.AsignarVisitante(fechaActual.AddYears(-20));
         var cuentaId = cuenta.Id;
 
         var ticket = new Dominio.Ticket
         {
             Codigo = Guid.NewGuid(),
-            FechaVisita = DateTime.Today,
+            FechaVisita = fechaActual,
             TipoEntrada = TipoTicket.General,
             CuentaId = cuentaId
         };
         var atraccion = new AtraccionParque("Simulador", TipoAtraccion.Simulador, 8, 12, "Test") { Id = 1 };
-        var incidencia = new Incidencia
-        {
-            AtraccionId = 1,
-            FechaReporte = DateTime.Now.AddHours(-2),
-            FechaResolucionEstimada = DateTime.Now.AddHours(2),
-            Descripcion = "En mantenimiento"
-        };
+        var incidencia = new Incidencia(
+            "En mantenimiento",
+            fechaActual.AddHours(-2),
+            fechaActual.AddHours(2),
+            1);
 
         var request = new ValidarAccesoRequest
         {
@@ -399,14 +432,15 @@ public class ServicioAccesoTest
     [TestMethod]
     public void ValidarAcceso_EventoEspecialSinEventoId_RetornaAccesoDenegado()
     {
+        var fechaActual = new DateTime(2025, 10, 8);
         var cuenta = Cuenta.Crear("Pedro", "Garcia", new Email("pedro@test.com"), "pass123", Rol.Visitante);
-        cuenta.AsignarVisitante(DateTime.Today.AddYears(-30));
+        cuenta.AsignarVisitante(fechaActual.AddYears(-30));
         var cuentaId = cuenta.Id;
 
         var ticket = new Dominio.Ticket
         {
             Codigo = Guid.NewGuid(),
-            FechaVisita = DateTime.Today,
+            FechaVisita = fechaActual,
             TipoEntrada = TipoTicket.EventoEspecial,
             CuentaId = cuentaId,
             EventoId = null
@@ -434,14 +468,15 @@ public class ServicioAccesoTest
     [TestMethod]
     public void ValidarAcceso_EventoNoEncontrado_RetornaAccesoDenegado()
     {
+        var fechaActual = new DateTime(2025, 10, 8);
         var cuenta = Cuenta.Crear("Ana", "Ramirez", new Email("ana@test.com"), "pass123", Rol.Visitante);
-        cuenta.AsignarVisitante(DateTime.Today.AddYears(-22));
+        cuenta.AsignarVisitante(fechaActual.AddYears(-22));
         var cuentaId = cuenta.Id;
 
         var ticket = new Dominio.Ticket
         {
             Codigo = Guid.NewGuid(),
-            FechaVisita = DateTime.Today,
+            FechaVisita = fechaActual,
             TipoEntrada = TipoTicket.EventoEspecial,
             CuentaId = cuentaId,
             EventoId = 999

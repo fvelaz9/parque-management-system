@@ -1,7 +1,7 @@
-using System.Linq.Expressions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Linq.Expressions;
 using Moq;
 using Parque.Aplicacion.DTOS;
+using Parque.Aplicacion.Servicios;
 using Parque.Aplicacion.Servicios.Incidencias;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
@@ -14,13 +14,15 @@ public class ServicioIncidenciasTest
 {
     private readonly Mock<IRepositorio<Incidencia>> _mockRepoIncidencias;
     private readonly Mock<IRepositorio<AtraccionParque>> _mockRepoAtracciones;
+    private readonly Mock<IServicioFechaHora> _mockServicioFechaHora;
     private readonly ServicioIncidencia _servicio;
 
     public ServicioIncidenciasTest()
     {
         _mockRepoIncidencias = new Mock<IRepositorio<Incidencia>>();
         _mockRepoAtracciones = new Mock<IRepositorio<AtraccionParque>>();
-        _servicio = new ServicioIncidencia(_mockRepoIncidencias.Object, _mockRepoAtracciones.Object);
+        _mockServicioFechaHora = new Mock<IServicioFechaHora>();
+        _servicio = new ServicioIncidencia(_mockRepoIncidencias.Object, _mockRepoAtracciones.Object, _mockServicioFechaHora.Object);
     }
 
     [TestMethod]
@@ -67,14 +69,16 @@ public class ServicioIncidenciasTest
     [ExpectedException(typeof(ArgumentException))]
     public void CrearIncidencia_FechaResolucionPasada_LanzaExcepcion()
     {
+        var fechaActual = new DateTime(2025, 10, 8, 12, 0, 0);
         var atraccion = new AtraccionParque("Carrusel", TipoAtraccion.Simulador, 0, 30, "Test") { Id = 1 };
         var request = new CrearIncidenciaRequest
         {
             AtraccionId = 1,
             Descripcion = "Falla",
-            FechaResolucionEstimada = DateTime.Now.AddDays(-1)
+            FechaResolucionEstimada = fechaActual.AddDays(-1)
         };
 
+        _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual()).Returns(fechaActual);
         _mockRepoAtracciones.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
             .Returns(atraccion);
 

@@ -1,5 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Parque.Aplicacion.DTOS;
 using Parque.Aplicacion.Servicios.Acceso;
@@ -77,13 +76,15 @@ public class AccesoControllerTest
     public void RegistrarIngresos_Exitoso_ReturnsOk()
     {
         var codigoTicket = Guid.NewGuid();
+        var cuenta = Cuenta.Crear("Juan", "Perez", new Email("test@test.com"), "pass123", Rol.Visitante);
+        cuenta.AsignarVisitante(DateTime.Today.AddYears(-25));
+
         var dto = new ValidarAccesoRequest
         {
             CodigoTicket = codigoTicket,
-            AtraccionId = 1
+            AtraccionId = 1,
+            CuentaVisitante = cuenta
         };
-        var cuenta = Cuenta.Crear("Juan", "Perez", new Email("test@test.com"), "pass123", Rol.Visitante);
-        cuenta.AsignarVisitante(DateTime.Today.AddYears(-25));
 
         var registro = new RegistroVisita
         {
@@ -94,7 +95,7 @@ public class AccesoControllerTest
 
         _servicioMock!.Setup(s => s.RegistrarIngreso(codigoTicket, 1, cuenta)).Returns(registro);
 
-        var result = _controller!.RegistrarIngresos(1, dto, cuenta);
+        var result = _controller!.RegistrarIngresos(1, dto);
 
         var okResult = result as OkObjectResult;
         Assert.IsNotNull(okResult);
@@ -107,17 +108,19 @@ public class AccesoControllerTest
     public void RegistrarIngresos_ConExcepcion_ReturnsBadRequest()
     {
         var codigoTicket = Guid.NewGuid();
+        var cuenta = Cuenta.Crear("Maria", "Lopez", new Email("maria@test.com"), "pass123", Rol.Visitante);
+
         var dto = new ValidarAccesoRequest
         {
             CodigoTicket = codigoTicket,
-            AtraccionId = 1
+            AtraccionId = 1,
+            CuentaVisitante = cuenta
         };
-        var cuenta = Cuenta.Crear("Maria", "Lopez", new Email("maria@test.com"), "pass123", Rol.Visitante);
 
         _servicioMock!.Setup(s => s.RegistrarIngreso(codigoTicket, 1, cuenta))
             .Throws(new ArgumentException("Acceso denegado"));
 
-        var result = _controller!.RegistrarIngresos(1, dto, cuenta);
+        var result = _controller!.RegistrarIngresos(1, dto);
 
         var badRequestResult = result as BadRequestObjectResult;
         Assert.IsNotNull(badRequestResult);

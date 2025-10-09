@@ -1,5 +1,3 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Parque.WebApi.Controllers;
 
 namespace Parque.WebApi.Test.Controllers;

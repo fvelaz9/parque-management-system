@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Parque.Dominio.Excepciones;
 using Parque.WebApi.Filtros;
 
@@ -115,10 +114,9 @@ public class ExceptionFilterTest
         var actionContext = new ActionContext(
             new DefaultHttpContext(),
             new RouteData(),
-            new ActionDescriptor()
-        );
+            new ActionDescriptor());
 
-        return new ExceptionContext(actionContext, new List<IFilterMetadata>())
+        return new ExceptionContext(actionContext, [])
         {
             Exception = exception
         };
