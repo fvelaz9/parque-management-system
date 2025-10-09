@@ -9,24 +9,6 @@ namespace Parque.WebApi.Controllers;
 [Route("api/gamificacion")]
 public class GamificacionController(IServicioPuntuacion servicioPuntuacion) : ControllerBase
 {
-    [HttpPost("calcular-puntos/{registroVisitaId}")]
-    public IActionResult CalcularPuntos(int registroVisitaId)
-    {
-        try
-        {
-            servicioPuntuacion.CalcularYRegistrarPuntos(registroVisitaId);
-            return Ok(new { mensaje = "Puntos calculados y registrados exitosamente" });
-        }
-        catch(InvalidOperationException ex)
-        {
-            return BadRequest(new { error = ex.Message });
-        }
-        catch(Exception ex)
-        {
-            return StatusCode(500, new { error = "Error interno del servidor", detalle = ex.Message });
-        }
-    }
-
     [HttpGet("ranking/diario")]
     [AuthorizationFilter("any")]
     public IActionResult ObtenerRankingDiario([FromQuery] DateTime? fecha, [FromQuery] int top = 10)

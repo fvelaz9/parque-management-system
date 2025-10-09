@@ -1,4 +1,5 @@
 ﻿using Parque.Aplicacion.DTOS;
+using Parque.Aplicacion.Servicios.Gamificacion;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
 using Parque.Dominio.Usuarios;
@@ -8,7 +9,7 @@ namespace Parque.Aplicacion.Servicios.Acceso;
 
 public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepositorio<Dominio.Ticket> repoTickets,
     IRepositorio<RegistroVisita> repoRegistros, IRepositorio<Incidencia> repoIncidencias, IRepositorio<Cuenta> repoCuentas,
-    IRepositorio<Evento> repoEvento, IServicioFechaHora servicioFechaHora) : IServicioAcceso
+    IRepositorio<Evento> repoEvento, IServicioFechaHora servicioFechaHora, IServicioPuntuacion servicioPuntuacion) : IServicioAcceso
 {
     public ValidarAccesoResponse ValidarAcceso(ValidarAccesoRequest request)
     {
@@ -254,6 +255,9 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
 
         registro.FechaEgreso = servicioFechaHora.ObtenerFechaActual();
         repoRegistros.Editar(registro);
+
+        servicioPuntuacion.CalcularYRegistrarPuntos(registro.Id);
+
         return registro;
     }
 }
