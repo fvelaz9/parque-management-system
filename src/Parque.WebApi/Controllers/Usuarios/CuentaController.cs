@@ -40,7 +40,6 @@ public class CuentaController(IServicioCuenta servicioCuenta) : ControllerBase
     [AuthorizationFilter("any")]
     public IActionResult ModificarPerfil([FromBody] ModificarPerfilDto dto)
     {
-        // Obtener el usuario autenticado del contexto
         var usuarioAutenticado = HttpContext.Items["user"] as Cuenta;
 
         if(usuarioAutenticado == null)
@@ -53,7 +52,6 @@ public class CuentaController(IServicioCuenta servicioCuenta) : ControllerBase
             });
         }
 
-        // Usar el ID del usuario autenticado directamente
         servicioCuenta.ModificarPerfil(usuarioAutenticado.Id, dto);
 
         return Ok(new ResponseDto
