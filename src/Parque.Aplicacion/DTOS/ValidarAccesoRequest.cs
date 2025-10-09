@@ -1,5 +1,5 @@
-using Parque.Dominio.Usuarios;
-namespace Parque.Aplicacion.DTOS;
+﻿using Parque.Dominio.Usuarios;
+namespace Parque.Aplicacion.DTOs;
 
 public class ValidarAccesoRequest
 {

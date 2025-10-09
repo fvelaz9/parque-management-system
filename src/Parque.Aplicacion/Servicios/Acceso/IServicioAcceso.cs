@@ -1,4 +1,4 @@
-using Parque.Aplicacion.DTOS;
+﻿using Parque.Aplicacion.DTOs;
 using Parque.Dominio.Atracciones;
 using Parque.Dominio.Usuarios;
 
@@ -9,4 +9,5 @@ public interface IServicioAcceso
     ValidarAccesoResponse ValidarAcceso(ValidarAccesoRequest request);
     RegistroVisita RegistrarIngreso(Guid codigoTicket, int atraccionId, Cuenta cuentaVisitante);
     RegistroVisita RegistrarEgreso(Guid codigoTicket, int atraccionId);
+    AforoResponse ObtenerAforoAtraccion(int atraccionId);
 }

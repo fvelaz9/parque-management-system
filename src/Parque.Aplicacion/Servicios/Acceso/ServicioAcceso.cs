@@ -1,7 +1,8 @@
-﻿using Parque.Aplicacion.DTOS;
+﻿using Parque.Aplicacion.DTOs;
 using Parque.Aplicacion.Servicios.Gamificacion;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
+using Parque.Dominio.Excepciones;
 using Parque.Dominio.Usuarios;
 using Parque.Infraestructura.Repositorios;
 
@@ -259,5 +260,33 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
         servicioPuntuacion.CalcularYRegistrarPuntos(registro.Id);
 
         return registro;
+    }
+
+    public AforoResponse ObtenerAforoAtraccion(int atraccionId)
+    {
+        var atraccion = repoAtracciones.Encontrar(a => a.Id == atraccionId);
+        if(atraccion == null)
+        {
+            throw new ExcepcionEntidadNoEncontrada("Atracción no encontrada");
+        }
+
+        var visitantesActuales = repoRegistros.ObtenerTodos()
+            .Count(r => r.AtraccionId == atraccionId && r.FechaEgreso == null);
+
+        var capacidadRestante = atraccion.Capacidad - visitantesActuales;
+        var porcentajeOcupacion = atraccion.Capacidad > 0
+            ? (visitantesActuales * 100.0) / atraccion.Capacidad
+            : 0;
+
+        return new AforoResponse
+        {
+            AtraccionId = atraccionId,
+            NombreAtraccion = atraccion.Nombre,
+            CapacidadTotal = atraccion.Capacidad,
+            VisitantesActuales = visitantesActuales,
+            CapacidadRestante = Math.Max(0, capacidadRestante),
+            PorcentajeOcupacion = Math.Round(porcentajeOcupacion, 2),
+            AforoCompleto = visitantesActuales >= atraccion.Capacidad
+        };
     }
 }

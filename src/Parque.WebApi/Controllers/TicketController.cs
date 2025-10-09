@@ -21,16 +21,11 @@ public class TicketController(IServicioTicket service) : ControllerBase
             return Unauthorized(new { mensaje = "Usuario no autenticado" });
         }
 
-        if(request.CuentaId != usuario.Id)
-        {
-            return Forbid();
-        }
-
         Dominio.Ticket creado;
 
         if(request.TipoEntrada == TipoTicket.General)
         {
-            creado = service.CrearTicketGeneral(request.CuentaId, request.FechaVisita);
+            creado = service.CrearTicketGeneral(usuario.Id, request.FechaVisita);
         }
         else if(request.TipoEntrada == TipoTicket.EventoEspecial)
         {
@@ -39,7 +34,7 @@ public class TicketController(IServicioTicket service) : ControllerBase
                 return BadRequest(new { mensaje = "Debe especificar el eventoId para tickets de evento especial" });
             }
 
-            creado = service.CrearTicketEventoEspecial(request.CuentaId, request.FechaVisita, request.EventoId.Value);
+            creado = service.CrearTicketEventoEspecial(usuario.Id, request.FechaVisita, request.EventoId.Value);
         }
         else
         {
