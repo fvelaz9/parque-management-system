@@ -1,4 +1,5 @@
 ﻿using Parque.Dominio;
+using Parque.Dominio.Excepciones;
 using Parque.Infraestructura.Repositorios;
 
 namespace Parque.Aplicacion.Servicios.Ticket;
@@ -18,7 +19,7 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
     public Dominio.Ticket CrearTicketEventoEspecial(Guid cuentaId, DateTime fechaVisita, int eventoId)
     {
         ValidarFechaFutura(fechaVisita);
-        ValidarEventoParaTicketEspecial(TipoTicket.EventoEspecial, eventoId);
+        ValidarEventoParaTicketEspecial(eventoId);
         Dominio.Ticket ticket = ConstruirTicket(cuentaId, fechaVisita, eventoId, TipoTicket.EventoEspecial);
         repositorio.Agregar(ticket);
         return ticket;
@@ -31,7 +32,7 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
         var ticket = repositorio.Encontrar(t => t.Id == id);
         if(ticket == null)
         {
-            throw new ArgumentException("Ticket no encontrado");
+            throw new ExcepcionEntidadNoEncontrada("Ticket no encontrado");
         }
 
         return ticket;
@@ -47,7 +48,14 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
         var ticket = repositorio.Encontrar(t => t.Id == id);
         if(ticket == null)
         {
-            throw new ArgumentException("Ticket no encontrado");
+            throw new ExcepcionEntidadNoEncontrada("Ticket no encontrado");
+        }
+
+        ValidarFechaFutura(fechaVisita);
+
+        if(tipoTicket == TipoTicket.EventoEspecial && eventoId.HasValue)
+        {
+            ValidarEventoParaTicketEspecial(eventoId.Value);
         }
 
         ticket.CuentaId = cuentaId;
@@ -60,40 +68,38 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
 
     public void EliminarTicket(int id)
     {
+        var ticket = repositorio.Encontrar(t => t.Id == id);
+        if(ticket == null)
+        {
+            throw new ExcepcionEntidadNoEncontrada("Ticket no encontrado");
+        }
+
         repositorio.Eliminar(t => t.Id == id);
     }
 
     private void ValidarFechaFutura(DateTime fechaVisita)
     {
         var fechaActual = servicioFechaHora.ObtenerFechaActual();
-        if(fechaVisita <= fechaActual)
+        if(fechaVisita.Date <= fechaActual.Date)
         {
             throw new ArgumentException("La fecha de visita debe ser futura");
         }
     }
 
-    private void ValidarEventoParaTicketEspecial(TipoTicket tipoTicket, int? eventoId)
+    private void ValidarEventoParaTicketEspecial(int eventoId)
     {
-        if(tipoTicket == TipoTicket.EventoEspecial)
+        var evento = repositorioEvento.Encontrar(e => e.Id == eventoId);
+        if(evento == null)
         {
-            if(!eventoId.HasValue)
-            {
-                throw new ArgumentException("Evento requerido para entradas especiales");
-            }
+            throw new ExcepcionEntidadNoEncontrada("Evento no encontrado");
+        }
 
-            var evento = repositorioEvento.Encontrar(e => e.Id == eventoId.Value);
-            if(evento == null)
-            {
-                throw new ArgumentException("Evento no encontrado");
-            }
+        var ticketsVendidos = repositorio.ObtenerTodos()
+            .Count(t => t.EventoId == eventoId && t.EsValido);
 
-            var ticketsVendidos = repositorio.ObtenerTodos()
-                .Count(t => t.EventoId == eventoId.Value && t.EsValido);
-
-            if(ticketsVendidos >= evento.AforoMaximo)
-            {
-                throw new InvalidOperationException("Aforo completo para este evento");
-            }
+        if(ticketsVendidos >= evento.AforoMaximo)
+        {
+            throw new InvalidOperationException("Aforo completo para este evento");
         }
     }
 
