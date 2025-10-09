@@ -512,4 +512,38 @@ public class ServicioAccesoTest
         Assert.IsFalse(resultado.AccesoPermitido);
         Assert.AreEqual("No se encontró el evento asociado al ticket", resultado.Mensaje);
     }
+
+    [TestMethod]
+    public void ObtenerAforoAtraccion_ConVisitantesActuales_RetornaAforoCalculado()
+    {
+        // Arrange
+        var atraccionId = 1;
+        var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.MontañaRusa, 12, 20, "Test") { Id = atraccionId };
+
+        var registros = new List<RegistroVisita>
+        {
+            new() { AtraccionId = atraccionId, FechaEgreso = null },
+            new() { AtraccionId = atraccionId, FechaEgreso = null },
+            new() { AtraccionId = atraccionId, FechaEgreso = null },
+            new() { AtraccionId = atraccionId, FechaEgreso = DateTime.Now },
+            new() { AtraccionId = 2, FechaEgreso = null }
+        };
+
+        _repoAtraccionesMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
+            .Returns(atraccion);
+        _repoRegistrosMock!.Setup(r => r.ObtenerTodos()).Returns(registros);
+
+        // Act
+        var resultado = _servicio!.ObtenerAforoAtraccion(atraccionId);
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(atraccionId, resultado.AtraccionId);
+        Assert.AreEqual("Montaña Rusa", resultado.NombreAtraccion);
+        Assert.AreEqual(20, resultado.CapacidadTotal);
+        Assert.AreEqual(3, resultado.VisitantesActuales);
+        Assert.AreEqual(17, resultado.CapacidadRestante);
+        Assert.AreEqual(15.0, resultado.PorcentajeOcupacion);
+        Assert.IsFalse(resultado.AforoCompleto);
+    }
 }
