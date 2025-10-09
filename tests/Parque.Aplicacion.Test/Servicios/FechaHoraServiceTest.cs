@@ -1,74 +1,123 @@
+﻿using Moq;
 using Parque.Aplicacion.Servicios;
+using Parque.Dominio;
+using Parque.Infraestructura.Repositorios;
 
 namespace Parque.Aplicacion.Test.Servicios;
 
 [TestClass]
 public class FechaHoraServiceTest
 {
-    [TestMethod]
-    public void ObtenerHora_SinConfigurar_DeberiaRetornarTiempoDelSistema()
+    private Mock<IRepositorio<ConfiguracionFechaHora>>? _mockRepositorio;
+    private ServicioFechaHora? _servicio;
+
+    [TestInitialize]
+    public void Setup()
     {
-        // Arrange
-        var servicio = new ServicioFechaHora();
-        var antes = DateTime.Now;
-
-        // Act
-        var resultado = servicio.ObtenerFechaActual();
-
-        // Assert
-        Assert.IsTrue(resultado >= antes && resultado <= DateTime.Now.AddSeconds(1));
-        Assert.IsFalse(servicio.UsaFechaPersonalizada());
+        _mockRepositorio = new Mock<IRepositorio<ConfiguracionFechaHora>>();
+        _servicio = new ServicioFechaHora(_mockRepositorio.Object);
     }
 
     [TestMethod]
-    public void AsignarFechaPersonalizada_DeberiaConfigurarTiempoPersonalizado()
+    public void ObtenerFechaActual_SinConfiguracion_DeberiaRetornarFechaSistema()
     {
         // Arrange
-        var service = new ServicioFechaHora();
-        var customTime = new DateTime(2025, 9, 2, 14, 45, 0);
+        _mockRepositorio!.Setup(r => r.ObtenerTodos()).Returns([]);
 
         // Act
-        service.ConfigurarFecha(customTime);
-        var result = service.ObtenerFechaActual();
+        var resultado = _servicio!.ObtenerFechaActual();
 
         // Assert
-        Assert.AreEqual(customTime, result);
-        Assert.IsTrue(service.UsaFechaPersonalizada());
+        Assert.IsTrue((DateTime.Now - resultado).TotalSeconds < 1);
     }
 
     [TestMethod]
-    public void ResetToSystemTime_DeberiaBorrarTiempoPersonalizado()
+    public void ConfigurarFecha_PrimeraVez_DeberiaAgregarConfiguracion()
     {
         // Arrange
-        var service = new ServicioFechaHora();
-        var customTime = new DateTime(2025, 9, 2, 14, 45, 0);
-        service.ConfigurarFecha(customTime);
+        var nuevaFecha = new DateTime(2025, 9, 2, 14, 45, 0);
+        var configuracionInicial = new ConfiguracionFechaHora(new DateTime(2025, 9, 1, 10, 0, 0)) { Id = 1 };
+
+        _mockRepositorio!.SetupSequence(r => r.ObtenerTodos())
+            .Returns([configuracionInicial])
+            .Returns([]);
 
         // Act
-        service.ResetearAFechaSistema();
-        var result = service.ObtenerFechaActual();
+        _servicio!.ConfigurarFecha(nuevaFecha);
 
         // Assert
-        Assert.AreNotEqual(customTime, result);
-        Assert.IsFalse(service.UsaFechaPersonalizada());
+        _mockRepositorio.Verify(r => r.Agregar(It.IsAny<ConfiguracionFechaHora>()), Times.Once);
     }
 
     [TestMethod]
-    public void SetCustomTime_ConcurrentAccess_DeberiaMantenerConsistencia()
+    public void ConfigurarFecha_YaExiste_DeberiaEditarConfiguracion()
     {
         // Arrange
-        var service = new ServicioFechaHora();
-        var time1 = new DateTime(2025, 1, 1, 10, 0, 0);
-        var time2 = new DateTime(2025, 12, 31, 23, 59, 0);
+        var fechaAnterior = new DateTime(2025, 9, 2, 14, 45, 0);
+        var nuevaFecha = new DateTime(2025, 9, 2, 16, 30, 0);
+        var configuracionExistente = new ConfiguracionFechaHora(fechaAnterior) { Id = 1 };
+
+        _mockRepositorio!.Setup(r => r.ObtenerTodos()).Returns([configuracionExistente]);
 
         // Act
-        Parallel.Invoke(
-            () => service.ConfigurarFecha(time1),
-            () => service.ConfigurarFecha(time2),
-            () => { var fechaActual = service.ObtenerFechaActual(); });
+        _servicio!.ConfigurarFecha(nuevaFecha);
 
         // Assert
-        var result = service.ObtenerFechaActual();
-        Assert.IsTrue(result == time1 || result == time2);
+        _mockRepositorio.Verify(r => r.Editar(It.Is<ConfiguracionFechaHora>(c => c.FechaHoraConfigurada == nuevaFecha)), Times.Once);
+        _mockRepositorio.Verify(r => r.Agregar(It.IsAny<ConfiguracionFechaHora>()), Times.Never);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(InvalidOperationException))]
+    public void ConfigurarFecha_FechaAnterior_DeberiaLanzarExcepcion()
+    {
+        // Arrange
+        var fechaActual = new DateTime(2025, 9, 2, 14, 45, 0);
+        var fechaAnterior = new DateTime(2025, 9, 1, 10, 0, 0);
+        var configuracionExistente = new ConfiguracionFechaHora(fechaActual) { Id = 1 };
+
+        _mockRepositorio!.Setup(r => r.ObtenerTodos()).Returns([configuracionExistente]);
+
+        // Act
+        _servicio!.ConfigurarFecha(fechaAnterior);
+
+        // Assert se maneja por ExpectedException
+    }
+
+    [TestMethod]
+    public void UsaFechaPersonalizada_ConConfiguracion_DeberiaRetornarTrue()
+    {
+        // Arrange
+        var configuracion = new ConfiguracionFechaHora(DateTime.Now) { Id = 1 };
+        _mockRepositorio!.Setup(r => r.ObtenerTodos()).Returns([configuracion]);
+
+        // Act
+        var resultado = _servicio!.UsaFechaPersonalizada();
+
+        // Assert
+        Assert.IsTrue(resultado);
+    }
+
+    [TestMethod]
+    public void UsaFechaPersonalizada_SinConfiguracion_DeberiaRetornarFalse()
+    {
+        // Arrange
+        _mockRepositorio!.Setup(r => r.ObtenerTodos()).Returns([]);
+
+        // Act
+        var resultado = _servicio!.UsaFechaPersonalizada();
+
+        // Assert
+        Assert.IsFalse(resultado);
+    }
+
+    [TestMethod]
+    public void ResetearAFechaSistema_DeberiaEliminarConfiguracion()
+    {
+        // Arrange & Act
+        _servicio!.ResetearAFechaSistema();
+
+        // Assert
+        _mockRepositorio!.Verify(r => r.Eliminar(It.IsAny<System.Linq.Expressions.Expression<Func<ConfiguracionFechaHora, bool>>>()), Times.Once);
     }
 }

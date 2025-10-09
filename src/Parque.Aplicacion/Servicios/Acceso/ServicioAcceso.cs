@@ -1,4 +1,4 @@
-using Parque.Aplicacion.DTOS;
+﻿using Parque.Aplicacion.DTOS;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
 using Parque.Dominio.Usuarios;
@@ -7,7 +7,8 @@ using Parque.Infraestructura.Repositorios;
 namespace Parque.Aplicacion.Servicios.Acceso;
 
 public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepositorio<Dominio.Ticket> repoTickets,
-    IRepositorio<RegistroVisita> repoRegistros, IRepositorio<Incidencia> repoIncidencias, IRepositorio<Cuenta> repoCuentas, IRepositorio<Evento> repoEvento) : IServicioAcceso
+    IRepositorio<RegistroVisita> repoRegistros, IRepositorio<Incidencia> repoIncidencias, IRepositorio<Cuenta> repoCuentas,
+    IRepositorio<Evento> repoEvento, IServicioFechaHora servicioFechaHora) : IServicioAcceso
 {
     public ValidarAccesoResponse ValidarAcceso(ValidarAccesoRequest request)
     {
@@ -24,7 +25,8 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             return new ValidarAccesoResponse { AccesoPermitido = false, Mensaje = "Atracción no encontrada" };
         }
 
-        if(ticket.FechaVisita.Date != DateTime.Today)
+        var fechaActual = servicioFechaHora.ObtenerFechaActual().Date;
+        if(ticket.FechaVisita.Date != fechaActual)
         {
             return new ValidarAccesoResponse
             {
@@ -115,7 +117,8 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
         }
 
         // 4. Validar que el evento esté activo (dentro del rango de fechas)
-        if(DateTime.Today < evento.Inicio.Date || DateTime.Today > evento.Fin.Date)
+        var fechaActual = servicioFechaHora.ObtenerFechaActual().Date;
+        if(fechaActual < evento.Inicio.Date || fechaActual > evento.Fin.Date)
         {
             return new ValidarAccesoResponse
             {
@@ -190,7 +193,8 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
     private ValidarAccesoResponse? ValidarIncidencias(ValidarAccesoRequest request, AtraccionParque atraccion)
     {
         var incidencias = repoIncidencias.Encontrar(d => d.AtraccionId == request.AtraccionId);
-        if(incidencias != null && !incidencias.EstaDisponible())
+        var fechaActual = servicioFechaHora.ObtenerFechaActual();
+        if(incidencias != null && !incidencias.EstaDisponible(fechaActual))
         {
             return new ValidarAccesoResponse
             {
@@ -239,7 +243,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
         {
             AtraccionId = atraccionId,
             Identificador = codigoTicket,
-            FechaIngreso = DateTime.Now
+            FechaIngreso = servicioFechaHora.ObtenerFechaActual()
         };
 
         repoRegistros.Agregar(registro);
@@ -255,7 +259,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             throw new ArgumentException("No hay ingreso registrado o ya se registró el egreso");
         }
 
-        registro.FechaEgreso = DateTime.Now;
+        registro.FechaEgreso = servicioFechaHora.ObtenerFechaActual();
         repoRegistros.Editar(registro);
         return registro;
     }

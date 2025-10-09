@@ -23,7 +23,7 @@ builder.Services.AddControllers(options =>
 });
 
 // Servicios de Aplicacion
-builder.Services.AddSingleton<IServicioFechaHora, ServicioFechaHora>();
+builder.Services.AddScoped<IServicioFechaHora, ServicioFechaHora>();
 builder.Services.AddScoped<IServicioCuenta, ServicioCuenta>();
 builder.Services.AddScoped<IServicioAtracciones, ServicioAtracciones>();
 builder.Services.AddScoped<IServicioTicket, ServicioTicket>();
