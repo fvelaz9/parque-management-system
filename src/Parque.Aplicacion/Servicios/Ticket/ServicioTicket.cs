@@ -3,7 +3,8 @@ using Parque.Infraestructura.Repositorios;
 
 namespace Parque.Aplicacion.Servicios.Ticket;
 
-public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositorio<Evento> repositorioEvento) : IServicioTicket
+public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositorio<Evento> repositorioEvento,
+    IServicioFechaHora servicioFechaHora) : IServicioTicket
 {
     public Dominio.Ticket CrearTicketGeneral(Guid cuentaId, DateTime fechaVisita)
     {
@@ -64,7 +65,8 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
 
     private void ValidarFechaFutura(DateTime fechaVisita)
     {
-        if(fechaVisita <= DateTime.Now)
+        var fechaActual = servicioFechaHora.ObtenerFechaActual();
+        if(fechaVisita <= fechaActual)
         {
             throw new ArgumentException("La fecha de visita debe ser futura");
         }
@@ -104,7 +106,7 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
             EventoId = eventoId,
             TipoEntrada = tipo,
             Codigo = Guid.NewGuid(),
-            FechaEmision = DateTime.Now,
+            FechaEmision = servicioFechaHora.ObtenerFechaActual(),
             EsValido = true
         };
     }

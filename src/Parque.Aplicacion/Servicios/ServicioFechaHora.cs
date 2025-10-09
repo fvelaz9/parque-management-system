@@ -1,42 +1,48 @@
-﻿namespace Parque.Aplicacion.Servicios;
-public class ServicioFechaHora : IServicioFechaHora
+﻿using Parque.Dominio;
+using Parque.Infraestructura.Repositorios;
+
+namespace Parque.Aplicacion.Servicios;
+
+public class ServicioFechaHora(IRepositorio<ConfiguracionFechaHora> repositorio) : IServicioFechaHora
 {
-    private DateTime? _fechaPersonalizada;
-    private readonly object _lock = new();
-
-    public ServicioFechaHora()
-    {
-    }
-
     public DateTime ObtenerFechaActual()
     {
-        lock(_lock)
-        {
-            return _fechaPersonalizada ?? DateTime.Now;
-        }
+        var configuracion = repositorio.ObtenerTodos().FirstOrDefault();
+        return configuracion?.FechaHoraConfigurada ?? DateTime.Now;
     }
 
     public void ConfigurarFecha(DateTime customTime)
     {
-        lock(_lock)
+        var fechaActual = ObtenerFechaActual();
+
+        // Validar que solo avance hacia adelante
+        if(customTime < fechaActual)
         {
-            _fechaPersonalizada = customTime;
+            throw new InvalidOperationException(
+                $"No se puede configurar una fecha anterior. Fecha actual: {fechaActual:yyyy-MM-ddTHH:mm}, Fecha solicitada: {customTime:yyyy-MM-ddTHH:mm}");
+        }
+
+        var configuracion = repositorio.ObtenerTodos().FirstOrDefault();
+
+        if(configuracion == null)
+        {
+            configuracion = new ConfiguracionFechaHora(customTime);
+            repositorio.Agregar(configuracion);
+        }
+        else
+        {
+            configuracion.FechaHoraConfigurada = customTime;
+            repositorio.Editar(configuracion);
         }
     }
 
     public bool UsaFechaPersonalizada()
     {
-        lock(_lock)
-        {
-            return _fechaPersonalizada.HasValue;
-        }
+        return repositorio.ObtenerTodos().Any();
     }
 
     public void ResetearAFechaSistema()
     {
-        lock(_lock)
-        {
-            _fechaPersonalizada = null;
-        }
+        repositorio.Eliminar(c => true);
     }
 }

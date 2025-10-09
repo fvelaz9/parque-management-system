@@ -56,8 +56,8 @@ public class IncidenciaTest
     public void ConstructorConParametros_DeberiaAsignarPropiedades()
     {
         var descripcion = "Falla";
-        var fechaInicio = DateTime.Now;
-        var fechaFin = DateTime.Now.AddHours(2);
+        var fechaInicio = new DateTime(2025, 10, 8, 10, 0, 0);
+        var fechaFin = new DateTime(2025, 10, 8, 12, 0, 0);
         var atraccionId = 5;
 
         var incidencia = new Incidencia(descripcion, fechaInicio, fechaFin, atraccionId);
@@ -71,16 +71,42 @@ public class IncidenciaTest
     [TestMethod]
     public void EstaActiva_DeberiaRetornarVerdaderoSiNoHaLlegadoFechaFin()
     {
-        var incidencia = new Incidencia("Test", DateTime.Now, DateTime.Now.AddHours(1), 1);
+        var fechaReporte = new DateTime(2025, 10, 8, 10, 0, 0);
+        var fechaResolucion = new DateTime(2025, 10, 8, 12, 0, 0);
+        var fechaReferencia = new DateTime(2025, 10, 8, 11, 0, 0);
+        var incidencia = new Incidencia("Test", fechaReporte, fechaResolucion, 1);
         incidencia.Disponible = true;
-        Assert.IsTrue(incidencia.EstaActiva());
+        Assert.IsTrue(incidencia.EstaActiva(fechaReferencia));
         Assert.IsTrue(incidencia.Disponible);
+    }
+
+    [TestMethod]
+    public void EstaActiva_DeberiaRetornarFalsoSiYaPasoFechaFin()
+    {
+        var fechaReporte = new DateTime(2025, 10, 8, 10, 0, 0);
+        var fechaResolucion = new DateTime(2025, 10, 8, 12, 0, 0);
+        var fechaReferencia = new DateTime(2025, 10, 8, 13, 0, 0);
+        var incidencia = new Incidencia("Test", fechaReporte, fechaResolucion, 1);
+        Assert.IsFalse(incidencia.EstaActiva(fechaReferencia));
     }
 
     [TestMethod]
     public void EstaDisponible_DeberiaRetornarVerdaderoSiYaPasoFechaFin()
     {
-        var incidencia = new Incidencia("Test", DateTime.Now.AddHours(-2), DateTime.Now.AddHours(-1), 1);
-        Assert.IsTrue(incidencia.EstaDisponible());
+        var fechaReporte = new DateTime(2025, 10, 8, 10, 0, 0);
+        var fechaResolucion = new DateTime(2025, 10, 8, 12, 0, 0);
+        var fechaReferencia = new DateTime(2025, 10, 8, 13, 0, 0);
+        var incidencia = new Incidencia("Test", fechaReporte, fechaResolucion, 1);
+        Assert.IsTrue(incidencia.EstaDisponible(fechaReferencia));
+    }
+
+    [TestMethod]
+    public void EstaDisponible_DeberiaRetornarFalsoSiNoHaLlegadoFechaFin()
+    {
+        var fechaReporte = new DateTime(2025, 10, 8, 10, 0, 0);
+        var fechaResolucion = new DateTime(2025, 10, 8, 12, 0, 0);
+        var fechaReferencia = new DateTime(2025, 10, 8, 11, 0, 0);
+        var incidencia = new Incidencia("Test", fechaReporte, fechaResolucion, 1);
+        Assert.IsFalse(incidencia.EstaDisponible(fechaReferencia));
     }
 }
