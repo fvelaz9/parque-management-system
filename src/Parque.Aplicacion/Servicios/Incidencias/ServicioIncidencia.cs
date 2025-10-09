@@ -11,6 +11,11 @@ public class ServicioIncidencia(IRepositorio<Incidencia> repoIncidencias, IRepos
 {
     public Incidencia CrearIncidencia(CrearIncidenciaRequest request)
     {
+        if(string.IsNullOrWhiteSpace(request.Descripcion))
+        {
+            throw new ArgumentException("La descripción de la incidencia es requerida");
+        }
+
         var atraccion = repoAtracciones.Encontrar(a => a.Id == request.AtraccionId);
         if(atraccion == null)
         {
