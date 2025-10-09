@@ -1,5 +1,6 @@
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Moq;
+using Parque.Aplicacion.Servicios;
 using Parque.Aplicacion.Servicios.Gamificacion;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
@@ -19,8 +20,10 @@ public class ServicioPuntuacionTest
     private Mock<IRepositorio<Cuenta>>? _repoCuentasMock;
     private Mock<IRepositorio<Evento>>? _repoEventosMock;
     private Mock<IRepositorio<ConfiguracionEstrategia>>? _repoConfiguracionMock;
+    private Mock<IServicioFechaHora>? _servicioFechaHoraMock;
     private Mock<IEstrategiaPuntuacion>? _estrategiaMock;
     private ServicioPuntuacion? _servicio;
+    private readonly DateTime _fechaActual = new(2025, 10, 8, 12, 0, 0);
 
     [TestInitialize]
     public void Setup()
@@ -32,7 +35,12 @@ public class ServicioPuntuacionTest
         _repoCuentasMock = new Mock<IRepositorio<Cuenta>>(MockBehavior.Strict);
         _repoEventosMock = new Mock<IRepositorio<Evento>>(MockBehavior.Strict);
         _repoConfiguracionMock = new Mock<IRepositorio<ConfiguracionEstrategia>>(MockBehavior.Strict);
+        _servicioFechaHoraMock = new Mock<IServicioFechaHora>(MockBehavior.Loose); // ⚠️ CAMBIO: Loose en lugar de Strict
         _estrategiaMock = new Mock<IEstrategiaPuntuacion>(MockBehavior.Strict);
+
+        // Configurar fecha por defecto para TODOS los tests
+        _servicioFechaHoraMock.Setup(s => s.ObtenerFechaActual())
+            .Returns(_fechaActual);
 
         var estrategias = new List<IEstrategiaPuntuacion> { _estrategiaMock.Object };
 
@@ -44,7 +52,8 @@ public class ServicioPuntuacionTest
             _repoCuentasMock.Object,
             _repoEventosMock.Object,
             _repoConfiguracionMock.Object,
-            estrategias);
+            estrategias,
+            _servicioFechaHoraMock.Object);
     }
 
     [TestCleanup]
@@ -108,9 +117,11 @@ public class ServicioPuntuacionTest
     {
         var registroVisitaId = 1;
         var cuentaId = Guid.NewGuid();
+        var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
         var registro = new RegistroVisita { Id = registroVisitaId, AtraccionId = 1, Identificador = Guid.NewGuid() };
         var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.Simulador, 12, 20, "Rápida");
-        var ticket = new Dominio.Ticket(cuentaId, DateTime.Today.AddDays(1), 1, TipoTicket.General);
+        var ticket = new Dominio.Ticket(cuentaId, fechaVisita, 1, TipoTicket.General, _fechaActual);
+
         _repoRegistrosMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<RegistroVisita, bool>>>()))
             .Returns(registro);
         _repoAtraccionesMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
@@ -128,7 +139,8 @@ public class ServicioPuntuacionTest
     {
         var registroVisitaId = 1;
         var cuentaId = Guid.NewGuid();
-        var fechaRegistro = DateTime.Today;
+        var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
+        var fechaRegistro = new DateTime(2025, 10, 8, 10, 0, 0);
         var registro = new RegistroVisita
         {
             Id = registroVisitaId,
@@ -137,7 +149,7 @@ public class ServicioPuntuacionTest
             FechaIngreso = fechaRegistro
         };
         var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.Simulador, 12, 20, "Rápida");
-        var ticket = new Dominio.Ticket(cuentaId, DateTime.Today.AddDays(1), 1, TipoTicket.General);
+        var ticket = new Dominio.Ticket(cuentaId, fechaVisita, 1, TipoTicket.General, _fechaActual);
         var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("test@test.com"), "password123", Rol.Visitante);
         var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
         typeof(Cuenta).GetProperty("Visitante")!.SetValue(cuenta, visitante);
@@ -146,6 +158,7 @@ public class ServicioPuntuacionTest
         var eventosVacios = new List<Evento>();
         var configuraciones = new List<ConfiguracionEstrategia> { new ConfiguracionEstrategia("TestStrategy") };
         var puntuacionesVacias = new List<PuntuacionVisitante>();
+
         _repoRegistrosMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<RegistroVisita, bool>>>()))
             .Returns(registro);
         _repoAtraccionesMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
@@ -166,7 +179,7 @@ public class ServicioPuntuacionTest
         _servicio!.CalcularYRegistrarPuntos(registroVisitaId);
 
         _repoPuntuacionesMock.Verify(r => r.Agregar(It.Is<PuntuacionVisitante>(
-            p => p.VisitanteId == visitanteId && p.Fecha == fechaRegistro)), Times.Once);
+            p => p.VisitanteId == visitanteId && p.Fecha == fechaRegistro.Date)), Times.Once);
     }
 
     [TestMethod]
@@ -174,8 +187,9 @@ public class ServicioPuntuacionTest
     {
         var registroVisitaId = 1;
         var cuentaId = Guid.NewGuid();
-        var visitanteId = Guid.NewGuid();
-        var fechaRegistro = DateTime.Today;
+        var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
+        var fechaRegistro = new DateTime(2025, 10, 8, 10, 0, 0);
+
         var registro = new RegistroVisita
         {
             Id = registroVisitaId,
@@ -184,15 +198,16 @@ public class ServicioPuntuacionTest
             FechaIngreso = fechaRegistro
         };
         var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.Simulador, 12, 20, "Rápida");
-        var ticket = new Dominio.Ticket(cuentaId, DateTime.Today.AddDays(1), 1, TipoTicket.General);
+        var ticket = new Dominio.Ticket(cuentaId, fechaVisita, 1, TipoTicket.General, _fechaActual);
         var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("test@test.com"), "password123", Rol.Visitante);
         var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
         typeof(Cuenta).GetProperty("Visitante")!.SetValue(cuenta, visitante);
-        var puntuacionExistente = new PuntuacionVisitante(visitante.Id, fechaRegistro, 30);
+        var puntuacionExistente = new PuntuacionVisitante(visitante.Id, fechaRegistro.Date, 30);
         var registrosVacios = new List<RegistroVisita>();
         var eventosVacios = new List<Evento>();
         var configuraciones = new List<ConfiguracionEstrategia> { new ConfiguracionEstrategia("TestStrategy") };
         var puntuaciones = new List<PuntuacionVisitante> { puntuacionExistente };
+
         _repoRegistrosMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<RegistroVisita, bool>>>()))
             .Returns(registro);
         _repoAtraccionesMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
@@ -228,8 +243,8 @@ public class ServicioPuntuacionTest
     {
         var puntuaciones = new List<PuntuacionVisitante>
         {
-            new PuntuacionVisitante(Guid.NewGuid(), DateTime.Today, 100),
-            new PuntuacionVisitante(Guid.NewGuid(), DateTime.Today, 80)
+            new PuntuacionVisitante(Guid.NewGuid(), _fechaActual.Date, 100),
+            new PuntuacionVisitante(Guid.NewGuid(), _fechaActual.Date, 80)
         };
         _repoPuntuacionesMock!.Setup(r => r.ObtenerTodos()).Returns(puntuaciones);
 
@@ -247,7 +262,7 @@ public class ServicioPuntuacionTest
         var puntuaciones = new List<PuntuacionVisitante>
         {
             new PuntuacionVisitante(Guid.NewGuid(), fecha, 100),
-            new PuntuacionVisitante(Guid.NewGuid(), DateTime.Today, 80)
+            new PuntuacionVisitante(Guid.NewGuid(), _fechaActual.Date, 80)
         };
         _repoPuntuacionesMock!.Setup(r => r.ObtenerTodos()).Returns(puntuaciones);
 
@@ -262,9 +277,9 @@ public class ServicioPuntuacionTest
     {
         var puntuaciones = new List<PuntuacionVisitante>
         {
-            new PuntuacionVisitante(Guid.NewGuid(), DateTime.Today, 100),
-            new PuntuacionVisitante(Guid.NewGuid(), DateTime.Today, 90),
-            new PuntuacionVisitante(Guid.NewGuid(), DateTime.Today, 80)
+            new PuntuacionVisitante(Guid.NewGuid(), _fechaActual.Date, 100),
+            new PuntuacionVisitante(Guid.NewGuid(), _fechaActual.Date, 90),
+            new PuntuacionVisitante(Guid.NewGuid(), _fechaActual.Date, 80)
         };
         _repoPuntuacionesMock!.Setup(r => r.ObtenerTodos()).Returns(puntuaciones);
 
@@ -280,9 +295,9 @@ public class ServicioPuntuacionTest
     {
         var puntuaciones = new List<PuntuacionVisitante>
         {
-            new PuntuacionVisitante(Guid.NewGuid(), DateTime.Today, 50),
-            new PuntuacionVisitante(Guid.NewGuid(), DateTime.Today, 150),
-            new PuntuacionVisitante(Guid.NewGuid(), DateTime.Today, 100)
+            new PuntuacionVisitante(Guid.NewGuid(), _fechaActual.Date, 50),
+            new PuntuacionVisitante(Guid.NewGuid(), _fechaActual.Date, 150),
+            new PuntuacionVisitante(Guid.NewGuid(), _fechaActual.Date, 100)
         };
         _repoPuntuacionesMock!.Setup(r => r.ObtenerTodos()).Returns(puntuaciones);
 
@@ -380,6 +395,7 @@ public class ServicioPuntuacionTest
     public void ObtenerEstrategiaActiva_SinEstrategiasRegistradas_LanzaExcepcion()
     {
         var configuracionesVacias = new List<ConfiguracionEstrategia>();
+        var servicioFechaHoraMockNuevo = new Mock<IServicioFechaHora>(MockBehavior.Loose); // ⚠️ CAMBIO: Loose
 
         var servicioSinEstrategias = new ServicioPuntuacion(
             _repoAtraccionesMock!.Object,
@@ -389,7 +405,8 @@ public class ServicioPuntuacionTest
             _repoCuentasMock!.Object,
             _repoEventosMock!.Object,
             _repoConfiguracionMock!.Object,
-            []);
+            [],
+            servicioFechaHoraMockNuevo.Object);
 
         _repoConfiguracionMock.Setup(r => r.ObtenerTodos()).Returns(configuracionesVacias);
 

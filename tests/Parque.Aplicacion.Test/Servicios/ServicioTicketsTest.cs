@@ -1,5 +1,6 @@
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Moq;
+using Parque.Aplicacion.Servicios;
 using Parque.Aplicacion.Servicios.Ticket;
 using Parque.Dominio;
 using Parque.Infraestructura.Repositorios;
@@ -11,20 +12,27 @@ public class ServicioTicketsTest
 {
     private readonly Mock<IRepositorio<Ticket>> _repositorioMock;
     private readonly Mock<IRepositorio<Evento>> _repositorioEventoMock;
+    private readonly Mock<IServicioFechaHora> _servicioFechaHoraMock;
     private readonly ServicioTicket _servicio;
+    private readonly DateTime _fechaActual = new(2025, 10, 8, 12, 0, 0);
 
     public ServicioTicketsTest()
     {
         _repositorioMock = new Mock<IRepositorio<Ticket>>();
         _repositorioEventoMock = new Mock<IRepositorio<Evento>>();
-        _servicio = new ServicioTicket(_repositorioMock.Object, _repositorioEventoMock.Object);
+        _servicioFechaHoraMock = new Mock<IServicioFechaHora>();
+        _servicioFechaHoraMock.Setup(s => s.ObtenerFechaActual()).Returns(_fechaActual);
+        _servicio = new ServicioTicket(
+            _repositorioMock.Object,
+            _repositorioEventoMock.Object,
+            _servicioFechaHoraMock.Object);
     }
 
     [TestMethod]
     public void CrearTicketGeneralValido()
     {
         var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
-        DateTime fechaVisita = DateTime.Now.AddDays(1);
+        var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
 
         _repositorioMock.Setup(r => r.Agregar(It.IsAny<Dominio.Ticket>()));
         var ticket = _servicio.CrearTicketGeneral(cuentaId, fechaVisita);
@@ -41,7 +49,7 @@ public class ServicioTicketsTest
     public void CrearTicketGeneralConFechaInvalida()
     {
         var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
-        DateTime fechaVisita = DateTime.Now.AddMinutes(-5);
+        var fechaVisita = new DateTime(2025, 10, 7, 12, 0, 0); // Fecha anterior a _fechaActual
 
         _servicio.CrearTicketGeneral(cuentaId, fechaVisita);
     }
@@ -50,11 +58,9 @@ public class ServicioTicketsTest
     [ExpectedException(typeof(ArgumentException))]
     public void CrearTicketEventoEspecialFechaInvalida()
     {
-        var fechaAhora = DateTime.Now;
         var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
+        var fechaPasada = new DateTime(2025, 10, 7, 12, 0, 0); // Fecha anterior
 
-        _servicio.CrearTicketGeneral(cuentaId, fechaAhora);
-        var fechaPasada = DateTime.Now.AddDays(-1);
         _servicio.CrearTicketEventoEspecial(cuentaId, fechaPasada, 1);
     }
 
@@ -62,9 +68,12 @@ public class ServicioTicketsTest
     [ExpectedException(typeof(InvalidOperationException))]
     public void CrearTicketEventoEspecialAforoCompleto()
     {
-        var fechaVisita = DateTime.Now.AddDays(2);
-        var evento = new Evento("Show", "Concierto", DateTime.Now, DateTime.Now.AddDays(10), 2, 50, EstadoEvento.Programado);
+        var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
+        var fechaInicioEvento = new DateTime(2025, 10, 8, 10, 0, 0);
+        var fechaFinEvento = new DateTime(2025, 10, 18, 10, 0, 0);
+        var evento = new Evento("Show", "Concierto", fechaInicioEvento, fechaFinEvento, 2, 50, EstadoEvento.Programado);
         var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
+
         _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
             .Returns(evento);
 
@@ -83,7 +92,8 @@ public class ServicioTicketsTest
     public void CrearTicketEventoEspecialEventoNoEncontrado()
     {
         var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
-        var fechaVisita = DateTime.Now.AddDays(5);
+        var fechaVisita = new DateTime(2025, 10, 13, 14, 0, 0);
+
         _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
             .Returns(default(Evento));
 
@@ -128,12 +138,13 @@ public class ServicioTicketsTest
     public void ModificarTicket_ConIdExistente_DeberiaModificarTicket()
     {
         var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
-        var ticketExistente = new Ticket { Id = 1, CuentaId = cuentaId, FechaVisita = DateTime.Now };
+        var fechaActualTicket = new DateTime(2025, 10, 8, 10, 0, 0);
+        var ticketExistente = new Ticket { Id = 1, CuentaId = cuentaId, FechaVisita = fechaActualTicket };
         _repositorioMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Ticket, bool>>>()))
             .Returns(ticketExistente);
 
         var cuentaId2 = new Guid("12345678-1234-1234-1234-123456789abc");
-        var nuevaFechaVisita = DateTime.Now.AddDays(2);
+        var nuevaFechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
         var nuevoEventoId = 2;
         var nuevoEventoTipo = TipoTicket.EventoEspecial;
 

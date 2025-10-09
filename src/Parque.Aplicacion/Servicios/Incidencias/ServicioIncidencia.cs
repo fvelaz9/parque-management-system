@@ -1,11 +1,12 @@
-using Parque.Aplicacion.DTOS;
+﻿using Parque.Aplicacion.DTOS;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
 using Parque.Infraestructura.Repositorios;
 
 namespace Parque.Aplicacion.Servicios.Incidencias;
 
-public class ServicioIncidencia(IRepositorio<Incidencia> repoIncidencias, IRepositorio<AtraccionParque> repoAtracciones) : IServicioIncidencia
+public class ServicioIncidencia(IRepositorio<Incidencia> repoIncidencias, IRepositorio<AtraccionParque> repoAtracciones,
+    IServicioFechaHora servicioFechaHora) : IServicioIncidencia
 {
     public Incidencia CrearIncidencia(CrearIncidenciaRequest request)
     {
@@ -15,7 +16,8 @@ public class ServicioIncidencia(IRepositorio<Incidencia> repoIncidencias, IRepos
             throw new ArgumentException("Atraccion no encontrada");
         }
 
-        if(request.FechaResolucionEstimada <= DateTime.Now)
+        var fechaActual = servicioFechaHora.ObtenerFechaActual();
+        if(request.FechaResolucionEstimada <= fechaActual)
         {
             throw new ArgumentException("La fecha de resolucion debe ser futura");
         }
@@ -23,7 +25,7 @@ public class ServicioIncidencia(IRepositorio<Incidencia> repoIncidencias, IRepos
         var incidencia = new Incidencia
         {
             Descripcion = request.Descripcion,
-            FechaReporte = DateTime.Now,
+            FechaReporte = fechaActual,
             FechaResolucionEstimada = request.FechaResolucionEstimada,
             AtraccionId = atraccion.Id,
         };
@@ -42,7 +44,7 @@ public class ServicioIncidencia(IRepositorio<Incidencia> repoIncidencias, IRepos
         }
 
         var incidenciaActiva = repoIncidencias.ObtenerTodos()
-            .FirstOrDefault(i => i.AtraccionId == atraccionId && i.EstaActiva());
+            .FirstOrDefault(i => i.AtraccionId == atraccionId && i.EstaActiva(servicioFechaHora.ObtenerFechaActual()));
         if(incidenciaActiva == null)
         {
             atraccion.Estado = EstadoAtraccion.Disponible;

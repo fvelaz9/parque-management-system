@@ -8,12 +8,12 @@ public class Ticket
     public int? EventoId { get; set; }
     public TipoTicket TipoEntrada { get; set; }
     public Guid Codigo { get; set; } = Guid.NewGuid();
-    public DateTime FechaEmision { get; set; } = DateTime.Now;
+    public DateTime FechaEmision { get; set; }
     public bool EsValido { get; set; } = true;
 
-    public Ticket(Guid cuentaId, DateTime fechaVisita, int eventoId, TipoTicket tipoEntrada)
+    public Ticket(Guid cuentaId, DateTime fechaVisita, int eventoId, TipoTicket tipoEntrada, DateTime fechaActual)
     {
-        if(fechaVisita.Date < DateTime.Today)
+        if(fechaVisita.Date < fechaActual.Date)
         {
             throw new ArgumentException("La fecha de visita debe ser futura");
         }
@@ -23,7 +23,7 @@ public class Ticket
         EventoId = eventoId;
         TipoEntrada = tipoEntrada;
         Codigo = Guid.NewGuid();
-        FechaEmision = DateTime.Now;
+        FechaEmision = fechaActual;
         EsValido = true;
     }
 
@@ -36,8 +36,8 @@ public class Ticket
         EsValido = false;
     }
 
-    public bool EstaVigente()
+    public bool EstaVigente(DateTime fechaReferencia)
     {
-        return EsValido && FechaVisita.Date >= DateTime.Now.Date;
+        return EsValido && FechaVisita.Date >= fechaReferencia.Date;
     }
 }
