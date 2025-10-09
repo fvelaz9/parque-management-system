@@ -41,14 +41,14 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
     [AuthorizationFilter("Administrador")]
     public IActionResult Update(int id, [FromBody] AtraccionParque atraccion)
     {
-        servicioAtracciones.ModificarAtraccion(
+        var modificada = servicioAtracciones.ModificarAtraccion(
             id,
             atraccion.Nombre,
             atraccion.Tipo,
             atraccion.EdadMinima,
             atraccion.Capacidad,
             atraccion.Descripcion);
-        return NoContent();
+        return Ok(modificada);
     }
 
     [HttpDelete("{id}")]
@@ -76,14 +76,7 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
     [AuthorizationFilter("any")]
     public IActionResult ObtenerAforo(int id)
     {
-        try
-        {
-            var aforo = servicioAtracciones.ObtenerAforoActual(id);
-            return Ok(aforo);
-        }
-        catch(ArgumentException ex)
-        {
-            return NotFound(new { mensaje = ex.Message });
-        }
+        var aforo = servicioAtracciones.ObtenerAforoActual(id);
+        return Ok(aforo);
     }
 }

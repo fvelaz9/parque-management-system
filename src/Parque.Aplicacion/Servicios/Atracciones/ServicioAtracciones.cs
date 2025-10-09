@@ -10,10 +10,7 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRep
 
     public AtraccionParque CrearAtraccion(string nombre, TipoAtraccion tipo, int edadMinima, int capacidad, string descripcion)
     {
-        if(capacidad <= 0)
-        {
-            throw new ArgumentException("La capacidad debe ser mayor a 0");
-        }
+        ValidarDatosAtraccion(nombre, descripcion, edadMinima, capacidad);
 
         var atraccion = new AtraccionParque(nombre, tipo, edadMinima, capacidad, descripcion);
         _repositorio.Agregar(atraccion);
@@ -25,13 +22,15 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRep
     public AtraccionParque? BuscarAtraccion(int id) =>
         _repositorio.Encontrar(a => a.Id == id);
 
-    public void ModificarAtraccion(int id, string nombre, TipoAtraccion tipo, int edadMinima, int capacidad, string descripcion)
+    public AtraccionParque ModificarAtraccion(int id, string nombre, TipoAtraccion tipo, int edadMinima, int capacidad, string descripcion)
     {
         var atraccion = _repositorio.Encontrar(a => a.Id == id);
         if(atraccion == null)
         {
             throw new ArgumentException("Atraccion no encontrada");
         }
+
+        ValidarDatosAtraccion(nombre, descripcion, edadMinima, capacidad);
 
         atraccion.Nombre = nombre;
         atraccion.Tipo = tipo;
@@ -40,6 +39,7 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRep
         atraccion.Descripcion = descripcion;
 
         _repositorio.Editar(atraccion);
+        return atraccion;
     }
 
     public void EliminarAtraccion(int id) =>
@@ -87,5 +87,28 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRep
             CapacidadMaxima = atraccion.Capacidad,
             Disponible = atraccion.Capacidad - aforo
         };
+    }
+
+    private static void ValidarDatosAtraccion(string nombre, string descripcion, int edadMinima, int capacidad)
+    {
+        if(string.IsNullOrWhiteSpace(nombre))
+        {
+            throw new ArgumentException("El nombre de la atracción es requerido");
+        }
+
+        if(string.IsNullOrWhiteSpace(descripcion))
+        {
+            throw new ArgumentException("La descripción de la atracción es requerida");
+        }
+
+        if(edadMinima < 0)
+        {
+            throw new ArgumentException("La edad mínima no puede ser negativa");
+        }
+
+        if(capacidad <= 0)
+        {
+            throw new ArgumentException("La capacidad debe ser mayor a 0");
+        }
     }
 }
