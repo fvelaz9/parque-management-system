@@ -6,8 +6,8 @@ public class TicketsTest
     [TestMethod]
     public void Constructor_Ticket_PropiedadesCorrectamenteInicializadas()
     {
-        var fechaVisita = DateTime.Now;
-        var fechaEmision = DateTime.Now.AddDays(-1);
+        var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
+        var fechaEmision = new DateTime(2025, 10, 8, 10, 0, 0);
         var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
 
         var ticket = new Ticket
@@ -21,6 +21,8 @@ public class TicketsTest
             EsValido = true
         };
 
+        var fechaReferencia = new DateTime(2025, 10, 8, 12, 0, 0);
+
         Assert.AreEqual(1, ticket.Id);
         Assert.AreEqual(cuentaId, ticket.CuentaId);
         Assert.AreEqual(fechaVisita, ticket.FechaVisita);
@@ -28,14 +30,16 @@ public class TicketsTest
         Assert.IsNotNull(ticket.Codigo);
         Assert.AreEqual(fechaEmision, ticket.FechaEmision);
         Assert.IsTrue(ticket.EsValido);
-        Assert.IsTrue(ticket.EstaVigente());
+        Assert.IsTrue(ticket.EstaVigente(fechaReferencia));
     }
 
     [TestMethod]
     public void MarcarComoUsado_DeberiaInvalidarTicket()
     {
         var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
-        var ticket = new Ticket(cuentaId, DateTime.Now.AddDays(1), 1, TipoTicket.General);
+        var fechaActual = new DateTime(2025, 10, 8, 10, 0, 0);
+        var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
+        var ticket = new Ticket(cuentaId, fechaVisita, 1, TipoTicket.General, fechaActual);
         Assert.IsTrue(ticket.EsValido);
 
         ticket.MarcarComoUsado();
@@ -47,12 +51,15 @@ public class TicketsTest
     public void EstaVigente_TicketValidoYFechaFutura_DeberiaSerTrue()
     {
         var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
-        var ticket = new Ticket(cuentaId, DateTime.Now.AddDays(1), 1, TipoTicket.General)
+        var fechaActual = new DateTime(2025, 10, 8, 10, 0, 0);
+        var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
+        var ticket = new Ticket(cuentaId, fechaVisita, 1, TipoTicket.General, fechaActual)
         {
             EsValido = true
         };
 
-        var resultado = ticket.EstaVigente();
+        var fechaReferencia = new DateTime(2025, 10, 9, 12, 0, 0);
+        var resultado = ticket.EstaVigente(fechaReferencia);
 
         Assert.IsTrue(resultado);
     }
@@ -61,12 +68,15 @@ public class TicketsTest
     public void EstaVigente_TicketInvalido_DeberiaSerFalse()
     {
         var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
-        var ticket = new Ticket(cuentaId, DateTime.Now.AddDays(1), 1, TipoTicket.General)
+        var fechaActual = new DateTime(2025, 10, 8, 10, 0, 0);
+        var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
+        var ticket = new Ticket(cuentaId, fechaVisita, 1, TipoTicket.General, fechaActual)
         {
             EsValido = false
         };
 
-        var resultado = ticket.EstaVigente();
+        var fechaReferencia = new DateTime(2025, 10, 9, 12, 0, 0);
+        var resultado = ticket.EstaVigente(fechaReferencia);
 
         Assert.IsFalse(resultado);
     }
@@ -74,13 +84,16 @@ public class TicketsTest
     [TestMethod]
     public void EstaVigente_TicketValidoPeroFechaPasada_DeberiaSerFalse()
     {
+        var fechaVisita = new DateTime(2025, 10, 8, 10, 0, 0);
+        var fechaReferencia = new DateTime(2025, 10, 10, 12, 0, 0);
+
         var ticket = new Ticket
         {
             EsValido = true,
-            FechaVisita = DateTime.Now.AddDays(-1) // Fecha pasada
+            FechaVisita = fechaVisita
         };
 
-        var resultado = ticket.EstaVigente();
+        var resultado = ticket.EstaVigente(fechaReferencia);
 
         Assert.IsFalse(resultado);
     }
@@ -88,13 +101,16 @@ public class TicketsTest
     [TestMethod]
     public void EstaVigente_TicketValidoFechaHoy_DeberiaSerTrue()
     {
+        var fechaVisita = new DateTime(2025, 10, 10, 10, 0, 0);
+        var fechaReferencia = new DateTime(2025, 10, 10, 12, 0, 0);
+
         var ticket = new Ticket
         {
             EsValido = true,
-            FechaVisita = DateTime.Now.Date // Solo la fecha de hoy
+            FechaVisita = fechaVisita
         };
 
-        var resultado = ticket.EstaVigente();
+        var resultado = ticket.EstaVigente(fechaReferencia);
 
         Assert.IsTrue(resultado);
     }
@@ -115,8 +131,10 @@ public class TicketsTest
     {
         var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
         var cuentaId2 = new Guid("12345678-1234-1234-1234-123456777abc");
-        var ticket1 = new Ticket(cuentaId, DateTime.Now.AddDays(1), 1, TipoTicket.General);
-        var ticket2 = new Ticket(cuentaId2, DateTime.Now.AddDays(1), 2, TipoTicket.General);
+        var fechaActual = new DateTime(2025, 10, 8, 10, 0, 0);
+        var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
+        var ticket1 = new Ticket(cuentaId, fechaVisita, 1, TipoTicket.General, fechaActual);
+        var ticket2 = new Ticket(cuentaId2, fechaVisita, 2, TipoTicket.General, fechaActual);
 
         Assert.AreNotEqual(ticket1.Codigo, ticket2.Codigo);
         Assert.AreNotEqual(Guid.Empty, ticket1.Codigo);
@@ -124,14 +142,15 @@ public class TicketsTest
     }
 
     [TestMethod]
-    public void FechaEmision_DeberiaSerAutomatica()
+    public void FechaEmision_DeberiaSerLaFechaProporcionada()
     {
         var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
-        var antes = DateTime.Now.AddSeconds(-1);
+        var fechaActual = new DateTime(2025, 10, 8, 10, 0, 0);
+        var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
 
-        var ticket = new Ticket(cuentaId, DateTime.Now.AddDays(1), 1, TipoTicket.General);
+        var ticket = new Ticket(cuentaId, fechaVisita, 1, TipoTicket.General, fechaActual);
 
-        Assert.IsTrue(ticket.FechaEmision >= antes && ticket.FechaEmision <= DateTime.Now.AddSeconds(1));
+        Assert.AreEqual(fechaActual, ticket.FechaEmision);
     }
 
     [TestMethod]
@@ -158,9 +177,10 @@ public class TicketsTest
     public void Constructor_FechaPasada_DeberiaLanzarExcepcion()
     {
         var cuentaId = Guid.NewGuid();
-        var fechaPasada = DateTime.Now.AddDays(-1);
+        var fechaActual = new DateTime(2025, 10, 10, 10, 0, 0);
+        var fechaPasada = new DateTime(2025, 10, 8, 10, 0, 0);
 
         Assert.ThrowsException<ArgumentException>(
-            () => new Ticket(cuentaId, fechaPasada, 1, TipoTicket.General));
+            () => new Ticket(cuentaId, fechaPasada, 1, TipoTicket.General, fechaActual));
     }
 }

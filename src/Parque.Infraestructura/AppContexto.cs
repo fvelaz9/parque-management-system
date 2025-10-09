@@ -18,6 +18,7 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
     public DbSet<Sesion> Sesiones { get; set; }
     public DbSet<PuntuacionVisitante> PuntuacionesVisitantes { get; set; }
     public DbSet<ConfiguracionEstrategia> ConfiguracionesEstrategia { get; set; }
+    public DbSet<ConfiguracionFechaHora> ConfiguracionFechaHora { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -83,6 +84,12 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
             {
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.EstrategiaActiva).IsRequired().HasMaxLength(50);
+            });
+
+            modelBuilder.Entity<ConfiguracionFechaHora>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.FechaHoraConfigurada).IsRequired();
             });
         });
     }

@@ -21,6 +21,6 @@ public class Incidencia
         AtraccionId = atraccionId;
     }
 
-    public bool EstaActiva() => DateTime.Now < FechaResolucionEstimada;
-    public bool EstaDisponible() => DateTime.Now >= FechaResolucionEstimada;
+    public bool EstaActiva(DateTime fechaReferencia) => fechaReferencia < FechaResolucionEstimada;
+    public bool EstaDisponible(DateTime fechaReferencia) => fechaReferencia >= FechaResolucionEstimada;
 }
