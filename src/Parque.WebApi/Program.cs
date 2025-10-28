@@ -15,7 +15,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-// Repositorio
 builder.Services.AddScoped(typeof(IRepositorio<>), typeof(Repositorio<>));
 
 // Registrar ExceptionFilter globalmente
@@ -23,6 +22,17 @@ builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ExceptionFilter>();
 });
+
+/*builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AngularApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")  // Puerto donde corre Angular
+            .AllowAnyMethod()                       // Permite GET, POST, PUT, DELETE, etc.
+            .AllowAnyHeader()                       // Permite cualquier header
+            .AllowCredentials();                    // Permite cookies/autenticación
+    });
+});*/
 
 // Servicios de Aplicacion
 builder.Services.AddScoped<IServicioFechaHora, ServicioFechaHora>();
@@ -80,6 +90,7 @@ using(var scope = app.Services.CreateScope())
 }
 
 app.UseHttpsRedirection();
+app.UseCors("AngularApp");
 app.UseAuthorization();
 app.MapControllers();
 
