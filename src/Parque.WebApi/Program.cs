@@ -51,7 +51,7 @@ builder.Services.AddDbContext<AppContexto>(options => options.UseSqlServer("name
 
 var app = builder.Build();
 
-// Crear un admin inicial si no existe
+/* Crear un admin inicial si no existe
 using(var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppContexto>();
@@ -75,6 +75,7 @@ using(var scope = app.Services.CreateScope())
         Console.WriteLine("Admin inicial creado: admin@admin.com / Admin123!");
     }
 }
+*/
 
 app.UseHttpsRedirection();
 app.UseCors("AngularApp");
