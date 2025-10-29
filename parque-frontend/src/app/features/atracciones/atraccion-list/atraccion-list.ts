@@ -7,12 +7,12 @@ import { AtraccionesService } from '../../../core/services/atracciones.service';
   selector: 'app-atraccion-list',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './atraccion-list.component.html',
-  styleUrl: './atraccion-list.component.css'
+  templateUrl: './atraccion-list.html',
+  styleUrl: './atraccion-list.css'
 })
 export class AtraccionListComponent {
   private readonly atraccionesService = inject(AtraccionesService);
-  
+
   public atracciones = signal<AtraccionParque[]>([]);
   public loading = signal<boolean>(true);
   public error = signal<string>('');
