@@ -23,7 +23,7 @@ builder.Services.AddControllers(options =>
     options.Filters.Add<ExceptionFilter>();
 });
 
-/*builder.Services.AddCors(options =>
+builder.Services.AddCors(options =>
 {
     options.AddPolicy("AngularApp", policy =>
     {
@@ -32,7 +32,7 @@ builder.Services.AddControllers(options =>
             .AllowAnyHeader()                       // Permite cualquier header
             .AllowCredentials();                    // Permite cookies/autenticación
     });
-});*/
+});
 
 // Servicios de Aplicacion
 builder.Services.AddScoped<IServicioFechaHora, ServicioFechaHora>();
@@ -43,19 +43,6 @@ builder.Services.AddScoped<IServicioEvento, ServicioEvento>();
 builder.Services.AddScoped<IServicioSesion, ServicioSesion>();
 builder.Services.AddScoped<IServicioAcceso, ServicioAcceso>();
 builder.Services.AddScoped<IServicioIncidencia, ServicioIncidencia>();
-
-builder.Services.AddScoped<IEstrategiaPuntuacion, PuntuacionPorAtraccion>(sp =>
-    new PuntuacionPorAtraccion());
-
-builder.Services.AddScoped<IEstrategiaPuntuacion, PuntuacionCombo>(sp =>
-    new PuntuacionCombo(
-        minutosVentana: 10,
-        atraccionesMinimasCombo: 3,
-        puntosBase: 8,
-        puntosCombo: 25));
-
-builder.Services.AddScoped<IEstrategiaPuntuacion, PuntuacionPorEvento>(sp =>
-    new PuntuacionPorEvento());
 
 builder.Services.AddScoped<IServicioPuntuacion, ServicioPuntuacion>();
 
