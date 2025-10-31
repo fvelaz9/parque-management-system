@@ -12,14 +12,12 @@ namespace Parque.WebApi.Controllers;
 public class AtraccionesController(IServicioAtracciones servicioAtracciones) : ControllerBase
 {
     [HttpGet]
-    [AuthorizationFilter("any")]
     public IActionResult GetAll()
     {
         return Ok(servicioAtracciones.ListarAtracciones());
     }
 
     [HttpGet("{id}")]
-    [AuthorizationFilter("any")]
     public IActionResult GetById(int id)
     {
         var atraccion = servicioAtracciones.BuscarAtraccion(id);
@@ -79,7 +77,6 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
     }
 
     [HttpGet("{id}/aforo")]
-    [AuthorizationFilter("any")]
     public IActionResult ObtenerAforo(int id)
     {
         var aforo = servicioAtracciones.ObtenerAforoActual(id);
