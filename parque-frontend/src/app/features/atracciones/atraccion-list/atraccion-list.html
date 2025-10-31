@@ -15,22 +15,22 @@
         <div class="atraccion-card">
           <div class="card-header">
             <h2>{{ atraccion.nombre }}</h2>
-            <span class="badge" [class.disponible]="atraccion.estado === 'Disponible'" 
-                               [class.fuera-servicio]="atraccion.estado === 'Fuera De Servicio'">
-              {{ atraccion.estado }}
-            </span>
-          </div>
-          
-          <div class="card-body">
-            <p><strong>Tipo:</strong> {{ atraccion.tipo }}</p>
-            <p><strong>Edad mínima:</strong> {{ atraccion.edadMinima }} años</p>
-            <p><strong>Capacidad:</strong> {{ atraccion.capacidad }} personas</p>
-            <p class="descripcion">{{ atraccion.descripcion }}</p>
-          </div>
-        </div>
-      } @empty {
-        <p class="empty">No hay atracciones disponibles.</p>
-      }
-    </div>
-  }
-</div>
+            <!-- <span class="badge" [class.disponible]="atraccion.estado === 'Disponible'"
+                                [class.fuera-servicio]="atraccion.estado === 'Fuera De Servicio'">
+               {{ atraccion.estado }}
+             </span> -->
+           </div>
+
+           <div class="card-body">
+             <p><strong>Tipo:</strong> {{ atraccion.tipo }}</p>
+             <p><strong>Edad mínima:</strong> {{ atraccion.edadMinima }} años</p>
+             <p><strong>Capacidad:</strong> {{ atraccion.capacidad }} personas</p>
+             <p class="descripcion">{{ atraccion.descripcion }}</p>
+           </div>
+         </div>
+       } @empty {
+         <p class="empty">No hay atracciones disponibles.</p>
+       }
+     </div>
+   }
+ </div>

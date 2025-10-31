@@ -6,7 +6,6 @@ using Parque.Aplicacion.Servicios.Gamificacion;
 using Parque.Aplicacion.Servicios.Incidencias;
 using Parque.Aplicacion.Servicios.Ticket;
 using Parque.Dominio.Gamificacion;
-using Parque.Dominio.Usuarios;
 using Parque.Infraestructura;
 using Parque.Infraestructura.Repositorios;
 using Parque.WebApi.Filtros;
@@ -28,9 +27,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AngularApp", policy =>
     {
-        policy.WithOrigins("http://localhost:4200")  // Puerto donde corre Angular
-            .AllowAnyMethod()                       // Permite GET, POST, PUT, DELETE, etc.
-            .AllowAnyHeader()                       // Permite cualquier header
+        policy.WithOrigins("http://localhost:4200") // Puerto donde corre Angular
+            .AllowAnyMethod() // Permite GET, POST, PUT, DELETE, etc.
+            .AllowAnyHeader() // Permite cualquier header
             .AllowCredentials();                    // Permite cookies/autenticación
     });
 });
