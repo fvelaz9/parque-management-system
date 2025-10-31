@@ -11,14 +11,15 @@ export interface AtraccionParque {
 }
 
 export enum TipoAtraccion {
-  MontañaRusa = 'Montaña Rusa',
-  Simulador = 'Simulador',
-  Espectaculo = 'Espectaculo',
-  ZonaInteractiva = 'Zona Interactiva'
+  MontañaRusa = 0,      // Coincide con C#
+  Simulador = 1,
+  Espectaculo = 2,
+  ZonaInteractiva = 3
 }
 
+
 export enum EstadoAtraccion {
-  Disponible = 'Disponible',
+  Disponible = 0,
   FueraDeServicio = 'Fuera De Servicio'
 }
 
