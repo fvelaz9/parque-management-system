@@ -18,7 +18,7 @@ public class AuthorizationFilter(string rol) : Attribute, IAuthorizationFilter
         var hasAllowAnonymous = context.ActionDescriptor.EndpointMetadata
             .Any(m => m is IAllowAnonymous);
 
-        if (hasAllowAnonymous)
+        if(hasAllowAnonymous)
         {
             return; // Permitir acceso sin autenticación
         }
