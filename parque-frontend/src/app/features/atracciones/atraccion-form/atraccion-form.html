@@ -1,1 +1,26 @@
-<p>atraccion-form works!</p>
+<div class="container">
+  <h1>Crear nueva Atracción</h1>
+
+  <form (ngSubmit)="onSubmit()" #atraccionForm="ngForm">
+
+    <label for="nombre">Nombre</label>
+    <input type="text" id="nombre" name="nombre" [(ngModel)]="atraccion.nombre" required />
+
+    <label for="tipo">Tipo</label>
+    <select id="tipo" name="tipo" [(ngModel)]="atraccion.tipo" required>
+      <option [value]="tipo" *ngFor="let tipo of tiposDisponibles">{{tipo}}</option>
+    </select>
+
+    <label for="edadMinima">Edad mínima</label>
+    <input type="number" id="edadMinima" name="edadMinima" [(ngModel)]="atraccion.edadMinima" min="0" required />
+
+    <label for="capacidad">Capacidad</label>
+    <input type="number" id="capacidad" name="capacidad" [(ngModel)]="atraccion.capacidad" min="1" required />
+
+    <label for="descripcion">Descripción</label>
+    <textarea id="descripcion" name="descripcion" [(ngModel)]="atraccion.descripcion" rows="3" required></textarea>
+
+    <button type="submit" [disabled]="atraccionForm.invalid">Guardar</button>
+    <button type="button" routerLink="/">Volver</button>
+  </form>
+</div>
