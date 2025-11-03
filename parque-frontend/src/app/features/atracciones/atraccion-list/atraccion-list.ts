@@ -33,4 +33,18 @@ export class AtraccionListComponent {
       }
     });
   });
+
+  crearAtraccion() {
+
+  }
+  editarAtraccion(atraccion: any) {
+    // Abrir modal con los datos de la atracción, o navegar a /editar
+  }
+
+  borrarAtraccion(atraccion: any) {
+    // Confirmar y llamar a servicio para borrar
+    if (confirm(`¿Seguro que deseas borrar "${atraccion.nombre}"?`)) {
+      // Servicio para borrar y refrescar lista
+    }
+  }
 }

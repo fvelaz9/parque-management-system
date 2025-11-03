@@ -1,0 +1,65 @@
+Comandos básicos Angular CLI (usá npx si no instalaste global: npx ng ...)
+
+1. Crear componente standalone:
+   npx ng generate component ruta/nombre --standalone
+   - Crea un componente (página o bloque UI)
+
+2. Crear servicio:
+   npx ng generate service ruta/nombre
+   - Crea lógica de negocio reutilizable
+
+3. Crear módulo:
+   npx ng generate module ruta/nombre
+   - Para modularizar y organizar el proyecto
+
+4. Crear guardia de rutas:
+   npx ng generate guard ruta/nombre
+   - Para proteger rutas con autenticación o permisos
+
+5. Crear clase:
+   npx ng generate class ruta/nombre
+   - Para modelos, enums o funciones auxiliares
+
+6. Servir app en modo desarrollo:
+   npx ng serve
+   - Levanta la app en http://localhost:4200
+
+7. Construir app para producción:
+   npx ng build --configuration production
+   - Genera archivos optimizados para deploy
+
+8. Ejecutar tests:
+   npx ng test
+   - Corre los tests unitarios
+
+9. Crear interfaz TypeScript:
+   npx ng generate interface ruta/nombre
+   - Para definir estructuras de datos (DTOs)
+
+10. Actualizar Angular CLI y Core:
+    npx ng update @angular/cli @angular/core
+    - Para actualizar a última versión estable
+
+Tips:
+- Para crear rutas automáticamente (Angular v17+):
+  npx ng generate component features/nueva-pagina --standalone --route ruta-nueva
+
+- Para listar todos los comandos y opciones:
+  npx ng help
+
+- Si ya instalaste Angular CLI globalmente, podés usar solo "ng".
+
+---
+
+Ejemplos prácticos para tu proyecto:
+- Crear lista de recompensas:
+  npx ng generate component features/recompensas/recompensa-list --standalone
+
+- Crear formulario de recompensa:
+  npx ng generate component features/recompensas/recompensa-form --standalone
+
+- Crear servicio de recompensas:
+  npx ng generate service core/services/recompensas
+
+- Crear clase modelo para recompensa:
+  npx ng generate class core/models/recompensa
