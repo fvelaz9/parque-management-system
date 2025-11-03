@@ -1,23 +1,22 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Parque.Aplicacion.Servicios.Atracciones;
 using Parque.Dominio.Atracciones;
-using Parque.WebApi.Filtros;
 
 namespace Parque.WebApi.Controllers;
 
 [ApiController]
 [Route("api/atracciones")]
+[AllowAnonymous]
 public class AtraccionesController(IServicioAtracciones servicioAtracciones) : ControllerBase
 {
     [HttpGet]
-    [AuthorizationFilter("any")]
     public IActionResult GetAll()
     {
         return Ok(servicioAtracciones.ListarAtracciones());
     }
 
     [HttpGet("{id}")]
-    [AuthorizationFilter("any")]
     public IActionResult GetById(int id)
     {
         var atraccion = servicioAtracciones.BuscarAtraccion(id);
@@ -25,7 +24,8 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
     }
 
     [HttpPost]
-    [AuthorizationFilter("Administrador")]
+
+    // [AuthorizationFilter("Administrador")]
     public IActionResult Create([FromBody] AtraccionParque atraccion)
     {
         var creada = servicioAtracciones.CrearAtraccion(
@@ -38,7 +38,8 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
     }
 
     [HttpPut("{id}")]
-    [AuthorizationFilter("Administrador")]
+
+    // [AuthorizationFilter("Administrador")]
     public IActionResult Update(int id, [FromBody] AtraccionParque atraccion)
     {
         var modificada = servicioAtracciones.ModificarAtraccion(
@@ -52,7 +53,8 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
     }
 
     [HttpDelete("{id}")]
-    [AuthorizationFilter("Administrador")]
+
+    // [AuthorizationFilter("Administrador")]
     public IActionResult Delete(int id)
     {
         servicioAtracciones.EliminarAtraccion(id);
@@ -60,7 +62,8 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
     }
 
     [HttpGet("reporte-uso")]
-    [AuthorizationFilter("Administrador")]
+
+    // [AuthorizationFilter("Administrador")]
     public IActionResult ReporteUsoAtracciones([FromQuery] DateTime desde, [FromQuery] DateTime hasta)
     {
         if(desde > hasta)
@@ -73,7 +76,6 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
     }
 
     [HttpGet("{id}/aforo")]
-    [AuthorizationFilter("any")]
     public IActionResult ObtenerAforo(int id)
     {
         var aforo = servicioAtracciones.ObtenerAforoActual(id);
