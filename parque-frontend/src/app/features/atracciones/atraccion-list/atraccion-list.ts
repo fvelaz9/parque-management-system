@@ -2,11 +2,12 @@ import { Component, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AtraccionParque } from '../../../core/models/atraccion.model';
 import { AtraccionesService } from '../../../core/services/atracciones.service';
+import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-atraccion-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './atraccion-list.html',
   styleUrl: './atraccion-list.css'
 })
