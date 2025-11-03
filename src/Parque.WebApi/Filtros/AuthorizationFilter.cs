@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Parque.Aplicacion.Servicios;
@@ -13,6 +14,15 @@ public class AuthorizationFilter(string rol) : Attribute, IAuthorizationFilter
 
     public void OnAuthorization(AuthorizationFilterContext context)
     {
+        // ✅ AGREGAR: Verificar si el endpoint tiene [AllowAnonymous]
+        var hasAllowAnonymous = context.ActionDescriptor.EndpointMetadata
+            .Any(m => m is IAllowAnonymous);
+
+        if(hasAllowAnonymous)
+        {
+            return; // Permitir acceso sin autenticación
+        }
+
         var token = context.HttpContext.Request.Headers[AUTHORIZATION_HEADER].ToString();
 
         if(string.IsNullOrWhiteSpace(token))
@@ -57,13 +67,11 @@ public class AuthorizationFilter(string rol) : Attribute, IAuthorizationFilter
                 return;
             }
 
-            // Usuario autorizado: agregar información al contexto
             var usuario = servicioSesion.ObtenerUsuarioSesion(token);
             context.HttpContext.Items["user"] = usuario;
         }
         catch(ExcepcionDominio ex)
         {
-            // Errores de negocio (token inválido, usuario no encontrado, etc.)
             context.Result = new ObjectResult(new ResponseDto
             {
                 Message = ex.Message,
@@ -75,7 +83,6 @@ public class AuthorizationFilter(string rol) : Attribute, IAuthorizationFilter
         }
         catch(Exception)
         {
-            // Errores inesperados
             context.Result = new ObjectResult(new ResponseDto
             {
                 Message = "Ocurrió un error inesperado al procesar la solicitud",
