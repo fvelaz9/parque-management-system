@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import {Component, inject} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NgForOf } from '@angular/common';
 
 import { AtraccionParque, TipoAtraccion } from '../../../core/models/atraccion.model';
@@ -14,6 +14,7 @@ import {AtraccionesService} from '../../../core/services/atracciones.service';
   standalone: true
 })
 export class AtraccionForm {
+  private readonly router = inject(Router);
   atraccion: AtraccionParque = {
     id: 0, // en creación puede ser 0 o omitido según backend
     nombre: '',
@@ -37,6 +38,7 @@ export class AtraccionForm {
     this.atraccionesService.createAtraccion(this.atraccion).subscribe({
       next: (res) => {
         alert('Atracción creada con éxito');
+        this.router.navigate(['/atracciones']);
       },
       error: (err) => {
         console.error('Error creando atracción:', err);

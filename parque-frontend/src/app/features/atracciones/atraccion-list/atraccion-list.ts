@@ -2,7 +2,7 @@ import { Component, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AtraccionParque } from '../../../core/models/atraccion.model';
 import { AtraccionesService } from '../../../core/services/atracciones.service';
-import {RouterLink} from '@angular/router';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-atraccion-list',
@@ -18,13 +18,18 @@ export class AtraccionListComponent {
   public loading = signal<boolean>(true);
   public error = signal<string>('');
 
-  // Effect para cargar las atracciones cuando se crea el componente
   private readonly loadAtraccionesEffect = effect(() => {
+    this.cargarAtracciones();
+  });
+
+  private cargarAtracciones() {
+    this.loading.set(true);
     this.atraccionesService.getAllAtracciones().subscribe({
       next: (result) => {
         console.log('Atracciones cargadas:', result);
         this.atracciones.set(result);
         this.loading.set(false);
+        this.error.set('');
       },
       error: (err) => {
         console.error('Error al cargar atracciones:', err);
@@ -32,19 +37,23 @@ export class AtraccionListComponent {
         this.loading.set(false);
       }
     });
-  });
-
-  crearAtraccion() {
-
   }
+
   editarAtraccion(atraccion: any) {
     // Abrir modal con los datos de la atracción, o navegar a /editar
   }
 
   borrarAtraccion(atraccion: any) {
-    // Confirmar y llamar a servicio para borrar
     if (confirm(`¿Seguro que deseas borrar "${atraccion.nombre}"?`)) {
-      // Servicio para borrar y refrescar lista
+      this.atraccionesService.deleteAtraccion(atraccion.id).subscribe({
+        next: (res) => {
+          alert('Atracción borrada con éxito');
+          this.cargarAtracciones(); // <- RECARGAR DATOS DESDE EL SERVIDOR
+        },
+        error: (err) => {
+          alert('Error al borrar atracción');
+        }
+      });
     }
   }
 }
