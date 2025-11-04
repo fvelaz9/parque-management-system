@@ -25,6 +25,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/login/login')
       .then(m => m.LoginComponent)
   },
+  {
+    path: 'registro-visitante',
+    loadComponent: () => import('./features/cuentas/registro-visitante/registro-visitante')
+      .then(m => m.RegistroVisitanteComponent)
+  },
   // Not Found route - debe ser la última
   {
     path: "**",

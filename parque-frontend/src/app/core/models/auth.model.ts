@@ -1,3 +1,5 @@
+import { CuentaDto } from './cuenta.model';
+
 export interface LoginRequest {
   email: string;
   password: string;
@@ -12,15 +14,6 @@ export interface LoginResponse {
   message: string;
 }
 
-export interface CuentaDto {
-  id: string;
-  nombre: string;
-  apellido: string;
-  email: string;
-  roles: string[];
-  visitante: VisitanteDto | null;
-}
-
 export interface VisitanteDto {
   id: string;
   fechaNacimiento: Date;
@@ -29,3 +22,5 @@ export interface VisitanteDto {
   puntosDiarios: number;
   puntosTotales: number;
 }
+
+export type { CuentaDto };

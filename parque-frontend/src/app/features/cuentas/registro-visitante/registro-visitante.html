@@ -1,0 +1,111 @@
+<div class="registro-container">
+  <div class="registro-card">
+    <h2>Registro de Visitante</h2>
+    <p class="subtitle">Crea tu cuenta para acceder al parque temático virtual</p>
+    
+    <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+      
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nombre">Nombre *</label>
+          <input 
+            type="text" 
+            id="nombre"
+            class="form-control"
+            formControlName="nombre"
+            placeholder="Ingrese su nombre"
+            [class.is-invalid]="f['nombre'].invalid && f['nombre'].touched">
+          
+          <div *ngIf="f['nombre'].invalid && f['nombre'].touched" class="invalid-feedback">
+            <small *ngIf="f['nombre'].errors?.['required']">El nombre es requerido</small>
+            <small *ngIf="f['nombre'].errors?.['minlength']">Mínimo 2 caracteres</small>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="apellido">Apellido *</label>
+          <input 
+            type="text" 
+            id="apellido"
+            class="form-control"
+            formControlName="apellido"
+            placeholder="Ingrese su apellido"
+            [class.is-invalid]="f['apellido'].invalid && f['apellido'].touched">
+          
+          <div *ngIf="f['apellido'].invalid && f['apellido'].touched" class="invalid-feedback">
+            <small *ngIf="f['apellido'].errors?.['required']">El apellido es requerido</small>
+            <small *ngIf="f['apellido'].errors?.['minlength']">Mínimo 2 caracteres</small>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email *</label>
+        <input 
+          type="email" 
+          id="email"
+          class="form-control"
+          formControlName="email"
+          placeholder="ejemplo@correo.com"
+          [class.is-invalid]="f['email'].invalid && f['email'].touched">
+        
+        <div *ngIf="f['email'].invalid && f['email'].touched" class="invalid-feedback">
+          <small *ngIf="f['email'].errors?.['required']">El email es requerido</small>
+          <small *ngIf="f['email'].errors?.['email']">Formato de email inválido</small>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña *</label>
+        <input 
+          type="password" 
+          id="password"
+          class="form-control"
+          formControlName="password"
+          placeholder="Mínimo 6 caracteres"
+          [class.is-invalid]="f['password'].invalid && f['password'].touched">
+        
+        <div *ngIf="f['password'].invalid && f['password'].touched" class="invalid-feedback">
+          <small *ngIf="f['password'].errors?.['required']">La contraseña es requerida</small>
+          <small *ngIf="f['password'].errors?.['minlength']">Mínimo 6 caracteres</small>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirmar Contraseña *</label>
+        <input 
+          type="password" 
+          id="confirmPassword"
+          class="form-control"
+          formControlName="confirmPassword"
+          placeholder="Repita su contraseña"
+          [class.is-invalid]="f['confirmPassword'].invalid && f['confirmPassword'].touched">
+        
+        <div *ngIf="f['confirmPassword'].invalid && f['confirmPassword'].touched" class="invalid-feedback">
+          <small *ngIf="f['confirmPassword'].errors?.['required']">Debe confirmar la contraseña</small>
+          <small *ngIf="f['confirmPassword'].errors?.['passwordMismatch']">Las contraseñas no coinciden</small>
+        </div>
+      </div>
+
+      <div *ngIf="successMessage" class="alert alert-success">
+        {{ successMessage }}
+      </div>
+
+      <div *ngIf="errorMessage" class="alert alert-danger">
+        {{ errorMessage }}
+      </div>
+
+      <button 
+        type="submit" 
+        class="btn btn-primary btn-block" 
+        [disabled]="loading">
+        <span *ngIf="loading" class="spinner"></span>
+        {{ loading ? 'Registrando...' : 'Registrarse' }}
+      </button>
+
+      <div class="login-link">
+        ¿Ya tienes cuenta? <a (click)="irAlLogin()">Inicia sesión aquí</a>
+      </div>
+    </form>
+  </div>
+</div>
