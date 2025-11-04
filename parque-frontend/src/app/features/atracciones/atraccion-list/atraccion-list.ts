@@ -40,7 +40,12 @@ export class AtraccionListComponent {
   }
 
   editarAtraccion(atraccion: any) {
-    // Abrir modal con los datos de la atracción, o navegar a /editar
+    this.atraccionesService.updateAtraccion(atraccion.id, atraccion).subscribe({
+      next: (res) => {
+        alert('Atracción modificada con éxito');
+        this.cargarAtracciones();
+      },
+    });
   }
 
   borrarAtraccion(atraccion: any) {
