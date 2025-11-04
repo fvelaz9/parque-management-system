@@ -1,68 +1,87 @@
 <div class="container">
   <h1>Crear nueva Atracción</h1>
 
-  <form (ngSubmit)="onSubmit()" #atraccionForm="ngForm">
+  <form (ngSubmit)="onSubmit()" #atraccionForm="ngForm" class="atraccion-form">
 
-    <label for="nombre">Nombre</label>
-    <input
-      type="text"
-      id="nombre"
-      name="nombre"
-      [(ngModel)]="atraccion.nombre"
-      required />
+    <div class="form-field">
+      <label for="nombre" class="form-label">Nombre</label>
+      <input
+        type="text"
+        id="nombre"
+        name="nombre"
+        [(ngModel)]="atraccion.nombre"
+        class="form-input"
+        required />
+    </div>
 
-    <label for="tipo">Tipo</label>
-    <select
-      id="tipo"
-      name="tipo"
-      [(ngModel)]="atraccion.tipo"
-      required>
-      <option
-        *ngFor="let tipo of tiposDisponibles"
-        [ngValue]="tipo.id">
-        {{tipo.nombre}}
-      </option>
-    </select>
+    <div class="form-field">
+      <label for="tipo" class="form-label">Tipo</label>
+      <select
+        id="tipo"
+        name="tipo"
+        [(ngModel)]="atraccion.tipo"
+        class="form-select"
+        required>
+        <option value="" disabled selected>Selecciona un tipo</option>
+        <option
+          *ngFor="let tipo of tiposDisponibles"
+          [ngValue]="tipo.id">
+          {{tipo.nombre}}
+        </option>
+      </select>
+    </div>
 
-    <label for="edadMinima">Edad mínima</label>
-    <input
-      type="number"
-      id="edadMinima"
-      name="edadMinima"
-      [(ngModel)]="atraccion.edadMinima"
-      min="0"
-      required />
+    <div class="form-field">
+      <label for="edadMinima" class="form-label">Edad mínima</label>
+      <input
+        type="number"
+        id="edadMinima"
+        name="edadMinima"
+        [(ngModel)]="atraccion.edadMinima"
+        class="form-input"
+        min="0"
+        required />
+    </div>
 
-    <label for="capacidad">Capacidad</label>
-    <input
-      type="number"
-      id="capacidad"
-      name="capacidad"
-      [(ngModel)]="atraccion.capacidad"
-      min="1"
-      required />
+    <div class="form-field">
+      <label for="capacidad" class="form-label">Capacidad</label>
+      <input
+        type="number"
+        id="capacidad"
+        name="capacidad"
+        [(ngModel)]="atraccion.capacidad"
+        class="form-input"
+        min="1"
+        required />
+    </div>
 
-    <label for="descripcion">Descripción</label>
-    <textarea
-      id="descripcion"
-      name="descripcion"
-      [(ngModel)]="atraccion.descripcion"
-      rows="3"
-      required>
-  </textarea>
+    <div class="form-field">
+      <label for="descripcion" class="form-label">Descripción</label>
+      <textarea
+        id="descripcion"
+        name="descripcion"
+        [(ngModel)]="atraccion.descripcion"
+        class="form-textarea"
+        rows="4"
+        required>
+      </textarea>
+    </div>
 
-    <button
-      type="submit"
-      [disabled]="atraccionForm.invalid">
-      Guardar
-    </button>
+    <div class="form-actions">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="atraccionForm.invalid">
+        Guardar
+      </button>
 
-    <button
-      type="button"
-      routerLink="/atracciones">
-      Volver
-    </button>
+      <button
+        type="button"
+        class="btn btn-secondary"
+        routerLink="/atracciones">
+        Volver
+      </button>
+    </div>
 
   </form>
-
 </div>

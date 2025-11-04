@@ -37,7 +37,6 @@ export class AtraccionForm {
     this.atraccionesService.createAtraccion(this.atraccion).subscribe({
       next: (res) => {
         alert('Atracción creada con éxito');
-        // Aquí podés navegar a otra página, limpiar formularios, etc.
       },
       error: (err) => {
         console.error('Error creando atracción:', err);
