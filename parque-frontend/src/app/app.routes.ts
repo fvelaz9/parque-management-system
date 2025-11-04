@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './features/home/home';
+import {AtraccionEdit} from './features/atracciones/atraccion-edit/atraccion-edit';
 
 export const routes: Routes = [
   {
@@ -20,5 +21,11 @@ export const routes: Routes = [
     path: 'atracciones/nueva',
     loadComponent: () => import('./features/atracciones/atraccion-form/atraccion-form')
       .then(m => m.AtraccionForm)
+  },
+  {
+    path: 'atracciones/editar',
+    loadComponent: () => import('./features/atracciones/atraccion-edit/atraccion-edit')
+      .then(m => m.AtraccionEdit)
   }
+
 ];
