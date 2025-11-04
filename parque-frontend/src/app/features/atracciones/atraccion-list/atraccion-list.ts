@@ -52,8 +52,7 @@ export class AtraccionListComponent {
     if (confirm(`¿Seguro que deseas borrar "${atraccion.nombre}"?`)) {
       this.atraccionesService.deleteAtraccion(atraccion.id).subscribe({
         next: (res) => {
-          alert('Atracción borrada con éxito');
-          this.cargarAtracciones(); // <- RECARGAR DATOS DESDE EL SERVIDOR
+          this.cargarAtracciones();
         },
         error: (err) => {
           alert('Error al borrar atracción');
