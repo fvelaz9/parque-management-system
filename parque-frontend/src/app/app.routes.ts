@@ -23,7 +23,7 @@ export const routes: Routes = [
       .then(m => m.AtraccionForm)
   },
   {
-    path: 'atracciones/editar',
+    path: 'atracciones/editar/:id',
     loadComponent: () => import('./features/atracciones/atraccion-edit/atraccion-edit')
       .then(m => m.AtraccionEdit)
   }

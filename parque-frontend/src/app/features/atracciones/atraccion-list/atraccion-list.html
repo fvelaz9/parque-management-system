@@ -26,7 +26,7 @@
             <p><strong>Capacidad:</strong> {{ atraccion.capacidad }} personas</p>
             <p class="descripcion">{{ atraccion.descripcion }}</p>
             <div class="d-flex gap-2">
-              <button class="btn btn-warning" [routerLink]="['/atracciones', 'editar']">Editar</button>
+              <button class="btn btn-warning" [routerLink]="['/atracciones', 'editar', atraccion.id]">Editar</button>
               <button class="btn btn-danger" (click)="borrarAtraccion(atraccion)">Borrar</button>
             </div>
           </div>

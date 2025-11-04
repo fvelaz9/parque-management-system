@@ -1,1 +1,87 @@
-<p>atraccion-edit works!</p>
+<div class="container mt-5" style="max-width: 600px;">
+  <h1 class="text-center mb-4">Editar Atracción</h1>
+
+  <form (ngSubmit)="onSubmit()" #atraccionForm="ngForm" class="p-4 bg-light rounded shadow-sm">
+
+    <div class="mb-3">
+      <label for="nombre" class="form-label text-uppercase fw-semibold" style="font-size: 14px; letter-spacing: 0.5px;">Nombre</label>
+      <input
+        type="text"
+        id="nombre"
+        name="nombre"
+        [(ngModel)]="atraccion.nombre"
+        class="form-control"
+        required />
+    </div>
+
+    <div class="mb-3">
+      <label for="tipo" class="form-label text-uppercase fw-semibold" style="font-size: 14px; letter-spacing: 0.5px;">Tipo</label>
+      <select
+        id="tipo"
+        name="tipo"
+        [(ngModel)]="atraccion.tipo"
+        class="form-select"
+        required>
+        <option value="" disabled>Selecciona un tipo</option>
+        <option
+          *ngFor="let tipo of tiposDisponibles"
+          [ngValue]="tipo.id">
+          {{tipo.nombre}}
+        </option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="edadMinima" class="form-label text-uppercase fw-semibold" style="font-size: 14px; letter-spacing: 0.5px;">Edad mínima</label>
+      <input
+        type="number"
+        id="edadMinima"
+        name="edadMinima"
+        [(ngModel)]="atraccion.edadMinima"
+        class="form-control"
+        min="0"
+        required />
+    </div>
+
+    <div class="mb-3">
+      <label for="capacidad" class="form-label text-uppercase fw-semibold" style="font-size: 14px; letter-spacing: 0.5px;">Capacidad</label>
+      <input
+        type="number"
+        id="capacidad"
+        name="capacidad"
+        [(ngModel)]="atraccion.capacidad"
+        class="form-control"
+        min="1"
+        required />
+    </div>
+
+    <div class="mb-3">
+      <label for="descripcion" class="form-label text-uppercase fw-semibold" style="font-size: 14px; letter-spacing: 0.5px;">Descripción</label>
+      <textarea
+        id="descripcion"
+        name="descripcion"
+        [(ngModel)]="atraccion.descripcion"
+        class="form-control"
+        rows="4"
+        required>
+      </textarea>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 mt-4">
+      <button
+        type="submit"
+        class="btn btn-primary px-4"
+        [disabled]="atraccionForm.invalid">
+        Guardar
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-secondary px-4"
+        routerLink="/atracciones">
+        Volver
+      </button>
+    </div>
+
+  </form>
+</div>
