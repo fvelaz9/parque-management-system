@@ -1,29 +1,36 @@
 import { Component } from '@angular/core';
-import {FormsModule} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { NgForOf } from '@angular/common';
+
+import { AtraccionParque, TipoAtraccion } from '../../../core/models/atraccion.model';
 
 @Component({
   selector: 'app-atraccion-form',
   templateUrl: './atraccion-form.html',
   styleUrls: ['./atraccion-form.css'],
-  imports: [
-    FormsModule
-  ],
+  imports: [FormsModule, RouterLink, NgForOf],
   standalone: true
 })
 export class AtraccionForm {
-  atraccion = {
+  atraccion: AtraccionParque = {
+    id: 0, // en creación puede ser 0 o omitido según backend
     nombre: '',
-    tipo: '',
+    tipo: TipoAtraccion.MontañaRusa, // valor inicial por defecto
     edadMinima: 0,
     capacidad: 1,
-    descripcion: ''
+    descripcion: '',
+    estado: 0 // o asigna un estado por defecto válido
   };
-  tiposDisponibles = ['Montaña Rusa', 'Tobogán', 'Casa Embrujada', 'Carrusel'];
+
+  tiposDisponibles = [
+    { id: TipoAtraccion.MontañaRusa, nombre: 'Montaña Rusa' },
+    { id: TipoAtraccion.Simulador, nombre: 'Simulador' },
+    { id: TipoAtraccion.Espectaculo, nombre: 'Espectaculo' },
+    { id: TipoAtraccion.ZonaInteractiva, nombre: 'Zona Interactiva' }
+  ];
 
   onSubmit() {
     console.log('Enviando atracción:', this.atraccion);
   }
 }
-
-
-

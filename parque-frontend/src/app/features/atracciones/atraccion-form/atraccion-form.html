@@ -4,23 +4,65 @@
   <form (ngSubmit)="onSubmit()" #atraccionForm="ngForm">
 
     <label for="nombre">Nombre</label>
-    <input type="text" id="nombre" name="nombre" [(ngModel)]="atraccion.nombre" required />
+    <input
+      type="text"
+      id="nombre"
+      name="nombre"
+      [(ngModel)]="atraccion.nombre"
+      required />
 
     <label for="tipo">Tipo</label>
-    <select id="tipo" name="tipo" [(ngModel)]="atraccion.tipo" required>
-      <option [value]="tipo" *ngFor="let tipo of tiposDisponibles">{{tipo}}</option>
+    <select
+      id="tipo"
+      name="tipo"
+      [(ngModel)]="atraccion.tipo"
+      required>
+      <option
+        *ngFor="let tipo of tiposDisponibles"
+        [ngValue]="tipo.id">
+        {{tipo.nombre}}
+      </option>
     </select>
 
     <label for="edadMinima">Edad mínima</label>
-    <input type="number" id="edadMinima" name="edadMinima" [(ngModel)]="atraccion.edadMinima" min="0" required />
+    <input
+      type="number"
+      id="edadMinima"
+      name="edadMinima"
+      [(ngModel)]="atraccion.edadMinima"
+      min="0"
+      required />
 
     <label for="capacidad">Capacidad</label>
-    <input type="number" id="capacidad" name="capacidad" [(ngModel)]="atraccion.capacidad" min="1" required />
+    <input
+      type="number"
+      id="capacidad"
+      name="capacidad"
+      [(ngModel)]="atraccion.capacidad"
+      min="1"
+      required />
 
     <label for="descripcion">Descripción</label>
-    <textarea id="descripcion" name="descripcion" [(ngModel)]="atraccion.descripcion" rows="3" required></textarea>
+    <textarea
+      id="descripcion"
+      name="descripcion"
+      [(ngModel)]="atraccion.descripcion"
+      rows="3"
+      required>
+  </textarea>
 
-    <button type="submit" [disabled]="atraccionForm.invalid">Guardar</button>
-    <button type="button" routerLink="/">Volver</button>
+    <button
+      type="submit"
+      [disabled]="atraccionForm.invalid">
+      Guardar
+    </button>
+
+    <button
+      type="button"
+      routerLink="/atracciones">
+      Volver
+    </button>
+
   </form>
+
 </div>

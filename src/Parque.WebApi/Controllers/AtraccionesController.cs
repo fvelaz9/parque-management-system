@@ -34,6 +34,7 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
             atraccion.EdadMinima,
             atraccion.Capacidad,
             atraccion.Descripcion);
+        Console.WriteLine("funciono");
         return CreatedAtAction(nameof(GetById), new { id = creada.Id }, creada);
     }
 
