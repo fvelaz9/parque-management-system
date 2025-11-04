@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { NgForOf } from '@angular/common';
 
 import { AtraccionParque, TipoAtraccion } from '../../../core/models/atraccion.model';
+import {AtraccionesService} from '../../../core/services/atracciones.service';
 
 @Component({
   selector: 'app-atraccion-form',
@@ -29,8 +30,19 @@ export class AtraccionForm {
     { id: TipoAtraccion.Espectaculo, nombre: 'Espectaculo' },
     { id: TipoAtraccion.ZonaInteractiva, nombre: 'Zona Interactiva' }
   ];
-
+  constructor(private atraccionesService: AtraccionesService) {}
   onSubmit() {
     console.log('Enviando atracción:', this.atraccion);
+
+    this.atraccionesService.createAtraccion(this.atraccion).subscribe({
+      next: (res) => {
+        alert('Atracción creada con éxito');
+        // Aquí podés navegar a otra página, limpiar formularios, etc.
+      },
+      error: (err) => {
+        console.error('Error creando atracción:', err);
+        alert('Error al crear atracción');
+      }
+    });
   }
 }
