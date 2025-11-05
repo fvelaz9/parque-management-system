@@ -1,4 +1,5 @@
-﻿using Parque.Aplicacion.DTOs.Gamificacion;
+﻿using Microsoft.EntityFrameworkCore.Diagnostics;
+using Parque.Aplicacion.DTOs.Gamificacion;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
 using Parque.Dominio.Gamificacion;
@@ -10,7 +11,7 @@ namespace Parque.Aplicacion.Servicios.Gamificacion;
 public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, IRepositorio<Dominio.Ticket> repoTickets,
     IRepositorio<RegistroVisita> repoRegistros, IRepositorio<PuntuacionVisitante> repoPuntuaciones, IRepositorio<Cuenta> repoCuentas,
     IRepositorio<Evento> repoEventos, IRepositorio<ConfiguracionEstrategia> repoConfiguracion, IEnumerable<IEstrategiaPuntuacion> estrategias,
-    IServicioFechaHora servicioFechaHora) : IServicioPuntuacion
+    IServicioFechaHora servicioFechaHora, IRepositorio<Visitante> repoVisitante) : IServicioPuntuacion
 {
     public void CalcularYRegistrarPuntos(int registroVisitaId)
     {
@@ -167,5 +168,12 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
         }
 
         return estrategia;
+    }
+
+    public void AgregarPuntuacionAVisitante(Visitante visitante, int puntos, string origenPuntos, string estrategia)
+    {
+        var fechaActual = servicioFechaHora.ObtenerFechaActual();
+        var puntuacion = new HistorialPuntuacion(fechaActual, origenPuntos, estrategia, puntos);
+        visitante.AgregarPuntuacionAHistorial(puntuacion);
     }
 }
