@@ -23,6 +23,7 @@ public class ServicioPuntuacionTest
     private Mock<IServicioFechaHora>? _servicioFechaHoraMock;
     private Mock<IEstrategiaPuntuacion>? _estrategiaMock;
     private ServicioPuntuacion? _servicio;
+    private Mock<IRepositorio<Visitante>>? _repoVisitanteMock;
     private readonly DateTime _fechaActual = new(2025, 10, 8, 12, 0, 0);
 
     [TestInitialize]
@@ -37,6 +38,7 @@ public class ServicioPuntuacionTest
         _repoConfiguracionMock = new Mock<IRepositorio<ConfiguracionEstrategia>>(MockBehavior.Strict);
         _servicioFechaHoraMock = new Mock<IServicioFechaHora>(MockBehavior.Loose); // ⚠️ CAMBIO: Loose en lugar de Strict
         _estrategiaMock = new Mock<IEstrategiaPuntuacion>(MockBehavior.Strict);
+        _repoVisitanteMock = new Mock<IRepositorio<Visitante>>(MockBehavior.Strict);
 
         // Configurar fecha por defecto para TODOS los tests
         _servicioFechaHoraMock.Setup(s => s.ObtenerFechaActual())
@@ -53,7 +55,8 @@ public class ServicioPuntuacionTest
             _repoEventosMock.Object,
             _repoConfiguracionMock.Object,
             estrategias,
-            _servicioFechaHoraMock.Object);
+            _servicioFechaHoraMock.Object,
+            _repoVisitanteMock.Object);
     }
 
     [TestCleanup]
@@ -397,6 +400,7 @@ public class ServicioPuntuacionTest
         var configuracionesVacias = new List<ConfiguracionEstrategia>();
         var servicioFechaHoraMockNuevo = new Mock<IServicioFechaHora>(MockBehavior.Loose); // ⚠️ CAMBIO: Loose
 
+        var repoVisitanteMock = new Mock<IRepositorio<Visitante>>(MockBehavior.Strict);
         var servicioSinEstrategias = new ServicioPuntuacion(
             _repoAtraccionesMock!.Object,
             _repoTicketsMock!.Object,
@@ -405,8 +409,9 @@ public class ServicioPuntuacionTest
             _repoCuentasMock!.Object,
             _repoEventosMock!.Object,
             _repoConfiguracionMock!.Object,
-            [],
-            servicioFechaHoraMockNuevo.Object);
+            new List<IEstrategiaPuntuacion>(),  // lista vacía
+            servicioFechaHoraMockNuevo.Object,
+            repoVisitanteMock.Object);
 
         _repoConfiguracionMock.Setup(r => r.ObtenerTodos()).Returns(configuracionesVacias);
 
