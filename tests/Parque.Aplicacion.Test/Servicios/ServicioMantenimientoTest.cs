@@ -127,4 +127,13 @@ public class ServicioMantenimientoTest
         _mockRepoIncidencias.Verify(r => r.Agregar(It.IsAny<Incidencia>()), Times.Once);
         _mockRepoMantenimientos.Verify(r => r.Agregar(It.IsAny<MantenimientoPreventivo>()), Times.Once);
     }
+
+    [TestMethod]
+    public void EliminarMantenimiento_NoExiste_LanzaExcepcion()
+    {
+        _mockRepoMantenimientos.Setup(r => r.Encontrar(It.IsAny<Expression<Func<MantenimientoPreventivo, bool>>>()))
+            .Returns((MantenimientoPreventivo?)null);
+
+        Assert.ThrowsException<ArgumentException>(() => _servicio.EliminarMantenimiento(1));
+    }
 }
