@@ -50,4 +50,12 @@ public class GamificacionController(IServicioPuntuacion servicioPuntuacion) : Co
         var estrategiaActiva = servicioPuntuacion.ObtenerEstrategiaActiva();
         return Ok(new { estrategiaActiva });
     }
+
+    [HttpGet("historial")]
+    [AuthorizationFilter("any")]
+    public ActionResult<List<HistorialPuntuacionDto>> ObtenerHistorialPuntuaciones([FromQuery] Guid visitanteId)
+    {
+        var historial = servicioPuntuacion.ObtenerHistorialVisitante(visitanteId);
+        return historial;
+    }
 }
