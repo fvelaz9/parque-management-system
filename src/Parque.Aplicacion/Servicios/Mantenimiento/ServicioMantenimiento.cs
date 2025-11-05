@@ -7,7 +7,8 @@ namespace Parque.Aplicacion.Servicios.Mantenimiento;
 
 public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMantenimiento,
     IRepositorio<AtraccionParque> repoAtracciones,
-    IServicioFechaHora servicioFechaHora
+    IServicioFechaHora servicioFechaHora,
+    IRepositorio<Incidencia> repoIncidencias
     ) : IServicioMantenimiento
 {
     public MantenimientoPreventivo CrearMantenimiento(CrearMantenimientoRequest request)
@@ -33,6 +34,16 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
             throw new ArgumentException("La fecha y hora de inicio del mantenimiento debe ser futura");
         }
 
+        var incidencia = new Incidencia
+        {
+            Descripcion = $"Mantenimiento preventivo: {request.Descripcion}",
+            FechaReporte = fechaHoraInicio,
+            FechaResolucionEstimada = fechaHoraFin,
+            AtraccionId = request.AtraccionId
+        };
+
+        repoIncidencias.Agregar(incidencia);
+
         var mantenimiento = new MantenimientoPreventivo
         {
             AtraccionId = request.AtraccionId,
@@ -40,7 +51,7 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
             HoraInicio = request.HoraInicio,
             DuracionEstimada = request.DuracionEstimada,
             Descripcion = request.Descripcion,
-            IncidenciaId = 1
+            IncidenciaId = incidencia.Id
         };
         repoMantenimiento.Agregar(mantenimiento);
 

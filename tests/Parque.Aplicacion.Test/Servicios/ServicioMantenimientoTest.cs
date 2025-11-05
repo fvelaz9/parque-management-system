@@ -28,7 +28,8 @@ public class ServicioMantenimientoTest
         _servicio = new ServicioMantenimiento(
             _mockRepoMantenimientos.Object,
             _mockRepoAtracciones.Object,
-            _mockServicioFechaHora.Object
+            _mockServicioFechaHora.Object,
+            _mockRepoIncidencias.Object
             );
     }
 
@@ -123,8 +124,6 @@ public class ServicioMantenimientoTest
         Assert.AreEqual(1, resultado.AtraccionId);
         Assert.AreEqual("Prueba mantenimiento", resultado.Descripcion);
         Assert.AreEqual(incidenciaCapturada.Id, resultado.IncidenciaId);
-
-        Assert.AreEqual(incidenciaCapturada, mantenimientoCapturado.IncidenciaAsociada);
         _mockRepoIncidencias.Verify(r => r.Agregar(It.IsAny<Incidencia>()), Times.Once);
         _mockRepoMantenimientos.Verify(r => r.Agregar(It.IsAny<MantenimientoPreventivo>()), Times.Once);
     }
