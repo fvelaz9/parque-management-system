@@ -7,7 +7,8 @@ namespace Parque.Aplicacion.Servicios.Mantenimiento;
 
 public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMantenimiento,
     IRepositorio<AtraccionParque> repoAtracciones,
-    IServicioFechaHora servicioFechaHora) : IServicioMantenimiento
+    IServicioFechaHora servicioFechaHora
+    ) : IServicioMantenimiento
 {
     public MantenimientoPreventivo CrearMantenimiento(CrearMantenimientoRequest request)
     {

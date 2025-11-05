@@ -89,4 +89,43 @@ public class ServicioMantenimientoTest
         var ex = Assert.ThrowsException<ArgumentException>(() => _servicio.CrearMantenimiento(request));
         Assert.AreEqual("La fecha y hora de inicio del mantenimiento debe ser futura", ex.Message);
     }
+
+    [TestMethod]
+    public void CrearMantenimiento_DatosValidos_CreaMantenimientoEIncidencia()
+    {
+        var fechaActual = DateTime.Now;
+        _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual()).Returns(fechaActual);
+
+        var atraccion = new AtraccionParque("Atraccion1", TipoAtraccion.MontañaRusa, 10, 20, "desc") { Id = 1 };
+        _mockRepoAtracciones.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
+            .Returns(atraccion);
+
+        Incidencia incidenciaCapturada = null;
+        _mockRepoIncidencias.Setup(r => r.Agregar(It.IsAny<Incidencia>()))
+            .Callback<Incidencia>(i => { i.Id = 1; incidenciaCapturada = i; });
+
+        MantenimientoPreventivo mantenimientoCapturado = null;
+        _mockRepoMantenimientos.Setup(r => r.Agregar(It.IsAny<MantenimientoPreventivo>()))
+            .Callback<MantenimientoPreventivo>(m => { m.Id = 1; mantenimientoCapturado = m; });
+
+        var request = new CrearMantenimientoRequest
+        {
+            AtraccionId = 1,
+            FechaProgramada = fechaActual.AddDays(1),
+            HoraInicio = TimeSpan.FromHours(14),
+            DuracionEstimada = TimeSpan.FromHours(2),
+            Descripcion = "Prueba mantenimiento"
+        };
+
+        var resultado = _servicio.CrearMantenimiento(request);
+
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(1, resultado.AtraccionId);
+        Assert.AreEqual("Prueba mantenimiento", resultado.Descripcion);
+        Assert.AreEqual(incidenciaCapturada.Id, resultado.IncidenciaId);
+
+        Assert.AreEqual(incidenciaCapturada, mantenimientoCapturado.IncidenciaAsociada);
+        _mockRepoIncidencias.Verify(r => r.Agregar(It.IsAny<Incidencia>()), Times.Once);
+        _mockRepoMantenimientos.Verify(r => r.Agregar(It.IsAny<MantenimientoPreventivo>()), Times.Once);
+    }
 }
