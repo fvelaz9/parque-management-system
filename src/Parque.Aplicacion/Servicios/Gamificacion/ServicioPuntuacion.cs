@@ -199,6 +199,16 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
 
     public List<HistorialPuntuacionDto> ObtenerHistorialVisitante(Guid visitanteId)
     {
-        throw new NotImplementedException();
+        var visitante = repoVisitante.Encontrar(v => v.Id == visitanteId);
+
+        return visitante.HistorialPuntuaciones
+            .OrderByDescending(x => x.FechaHora)
+            .Select(x => new HistorialPuntuacionDto
+            {
+                FechaHora = x.FechaHora,
+                EstrategiaActiva = x.EstrategiaActiva,
+                OrigenPuntos = x.OrigenPuntos,
+                Puntos = x.Puntos
+            }).ToList();
     }
 }
