@@ -26,48 +26,22 @@ public class ServicioMantenimientoTest
         _mockRepoAtracciones = new Mock<IRepositorio<AtraccionParque>>();
         _mockServicioFechaHora = new Mock<IServicioFechaHora>();
         _servicio = new ServicioMantenimiento(
-            _mockRepoMantenimientos.Object,
-            _mockRepoIncidencias.Object,
-            _mockRepoAtracciones.Object,
-            _mockServicioFechaHora.Object);
+            _mockRepoMantenimientos.Object);
     }
 
     [TestMethod]
-    public void CrearMantenimiento_AtraccionExiste_CreaMantenimientoEIncidenciaAsociada()
+    public void CrearMantenimiento_DescripcionVacia_LanzaArgumentException()
     {
-        // Arrange
-        var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.MontañaRusa, 12, 50, "Test") { Id = 1 };
-        var fechaActual = new DateTime(2025, 11, 10, 12, 0, 0);
         var request = new CrearMantenimientoRequest
         {
             AtraccionId = 1,
-            FechaProgramada = new DateTime(2025, 11, 15),
-            HoraInicio = new TimeSpan(14, 30, 0),
-            DuracionEstimada = new TimeSpan(2, 0, 0),
-            Descripcion = "Revisión de motores"
+            FechaProgramada = DateTime.Now.AddDays(1),
+            HoraInicio = TimeSpan.FromHours(14),
+            DuracionEstimada = TimeSpan.FromHours(2),
+            Descripcion = " "
         };
 
-        _mockServicioFechaHora.Setup(f => f.ObtenerFechaActual()).Returns(fechaActual);
-        _mockRepoAtracciones.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
-            .Returns(atraccion);
-
-        Incidencia? incidenciaCapturada = null;
-        _mockRepoIncidencias.Setup(r => r.Agregar(It.IsAny<Incidencia>()))
-            .Callback<Incidencia>(i =>
-            {
-                i.Id = 1;
-                incidenciaCapturada = i;
-            });
-
-        MantenimientoPreventivo mantenimientiCapturado = null;
-        _mockRepoMantenimientos.Setup(r => r.Agregar(It.IsAny<MantenimientoPreventivo>()))
-            .Callback<MantenimientoPreventivo>(m =>
-            {
-                m.Id = 1;
-                mantenimientiCapturado = m;
-            });
-
-        // Act
-        var resultado = _servicio.CrearMantenimiento(request);
+        var ex = Assert.ThrowsException<ArgumentException>(() => _servicio.CrearMantenimiento(request));
+        Assert.AreEqual("La descripción del mantenimiento es requerida", ex.Message);
     }
 }
