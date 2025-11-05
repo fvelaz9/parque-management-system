@@ -34,14 +34,7 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
             throw new ArgumentException("La fecha y hora de inicio del mantenimiento debe ser futura");
         }
 
-        var incidencia = new Incidencia
-        {
-            Descripcion = $"Mantenimiento preventivo: {request.Descripcion}",
-            FechaReporte = fechaHoraInicio,
-            FechaResolucionEstimada = fechaHoraFin,
-            AtraccionId = request.AtraccionId
-        };
-
+        var incidencia = CrearIncidenciaTemporal(request, fechaHoraInicio, fechaHoraFin);
         repoIncidencias.Agregar(incidencia);
 
         var mantenimiento = new MantenimientoPreventivo
@@ -56,6 +49,17 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
         repoMantenimiento.Agregar(mantenimiento);
 
         return mantenimiento;
+    }
+
+    private Incidencia CrearIncidenciaTemporal(CrearMantenimientoRequest request, DateTime inicio, DateTime fin)
+    {
+        return new Incidencia
+        {
+            Descripcion = $"Mantenimiento preventivo: {request.Descripcion}",
+            FechaReporte = inicio,
+            FechaResolucionEstimada = fin,
+            AtraccionId = request.AtraccionId
+        };
     }
 
     public void EliminarMantenimiento(int id)
