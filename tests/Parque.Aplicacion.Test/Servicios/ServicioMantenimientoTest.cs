@@ -136,4 +136,29 @@ public class ServicioMantenimientoTest
 
         Assert.ThrowsException<ArgumentException>(() => _servicio.EliminarMantenimiento(1));
     }
+
+    [TestMethod]
+    public void EliminarMantenimiento_Existe_EliminaYActualizaEstado()
+    {
+        var mantenimiento = new MantenimientoPreventivo
+        {
+            Id = 1,
+            AtraccionId = 1,
+            IncidenciaId = 1
+        };
+        var atraccion = new AtraccionParque("Atraccion", TipoAtraccion.MontañaRusa, 12, 50, "desc") { Id = 1 };
+
+        _mockRepoMantenimientos.Setup(r => r.Encontrar(It.IsAny<Expression<Func<MantenimientoPreventivo, bool>>>()))
+            .Returns(mantenimiento);
+        _mockRepoIncidencias.Setup(r => r.ObtenerTodos())
+            .Returns(new List<Incidencia>());
+        _mockRepoAtracciones.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
+            .Returns(atraccion);
+
+        _servicio.EliminarMantenimiento(1);
+
+        _mockRepoIncidencias.Verify(r => r.Eliminar(It.IsAny<Expression<Func<Incidencia, bool>>>()), Times.Once);
+        _mockRepoMantenimientos.Verify(r => r.Eliminar(It.IsAny<Expression<Func<MantenimientoPreventivo, bool>>>()), Times.Once);
+        _mockRepoAtracciones.Verify(r => r.Editar(It.Is<AtraccionParque>(a => a.Estado == EstadoAtraccion.Disponible)), Times.Once);
+    }
 }
