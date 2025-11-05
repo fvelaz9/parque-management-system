@@ -196,4 +196,9 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
         var puntuacion = new HistorialPuntuacion(fechaActual, origenPuntos, estrategia, puntos);
         visitante.AgregarPuntuacionAHistorial(puntuacion);
     }
+
+    public List<HistorialPuntuacionDto> ObtenerHistorialPuntuacionesDto(Guid visitanteId)
+    {
+        throw new NotImplementedException();
+    }
 }
