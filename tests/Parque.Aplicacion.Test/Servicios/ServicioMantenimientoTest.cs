@@ -65,4 +65,27 @@ public class ServicioMantenimientoTest
         var ex = Assert.ThrowsException<ArgumentException>(() => _servicio.CrearMantenimiento(request));
         Assert.AreEqual("Atracción no encontrada", ex.Message);
     }
+
+    [TestMethod]
+    public void CrearMantenimiento_FechaInicioEnPasado_LanzaArgumentException()
+    {
+        var fechaActual = DateTime.Now;
+        _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual()).Returns(fechaActual);
+
+        var atraccion = new AtraccionParque("Atraccion1", TipoAtraccion.MontañaRusa, 10, 20, "desc") { Id = 1 };
+        _mockRepoAtracciones.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
+            .Returns(atraccion);
+
+        var request = new CrearMantenimientoRequest
+        {
+            AtraccionId = 1,
+            FechaProgramada = fechaActual.AddDays(-1), // en pasado
+            HoraInicio = TimeSpan.Zero,
+            DuracionEstimada = TimeSpan.FromHours(2),
+            Descripcion = "Mantenimiento valid"
+        };
+
+        var ex = Assert.ThrowsException<ArgumentException>(() => _servicio.CrearMantenimiento(request));
+        Assert.AreEqual("La fecha y hora de inicio del mantenimiento debe ser futura", ex.Message);
+    }
 }
