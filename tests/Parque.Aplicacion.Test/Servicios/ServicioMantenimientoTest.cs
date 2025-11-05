@@ -182,4 +182,19 @@ public class ServicioMantenimientoTest
 
         _mockRepoMantenimientos.Verify(r => r.ObtenerTodos(), Times.Once);
     }
+
+    [TestMethod]
+    public void ListarMantenimientos_Vacia_RetornaListaVacia()
+    {
+        // Arrange
+        _mockRepoMantenimientos.Setup(r => r.ObtenerTodos()).Returns(Enumerable.Empty<MantenimientoPreventivo>().ToList());
+
+        // Act
+        var resultados = _servicio.ListarMantenimientos();
+
+        // Assert
+        Assert.IsNotNull(resultados);
+        Assert.AreEqual(0, resultados.Count());
+        _mockRepoMantenimientos.Verify(r => r.ObtenerTodos(), Times.Once);
+    }
 }

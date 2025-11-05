@@ -89,6 +89,12 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
 
     public IEnumerable<MantenimientoPreventivo> ListarMantenimientos()
     {
-        throw new NotImplementedException();
+        var mantenimientos = repoMantenimiento.ObtenerTodos();
+        if (mantenimientos == null)
+        {
+            return Enumerable.Empty<MantenimientoPreventivo>();
+        }
+
+        return mantenimientos;
     }
 }
