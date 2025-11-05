@@ -44,4 +44,23 @@ public class ServicioMantenimientoTest
         var ex = Assert.ThrowsException<ArgumentException>(() => _servicio.CrearMantenimiento(request));
         Assert.AreEqual("La descripción del mantenimiento es requerida", ex.Message);
     }
+
+    [TestMethod]
+    public void CrearMantenimiento_AtraccionNoExiste_LanzaArgumentException()
+    {
+        _mockRepoAtracciones.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
+            .Returns((AtraccionParque)null);
+
+        var request = new CrearMantenimientoRequest
+        {
+            AtraccionId = 999,
+            FechaProgramada = DateTime.Now.AddDays(1),
+            HoraInicio = TimeSpan.FromHours(14),
+            DuracionEstimada = TimeSpan.FromHours(2),
+            Descripcion = "Mantenimiento valid"
+        };
+
+        var ex = Assert.ThrowsException<ArgumentException>(() => _servicio.CrearMantenimiento(request));
+        Assert.AreEqual("Atracción no encontrada", ex.Message);
+    }
 }
