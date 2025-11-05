@@ -27,7 +27,8 @@ public class ServicioMantenimientoTest
         _mockServicioFechaHora = new Mock<IServicioFechaHora>();
         _servicio = new ServicioMantenimiento(
             _mockRepoMantenimientos.Object,
-            _mockRepoAtracciones.Object
+            _mockRepoAtracciones.Object,
+            _mockServicioFechaHora.Object
             );
     }
 

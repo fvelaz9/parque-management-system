@@ -6,8 +6,8 @@ using Parque.Infraestructura.Repositorios;
 namespace Parque.Aplicacion.Servicios.Mantenimiento;
 
 public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMantenimiento,
-    IRepositorio<AtraccionParque> repoAtracciones
-    ) : IServicioMantenimiento
+    IRepositorio<AtraccionParque> repoAtracciones,
+    IServicioFechaHora servicioFechaHora) : IServicioMantenimiento
 {
     public MantenimientoPreventivo CrearMantenimiento(CrearMantenimientoRequest request)
     {
@@ -21,6 +21,15 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
         if (atraccion == null)
         {
             throw new ArgumentException("Atracción no encontrada");
+        }
+
+        var fechaHoraInicio = request.FechaProgramada.Add(request.HoraInicio);
+        var fechaHoraFin = fechaHoraInicio.Add(request.DuracionEstimada);
+        var fechaActual = servicioFechaHora.ObtenerFechaActual();
+
+        if (fechaHoraInicio <= fechaActual)
+        {
+            throw new ArgumentException("La fecha y hora de inicio del mantenimiento debe ser futura");
         }
 
         var mantenimiento = new MantenimientoPreventivo
