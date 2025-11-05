@@ -199,12 +199,7 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
 
     public List<HistorialPuntuacionDto> ObtenerHistorialVisitante(Guid visitanteId)
     {
-        var visitante = repoVisitante.Encontrar(v => v.Id == visitanteId);
-
-        if (visitante == null)
-        {
-            throw new InvalidOperationException($"Visitante con ID {visitanteId} no encontrado");
-        }
+        var visitante = ObtenerVisitante(visitanteId);
 
         return visitante.HistorialPuntuaciones
             .OrderByDescending(x => x.FechaHora)
@@ -215,5 +210,16 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
                 OrigenPuntos = x.OrigenPuntos,
                 Puntos = x.Puntos
             }).ToList();
+    }
+
+    public Visitante ObtenerVisitante(Guid visitanteId)
+    {
+        var visitante = repoVisitante.Encontrar(v => v.Id == visitanteId);
+        if (visitante == null)
+        {
+            throw new InvalidOperationException($"Visitante con ID {visitanteId} no encontrado");
+        }
+
+        return visitante;
     }
 }
