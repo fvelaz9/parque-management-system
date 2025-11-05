@@ -76,6 +76,26 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
 
             repoPuntuaciones.Editar(puntuacion);
         }
+
+        var nombreEstrategia= estrategiaActiva.Nombre;
+        var origenPuntuacion = " ";
+        if(eventoActivo != null)
+        {
+            origenPuntuacion = $"Evento: {eventoActivo.Titulo}";
+        }
+        else
+        {
+            origenPuntuacion = $"Atraccion: {atraccion.Nombre}";
+        }
+
+        var visitante = repoVisitante.Encontrar(c => c.Id == visitanteId);
+        if(visitante == null)
+        {
+            throw new InvalidOperationException($"Visitante con ID no encontrado");
+        }
+
+        AgregarPuntuacionAVisitante(visitante, puntos, origenPuntuacion, nombreEstrategia);
+        repoVisitante.Editar(visitante);
     }
 
     public List<RankingVisitanteDto> ObtenerRankingDiario(DateTime? fecha, int top)
