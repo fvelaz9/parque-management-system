@@ -5,13 +5,22 @@ using Parque.Infraestructura.Repositorios;
 
 namespace Parque.Aplicacion.Servicios.Mantenimiento;
 
-public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMantenimiento) : IServicioMantenimiento
+public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMantenimiento,
+    IRepositorio<AtraccionParque> repoAtracciones
+    ) : IServicioMantenimiento
 {
     public MantenimientoPreventivo CrearMantenimiento(CrearMantenimientoRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.Descripcion))
         {
             throw new ArgumentException("La descripción del mantenimiento es requerida");
+        }
+
+        var atraccion = repoAtracciones.Encontrar(a => a.Id == request.AtraccionId);
+
+        if (atraccion == null)
+        {
+            throw new ArgumentException("Atracción no encontrada");
         }
 
         var mantenimiento = new MantenimientoPreventivo
