@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using Moq;
+using Parque.Aplicacion.DTOs.Gamificacion;
 using Parque.Aplicacion.Servicios;
 using Parque.Aplicacion.Servicios.Gamificacion;
 using Parque.Dominio;
@@ -485,5 +486,23 @@ public class ServicioPuntuacionTest
             "Debe usar la estrategia activa obtenida para calcular puntos");
         _repoPuntuacionesMock.Verify(r => r.Agregar(It.Is<PuntuacionVisitante>(
             p => p.PuntosDiarios == 75 && p.PuntosTotales == 75)), Times.Once);
+    }
+
+    [TestMethod]
+    public void ObtenerHistorialPuntuacionesDto_DebeRetornarLista()
+    {
+        // arrange
+        var visitante = Visitante.Crear(new DateTime(1990,1,1));
+        visitante.HistorialPuntuaciones.Add(new HistorialPuntuacion(DateTime.UtcNow, "veiras", "A", 10));
+
+        _repoVisitanteMock!
+            .Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
+            .Returns(visitante);
+
+        // act
+        var resultado = _servicio!.ObtenerHistorialVisitante(visitante.Id);
+
+        // assert
+        Assert.IsInstanceOfType(resultado, typeof(List<HistorialPuntuacionDto>));
     }
 }
