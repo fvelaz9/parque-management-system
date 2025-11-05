@@ -197,7 +197,7 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
         visitante.AgregarPuntuacionAHistorial(puntuacion);
     }
 
-    public List<HistorialPuntuacionDto> ObtenerHistorialPuntuacionesDto(Guid visitanteId)
+    public List<HistorialPuntuacionDto> ObtenerHistorialVisitante(Guid visitanteId)
     {
         throw new NotImplementedException();
     }
