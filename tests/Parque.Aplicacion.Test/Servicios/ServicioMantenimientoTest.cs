@@ -161,4 +161,25 @@ public class ServicioMantenimientoTest
         _mockRepoMantenimientos.Verify(r => r.Eliminar(It.IsAny<Expression<Func<MantenimientoPreventivo, bool>>>()), Times.Once);
         _mockRepoAtracciones.Verify(r => r.Editar(It.Is<AtraccionParque>(a => a.Estado == EstadoAtraccion.Disponible)), Times.Once);
     }
+
+    [TestMethod]
+    public void ListarMantenimientos_RetornaListaCorrecta()
+    {
+        var lista = new List<MantenimientoPreventivo>
+        {
+            new MantenimientoPreventivo { Id = 1, Descripcion = "Mantenimiento 1" },
+            new MantenimientoPreventivo { Id = 2, Descripcion = "Mantenimiento 2" }
+        };
+
+        _mockRepoMantenimientos.Setup(r => r.ObtenerTodos()).Returns(lista);
+
+        var resultado = _servicio.ListarMantenimientos();
+
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(2, resultado.Count());
+        Assert.AreEqual("Mantenimiento 1", resultado.ElementAt(0).Descripcion);
+        Assert.AreEqual("Mantenimiento 2", resultado.ElementAt(1).Descripcion);
+
+        _mockRepoMantenimientos.Verify(r => r.ObtenerTodos(), Times.Once);
+    }
 }
