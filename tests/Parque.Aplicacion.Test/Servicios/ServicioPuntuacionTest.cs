@@ -505,4 +505,15 @@ public class ServicioPuntuacionTest
         // assert
         Assert.IsInstanceOfType(resultado, typeof(List<HistorialPuntuacionDto>));
     }
+
+    [TestMethod]
+    [ExpectedException(typeof(InvalidOperationException))]
+    public void ObtenerHistorialPuntuacionesDtoVisitanteNoExiste()
+    {
+        _repoVisitanteMock!
+            .Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
+            .Returns((Visitante)null!);
+
+        _servicio!.ObtenerHistorialVisitante(Guid.NewGuid());
+    }
 }
