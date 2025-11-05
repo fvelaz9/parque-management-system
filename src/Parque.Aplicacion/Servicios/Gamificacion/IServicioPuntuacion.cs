@@ -11,4 +11,5 @@ public interface IServicioPuntuacion
     void CambiarEstrategiaActiva(string nombreEstrategia);
     string ObtenerEstrategiaActiva();
     void AgregarPuntuacionAVisitante(Visitante visitante, int puntos, string origenPuntos, string estrategia);
+    List<HistorialPuntuacionDto> ObtenerHistorialPuntuacionesDto(Guid visitanteId);
 }
