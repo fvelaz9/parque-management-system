@@ -190,4 +190,57 @@ public class GamifiacionController_Test
     }
 
     #endregion
+
+    [TestMethod]
+    public void ObtenerHistorialPuntuaciones_VisitanteValido_RetornaHistorial()
+    {
+        // Arrange
+        var visitanteId = Guid.NewGuid();
+        var historialEsperado = new List<HistorialPuntuacionDto>
+        {
+            new() { EstrategiaActiva = "X", OrigenPuntos = "A", Puntos = 10, FechaHora = DateTime.UtcNow },
+            new() { EstrategiaActiva = "Y", OrigenPuntos = "B", Puntos = 20, FechaHora = DateTime.UtcNow }
+        };
+
+        _serviceMock!
+            .Setup(s => s.ObtenerHistorialVisitante(visitanteId))
+            .Returns(historialEsperado);
+
+        // Act
+        var result = _controller!.ObtenerHistorialPuntuaciones(visitanteId);
+
+        // Assert
+        Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult)); // ActionResult<T>
+        var okResult = result.Result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.AreEqual(200, okResult.StatusCode);
+
+        var historial = okResult.Value as List<HistorialPuntuacionDto>;
+        Assert.IsNotNull(historial);
+        Assert.AreEqual(2, historial.Count);
+    }
+
+    [TestMethod]
+    public void ObtenerRankingDiario_ValidaContenidoRetornado()
+    {
+        // Arrange
+        var ranking = new List<RankingVisitanteDto>
+        {
+            new() { VisitanteId = Guid.NewGuid(), PuntosDiarios = 60, PuntosTotales = 200, Posicion = 1 }
+        };
+
+        _serviceMock!
+            .Setup(s => s.ObtenerRankingDiario(null, 10))
+            .Returns(ranking);
+
+        // Act
+        var result = _controller!.ObtenerRankingDiario(null, 10) as OkObjectResult;
+
+        // Assert
+        Assert.IsNotNull(result);
+
+        dynamic payload = result!.Value!;
+        Assert.AreEqual(1, payload.totalVisitantes);
+        Assert.AreEqual(60, payload.ranking[0].PuntosDiarios);
+    }
 }
