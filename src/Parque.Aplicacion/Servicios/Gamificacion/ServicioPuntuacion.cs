@@ -201,6 +201,11 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
     {
         var visitante = repoVisitante.Encontrar(v => v.Id == visitanteId);
 
+        if (visitante == null)
+        {
+            throw new InvalidOperationException($"Visitante con ID {visitanteId} no encontrado");
+        }
+
         return visitante.HistorialPuntuaciones
             .OrderByDescending(x => x.FechaHora)
             .Select(x => new HistorialPuntuacionDto
