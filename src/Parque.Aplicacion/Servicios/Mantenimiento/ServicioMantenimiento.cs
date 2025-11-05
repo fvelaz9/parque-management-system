@@ -64,7 +64,14 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
 
     public void EliminarMantenimiento(int id)
     {
-        throw new NotImplementedException();
+        var mantenimiento = repoMantenimiento.Encontrar(m => m.Id == id);
+        if (mantenimiento == null)
+        {
+            throw new ArgumentException("Mantenimiento no encontrado");
+        }
+
+        repoIncidencias.Eliminar(i => i.Id == mantenimiento.IncidenciaId);
+        repoMantenimiento.Eliminar(m => m.Id == id);
     }
 
     public IEnumerable<MantenimientoPreventivo> ListarMantenimientos()
