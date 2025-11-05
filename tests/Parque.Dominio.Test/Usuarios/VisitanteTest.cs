@@ -236,4 +236,19 @@ public class VisitanteTest
         Assert.AreEqual(new DateTime(2025, 10, 8), puntuacion.Fecha);
         Assert.AreEqual(TimeSpan.Zero, puntuacion.Fecha.TimeOfDay);
     }
+
+    [TestMethod]
+    public void AgregarPuntuacionAHistoria()
+    {
+        // Arrange
+        var visitante = Visitante.Crear(DateTime.UtcNow.AddYears(-20));
+        var historial = new HistorialPuntuacion(DateTime.UtcNow, "estrategiaX", "eventoX", 25);
+
+        // Act
+        visitante.AgregarPuntuacionAHistorial(historial);
+
+        // Assert
+        Assert.AreEqual(1, visitante.HistorialPuntuaciones.Count);
+        Assert.AreEqual(historial, visitante.HistorialPuntuaciones[0]);
+    }
 }
