@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Parque.Infraestructura.Migrations
 {
     /// <inheritdoc />
-    public partial class agregar : Migration
+    public partial class Agregar : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

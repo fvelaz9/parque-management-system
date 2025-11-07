@@ -13,7 +13,7 @@ namespace Parque.Infraestructura.Migrations
 {
     [DbContext(typeof(AppContexto))]
     [Migration("20251107181704_agregar")]
-    partial class agregar
+    partial class Agregar
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
