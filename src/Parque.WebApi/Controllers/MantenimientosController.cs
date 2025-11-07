@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Parque.Aplicacion.DTOs;
 using Parque.Aplicacion.Servicios.Mantenimiento;
@@ -7,10 +8,12 @@ namespace Parque.WebApi.Controllers;
 
 [ApiController]
 [Route("api/mantenimientos")]
+[AllowAnonymous]
 public class MantenimientosController(IServicioMantenimiento servicio) : ControllerBase
 {
     [HttpGet]
-    [AuthorizationFilter("Administrador")]
+
+    // [AuthorizationFilter("Administrador")]
     public IActionResult GetAll()
     {
         var mantenimientos = servicio.ListarMantenimientos();
@@ -18,7 +21,8 @@ public class MantenimientosController(IServicioMantenimiento servicio) : Control
     }
 
     [HttpPost]
-    [AuthorizationFilter("Administrador")]
+
+    // [AuthorizationFilter("Administrador")]
     public IActionResult Create([FromBody] CrearMantenimientoRequest request)
     {
         try
@@ -33,7 +37,8 @@ public class MantenimientosController(IServicioMantenimiento servicio) : Control
     }
 
     [HttpDelete("{id}")]
-    [AuthorizationFilter("Administrador")]
+
+    // [AuthorizationFilter("Administrador")]
     public IActionResult Delete(int id)
     {
         try
