@@ -1,5 +1,4 @@
 using System.Linq.Expressions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Parque.Aplicacion.DTOs;
 using Parque.Aplicacion.Servicios;
@@ -29,8 +28,7 @@ public class ServicioMantenimientoTest
             _mockRepoMantenimientos.Object,
             _mockRepoAtracciones.Object,
             _mockServicioFechaHora.Object,
-            _mockRepoIncidencias.Object
-            );
+            _mockRepoIncidencias.Object);
     }
 
     [TestMethod]
@@ -103,11 +101,13 @@ public class ServicioMantenimientoTest
 
         Incidencia incidenciaCapturada = null;
         _mockRepoIncidencias.Setup(r => r.Agregar(It.IsAny<Incidencia>()))
-            .Callback<Incidencia>(i => { i.Id = 1; incidenciaCapturada = i; });
+            .Callback<Incidencia>(i => { i.Id = 1;
+                incidenciaCapturada = i; });
 
         MantenimientoPreventivo mantenimientoCapturado = null;
         _mockRepoMantenimientos.Setup(r => r.Agregar(It.IsAny<MantenimientoPreventivo>()))
-            .Callback<MantenimientoPreventivo>(m => { m.Id = 1; mantenimientoCapturado = m; });
+            .Callback<MantenimientoPreventivo>(m => { m.Id = 1;
+                mantenimientoCapturado = m; });
 
         var request = new CrearMantenimientoRequest
         {
@@ -151,7 +151,7 @@ public class ServicioMantenimientoTest
         _mockRepoMantenimientos.Setup(r => r.Encontrar(It.IsAny<Expression<Func<MantenimientoPreventivo, bool>>>()))
             .Returns(mantenimiento);
         _mockRepoIncidencias.Setup(r => r.ObtenerTodos())
-            .Returns(new List<Incidencia>());
+            .Returns([]);
         _mockRepoAtracciones.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
             .Returns(atraccion);
 

@@ -60,8 +60,7 @@ public class MantenimientoTest
         mantenimiento.FechaProgramada = fechaInicio;
         mantenimiento.HoraInicio = horaInicio;
         mantenimiento.DuracionEstimada = duracion;
-
-        var funcion1 = mantenimiento.FechaHoraInicio();
-        var funcion2 = mantenimiento.FechaHoraFin();
+        _ = mantenimiento.FechaHoraInicio();
+        _ = mantenimiento.FechaHoraFin();
     }
 }

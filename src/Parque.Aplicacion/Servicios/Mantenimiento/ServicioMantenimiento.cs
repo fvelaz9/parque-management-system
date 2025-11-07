@@ -13,14 +13,14 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
 {
     public MantenimientoPreventivo CrearMantenimiento(CrearMantenimientoRequest request)
     {
-        if (string.IsNullOrWhiteSpace(request.Descripcion))
+        if(string.IsNullOrWhiteSpace(request.Descripcion))
         {
             throw new ArgumentException("La descripción del mantenimiento es requerida");
         }
 
         var atraccion = repoAtracciones.Encontrar(a => a.Id == request.AtraccionId);
 
-        if (atraccion == null)
+        if(atraccion == null)
         {
             throw new ArgumentException("Atracción no encontrada");
         }
@@ -29,7 +29,7 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
         var fechaHoraFin = fechaHoraInicio.Add(request.DuracionEstimada);
         var fechaActual = servicioFechaHora.ObtenerFechaActual();
 
-        if (fechaHoraInicio <= fechaActual)
+        if(fechaHoraInicio <= fechaActual)
         {
             throw new ArgumentException("La fecha y hora de inicio del mantenimiento debe ser futura");
         }
@@ -65,7 +65,7 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
     public void EliminarMantenimiento(int id)
     {
         var mantenimiento = repoMantenimiento.Encontrar(m => m.Id == id);
-        if (mantenimiento == null)
+        if(mantenimiento == null)
         {
             throw new ArgumentException("Mantenimiento no encontrado");
         }
@@ -73,13 +73,13 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
         repoIncidencias.Eliminar(i => i.Id == mantenimiento.IncidenciaId);
         repoMantenimiento.Eliminar(m => m.Id == id);
         var atraccion = repoAtracciones.Encontrar(a => a.Id == mantenimiento.AtraccionId);
-        if (atraccion != null)
+        if(atraccion != null)
         {
             var fechaActual = servicioFechaHora.ObtenerFechaActual();
             var tieneIncidenciasActivas = repoIncidencias
                 .ObtenerTodos()
                 .Any(i => i.AtraccionId == mantenimiento.AtraccionId && i.EstaActiva(fechaActual));
-            if (!tieneIncidenciasActivas)
+            if(!tieneIncidenciasActivas)
             {
                 atraccion.Estado = EstadoAtraccion.Disponible;
                 repoAtracciones.Editar(atraccion);
@@ -90,7 +90,7 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
     public IEnumerable<MantenimientoPreventivo> ListarMantenimientos()
     {
         var mantenimientos = repoMantenimiento.ObtenerTodos();
-        if (mantenimientos == null)
+        if(mantenimientos == null)
         {
             return Enumerable.Empty<MantenimientoPreventivo>();
         }

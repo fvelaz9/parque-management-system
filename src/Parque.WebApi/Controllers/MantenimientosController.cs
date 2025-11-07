@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Parque.Aplicacion.DTOs;
 using Parque.Aplicacion.Servicios.Mantenimiento;
-using Parque.WebApi.Filtros;
 
 namespace Parque.WebApi.Controllers;
 
@@ -30,7 +29,7 @@ public class MantenimientosController(IServicioMantenimiento servicio) : Control
             var mantenimiento = servicio.CrearMantenimiento(request);
             return CreatedAtAction(nameof(GetAll), new { id = mantenimiento.Id }, mantenimiento);
         }
-        catch (ArgumentException ex)
+        catch(ArgumentException ex)
         {
             return BadRequest(new { mensaje = ex.Message });
         }
@@ -46,7 +45,7 @@ public class MantenimientosController(IServicioMantenimiento servicio) : Control
             servicio.EliminarMantenimiento(id);
             return NoContent();
         }
-        catch (ArgumentException ex)
+        catch(ArgumentException ex)
         {
             return NotFound(new { mensaje = ex.Message });
         }
