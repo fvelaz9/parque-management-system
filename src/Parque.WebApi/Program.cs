@@ -26,12 +26,12 @@ builder.Services.AddControllers(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AngularApp", policy =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:4200") // Puerto donde corre Angular
-            .AllowAnyMethod() // Permite GET, POST, PUT, DELETE, etc.
-            .AllowAnyHeader() // Permite cualquier header
-            .AllowCredentials();                    // Permite cookies/autenticación
+        policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
+              .AllowAnyMethod()
+              .AllowAnyHeader()
+              .AllowCredentials();
     });
 });
 
@@ -67,7 +67,7 @@ builder.Services.AddDbContext<AppContexto>(options => options.UseSqlServer("name
 var app = builder.Build();
 
 app.UseHttpsRedirection();
-app.UseCors("AngularApp");
+app.UseCors("AllowFrontend");
 app.UseAuthorization();
 app.MapControllers();
 
