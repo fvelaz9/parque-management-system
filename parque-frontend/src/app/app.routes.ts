@@ -1,7 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './features/home/home';
 import { NotFoundComponent } from './features/not-found/not-found';
-import { AtraccionListComponent } from './features/atracciones/atraccion-list/atraccion-list';
 import { authGuard } from './auth-guard';
 
 export const routes: Routes = [
@@ -17,8 +16,17 @@ export const routes: Routes = [
   {
     path: 'atracciones',
     loadComponent: () => import('./features/atracciones/atraccion-list/atraccion-list')
-      .then(m => m.AtraccionListComponent),
-      canActivate: [authGuard]
+      .then(m => m.AtraccionListComponent)
+  },
+  {
+    path: 'atracciones/nueva',
+    loadComponent: () => import('./features/atracciones/atraccion-form/atraccion-form')
+      .then(m => m.AtraccionForm)
+  },
+  {
+    path: 'atracciones/editar/:id',
+    loadComponent: () => import('./features/atracciones/atraccion-edit/atraccion-edit')
+      .then(m => m.AtraccionEdit)
   },
   {
     path: 'login',
@@ -35,4 +43,5 @@ export const routes: Routes = [
     path: "**",
     component: NotFoundComponent
   }
+
 ];

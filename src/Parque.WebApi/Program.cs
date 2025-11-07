@@ -4,6 +4,7 @@ using Parque.Aplicacion.Servicios.Acceso;
 using Parque.Aplicacion.Servicios.Atracciones;
 using Parque.Aplicacion.Servicios.Gamificacion;
 using Parque.Aplicacion.Servicios.Incidencias;
+using Parque.Aplicacion.Servicios.Mantenimiento;
 using Parque.Aplicacion.Servicios.Ticket;
 using Parque.Dominio.Gamificacion;
 using Parque.Infraestructura;
@@ -43,6 +44,7 @@ builder.Services.AddScoped<IServicioEvento, ServicioEvento>();
 builder.Services.AddScoped<IServicioSesion, ServicioSesion>();
 builder.Services.AddScoped<IServicioAcceso, ServicioAcceso>();
 builder.Services.AddScoped<IServicioIncidencia, ServicioIncidencia>();
+builder.Services.AddScoped<IServicioMantenimiento, ServicioMantenimiento>();
 
 builder.Services.AddScoped<IEstrategiaPuntuacion, PuntuacionPorAtraccion>(sp =>
     new PuntuacionPorAtraccion());
