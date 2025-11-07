@@ -1,4 +1,4 @@
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using Moq;
 using Parque.Aplicacion.DTOs;
 using Parque.Aplicacion.Servicios;
@@ -51,7 +51,7 @@ public class ServicioMantenimientoTest
     public void CrearMantenimiento_AtraccionNoExiste_LanzaArgumentException()
     {
         _mockRepoAtracciones.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
-            .Returns((AtraccionParque)null);
+            .Returns(null as AtraccionParque);
 
         var request = new CrearMantenimientoRequest
         {
@@ -99,15 +99,21 @@ public class ServicioMantenimientoTest
         _mockRepoAtracciones.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
             .Returns(atraccion);
 
-        Incidencia incidenciaCapturada = null;
+        Incidencia? incidenciaCapturada = null;
         _mockRepoIncidencias.Setup(r => r.Agregar(It.IsAny<Incidencia>()))
-            .Callback<Incidencia>(i => { i.Id = 1;
-                incidenciaCapturada = i; });
+            .Callback<Incidencia>(i =>
+            {
+                i.Id = 1;
+                incidenciaCapturada = i;
+            });
 
-        MantenimientoPreventivo mantenimientoCapturado = null;
+        MantenimientoPreventivo? mantenimientoCapturado = null;
         _mockRepoMantenimientos.Setup(r => r.Agregar(It.IsAny<MantenimientoPreventivo>()))
-            .Callback<MantenimientoPreventivo>(m => { m.Id = 1;
-                mantenimientoCapturado = m; });
+            .Callback<MantenimientoPreventivo>(m =>
+            {
+                m.Id = 1;
+                mantenimientoCapturado = m;
+            });
 
         var request = new CrearMantenimientoRequest
         {
@@ -123,6 +129,7 @@ public class ServicioMantenimientoTest
         Assert.IsNotNull(resultado);
         Assert.AreEqual(1, resultado.AtraccionId);
         Assert.AreEqual("Prueba mantenimiento", resultado.Descripcion);
+        Assert.IsNotNull(incidenciaCapturada);
         Assert.AreEqual(incidenciaCapturada.Id, resultado.IncidenciaId);
         _mockRepoIncidencias.Verify(r => r.Agregar(It.IsAny<Incidencia>()), Times.Once);
         _mockRepoMantenimientos.Verify(r => r.Agregar(It.IsAny<MantenimientoPreventivo>()), Times.Once);
