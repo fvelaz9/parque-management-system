@@ -14,7 +14,7 @@ builder.Services.AgregarBaseDatos();
 var app = builder.Build();
 
 // Asegurar que la base de datos esté creada y migrada
-using (var scope = app.Services.CreateScope())
+using(var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppContexto>();
     try
@@ -24,7 +24,7 @@ using (var scope = app.Services.CreateScope())
         var todasLasCuentas = repo.ObtenerTodos();
         var adminExistente = todasLasCuentas.FirstOrDefault(c => c.Roles.Contains(Rol.Administrador));
 
-        if (adminExistente == null)
+        if(adminExistente == null)
         {
             var adminEmail = new Email("admin@admin.com");
             var adminInicial = Cuenta.Crear(
@@ -42,7 +42,7 @@ using (var scope = app.Services.CreateScope())
             Console.WriteLine("Administrador ya existe en el sistema.");
         }
     }
-    catch (Exception ex)
+    catch(Exception ex)
     {
         Console.WriteLine($"Error al inicializar la base de datos: {ex.Message}");
         throw;
