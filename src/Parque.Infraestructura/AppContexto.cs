@@ -20,6 +20,7 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
     public DbSet<ConfiguracionEstrategia> ConfiguracionesEstrategia { get; set; }
     public DbSet<ConfiguracionFechaHora> ConfiguracionFechaHora { get; set; }
     public DbSet<Incidencia> Incidencias { get; set; }
+    public DbSet<MantenimientoPreventivo> MantenimientosPreventivos { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -196,6 +196,39 @@ namespace Parque.Infraestructura.Migrations
                     b.ToTable("Incidencias");
                 });
 
+            modelBuilder.Entity("Parque.Dominio.MantenimientoPreventivo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AtraccionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Descripcion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeSpan>("DuracionEstimada")
+                        .HasColumnType("time");
+
+                    b.Property<DateTime>("FechaProgramada")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan>("HoraInicio")
+                        .HasColumnType("time");
+
+                    b.Property<int>("IncidenciaId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("IncidenciaId");
+
+                    b.ToTable("MantenimientosPreventivos");
+                });
+
             modelBuilder.Entity("Parque.Dominio.Sesion", b =>
                 {
                     b.Property<Guid>("Id")
@@ -347,6 +380,17 @@ namespace Parque.Infraestructura.Migrations
                         .HasForeignKey("EventoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Parque.Dominio.MantenimientoPreventivo", b =>
+                {
+                    b.HasOne("Parque.Dominio.Incidencia", "IncidenciaAsociada")
+                        .WithMany()
+                        .HasForeignKey("IncidenciaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("IncidenciaAsociada");
                 });
 
             modelBuilder.Entity("Parque.Dominio.Usuarios.Cuenta", b =>
