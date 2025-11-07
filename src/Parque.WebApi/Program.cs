@@ -13,7 +13,7 @@ builder.Services.AgregarBaseDatos();
 var app = builder.Build();
 
 // Crear un admin inicial si no existe
-using (var scope = app.Services.CreateScope())
+using(var scope = app.Services.CreateScope())
 {
     var repo = scope.ServiceProvider.GetRequiredService<IRepositorio<Cuenta>>();
 
@@ -21,7 +21,7 @@ using (var scope = app.Services.CreateScope())
     var todasLasCuentas = repo.ObtenerTodos();
     var adminExistente = todasLasCuentas.FirstOrDefault(c => c.Roles.Contains(Rol.Administrador));
 
-    if (adminExistente == null)
+    if(adminExistente == null)
     {
         var adminEmail = new Email("admin@admin.com");
         var adminInicial = Cuenta.Crear(
