@@ -13,7 +13,6 @@ builder.Services.AgregarBaseDatos();
 
 var app = builder.Build();
 
-// Asegurar que la base de datos esté creada y migrada
 using(var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppContexto>();

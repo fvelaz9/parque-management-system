@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Parque.Aplicacion.DTOs;
 using Parque.Aplicacion.Servicios.Mantenimiento;
@@ -10,8 +10,8 @@ namespace Parque.WebApi.Test.Controllers;
 [TestClass]
 public class MantenimientosControllerTest
 {
-    private Mock<IServicioMantenimiento>? _mockServicio;
-    private MantenimientosController? _controller;
+    private Mock<IServicioMantenimiento> _mockServicio = null!;
+    private MantenimientosController _controller = null!;
 
     [TestInitialize]
     public void Setup()
