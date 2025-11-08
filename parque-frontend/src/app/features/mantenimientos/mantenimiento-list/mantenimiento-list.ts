@@ -1,11 +1,61 @@
-import { Component } from '@angular/core';
+// src/app/features/mantenimientos/mantenimiento-list/mantenimiento-list.ts
+import { Component, inject, signal, effect } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { MantenimientoPreventivo } from '../../../core/models/mantenimiento.model';
+import { MantenimientosService } from '../../../core/services/mantenimiento.service';
 
 @Component({
   selector: 'app-mantenimiento-list',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, RouterLink],
   templateUrl: './mantenimiento-list.html',
-  styleUrl: './mantenimiento-list.css',
+  styleUrl: './mantenimiento-list.css'
 })
 export class MantenimientoList {
+  private readonly mantenimientosService = inject(MantenimientosService);
 
+  public mantenimientos = signal<MantenimientoPreventivo[]>([]);
+  public loading = signal(true);
+  public error = signal('');
+
+  private readonly loadMantenimientosEffect = effect(() => {
+    this.cargarMantenimientos();
+  });
+
+  private cargarMantenimientos() {
+    this.loading.set(true);
+    this.mantenimientosService.getAllMantenimientos().subscribe({
+      next: (result) => {
+        console.log('Mantenimientos cargados:', result);
+        this.mantenimientos.set(result);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error('Error al cargar mantenimientos:', err);
+        this.error.set('Error al cargar los mantenimientos');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  eliminarMantenimiento(id: number) {
+    if (confirm('¿Estás seguro de que deseas eliminar este mantenimiento?')) {
+      this.mantenimientosService.deleteMantenimiento(id).subscribe({
+        next: () => {
+          console.log('Mantenimiento eliminado');
+          this.cargarMantenimientos(); // Recargar lista
+        },
+        error: (err) => {
+          console.error('Error al eliminar mantenimiento:', err);
+          alert('Error al eliminar el mantenimiento');
+        }
+      });
+    }
+  }
+
+  formatearDuracion(duracion: string): string {
+    const parts = duracion.split(':');
+    return `${parts[0]}h ${parts[1]}m`;
+  }
 }

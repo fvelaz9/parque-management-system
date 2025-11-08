@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { HomeComponent } from './features/home/home';
 import { NotFoundComponent } from './features/not-found/not-found';
 import { authGuard } from './auth-guard';
+import {MantenimientoList} from './features/mantenimientos/mantenimiento-list/mantenimiento-list';
 
 export const routes: Routes = [
   {
@@ -37,6 +38,11 @@ export const routes: Routes = [
     path: 'registro-visitante',
     loadComponent: () => import('./features/cuentas/registro-visitante/registro-visitante')
       .then(m => m.RegistroVisitanteComponent)
+  },
+  {
+    path: 'mantenimientos',
+    loadComponent: () => import('./features/mantenimientos/mantenimiento-list/mantenimiento-list')
+      .then(m => m.MantenimientoList)
   },
   // Not Found route - debe ser la última
   {
