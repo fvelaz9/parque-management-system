@@ -3,6 +3,7 @@ import { HomeComponent } from './features/home/home';
 import { NotFoundComponent } from './features/not-found/not-found';
 import { authGuard } from './auth-guard';
 import {MantenimientoList} from './features/mantenimientos/mantenimiento-list/mantenimiento-list';
+import {MantenimientoForm} from './features/mantenimientos/mantenimiento-form/mantenimiento-form';
 
 export const routes: Routes = [
   {
@@ -43,6 +44,11 @@ export const routes: Routes = [
     path: 'mantenimientos',
     loadComponent: () => import('./features/mantenimientos/mantenimiento-list/mantenimiento-list')
       .then(m => m.MantenimientoList)
+  },
+  {
+    path: 'mantenimientos/nuevo',
+    loadComponent: () => import('./features/mantenimientos/mantenimiento-form/mantenimiento-form')
+      .then(m => m.MantenimientoForm)
   },
   // Not Found route - debe ser la última
   {
