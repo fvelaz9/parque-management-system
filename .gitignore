@@ -145,3 +145,11 @@ TestResult.xml
 # Evitar duplicados: ya tienes estas dos arriba, mantén solo una versión
 # [Bb]in/
 # [Oo]bj/
+
+# SQL Server database files
+*.mdf
+*.ldf
+*.ndf
+*.bak
+Entropy.bin
+data/
