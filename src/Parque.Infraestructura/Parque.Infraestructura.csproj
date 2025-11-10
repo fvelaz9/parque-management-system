@@ -23,4 +23,8 @@
     <ProjectReference Include="..\Parque.Dominio\Parque.Dominio.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Migrations\" />
+  </ItemGroup>
+
 </Project>

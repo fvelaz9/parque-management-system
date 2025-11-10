@@ -1,0 +1,37 @@
+<nav class="navbar">
+  <div class="navbar-container">
+    <a routerLink="/home" class="navbar-brand">
+      🎢 Parque
+    </a>
+
+    <ul class="navbar-menu">
+      <li>
+        <a routerLink="/home" routerLinkActive="active" class="nav-link">
+          Inicio
+        </a>
+      </li>
+      <li>
+        <a routerLink="/atracciones" routerLinkActive="active" class="nav-link">
+          Atracciones
+        </a>
+      </li>
+      
+      @if (isLoggedIn) {
+        <li>
+          <span class="usuario-nombre">{{ usuario?.nombre }}</span>
+        </li>
+        <li>
+          <button (click)="logout()" class="btn-logout">
+            Cerrar sesión
+          </button>
+        </li>
+      } @else {
+        <li>
+          <a routerLink="/login" routerLinkActive="active" class="nav-link">
+            Iniciar sesión
+          </a>
+        </li>
+      }
+    </ul>
+  </div>
+</nav>
