@@ -46,6 +46,7 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
             Descripcion = request.Descripcion,
             IncidenciaId = incidencia.Id
         };
+        atraccion.Estado = EstadoAtraccion.FueraDeServicio;
         repoMantenimiento.Agregar(mantenimiento);
 
         return mantenimiento;
