@@ -3,7 +3,7 @@ using Parque.Dominio.Usuarios;
 
 namespace Parque.Dominio.Gamificacion;
 
-public class Recompensas
+public class Recompensa
 {
     public Guid Id { get;  set; }
     public string Nombre { get; set; } = string.Empty;
@@ -12,7 +12,7 @@ public class Recompensas
     public int CantidadDisponible { get;  set; }
     public NivelMembresia? NivelMembresiaRequerido { get;  set; }
     public DateTime FechaCreacion { get;  set; }
-    public Recompensas() { }
+    public Recompensa() { }
 
     public void ReducirStock()
     {

@@ -1,7 +1,7 @@
 using Parque.Dominio.Excepciones;
 using Parque.Dominio.Usuarios;
 
-namespace Parque.Dominio.Gamificacion.Recompensa;
+namespace Parque.Dominio.Gamificacion;
 
 public class HistorialCanje
 {

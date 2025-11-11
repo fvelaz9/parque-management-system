@@ -18,7 +18,7 @@ public class RecompensaTest
         var cantidad = 10;
 
         // Act
-        var recompensa = new Recompensas
+        var recompensa = new Recompensa
         {
             Id = id,
             Nombre = nombre,
@@ -37,7 +37,7 @@ public class RecompensaTest
     public void ReducirStock_ConStockDisponible_DebeDisminuirCantidadEnUno()
     {
         // Arrange
-        var recompensa = new Recompensas
+        var recompensa = new Recompensa
         {
             Id = Guid.NewGuid(),
             Nombre = "Test",
@@ -56,7 +56,7 @@ public class RecompensaTest
     public void ReducirStock_ConStockNegativo_DebeLanzarExcepcion()
     {
         var fecha = new DateTime(2025, 11, 10);
-        var recompensa = new Recompensas
+        var recompensa = new Recompensa
         {
             Id = Guid.NewGuid(),
             Nombre = "Test",
