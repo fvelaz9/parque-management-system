@@ -1,9 +1,14 @@
-<div class="registro-container">
-  <div class="registro-card">
-    <h2>🎡 Registro de Visitante</h2>
-    <p class="subtitle">Crea tu cuenta para acceder al parque temático virtual</p>
+<div class="crear-cuenta-container">
+  <div class="crear-cuenta-card">
+    <div class="header">
+      <h2>👤 Crear Nueva Cuenta</h2>
+      <p class="subtitle">Complete los datos para registrar un nuevo usuario en el sistema</p>
+    </div>
     
-    <form [formGroup]="registroForm" (ngSubmit)="onSubmit()" autocomplete="on">
+    <form [formGroup]="cuentaForm" (ngSubmit)="onSubmit()" autocomplete="on">
+      
+      <!-- Información Personal -->
+      <div class="section-title">Información Personal</div>
       
       <div class="form-row">
         <div class="form-group">
@@ -41,6 +46,9 @@
         </div>
       </div>
 
+      <!-- Credenciales -->
+      <div class="section-title">Credenciales de Acceso</div>
+
       <div class="form-group">
         <label for="email">Email *</label>
         <input 
@@ -48,7 +56,7 @@
           id="email"
           class="form-control"
           formControlName="email"
-          placeholder="juan.perez@correo.com"
+          placeholder="juan.perez@parque.com"
           autocomplete="email"
           [class.is-invalid]="f['email'].invalid && f['email'].touched">
         
@@ -75,23 +83,28 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="confirmPassword">Confirmar Contraseña *</label>
-        <input 
-          type="password" 
-          id="confirmPassword"
-          class="form-control"
-          formControlName="confirmPassword"
-          placeholder="••••••••"
-          autocomplete="new-password"
-          [class.is-invalid]="f['confirmPassword'].invalid && f['confirmPassword'].touched">
-        
-        <div *ngIf="f['confirmPassword'].invalid && f['confirmPassword'].touched" class="invalid-feedback">
-          <small *ngIf="f['confirmPassword'].errors?.['required']">Debe confirmar la contraseña</small>
-          <small *ngIf="f['confirmPassword'].errors?.['passwordMismatch']">Las contraseñas no coinciden</small>
+      <!-- Roles -->
+      <div class="section-title">Rol del Usuario *</div>
+      
+      <div class="roles-container">
+        <div 
+          *ngFor="let rol of rolesDisponibles"
+          class="role-chip"
+          [class.selected]="isRoleSelected(rol.value)"
+          (click)="toggleRole(rol.value)">
+          <span class="role-icon">
+            <span *ngIf="!isRoleSelected(rol.value)">○</span>
+            <span *ngIf="isRoleSelected(rol.value)">✓</span>
+          </span>
+          <span class="role-label">{{ rol.label }}</span>
         </div>
       </div>
 
+      <div *ngIf="rolSeleccionado === null" class="roles-hint">
+        Seleccione un rol para continuar
+      </div>
+
+      <!-- Mensajes -->
       <div *ngIf="successMessage" class="alert alert-success">
         {{ successMessage }}
       </div>
@@ -100,16 +113,23 @@
         {{ errorMessage }}
       </div>
 
-      <button 
-        type="submit" 
-        class="btn btn-primary btn-block" 
-        [disabled]="loading">
-        <span *ngIf="loading" class="spinner"></span>
-        {{ loading ? 'Registrando...' : 'Registrarse' }}
-      </button>
-
-      <div class="login-link">
-        ¿Ya tienes cuenta? <a (click)="irAlLogin()">Inicia sesión aquí</a>
+      <!-- Botones de Acción -->
+      <div class="actions">
+        <button 
+          type="button" 
+          class="btn btn-secondary" 
+          (click)="cancelar()"
+          [disabled]="loading">
+          Cancelar
+        </button>
+        
+        <button 
+          type="submit" 
+          class="btn btn-primary" 
+          [disabled]="loading">
+          <span *ngIf="loading" class="spinner"></span>
+          {{ loading ? 'Creando...' : 'Crear Cuenta' }}
+        </button>
       </div>
     </form>
   </div>

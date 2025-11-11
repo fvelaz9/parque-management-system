@@ -38,6 +38,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/cuentas/registro-visitante/registro-visitante')
       .then(m => m.RegistroVisitanteComponent)
   },
+  {
+    path: 'cuentas',
+    loadComponent: () => import('./features/cuentas/crear-cuenta/crear-cuenta')
+      .then(m => m.CrearCuentaComponent),
+    canActivate: [authGuard]
+  },
   // Not Found route - debe ser la última
   {
     path: "**",
