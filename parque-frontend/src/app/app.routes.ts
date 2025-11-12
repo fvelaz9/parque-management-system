@@ -3,6 +3,7 @@ import { HomeComponent } from './features/home/home';
 import { NotFoundComponent } from './features/not-found/not-found';
 import { authGuard } from './core/guards/auth.guard';
 import { visitanteGuard } from './core/guards/visitante.guard'; 
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   {
@@ -41,9 +42,15 @@ export const routes: Routes = [
   },
   {
     path: 'cuentas',
+    loadComponent: () => import('./features/cuentas/lista-cuentas/lista-cuentas')
+      .then(m => m.ListaCuentasComponent),
+    canActivate: [adminGuard]
+  },
+  {
+    path: 'cuentas/crear',
     loadComponent: () => import('./features/cuentas/crear-cuenta/crear-cuenta')
       .then(m => m.CrearCuentaComponent),
-    canActivate: [authGuard]
+    canActivate: [adminGuard]
   },
   {
     path: 'modificar-perfil',

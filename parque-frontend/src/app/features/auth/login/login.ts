@@ -49,7 +49,6 @@ export class LoginComponent {
       password: this.loginForm.value.password
     };
 
-    // Llamar al servicio de autenticación
     this.authService.login(loginData).subscribe({
       next: (response) => {
         console.log('Login exitoso', response);
