@@ -35,7 +35,7 @@ public class ServicioPuntuacionTest
         _repoCuentasMock = new Mock<IRepositorio<Cuenta>>(MockBehavior.Strict);
         _repoEventosMock = new Mock<IRepositorio<Evento>>(MockBehavior.Strict);
         _repoConfiguracionMock = new Mock<IRepositorio<ConfiguracionEstrategia>>(MockBehavior.Strict);
-        _servicioFechaHoraMock = new Mock<IServicioFechaHora>(MockBehavior.Loose); // ⚠️ CAMBIO: Loose en lugar de Strict
+        _servicioFechaHoraMock = new Mock<IServicioFechaHora>(MockBehavior.Loose);
         _estrategiaMock = new Mock<IEstrategiaPuntuacion>(MockBehavior.Strict);
 
         // Configurar fecha por defecto para TODOS los tests

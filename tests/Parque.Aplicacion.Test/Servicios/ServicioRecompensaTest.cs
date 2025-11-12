@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Parque.Aplicacion.DTOs;
@@ -104,5 +105,95 @@ public class ServicioRecompensaTest
 
         // Act & Assert
         Assert.ThrowsException<InvalidOperationException>(() => _servicio.CrearRecompensa(dto));
+    }
+
+    [TestMethod]
+    public void ActualizarRecompensa_ConDatosValidos_DebeRetornarRecompensaActualizada()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var recompensaExistente = new Recompensa
+        {
+            Id = id,
+            Nombre = "Viejo",
+            Descripcion = "Descripción vieja",
+            CostoEnPuntos = 100,
+            CantidadDisponible = 5,
+            FechaCreacion = new DateTime(2025, 1, 1)
+        };
+
+        _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>()))
+            .Returns(recompensaExistente);
+
+        var dtoActualizado = new RecompensaDto
+        {
+            Nombre = "Nuevo Nombre",
+            Descripcion = "Nueva descripción",
+            CostoEnPuntos = 200,
+            CantidadDisponible = 10,
+            NivelMembresiaRequerido = NivelMembresia.Premium
+        };
+
+        // Act
+        var resultado = _servicio.ActualizarRecompensa(id, dtoActualizado);
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(id, resultado.Id);
+        Assert.AreEqual("Nuevo Nombre", resultado.Nombre);
+        Assert.AreEqual("Nueva descripción", resultado.Descripcion);
+        Assert.AreEqual(200, resultado.CostoEnPuntos);
+        Assert.AreEqual(10, resultado.CantidadDisponible);
+        Assert.AreEqual(NivelMembresia.Premium, resultado.NivelMembresiaRequerido);
+        _mockRepoRecompensa.Verify(r => r.Editar(recompensaExistente), Times.Once);
+    }
+
+    [TestMethod]
+    public void ActualizarRecompensa_ConIdInexistente_DebeLanzarExcepcion()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>()))
+            .Returns((Recompensa)null!);
+
+        var dto = new RecompensaDto
+        {
+            Nombre = "Test",
+            CostoEnPuntos = 100,
+            CantidadDisponible = 5
+        };
+
+        // Act & Assert
+        Assert.ThrowsException<InvalidOperationException>(() =>
+            _servicio.ActualizarRecompensa(id, dto));
+    }
+
+    [TestMethod]
+    public void ActualizarRecompensa_ConNombreVacio_DebeLanzarExcepcion()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var recompensaExistente = new Recompensa
+        {
+            Id = id,
+            Nombre = "Existente",
+            CostoEnPuntos = 100,
+            CantidadDisponible = 5,
+            FechaCreacion = DateTime.UtcNow
+        };
+
+        _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>()))
+            .Returns(recompensaExistente);
+
+        var dto = new RecompensaDto
+        {
+            Nombre = " ",
+            CostoEnPuntos = 100,
+            CantidadDisponible = 5
+        };
+
+        // Act & Assert
+        Assert.ThrowsException<InvalidOperationException>(() =>
+            _servicio.ActualizarRecompensa(id, dto));
     }
 }
