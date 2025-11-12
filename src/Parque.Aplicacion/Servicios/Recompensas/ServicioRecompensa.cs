@@ -113,6 +113,12 @@ public class ServicioRecompensa(
             throw new InvalidOperationException($"Recompensa {recompensa.Nombre} no encontrada");
         }
 
+        if (recompensa.NivelMembresiaRequerido.HasValue &&
+            visitante.NivelMembresia < recompensa.NivelMembresiaRequerido.Value)
+        {
+            throw new InvalidOperationException("Nivel de membresía insuficiente para canjear esta recompensa");
+        }
+
         var puntuaciones = repoPuntuacion.ObtenerTodos();
         var puntuacionVisitante = puntuaciones.FirstOrDefault(p => p.VisitanteId == request.VisitanteId);
         if (puntuacionVisitante == null || puntuacionVisitante.PuntosTotales < recompensa.CostoEnPuntos)
