@@ -107,7 +107,33 @@ public class ServicioRecompensa(
             throw new InvalidOperationException("Usuario no encontrado");
         }
 
-        return null;
+        var recompensa = repoRecompensa.Encontrar(r => r.Id == request.RecompensaId);
+        if(recompensa == null)
+        {
+            throw new InvalidOperationException($"Recompensa {recompensa.Nombre} no encontrada");
+        }
+
+        var puntuaciones = repoPuntuacion.ObtenerTodos();
+        var puntuacionVisitante = puntuaciones.FirstOrDefault(p => p.VisitanteId == request.VisitanteId);
+        if (puntuacionVisitante == null || puntuacionVisitante.PuntosTotales < recompensa.CostoEnPuntos)
+        {
+            throw new InvalidOperationException("Puntos insuficientes para canjear esta recompensa");
+        }
+
+        recompensa.ReducirStock();
+        puntuacionVisitante.PuntosTotales -= recompensa.CostoEnPuntos;
+
+        var historial = new HistorialCanje
+        {
+            Id = Guid.NewGuid(),
+            VisitanteId = request.VisitanteId,
+            RecompensaId = request.RecompensaId,
+            PuntosCanjeados = recompensa.CostoEnPuntos,
+            FechaCanje = servicioFechaHora.ObtenerFechaActual()
+        };
+        repoHistorial.Agregar(historial);
+        repoPuntuacion.Editar(puntuacionVisitante);
+        return historial;
     }
 
     public List<HistorialCanjeDto> ObtenerHistorialCanjes(Guid visitanteId)
