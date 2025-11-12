@@ -1,11 +1,15 @@
 using Parque.Aplicacion.DTOs.RecompensasDtos;
 using Parque.Dominio.Gamificacion;
+using Parque.Dominio.Usuarios;
 using Parque.Infraestructura.Repositorios;
 
 namespace Parque.Aplicacion.Servicios.Recompensas;
 
 public class ServicioRecompensa(
     IRepositorio<Recompensa> repoRecompensa,
+    IRepositorio<HistorialCanje> repoHistorial,
+    IRepositorio<PuntuacionVisitante> repoPuntuacion,
+    IRepositorio<Visitante> repoVisitante,
     IServicioFechaHora servicioFechaHora
 ) : IServicioRecompensa
 {
@@ -97,7 +101,11 @@ public class ServicioRecompensa(
 
     public HistorialCanje CanjearRecompensa(CanjearRecompensaRequest request)
     {
-        throw new NotImplementedException();
+        var visitante = repoVisitante.Encontrar(r => r.Id == request.VisitanteId);
+        if(visitante == null)
+        {
+            throw new InvalidOperationException("Usuario no encontrado");
+        }
     }
 
     public List<HistorialCanjeDto> ObtenerHistorialCanjes(Guid visitanteId)

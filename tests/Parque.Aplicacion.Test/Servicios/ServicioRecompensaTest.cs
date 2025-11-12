@@ -32,7 +32,7 @@ public class ServicioRecompensaTest
         _mockServicioFechaHora = new Mock<IServicioFechaHora>();
         _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual())
             .Returns(new DateTime(2025, 11, 11, 22, 0, 0));
-        _servicio = new ServicioRecompensa(_mockRepoRecompensa.Object, _mockServicioFechaHora.Object);
+        _servicio = new ServicioRecompensa(_mockRepoRecompensa.Object,_mockRepoHistorial.Object, _mockRepoPuntuacion.Object,_mockRepoVisitante.Object, _mockServicioFechaHora.Object );
     }
 
     [TestMethod]
