@@ -2,7 +2,6 @@ using System.ComponentModel.DataAnnotations;
 using Parque.Dominio.Usuarios;
 
 namespace Parque.Aplicacion.DTOs.RecompensasDtos;
-
 public class RecompensaDto
 {
     public Guid Id { get; set; }
@@ -11,5 +10,5 @@ public class RecompensaDto
     public int CostoEnPuntos { get; set; }
     public int CantidadDisponible { get; set; }
     public NivelMembresia? NivelMembresiaRequerido { get; set; }
-    public DateTime? FechaCreacion { get; set; } 
+    public DateTime FechaCreacion { get; set; }
 }
