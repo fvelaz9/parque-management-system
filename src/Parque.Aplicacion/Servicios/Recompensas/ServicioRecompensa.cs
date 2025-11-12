@@ -80,12 +80,19 @@ public class ServicioRecompensa(
 
     public List<Recompensa> ObtenerRecompensas()
     {
-        throw new NotImplementedException();
+        return repoRecompensa.ObtenerTodos();
     }
 
     public Recompensa ObtenerRecompensaPorId(Guid id)
     {
-        throw new NotImplementedException();
+        var recompensa = repoRecompensa.Encontrar(r => r.Id == id);
+
+        if (recompensa == null)
+        {
+            throw new InvalidOperationException($"Recompensa con ID {id} no encontrada");
+        }
+
+        return recompensa;
     }
 
     public HistorialCanje CanjearRecompensa(CanjearRecompensaRequest request)
