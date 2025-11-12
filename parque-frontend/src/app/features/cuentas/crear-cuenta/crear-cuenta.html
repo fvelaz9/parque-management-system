@@ -4,6 +4,14 @@
       <h2>👤 Crear Nueva Cuenta</h2>
       <p class="subtitle">Complete los datos para registrar un nuevo usuario en el sistema</p>
     </div>
+
+    <!-- Mensajes -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+    <div *ngIf="successMessage" class="alert alert-success">
+      {{ successMessage }}
+    </div>
     
     <form [formGroup]="cuentaForm" (ngSubmit)="onSubmit()" autocomplete="on">
       
@@ -83,8 +91,8 @@
         </div>
       </div>
 
-      <!-- Roles -->
-      <div class="section-title">Rol del Usuario *</div>
+      <!-- Roles (selección múltiple) -->
+      <div class="section-title">Roles del Usuario * (puede seleccionar varios)</div>
       
       <div class="roles-container">
         <div 
@@ -100,17 +108,45 @@
         </div>
       </div>
 
-      <div *ngIf="rolSeleccionado === null" class="roles-hint">
-        Seleccione un rol para continuar
-      </div>
+      <!-- Campos adicionales para Visitante -->
+      <div *ngIf="esVisitante" class="visitante-fields">
+        <div class="section-title">Datos del Visitante</div>
 
-      <!-- Mensajes -->
-      <div *ngIf="successMessage" class="alert alert-success">
-        {{ successMessage }}
-      </div>
+        <div class="form-row">
+          <!-- Fecha de Nacimiento -->
+          <div class="form-group">
+            <label for="fechaNacimiento">Fecha de Nacimiento *</label>
+            <input 
+              id="fechaNacimiento"
+              type="date"
+              formControlName="fechaNacimiento"
+              class="form-control"
+              [class.is-invalid]="f['fechaNacimiento'].invalid && f['fechaNacimiento'].touched"
+            />
+            <div *ngIf="f['fechaNacimiento'].invalid && f['fechaNacimiento'].touched" class="invalid-feedback">
+              <small>La fecha de nacimiento es requerida para visitantes</small>
+            </div>
+          </div>
 
-      <div *ngIf="errorMessage" class="alert alert-danger">
-        {{ errorMessage }}
+          <!-- Nivel de Membresía -->
+          <div class="form-group">
+            <label for="nivelMembresia">Nivel de Membresía *</label>
+            <select 
+              id="nivelMembresia"
+              formControlName="nivelMembresia"
+              class="form-control"
+              [class.is-invalid]="f['nivelMembresia'].invalid && f['nivelMembresia'].touched"
+            >
+              <option value="">Seleccione un nivel</option>
+              <div *ngFor="let nivel of nivelesMembresia">
+                <option [value]="nivel.value">{{ nivel.label }}</option>
+              </div>
+            </select>
+            <div *ngIf="f['nivelMembresia'].invalid && f['nivelMembresia'].touched" class="invalid-feedback">
+              <small>El nivel de membresía es requerido para visitantes</small>
+            </div>
+          </div>
+        </div>
       </div>
 
       <!-- Botones de Acción -->

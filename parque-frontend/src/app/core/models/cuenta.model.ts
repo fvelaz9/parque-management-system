@@ -22,6 +22,12 @@ export interface ModificarPerfilDto {
   password?: string;
 }
 
+export enum Rol {
+  Administrador = 1,
+  Operador = 2,
+  Visitante = 3
+}
+
 export enum NivelMembresia {
   Estandar = 1,
   Premium = 2,

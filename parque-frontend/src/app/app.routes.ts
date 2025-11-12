@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './features/home/home';
 import { NotFoundComponent } from './features/not-found/not-found';
-import { authGuard } from './auth-guard';
+import { authGuard } from './core/guards/auth.guard';
+import { visitanteGuard } from './core/guards/visitante.guard'; 
 
 export const routes: Routes = [
   {
@@ -43,6 +44,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/cuentas/crear-cuenta/crear-cuenta')
       .then(m => m.CrearCuentaComponent),
     canActivate: [authGuard]
+  },
+  {
+    path: 'modificar-perfil',
+    loadComponent: () => import('./features/cuentas/modificar-perfil/modificar-perfil')
+      .then(m => m.ModificarPerfilComponent),
+    canActivate: [visitanteGuard]
   },
   // Not Found route - debe ser la última
   {
