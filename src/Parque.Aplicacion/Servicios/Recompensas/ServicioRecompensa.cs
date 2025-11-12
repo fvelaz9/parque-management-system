@@ -106,6 +106,8 @@ public class ServicioRecompensa(
         {
             throw new InvalidOperationException("Usuario no encontrado");
         }
+
+        return null;
     }
 
     public List<HistorialCanjeDto> ObtenerHistorialCanjes(Guid visitanteId)

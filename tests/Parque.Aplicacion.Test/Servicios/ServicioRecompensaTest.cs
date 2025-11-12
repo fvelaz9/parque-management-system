@@ -306,4 +306,54 @@ public class ServicioRecompensaTest
         Assert.ThrowsException<InvalidOperationException>(() =>
             _servicio.ObtenerRecompensaPorId(id));
     }
+
+    [TestMethod]
+    public void CanjearRecompensa_ConDatosValidos_DebeRetornarHistorialCanje()
+    {
+        // Arrange
+        var visitanteId = Guid.NewGuid();
+        var recompensaId = Guid.NewGuid();
+
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("test@test.com"), "password123", Rol.Visitante);
+        var visitante = Visitante.Crear(new DateTime(1990, 1, 1));        
+        var recompensa = new Recompensa
+        {
+            Id = recompensaId,
+            Nombre = "Premio Test",
+            CostoEnPuntos = 100,
+            CantidadDisponible = 5,
+            NivelMembresiaRequerido = NivelMembresia.Estandar,
+            FechaCreacion = DateTime.UtcNow
+        };
+        var puntuacion = new PuntuacionVisitante(visitanteId, DateTime.UtcNow.Date, 0)
+        {
+            PuntosTotales = 500
+        };
+
+        _mockRepoVisitante.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
+            .Returns(visitante);
+        _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>()))
+            .Returns(recompensa);
+        _mockRepoPuntuacion.Setup(r => r.ObtenerTodos())
+            .Returns(new List<PuntuacionVisitante> { puntuacion });
+
+        var request = new CanjearRecompensaRequest
+        {
+            VisitanteId = visitanteId,
+            RecompensaId = recompensaId
+        };
+
+        // Act
+        var resultado = _servicio.CanjearRecompensa(request);
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(visitanteId, resultado.VisitanteId);
+        Assert.AreEqual(recompensaId, resultado.RecompensaId);
+        Assert.AreEqual(100, resultado.PuntosCanjeados);
+        Assert.AreEqual(4, recompensa.CantidadDisponible); // Reducido
+        Assert.AreEqual(400, puntuacion.PuntosTotales); // Descontado
+        _mockRepoHistorial.Verify(r => r.Agregar(It.IsAny<HistorialCanje>()), Times.Once);
+        _mockRepoPuntuacion.Verify(r => r.Editar(puntuacion), Times.Once);
+    }
 }
