@@ -59,7 +59,23 @@ public class ServicioRecompensa(
 
     public Recompensa ActualizarRecompensa(Guid id, RecompensaDto dto)
     {
-        throw new NotImplementedException();
+        VerificacionRecompensa(dto);
+
+        var recompensa = repoRecompensa.Encontrar(r => r.Id == id);
+        if (recompensa == null)
+        {
+            throw new InvalidOperationException($"Recompensa con ID {id} no encontrada");
+        }
+
+        recompensa.Nombre = dto.Nombre;
+        recompensa.Descripcion = dto.Descripcion ?? string.Empty;
+        recompensa.CostoEnPuntos = dto.CostoEnPuntos;
+        recompensa.CantidadDisponible = dto.CantidadDisponible;
+        recompensa.NivelMembresiaRequerido = dto.NivelMembresiaRequerido;
+
+        repoRecompensa.Editar(recompensa);
+
+        return recompensa;
     }
 
     public List<Recompensa> ObtenerRecompensas()
