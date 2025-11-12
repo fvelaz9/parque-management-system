@@ -365,12 +365,12 @@ public class ServicioRecompensaTest
     public void CanjearRecompensa_ConPuntosInsuficientes_DebeLanzarExcepcion()
     {
         // Arrange
-        var visitanteId = Guid.NewGuid();
         var recompensaId = Guid.NewGuid();
 
         var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("test@test.com"), "password123", Rol.Visitante);
         var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
         visitante.AsignarMembresia(NivelMembresia.Estandar);
+        var visitanteId = visitante.Id;
         var recompensa = new Recompensa
         {
             Id = recompensaId,
@@ -403,12 +403,12 @@ public class ServicioRecompensaTest
     public void CanjearRecompensa_ConStockAgotado_DebeLanzarExcepcion()
     {
         // Arrange
-        var visitanteId = Guid.NewGuid();
         var recompensaId = Guid.NewGuid();
 
         var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("test@test.com"), "password123", Rol.Visitante);
         var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
         visitante.AsignarMembresia(NivelMembresia.Premium);
+        var visitanteId = visitante.Id;
         var recompensa = new Recompensa
         {
             Id = recompensaId,
@@ -434,12 +434,12 @@ public class ServicioRecompensaTest
     public void CanjearRecompensa_ConNivelInsuficiente_DebeLanzarExcepcion()
     {
         // Arrange
-        var visitanteId = Guid.NewGuid();
         var recompensaId = Guid.NewGuid();
 
         var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("test@test.com"), "password123", Rol.Visitante);
         var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
         visitante.AsignarMembresia(NivelMembresia.Estandar);
+        var visitanteId = visitante.Id;
         var recompensa = new Recompensa
         {
             Id = recompensaId,
