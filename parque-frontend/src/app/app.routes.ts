@@ -38,10 +38,17 @@ export const routes: Routes = [
     loadComponent: () => import('./features/cuentas/registro-visitante/registro-visitante')
       .then(m => m.RegistroVisitanteComponent)
   },
+  {
+    path: 'eventos',
+    loadComponent: () => import('./features/Evento/evento-list/evento-list.component')
+      .then(m => m.EventoListComponent)
+  },
   // Not Found route - debe ser la última
   {
     path: "**",
     component: NotFoundComponent
-  }
+  },
+
+
 
 ];
