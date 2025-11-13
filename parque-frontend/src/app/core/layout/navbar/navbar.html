@@ -15,7 +15,12 @@
           Atracciones
         </a>
       </li>
-      
+      <li>
+        <a routerLink="/evento" routerLinkActive="active" class="nav-link">
+          Eventos
+        </a>
+      </li>
+
       @if (isLoggedIn) {
         <li>
           <span class="usuario-nombre">{{ usuario?.nombre }}</span>
