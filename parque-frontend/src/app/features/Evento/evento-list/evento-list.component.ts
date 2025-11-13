@@ -1,0 +1,57 @@
+import { Component, inject, signal, effect } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Evento } from '../../../core/models/evento.model';
+import { EventoService } from '../../../core/services/evento.service';
+
+@Component({
+  selector: 'app-evento-list',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './evento-list.component.html',
+  styleUrls: ['./evento-list.component.css']
+})
+export class EventoListComponent {
+  private readonly eventoService = inject(EventoService);
+
+  public eventos = signal<Evento[]>([]);
+  public loading = signal<boolean>(true);
+  public error = signal<string>('');
+
+  private readonly loadEventosEffect = effect(() => {
+    this.cargarEventos();
+  });
+
+  private cargarEventos() {
+    this.loading.set(true);
+    this.eventoService.listarEventos().subscribe({
+      next: (result) => {
+        console.log('Eventos cargados:', result);
+        this.eventos.set(result);
+        this.loading.set(false);
+        this.error.set('');
+      },
+      error: (err) => {
+        console.error('Error al cargar eventos:', err);
+        this.error.set('No se pudieron cargar los eventos. Verifica que el backend esté corriendo.');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  eliminarEvento(evento: Evento) {
+    if (confirm(`¿Seguro que deseas borrar "${evento.titulo}"?`)) {
+      this.eventoService.deleteEvento(evento.id).subscribe({
+        next: () => {
+          this.cargarEventos();
+        },
+        error: () => {
+          alert('Error al borrar evento');
+        }
+      });
+    }
+  }
+
+  agregarEvento() {
+    alert('Funcionalidad para agregar evento por implementar');
+  }
+}
