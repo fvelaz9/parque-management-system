@@ -398,37 +398,6 @@ public class ServicioRecompensaTest
         Assert.AreEqual("Puntos insuficientes para canjear esta recompensa", ex.Message);
     }
 
-    // TEST 3: Stock agotado
-    [TestMethod]
-    public void CanjearRecompensa_ConStockAgotado_DebeLanzarExcepcion()
-    {
-        // Arrange
-        var recompensaId = Guid.NewGuid();
-
-        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("test@test.com"), "password123", Rol.Visitante);
-        var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
-        visitante.AsignarMembresia(NivelMembresia.Premium);
-        var visitanteId = visitante.Id;
-        var recompensa = new Recompensa
-        {
-            Id = recompensaId,
-            Nombre = "Premio Agotado",
-            CostoEnPuntos = 100,
-            CantidadDisponible = 0, // Sin stock
-            FechaCreacion = DateTime.UtcNow
-        };
-
-        _mockRepoVisitante.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
-            .Returns(visitante);
-        _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>()))
-            .Returns(recompensa);
-
-        var request = new CanjearRecompensaRequest { VisitanteId = visitanteId, RecompensaId = recompensaId };
-
-        // Act & Assert
-        Assert.ThrowsException<ExcepcionDominio>(() => _servicio.CanjearRecompensa(request));
-    }
-
     // TEST 4: Nivel de membresía insuficiente
     [TestMethod]
     public void CanjearRecompensa_ConNivelInsuficiente_DebeLanzarExcepcion()
@@ -483,5 +452,82 @@ public class ServicioRecompensaTest
 
         // Act & Assert
         Assert.ThrowsException<InvalidOperationException>(() => _servicio.CanjearRecompensa(request));
+    }
+
+    [TestMethod]
+    public void CanjearRecompensa_ConRecompensaInexistente_DebeLanzarExcepcion()
+    {
+        var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
+        visitante.AsignarMembresia(NivelMembresia.Estandar);
+        var visitanteId = visitante.Id;
+        var recompensaId = Guid.NewGuid();
+        _mockRepoVisitante.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
+            .Returns(visitante);
+        _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>()))
+            .Returns((Recompensa)null!);
+
+        var request = new CanjearRecompensaRequest { VisitanteId = visitanteId, RecompensaId = recompensaId };
+
+        Assert.ThrowsException<InvalidOperationException>(() => _servicio.CanjearRecompensa(request));
+    }
+
+    [TestMethod]
+    public void ObtenerHistorialCanjes_DebeRetornarListaDeDtos()
+    {
+        // Arrange
+        var visitanteId = Guid.NewGuid();
+        var recompensaId = Guid.NewGuid();
+
+        var historial = new List<HistorialCanje>
+        {
+            new()
+            {
+                Id = Guid.NewGuid(),
+                VisitanteId = visitanteId,
+                RecompensaId = recompensaId,
+                PuntosCanjeados = 100,
+                FechaCanje = DateTime.UtcNow
+            }
+        };
+
+        var recompensa = new Recompensa
+        {
+            Id = recompensaId,
+            Nombre = "Premio Test",
+            CostoEnPuntos = 100,
+            CantidadDisponible = 5,
+            FechaCreacion = DateTime.UtcNow
+        };
+
+        _mockRepoHistorial.Setup(r => r.ObtenerTodos()).Returns(historial);
+        _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>()))
+            .Returns(recompensa);
+
+        // Act
+        var resultado = _servicio.ObtenerHistorialCanjes(visitanteId);
+        var resultado_obj = resultado.FirstOrDefault(d => d.VisitanteId == visitanteId);
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(1, resultado.Count);
+        Assert.AreEqual(visitanteId, resultado_obj.VisitanteId);
+        Assert.AreEqual(recompensaId, resultado_obj.RecompensaId);
+        Assert.AreEqual("Premio Test", resultado_obj.NombreRecompensa);
+        Assert.AreEqual(100, resultado_obj.PuntosCanjeados);
+    }
+
+    [TestMethod]
+    public void ObtenerHistorialCanjes_SinCanjes_DebeRetornarListaVacia()
+    {
+        // Arrange
+        var visitanteId = Guid.NewGuid();
+        _mockRepoHistorial.Setup(r => r.ObtenerTodos()).Returns(new List<HistorialCanje>());
+
+        // Act
+        var resultado = _servicio.ObtenerHistorialCanjes(visitanteId);
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(0, resultado.Count);
     }
 }

@@ -108,9 +108,9 @@ public class ServicioRecompensa(
         }
 
         var recompensa = repoRecompensa.Encontrar(r => r.Id == request.RecompensaId);
-        if(recompensa == null)
+        if (recompensa == null)
         {
-            throw new InvalidOperationException($"Recompensa {recompensa.Nombre} no encontrada");
+            throw new InvalidOperationException($"Recompensa con ID {request.RecompensaId} no encontrada");
         }
 
         if (recompensa.NivelMembresiaRequerido.HasValue &&
