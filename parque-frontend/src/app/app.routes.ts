@@ -50,6 +50,29 @@ export const routes: Routes = [
     loadComponent: () => import('./features/mantenimientos/mantenimiento-form/mantenimiento-form')
       .then(m => m.MantenimientoForm)
   },
+  {
+    path: 'recompensas',
+    loadComponent: () => import('./features/recompensas/recompensas-list/recompensas-list')
+      .then(m => m.RecompensasList)
+  },
+  /*
+  {
+    path: 'recompensas/nueva',
+    loadComponent: () => import('./features/recompensas/recompensa-form/recompensa-form')
+      .then(m => m.RecompensaForm)
+  },
+  {
+    path: 'recompensas/editar/:id',
+    loadComponent: () => import('./features/recompensas/recompensa-form/recompensa-form')
+      .then(m => m.RecompensaForm)
+  },
+  {
+    path: 'recompensas/historial',
+    loadComponent: () => import('./features/recompensas/recompensas-historial/recompensas-historial')
+      .then(m => m.RecompensasHistorial)
+  },
+  */
+
   // Not Found route - debe ser la última
   {
     path: "**",

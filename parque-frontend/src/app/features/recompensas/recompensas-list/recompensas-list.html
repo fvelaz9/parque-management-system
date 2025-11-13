@@ -1,1 +1,78 @@
-<p>recompensas-list works!</p>
+<!-- src/app/features/recompensas/recompensas-list/recompensas-list.html -->
+<section class="recompensas-container">
+  <header class="page-header">
+    <div class="header-content">
+      <h2>Recompensas Disponibles</h2>
+      <span class="total-badge">{{ total() }} recompensas</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-secondary" (click)="verHistorial()" *ngIf="isVisitante">
+        Ver mi historial
+      </button>
+      <a routerLink="/recompensas/nueva" class="btn btn-primary" *ngIf="isAdmin">
+        Nueva recompensa
+      </a>
+    </div>
+  </header>
+
+  <div class="loading" *ngIf="loading()">
+    <p>Cargando recompensas...</p>
+  </div>
+
+  <div class="error" *ngIf="!loading() && error()">
+    <p>{{ error() }}</p>
+  </div>
+
+  <div class="cards-grid" *ngIf="!loading() && !error()">
+    <article class="recompensa-card" *ngFor="let r of recompensas()">
+      <div class="card-header">
+        <h3 class="card-title">{{ r.nombre }}</h3>
+        <span class="nivel-badge" [ngClass]="getNivelClass(r.nivelMembresiaRequerido)">
+          {{ formatearNivel(r.nivelMembresiaRequerido) }}
+        </span>
+      </div>
+
+      <div class="card-body">
+        <p class="descripcion">{{ r.descripcion || 'Sin descripción' }}</p>
+
+        <div class="card-info">
+          <div class="info-item">
+            <span class="label">Costo:</span>
+            <span class="value puntos">{{ r.costoEnPuntos }} pts</span>
+          </div>
+          <div class="info-item">
+            <span class="label">Stock:</span>
+            <span class="value" [class.stock-bajo]="r.cantidadDisponible < 5">
+              {{ r.cantidadDisponible }} unidades
+            </span>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <span class="fecha">{{ r.fechaCreacion | date:'short' }}</span>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button
+          class="btn btn-canjear"
+          *ngIf="isVisitante"
+          (click)="canjearRecompensa(r)"
+          [disabled]="r.cantidadDisponible === 0">
+          {{ r.cantidadDisponible === 0 ? 'Agotado' : 'Canjear' }}
+        </button>
+
+        <a
+          routerLink="/recompensas/editar/{{ r.id }}"
+          class="btn btn-editar"
+          *ngIf="isAdmin">
+          Editar
+        </a>
+      </div>
+    </article>
+  </div>
+
+  <div class="vacio" *ngIf="!loading() && !error() && recompensas().length === 0">
+    <p>No hay recompensas disponibles en este momento.</p>
+  </div>
+</section>

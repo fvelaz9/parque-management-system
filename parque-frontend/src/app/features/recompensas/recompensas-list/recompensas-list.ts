@@ -1,11 +1,101 @@
-import { Component } from '@angular/core';
+// src/app/features/recompensas/recompensas-list/recompensas-list.ts
+import { Component, effect, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
+import { RecompensasService } from '../../../core/services/recompensa.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { Recompensa, NivelMembresia } from '../../../core/models/recompensa.model';
 
 @Component({
   selector: 'app-recompensas-list',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, RouterLink],
   templateUrl: './recompensas-list.html',
-  styleUrl: './recompensas-list.css',
+  styleUrl: './recompensas-list.css'
 })
 export class RecompensasList {
+  private readonly recompensasService = inject(RecompensasService);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
+  total = signal(0);
+  recompensas = signal<Recompensa[]>([]);
+  loading = signal(true);
+  error = signal('');
+
+  private readonly loadEffect = effect(() => {
+    this.cargarRecompensas();
+  });
+
+  private cargarRecompensas() {
+    this.loading.set(true);
+    this.error.set('');
+    this.recompensasService.getAll().subscribe({
+      next: (resp) => {
+        this.total.set(resp.total);
+        this.recompensas.set(resp.recompensas);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error('Error al cargar recompensas:', err);
+        this.error.set('Error al cargar las recompensas');
+        this.loading.set(false);
+      }
+    });
+  }
+
+  get isAdmin(): boolean {
+    return this.authService.getUsuario()?.roles?.includes('Administrador') || false;
+  }
+
+  get isVisitante(): boolean {
+    return this.authService.getUsuario()?.roles?.includes('Visitante') || false;
+  }
+
+  get visitanteId(): string | null {
+    return this.authService.getUsuario()?.visitante?.id || null;
+  }
+
+  canjearRecompensa(recompensa: Recompensa) {
+    if (!this.visitanteId) {
+      alert('No se pudo obtener el ID del visitante');
+      return;
+    }
+
+    const confirmar = confirm(`¿Canjear "${recompensa.nombre}" por ${recompensa.costoEnPuntos} puntos?`);
+    if (!confirmar) return;
+
+    this.recompensasService.canjear({
+      visitanteId: this.visitanteId,
+      recompensaId: recompensa.id
+    }).subscribe({
+      next: (resp) => {
+        alert(resp.mensaje || 'Recompensa canjeada exitosamente');
+        this.cargarRecompensas(); // Recargar para ver stock actualizado
+      },
+      error: (err) => {
+        console.error('Error al canjear:', err);
+        alert(err.error?.message || 'Error al canjear la recompensa');
+      }
+    });
+  }
+
+  verHistorial() {
+    this.router.navigate(['/recompensas/historial']);
+  }
+
+  formatearNivel(nivel?: NivelMembresia): string {
+    if (!nivel) return 'Sin requisito';
+    return NivelMembresia[nivel];
+  }
+
+  getNivelClass(nivel?: NivelMembresia): string {
+    if (!nivel) return '';
+    switch (nivel) {
+      case NivelMembresia.Estandar: return 'nivel-estandar';
+      case NivelMembresia.Premium: return 'nivel-premium';
+      case NivelMembresia.VIP: return 'nivel-vip';
+      default: return '';
+    }
+  }
 }
