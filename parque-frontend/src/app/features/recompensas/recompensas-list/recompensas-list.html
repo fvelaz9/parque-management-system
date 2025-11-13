@@ -27,8 +27,8 @@
     <article class="recompensa-card" *ngFor="let r of recompensas()">
       <div class="card-header">
         <h3 class="card-title">{{ r.nombre }}</h3>
-        <span class="nivel-badge" [ngClass]="getNivelClass(r.nivelMembresiaRequerido)">
-          {{ formatearNivel(r.nivelMembresiaRequerido) }}
+        <span class="nivel-badge" [ngClass]="obtenerClaseNivel(r.nivelMembresiaRequerido)">
+            {{ obtenerNivel(r.nivelMembresiaRequerido) }}
         </span>
       </div>
 

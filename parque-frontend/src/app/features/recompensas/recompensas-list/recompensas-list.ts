@@ -84,18 +84,21 @@ export class RecompensasList {
     this.router.navigate(['/recompensas/historial']);
   }
 
-  formatearNivel(nivel?: NivelMembresia): string {
+  readonly nivelesMap = {
+    1: 'Estandar',
+    2: 'Premium',
+    3: 'VIP'
+  } as const;
+
+  obtenerNivel(nivel?: number): string {
     if (!nivel) return 'Sin requisito';
-    return NivelMembresia[nivel];
+    return (this.nivelesMap as any)[nivel] || 'Sin requisito';
   }
 
-  getNivelClass(nivel?: NivelMembresia): string {
+  obtenerClaseNivel(nivel?: number): string {
     if (!nivel) return '';
-    switch (nivel) {
-      case NivelMembresia.Estandar: return 'nivel-estandar';
-      case NivelMembresia.Premium: return 'nivel-premium';
-      case NivelMembresia.VIP: return 'nivel-vip';
-      default: return '';
-    }
+    const nombreNivel = (this.nivelesMap as any)[nivel];
+    if (!nombreNivel) return '';
+    return `nivel-${nombreNivel.toLowerCase()}`;
   }
 }
