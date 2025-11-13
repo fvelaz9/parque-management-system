@@ -1,1 +1,19 @@
-<p>evento-list works!</p>
+<div class="evento-list-container">
+  <h2>Lista de eventos</h2>
+  <ul class="evento-list">
+    <li *ngFor="let evento of eventos(); let i = index" class="evento-item">
+      <div>
+        <strong>{{ evento.titulo }}</strong><br>
+        {{ evento.descripcion }}<br>
+        Desde: {{ evento.inicio | date:'short' }}<br>
+        Hasta: {{ evento.fin | date:'short' }}<br>
+        Aforo máximo: {{ evento.aforoMaximo }}<br>
+        Costo adicional: ${{ evento.costoAdicional }}<br>
+        Estado: {{ evento.estado }}
+      </div>
+      <button (click)="eliminarEvento(evento)" class="btn-eliminar">Eliminar</button>
+    </li>
+  </ul>
+
+  <button (click)="agregarEvento()" class="btn-agregar">Agregar evento</button>
+</div>
