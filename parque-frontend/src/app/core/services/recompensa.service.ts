@@ -1,14 +1,25 @@
 // src/app/core/services/recompensas.service.ts
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Recompensa, CrearRecompensaRequest, CanjearRecompensaRequest, HistorialCanjeDto } from '../models/recompensa.model';
 import { environment } from '../../../environments/environment.development';
+import { AuthService } from './auth.service';
+
 
 @Injectable({ providedIn: 'root' })
 export class RecompensasService {
   private readonly http = inject(HttpClient);
+  private authService = inject(AuthService);
   private readonly apiUrl = `${environment.apiUrl}/recompensas`;
+
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': token || ''  // ← SIN "Bearer"
+    });
+  }
 
   // GET /api/recompensas
   getAll(): Observable<{ total: number; recompensas: Recompensa[] }> {
@@ -17,7 +28,7 @@ export class RecompensasService {
 
   // GET /api/recompensas/{id}
   getById(id: string): Observable<Recompensa> {
-    return this.http.get<Recompensa>(`${this.apiUrl}/${id}`);
+    return this.http.get<Recompensa>(`${this.apiUrl}/${id}`, {headers: this.getHeaders()});
   }
 
   // POST /api/recompensas

@@ -15,13 +15,12 @@ export interface Recompensa {
   nivelMembresiaRequerido?: NivelMembresia;
   fechaCreacion: string;
 }
-
 export interface CrearRecompensaRequest {
-  nombre: string;
-  descripcion?: string;
-  costoEnPuntos: number;
-  cantidadDisponible: number;
-  nivelMembresiaRequerido?: NivelMembresia;
+  Nombre: string;  // ← Mayúscula
+  Descripcion?: string;
+  CostoEnPuntos: number;
+  CantidadDisponible: number;
+  NivelMembresiaRequerido?: NivelMembresia;
 }
 
 export interface CanjearRecompensaRequest {
