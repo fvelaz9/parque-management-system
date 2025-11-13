@@ -55,12 +55,13 @@ export const routes: Routes = [
     loadComponent: () => import('./features/recompensas/recompensas-list/recompensas-list')
       .then(m => m.RecompensasList)
   },
-  /*
+
   {
     path: 'recompensas/nueva',
     loadComponent: () => import('./features/recompensas/recompensa-form/recompensa-form')
       .then(m => m.RecompensaForm)
   },
+  /*
   {
     path: 'recompensas/editar/:id',
     loadComponent: () => import('./features/recompensas/recompensa-form/recompensa-form')
