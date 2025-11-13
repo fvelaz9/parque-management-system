@@ -11,7 +11,7 @@ export interface AtraccionParque {
 }
 
 export enum TipoAtraccion {
-  MontañaRusa = 0,      // Coincide con C#
+  MontañaRusa = 0,
   Simulador = 1,
   Espectaculo = 2,
   ZonaInteractiva = 3
