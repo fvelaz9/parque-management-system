@@ -519,14 +519,11 @@ public class ServicioRecompensaTest
     [TestMethod]
     public void ObtenerHistorialCanjes_SinCanjes_DebeRetornarListaVacia()
     {
-        // Arrange
         var visitanteId = Guid.NewGuid();
         _mockRepoHistorial.Setup(r => r.ObtenerTodos()).Returns(new List<HistorialCanje>());
 
-        // Act
         var resultado = _servicio.ObtenerHistorialCanjes(visitanteId);
 
-        // Assert
         Assert.IsNotNull(resultado);
         Assert.AreEqual(0, resultado.Count);
     }
