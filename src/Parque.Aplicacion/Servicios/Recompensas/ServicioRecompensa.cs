@@ -147,6 +147,10 @@ public class ServicioRecompensa(
         var historial = repoHistorial.ObtenerTodos()
             .Where(h => h.VisitanteId == visitanteId)
             .ToList();
+        if(historial == null)
+        {
+            throw new InvalidOperationException("No hay transacciones registradas");
+        }
 
         var dtos = new List<HistorialCanjeDto>();
 
