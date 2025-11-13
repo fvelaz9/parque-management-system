@@ -144,6 +144,27 @@ public class ServicioRecompensa(
 
     public List<HistorialCanjeDto> ObtenerHistorialCanjes(Guid visitanteId)
     {
-        throw new NotImplementedException();
+        var historial = repoHistorial.ObtenerTodos()
+            .Where(h => h.VisitanteId == visitanteId)
+            .ToList();
+
+        var dtos = new List<HistorialCanjeDto>();
+
+        foreach (var canje in historial)
+        {
+            var recompensa = repoRecompensa.Encontrar(r => r.Id == canje.RecompensaId);
+
+            dtos.Add(new HistorialCanjeDto
+            {
+                Id = canje.Id,
+                VisitanteId = canje.VisitanteId,
+                RecompensaId = canje.RecompensaId,
+                NombreRecompensa = recompensa?.Nombre ?? "Recompensa no encontrada",
+                PuntosCanjeados = canje.PuntosCanjeados,
+                FechaCanje = canje.FechaCanje
+            });
+        }
+
+        return dtos;
     }
 }
