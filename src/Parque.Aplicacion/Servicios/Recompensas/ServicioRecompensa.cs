@@ -55,7 +55,7 @@ public class ServicioRecompensa(
             throw new InvalidOperationException("La cantidad disponible no puede ser negativa");
         }
 
-        if (dto.Descripcion != null && dto.Descripcion.Length > 500)
+        if (dto.Descripcion != null && dto.Descripcion.Length > 200)
         {
             throw new InvalidOperationException("La descripción no puede exceder 500 caracteres");
         }

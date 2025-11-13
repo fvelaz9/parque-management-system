@@ -79,6 +79,27 @@ public class ServicioRecompensaTest
     }
 
     [TestMethod]
+    public void CrearRecompensa_DescripcionLarga()
+    {
+        // Arrange
+        var dto = new RecompensaDto
+        {
+            Nombre = "joseeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" +
+                     "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" +
+                     "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" +
+                     "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" +
+                     "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" +
+                     "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee" +
+                     "eeeeeeeeeeeee",
+            CostoEnPuntos = 100,
+            CantidadDisponible = 5
+        };
+
+        // Act & Assert
+        Assert.ThrowsException<InvalidOperationException>(() => _servicio.CrearRecompensa(dto));
+    }
+
+    [TestMethod]
     public void CrearRecompensa_ConNError_DebeLanzarExcepcion()
     {
         // Arrange
