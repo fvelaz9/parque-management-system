@@ -1,26 +1,26 @@
-.registro-container {
+.crear-cuenta-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
+  padding: 30px 20px;
 }
 
-.registro-card {
+.crear-cuenta-card {
   background: white;
   padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
   width: 100%;
-  max-width: 600px;
+  max-width: 700px;
   animation: slideIn 0.4s ease-out;
 }
 
 @keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(-20px);
+    transform: translateY(-30px);
   }
   to {
     opacity: 1;
@@ -28,10 +28,16 @@
   }
 }
 
-.registro-card h2 {
+.header {
+  margin-bottom: 32px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 20px;
+}
+
+.header h2 {
   text-align: center;
   color: #333;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   font-size: 28px;
   font-weight: 600;
 }
@@ -39,8 +45,17 @@
 .subtitle {
   text-align: center;
   color: #666;
-  margin-bottom: 30px;
+  margin: 0;
   font-size: 14px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #444;
+  margin: 24px 0 16px 0;
+  padding-left: 12px;
+  border-left: 4px solid #667eea;
 }
 
 .form-row {
@@ -51,6 +66,10 @@
 }
 
 @media (max-width: 576px) {
+  .crear-cuenta-card {
+    padding: 30px 20px;
+  }
+
   .form-row {
     grid-template-columns: 1fr;
     gap: 0;
@@ -63,7 +82,7 @@
 
 .form-group label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   color: #333;
   font-weight: 500;
   font-size: 14px;
@@ -113,6 +132,81 @@
   }
 }
 
+/* Roles Container */
+.roles-container {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.role-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border: 2px solid #e0e0e0;
+  border-radius: 25px;
+  background-color: #fafafa;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  user-select: none;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.role-chip:hover {
+  border-color: #667eea;
+  background-color: #f5f7ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.role-chip.selected {
+  border-color: #667eea;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.role-chip.selected:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+}
+
+.role-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.role-chip:not(.selected) .role-icon {
+  background-color: #e0e0e0;
+  color: #999;
+}
+
+.role-label {
+  font-weight: 500;
+}
+
+.roles-hint {
+  color: #666;
+  font-size: 13px;
+  font-style: italic;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border-left: 3px solid #667eea;
+}
+
+/* Alerts */
 .alert {
   padding: 14px 16px;
   border-radius: 6px;
@@ -162,12 +256,21 @@
   font-size: 16px;
 }
 
+/* Actions */
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 2px solid #f0f0f0;
+}
+
 .btn {
-  width: 100%;
+  flex: 1;
   padding: 14px;
   border: none;
   border-radius: 6px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -187,6 +290,17 @@
 
 .btn-primary:active:not(:disabled) {
   transform: translateY(0);
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #5a6268;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(108, 117, 125, 0.3);
 }
 
 .btn:disabled {
@@ -212,33 +326,30 @@
   }
 }
 
-.login-link {
-  text-align: center;
-  margin-top: 24px;
-  color: #666;
-  font-size: 14px;
+/* Responsive adjustments */
+@media (max-width: 576px) {
+  .actions {
+    flex-direction: column-reverse;
+  }
+
+  .btn {
+    width: 100%;
+  }
+
+  .roles-container {
+    flex-direction: column;
+  }
+
+  .role-chip {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
-.login-link a {
-  color: #667eea;
-  text-decoration: none;
-  font-weight: 600;
-  cursor: pointer;
-  transition: color 0.3s ease;
-}
-
-.login-link a:hover {
-  color: #764ba2;
-  text-decoration: underline;
-}
-
-/* Mejoras de accesibilidad */
-.form-control:focus-visible {
+/* Accesibilidad */
+.form-control:focus-visible,
+.role-chip:focus-visible,
+.btn:focus-visible {
   outline: 2px solid #667eea;
   outline-offset: 2px;
-}
-
-/* Animación de carga del botón */
-.btn:disabled .spinner {
-  animation: spin 0.6s linear infinite;
 }

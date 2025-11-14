@@ -1,0 +1,76 @@
+<div class="lista-cuentas-container">
+  <div class="lista-cuentas-card">
+    <div class="header">
+      <h2>👥 Gestión de Cuentas</h2>
+      <button class="btn btn-primary" routerLink="/cuentas/crear">
+        ➕ Nueva Cuenta
+      </button>
+    </div>
+
+    @if (errorMessage) {
+      <div class="alert alert-danger">{{ errorMessage }}</div>
+    }
+
+    @if (loading) {
+      <div class="loading">Cargando cuentas...</div>
+    } @else {
+      <div class="table-container">
+        <table class="cuentas-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Roles</th>
+              <th>Membresía</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (cuenta of cuentas; track cuenta.id) {
+              <tr>
+                <td>{{ cuenta.nombre }} {{ cuenta.apellido }}</td>
+                <td>{{ cuenta.email }}</td>
+                <td>
+                  <div class="roles-badges">
+                    @for (rol of cuenta.roles; track rol) {
+                      <span class="role-badge">{{ rol }}</span>
+                    }
+                  </div>
+                </td>
+                <td>
+                  @if (esVisitante(cuenta) && cuenta.visitante) {
+                    <span 
+                      class="membresia-badge"
+                      [class]="getNivelMembresiaClass(cuenta.visitante.nivelMembresia)">
+                      {{ getNivelMembresiaTexto(cuenta.visitante.nivelMembresia) }}
+                    </span>
+                  } @else {
+                    <span class="text-muted">N/A</span>
+                  }
+                </td>
+                <td>
+                  @if (esVisitante(cuenta)) {
+                    <button 
+                      class="btn btn-sm btn-secondary"
+                      (click)="abrirModalMembresia(cuenta)">
+                      🎫 Cambiar Membresía
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Modal para cambiar membresía -->
+@if (mostrarModal && cuentaSeleccionada) {
+  <app-cambiar-membresia-modal
+    [cuenta]="cuentaSeleccionada"
+    (cerrar)="cerrarModal()"
+    (membresiaCambiada)="onMembresiaCambiada()">
+  </app-cambiar-membresia-modal>
+}

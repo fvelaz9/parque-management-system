@@ -78,6 +78,12 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
         return cuenta.ToDto();
     }
 
+    public IEnumerable<CuentaDto> ObtenerTodas()
+    {
+        var cuentas = cuentaRepo.ObtenerTodos();
+        return cuentas.Select(c => c.ToDto());
+    }
+
     private void AsignarPerfilVisitante(Cuenta cuenta, RegistrarCuentaDto dto)
     {
         if(!dto.FechaNacimiento.HasValue)
