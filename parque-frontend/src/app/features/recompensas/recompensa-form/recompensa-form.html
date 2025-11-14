@@ -8,7 +8,7 @@
       <input
         type="text"
         id="nombre"
-        [(ngModel)]="recompensa.Nombre"
+        [(ngModel)]="recompensa.nombre"
         name="nombre"
         class="form-input"
         placeholder="Ej: Descuento 10%"
@@ -20,7 +20,7 @@
       <label class="form-label" for="descripcion">Descripción</label>
       <textarea
         id="descripcion"
-        [(ngModel)]="recompensa.Descripcion"
+        [(ngModel)]="recompensa.descripcion"
         name="descripcion"
         class="form-textarea"
         placeholder="Descripción opcional de la recompensa"></textarea>
@@ -32,7 +32,7 @@
       <input
         type="number"
         id="costoEnPuntos"
-        [(ngModel)]="recompensa.CostoEnPuntos"
+        [(ngModel)]="recompensa.costoEnPuntos"
         name="costoEnPuntos"
         class="form-input"
         min="1"
@@ -45,7 +45,7 @@
       <input
         type="number"
         id="cantidadDisponible"
-        [(ngModel)]="recompensa.CantidadDisponible"
+        [(ngModel)]="recompensa.cantidadDisponible"
         name="cantidadDisponible"
         class="form-input"
         min="0"
@@ -57,7 +57,7 @@
       <label class="form-label" for="nivelMembresia">Nivel de Membresía Requerido</label>
       <select
         id="nivelMembresia"
-        [(ngModel)]="recompensa.NivelMembresiaRequerido"
+        [(ngModel)]="recompensa.nivelMembresiaRequerido"
         name="nivelMembresiaRequerido"
         class="form-select">
         <option [ngValue]="nivel.valor" *ngFor="let nivel of nivelesMembresia">

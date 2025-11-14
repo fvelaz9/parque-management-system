@@ -19,11 +19,11 @@ export class RecompensaForm {
   public submitting = signal(false);
 
   recompensa: CrearRecompensaRequest = {
-    Nombre: '',
-    Descripcion: '',
-    CostoEnPuntos: 0,
-    CantidadDisponible: 0,
-    NivelMembresiaRequerido: undefined
+    nombre: '',
+    descripcion: '',
+    costoEnPuntos: 0,
+    cantidadDisponible: 0,
+    nivelMembresiaRequerido: undefined
   };
 
   readonly nivelesMembresia = [
@@ -56,17 +56,17 @@ export class RecompensaForm {
   }
 
   private validarFormulario(): boolean {
-    if (!this.recompensa.Nombre.trim()) {
+    if (!this.recompensa.nombre.trim()) {
       alert('Debe ingresar un nombre');
       return false;
     }
 
-    if (this.recompensa.CostoEnPuntos <= 0) {
+    if (this.recompensa.costoEnPuntos <= 0) {
       alert('El costo debe ser mayor a 0');
       return false;
     }
 
-    if (this.recompensa.CantidadDisponible < 0) {
+    if (this.recompensa.cantidadDisponible < 0) {
       alert('La cantidad no puede ser negativa');
       return false;
     }

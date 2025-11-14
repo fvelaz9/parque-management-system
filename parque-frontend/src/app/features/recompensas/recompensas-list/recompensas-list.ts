@@ -107,10 +107,10 @@ export class RecompensasList {
   }
 
   eliminarRecompensa(recompensa: Recompensa) {
-    const confirmar = confirm(`¿Estás seguro de eliminar "${recompensa.nombre}"?`);  // ← Cambiar a PascalCase
+    const confirmar = confirm(`¿Estás seguro de eliminar "${recompensa.nombre}"?`);
     if (!confirmar) return;
 
-    this.recompensasService.delete(recompensa.id).subscribe({  // ← Cambiar de Eliminar() a delete() y usar PascalCase
+    this.recompensasService.delete(recompensa.id).subscribe({
       next: () => {
         alert('Recompensa eliminada exitosamente');
         this.cargarRecompensas();
