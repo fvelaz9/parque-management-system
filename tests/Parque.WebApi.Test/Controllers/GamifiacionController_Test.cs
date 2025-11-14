@@ -211,14 +211,8 @@ public class GamifiacionController_Test
         var result = _controller!.ObtenerHistorialPuntuaciones(visitanteId);
 
         // Assert
-        Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult)); // ActionResult<T>
-        var okResult = result.Result as OkObjectResult;
-        Assert.IsNotNull(okResult);
-        Assert.AreEqual(200, okResult.StatusCode);
-
-        var historial = okResult.Value as List<HistorialPuntuacionDto>;
-        Assert.IsNotNull(historial);
-        Assert.AreEqual(2, historial.Count);
+        Assert.IsNotNull(result.Value);
+        Assert.AreEqual(2, result.Value.Count);
     }
 
     [TestMethod]
@@ -240,9 +234,10 @@ public class GamifiacionController_Test
         // Assert
         Assert.IsNotNull(result);
 
-        // Convertimos el objeto anónimo -> JSON -> ExpandoObject
         var json = System.Text.Json.JsonSerializer.Serialize(result!.Value);
         dynamic payload = Newtonsoft.Json.JsonConvert.DeserializeObject<ExpandoObject>(json)!;
+
+        Assert.AreEqual(DateTime.Today.Date, (DateTime)payload.fecha);
 
         Assert.AreEqual(1, (int)payload.totalVisitantes);
         Assert.AreEqual(60, (int)payload.ranking[0].PuntosDiarios);
