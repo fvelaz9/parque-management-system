@@ -24,6 +24,12 @@ export class RecompensasList {
   error = signal('');
 
   private readonly loadEffect = effect(() => {
+    const usuario = this.authService.getUsuario();
+    console.log('=== DEBUG USUARIO ===');
+    console.log('Usuario completo:', usuario);
+    console.log('Visitante ID (getter):', this.visitanteId);
+    console.log('=====================');
+
     this.cargarRecompensas();
   });
 
@@ -53,7 +59,8 @@ export class RecompensasList {
   }
 
   get visitanteId(): string | null {
-    return this.authService.getUsuario()?.visitante?.id || null;
+    const usuario = this.authService.getUsuario();
+    return usuario?.visitante?.id || usuario?.id || null;
   }
 
   canjearRecompensa(recompensa: Recompensa) {
@@ -62,7 +69,7 @@ export class RecompensasList {
       return;
     }
 
-    const confirmar = confirm(`¿Canjear "${recompensa.nombre}" por ${recompensa.costoEnPuntos} puntos?`);  // ← Usar PascalCase
+    const confirmar = confirm(`¿Canjear "${recompensa.nombre}" por ${recompensa.costoEnPuntos} puntos?`);
     if (!confirmar) return;
 
     this.recompensasService.canjear({

@@ -49,11 +49,15 @@ export class RecompensaForm {
       },
       error: (err) => {
         console.error('Error al crear recompensa:', err);
-        alert(err.error?.mensaje || 'Error al crear la recompensa');
+
+        const errorMsg = err.error?.message || err.error?.mensaje || 'Error al crear la recompensa';
+        alert(errorMsg);
+
         this.submitting.set(false);
       }
     });
   }
+
 
   private validarFormulario(): boolean {
     if (!this.recompensa.nombre.trim()) {
