@@ -1,7 +1,9 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './features/home/home';
 import { NotFoundComponent } from './features/not-found/not-found';
-import { authGuard } from './auth-guard';
+import { authGuard } from './core/guards/auth.guard';
+import { visitanteGuard } from './core/guards/visitante.guard'; 
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   {
@@ -37,6 +39,24 @@ export const routes: Routes = [
     path: 'registro-visitante',
     loadComponent: () => import('./features/cuentas/registro-visitante/registro-visitante')
       .then(m => m.RegistroVisitanteComponent)
+  },
+  {
+    path: 'cuentas',
+    loadComponent: () => import('./features/cuentas/lista-cuentas/lista-cuentas')
+      .then(m => m.ListaCuentasComponent),
+    canActivate: [adminGuard]
+  },
+  {
+    path: 'cuentas/crear',
+    loadComponent: () => import('./features/cuentas/crear-cuenta/crear-cuenta')
+      .then(m => m.CrearCuentaComponent),
+    canActivate: [adminGuard]
+  },
+  {
+    path: 'modificar-perfil',
+    loadComponent: () => import('./features/cuentas/modificar-perfil/modificar-perfil')
+      .then(m => m.ModificarPerfilComponent),
+    canActivate: [visitanteGuard]
   },
   // Not Found route - debe ser la última
   {
