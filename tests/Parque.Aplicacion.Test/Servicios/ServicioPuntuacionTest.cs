@@ -183,7 +183,10 @@ public class ServicioPuntuacionTest
         _servicio!.CalcularYRegistrarPuntos(registroVisitaId);
 
         _repoPuntuacionesMock.Verify(r => r.Agregar(It.Is<PuntuacionVisitante>(
-            p => p.VisitanteId == visitanteId && p.Fecha == fechaRegistro.Date)), Times.Once);
+            p => p.VisitanteId == visitanteId
+                 && p.Fecha == fechaRegistro.Date
+                 && p.PuntosDiarios == 50
+                 && p.PuntosTotales == 50)), Times.Once);
     }
 
     [TestMethod]
@@ -232,7 +235,9 @@ public class ServicioPuntuacionTest
         _servicio!.CalcularYRegistrarPuntos(registroVisitaId);
 
         _repoPuntuacionesMock.Verify(r => r.Editar(It.Is<PuntuacionVisitante>(
-            p => p.VisitanteId == visitante.Id)), Times.Once);
+            p => p.VisitanteId == visitante.Id
+                 && p.PuntosDiarios == 50
+                 && p.PuntosTotales == 50)), Times.Once);
     }
 
     [TestMethod]
