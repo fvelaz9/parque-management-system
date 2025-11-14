@@ -32,12 +32,14 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
             throw new InvalidOperationException($"Ticket con código {registro.Identificador} no encontrado");
         }
 
-        var cuenta = repoCuentas.Encontrar(c => c.Id == ticket.CuentaId);
+        var cuenta = repoCuentas.EncontrarConRelaciones(
+            c => c.Id == ticket.CuentaId, nameof(Cuenta.Visitante));
         if(cuenta == null)
         {
             throw new InvalidOperationException($"Cuenta con ID {ticket.CuentaId} no encontrada");
         }
 
+        // Ahora cuenta.Visitante NO será NULL
         var visitanteId = cuenta.Visitante!.Id;
 
         var fechaRegistro = registro.FechaIngreso.Date;
