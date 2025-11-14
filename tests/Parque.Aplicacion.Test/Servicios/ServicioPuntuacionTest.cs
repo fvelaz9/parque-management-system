@@ -492,7 +492,7 @@ public class ServicioPuntuacionTest
     public void ObtenerHistorialPuntuacionesDto_DebeRetornarLista()
     {
         // arrange
-        var visitante = Visitante.Crear(new DateTime(1990,1,1));
+        var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
         visitante.HistorialPuntuaciones.Add(new HistorialPuntuacion(DateTime.UtcNow, "veiras", "A", 10));
 
         _repoVisitanteMock!

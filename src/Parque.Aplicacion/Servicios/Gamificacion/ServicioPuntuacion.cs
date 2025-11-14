@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Diagnostics;
-using Parque.Aplicacion.DTOs.Gamificacion;
+﻿using Parque.Aplicacion.DTOs.Gamificacion;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
 using Parque.Dominio.Gamificacion;
@@ -77,7 +76,7 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
             repoPuntuaciones.Editar(puntuacion);
         }
 
-        var nombreEstrategia= estrategiaActiva.Nombre;
+        var nombreEstrategia = estrategiaActiva.Nombre;
         var origenPuntuacion = " ";
         if(eventoActivo != null)
         {
@@ -215,7 +214,7 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
     public Visitante ObtenerVisitante(Guid visitanteId)
     {
         var visitante = repoVisitante.Encontrar(v => v.Id == visitanteId);
-        if (visitante == null)
+        if(visitante == null)
         {
             throw new InvalidOperationException($"Visitante con ID {visitanteId} no encontrado");
         }
