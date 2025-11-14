@@ -28,6 +28,12 @@ export class CuentaService {
     });
   }
 
+  obtenerCuentas(): Observable<ResponseDto<CuentaDto[]>> {
+    return this.http.get<ResponseDto<CuentaDto[]>>(this.apiUrl, {
+      headers: this.getHeaders()
+    });
+  }
+  
   registrarVisitante(dto: RegistrarVisitanteDto): Observable<ResponseDto<CuentaDto>> {
     return this.http.post<ResponseDto<CuentaDto>>(`${this.apiUrl}/registro`, dto);
   }

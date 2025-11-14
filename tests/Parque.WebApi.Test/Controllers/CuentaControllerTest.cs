@@ -525,4 +525,201 @@ public class CuentaControllerTest
         Assert.IsNotNull(resultado);
         Assert.AreEqual(201, resultado.StatusCode);
     }
+
+    #region Tests ObtenerTodas
+
+    [TestMethod]
+    public void ObtenerTodas_ConCuentasExistentes_RetornaOkConListaDeCuentas()
+    {
+        // Arrange
+        var cuentas = new List<CuentaDto>
+        {
+            new CuentaDto(
+                Guid.NewGuid(),
+                "Juan",
+                "Pérez",
+                "juan@test.com",
+                ["Visitante"],
+                new VisitanteDto(Guid.NewGuid(), new DateTime(1990, 1, 1), 34, "Estandar", 0, 0)),
+            new CuentaDto(
+                Guid.NewGuid(),
+                "María",
+                "García",
+                "maria@admin.com",
+                ["Administrador"],
+                null),
+            new CuentaDto(
+                Guid.NewGuid(),
+                "Carlos",
+                "López",
+                "carlos@operador.com",
+                ["Operador"],
+                null)
+        };
+
+        _serviceMock!.Setup(s => s.ObtenerTodas()).Returns(cuentas);
+
+        // Act
+        var result = _controller!.ObtenerTodas();
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+
+        var response = okResult.Value as ResponseDto;
+        Assert.IsNotNull(response);
+        Assert.IsTrue(response.ExecutionSuccessful);
+        Assert.AreEqual("Cuentas obtenidas exitosamente", response.Message);
+
+        var cuentasResponse = response.Content as IEnumerable<CuentaDto>;
+        Assert.IsNotNull(cuentasResponse);
+        Assert.AreEqual(3, cuentasResponse.Count());
+
+        _serviceMock.Verify(s => s.ObtenerTodas(), Times.Once);
+    }
+
+    [TestMethod]
+    public void ObtenerTodas_SinCuentas_RetornaOkConListaVacia()
+    {
+        // Arrange
+        var cuentasVacias = new List<CuentaDto>();
+        _serviceMock!.Setup(s => s.ObtenerTodas()).Returns(cuentasVacias);
+
+        // Act
+        var result = _controller!.ObtenerTodas();
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = result as OkObjectResult;
+        var response = okResult?.Value as ResponseDto;
+
+        Assert.IsNotNull(response);
+        Assert.IsTrue(response.ExecutionSuccessful);
+
+        var cuentasResponse = response.Content as IEnumerable<CuentaDto>;
+        Assert.IsNotNull(cuentasResponse);
+        Assert.AreEqual(0, cuentasResponse.Count());
+
+        _serviceMock.Verify(s => s.ObtenerTodas(), Times.Once);
+    }
+
+    [TestMethod]
+    public void ObtenerTodas_ConVisitantesConDiferentesMembresias_RetornaTodasCorrectamente()
+    {
+        // Arrange
+        var cuentas = new List<CuentaDto>
+        {
+            new CuentaDto(
+                Guid.NewGuid(),
+                "Ana",
+                "Martínez",
+                "ana@test.com",
+                ["Visitante"],
+                new VisitanteDto(Guid.NewGuid(), new DateTime(1992, 5, 15), 32, "Premium", 5, 150)),
+            new CuentaDto(
+                Guid.NewGuid(),
+                "Luis",
+                "Fernández",
+                "luis@test.com",
+                ["Visitante"],
+                new VisitanteDto(Guid.NewGuid(), new DateTime(1985, 8, 20), 39, "VIP", 10, 300))
+        };
+
+        _serviceMock!.Setup(s => s.ObtenerTodas()).Returns(cuentas);
+
+        // Act
+        var result = _controller!.ObtenerTodas();
+
+        // Assert
+        var okResult = result as OkObjectResult;
+        var response = okResult?.Value as ResponseDto;
+        var cuentasResponse = (response?.Content as IEnumerable<CuentaDto>)?.ToList();
+
+        Assert.IsNotNull(cuentasResponse);
+        Assert.AreEqual(2, cuentasResponse.Count);
+        Assert.AreEqual("Premium", cuentasResponse[0].Visitante?.NivelMembresia);
+        Assert.AreEqual("VIP", cuentasResponse[1].Visitante?.NivelMembresia);
+    }
+
+    [TestMethod]
+    public void ObtenerTodas_VerificaEstructuraDeRespuesta()
+    {
+        // Arrange
+        var cuentas = new List<CuentaDto>
+        {
+            new CuentaDto(
+                Guid.NewGuid(),
+                "Test",
+                "User",
+                "test@test.com",
+                ["Visitante"],
+                null)
+        };
+
+        _serviceMock!.Setup(s => s.ObtenerTodas()).Returns(cuentas);
+
+        // Act
+        var result = _controller!.ObtenerTodas();
+
+        // Assert
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.AreEqual(200, okResult.StatusCode);
+
+        var response = okResult.Value as ResponseDto;
+        Assert.IsNotNull(response);
+        Assert.IsNotNull(response.Content);
+        Assert.IsTrue(response.ExecutionSuccessful);
+        Assert.IsFalse(string.IsNullOrWhiteSpace(response.Message));
+    }
+
+    [TestMethod]
+    public void ObtenerTodas_InvocaServicioUnaVez()
+    {
+        // Arrange
+        var cuentas = new List<CuentaDto>();
+        _serviceMock!.Setup(s => s.ObtenerTodas()).Returns(cuentas);
+
+        // Act
+        _controller!.ObtenerTodas();
+
+        // Assert
+        _serviceMock.Verify(s => s.ObtenerTodas(), Times.Once);
+        _serviceMock.VerifyNoOtherCalls();
+    }
+
+    [TestMethod]
+    public void ObtenerTodas_ConCuentasConMultiplesRoles_RetornaRolesCorrectamente()
+    {
+        // Arrange
+        var cuentas = new List<CuentaDto>
+        {
+            new CuentaDto(
+                Guid.NewGuid(),
+                "Multi",
+                "Role",
+                "multi@test.com",
+                ["Administrador", "Operador"],
+                null)
+        };
+
+        _serviceMock!.Setup(s => s.ObtenerTodas()).Returns(cuentas);
+
+        // Act
+        var result = _controller!.ObtenerTodas();
+
+        // Assert
+        var okResult = result as OkObjectResult;
+        var response = okResult?.Value as ResponseDto;
+        var cuentasResponse = (response?.Content as IEnumerable<CuentaDto>)?.ToList();
+
+        Assert.IsNotNull(cuentasResponse);
+        var cuenta = cuentasResponse.First();
+        Assert.AreEqual(2, cuenta.Roles.Count());
+        Assert.IsTrue(cuenta.Roles.Contains("Administrador"));
+        Assert.IsTrue(cuenta.Roles.Contains("Operador"));
+    }
+
+    #endregion
 }

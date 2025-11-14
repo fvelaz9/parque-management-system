@@ -830,4 +830,147 @@ public class ServicioCuentaTest
         Assert.AreEqual("nuevo@test.com", cuenta.Email.Valor);
         mockRepo.Verify(r => r.Editar(cuenta), Times.Once);
     }
+
+    #region Tests ObtenerTodas
+
+    [TestMethod]
+    public void ObtenerTodas_ConCuentasExistentes_RetornaListaDeCuentas()
+    {
+        // Arrange
+        var cuenta1 = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "password123", Rol.Visitante);
+        cuenta1.AsignarVisitante(new DateTime(1990, 1, 1));
+
+        var cuenta2 = Cuenta.Crear("María", "García", new Email("maria@admin.com"), "admin123", Rol.Administrador);
+
+        var cuenta3 = Cuenta.Crear("Carlos", "López", new Email("carlos@operador.com"), "operador123", Rol.Operador);
+
+        var cuentas = new List<Cuenta> { cuenta1, cuenta2, cuenta3 };
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.ObtenerTodos()).Returns(cuentas);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+
+        // Act
+        var resultado = servicio.ObtenerTodas();
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(3, resultado.Count());
+        var listaCuentas = resultado.ToList();
+        Assert.AreEqual("Juan", listaCuentas[0].Nombre);
+        Assert.AreEqual("María", listaCuentas[1].Nombre);
+        Assert.AreEqual("Carlos", listaCuentas[2].Nombre);
+
+        mockRepo.Verify(r => r.ObtenerTodos(), Times.Once);
+    }
+
+    [TestMethod]
+    public void ObtenerTodas_SinCuentas_RetornaListaVacia()
+    {
+        // Arrange
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.ObtenerTodos()).Returns([]);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+
+        // Act
+        var resultado = servicio.ObtenerTodas();
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(0, resultado.Count());
+        mockRepo.Verify(r => r.ObtenerTodos(), Times.Once);
+    }
+
+    [TestMethod]
+    public void ObtenerTodas_ConVisitantesYAdministradores_RetornaTodasLasCuentas()
+    {
+        // Arrange
+        var visitante1 = Cuenta.Crear("Ana", "Martínez", new Email("ana@test.com"), "pass123", Rol.Visitante);
+        visitante1.AsignarVisitante(new DateTime(1992, 5, 15));
+        visitante1.Visitante!.AsignarMembresia(NivelMembresia.Premium);
+
+        var admin = Cuenta.Crear("Pedro", "Admin", new Email("pedro@admin.com"), "admin123", Rol.Administrador);
+
+        var visitante2 = Cuenta.Crear("Laura", "Gómez", new Email("laura@test.com"), "pass456", Rol.Visitante);
+        visitante2.AsignarVisitante(new DateTime(1988, 8, 20));
+        visitante2.Visitante!.AsignarMembresia(NivelMembresia.VIP);
+
+        var cuentas = new List<Cuenta> { visitante1, admin, visitante2 };
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.ObtenerTodos()).Returns(cuentas);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+
+        // Act
+        var resultado = servicio.ObtenerTodas();
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(3, resultado.Count());
+
+        var listaCuentas = resultado.ToList();
+        Assert.IsNotNull(listaCuentas[0].Visitante);
+        Assert.AreEqual(NivelMembresia.Premium.ToString(), listaCuentas[0].Visitante!.NivelMembresia);
+        Assert.IsNull(listaCuentas[1].Visitante);
+        Assert.IsTrue(listaCuentas[1].Roles.Contains(Rol.Administrador.ToString()));
+        Assert.IsNotNull(listaCuentas[2].Visitante);
+        Assert.AreEqual(NivelMembresia.VIP.ToString(), listaCuentas[2].Visitante!.NivelMembresia);
+    }
+
+    [TestMethod]
+    public void ObtenerTodas_VerificaMapeoCorrectoDeDatos()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Roberto", "Silva", new Email("roberto@test.com"), "password123", Rol.Visitante);
+        cuenta.AsignarVisitante(new DateTime(1985, 3, 10));
+
+        var cuentas = new List<Cuenta> { cuenta };
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.ObtenerTodos()).Returns(cuentas);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+
+        // Act
+        var resultado = servicio.ObtenerTodas();
+
+        // Assert
+        var cuentaDto = resultado.First();
+        Assert.AreEqual(cuenta.Id, cuentaDto.Id);
+        Assert.AreEqual("Roberto", cuentaDto.Nombre);
+        Assert.AreEqual("Silva", cuentaDto.Apellido);
+        Assert.AreEqual("roberto@test.com", cuentaDto.Email);
+        Assert.IsTrue(cuentaDto.Roles.Contains(Rol.Visitante.ToString()));
+        Assert.IsNotNull(cuentaDto.Visitante);
+        Assert.AreEqual(new DateTime(1985, 3, 10), cuentaDto.Visitante.FechaNacimiento);
+    }
+
+    [TestMethod]
+    public void ObtenerTodas_ConMultiplesRoles_RetornaTodosLosRoles()
+    {
+        // Arrange
+        var cuenta = Cuenta.Crear("Admin", "Multi", new Email("admin@test.com"), "pass123", Rol.Administrador);
+        cuenta.AgregarRol(Rol.Operador);
+
+        var cuentas = new List<Cuenta> { cuenta };
+
+        var mockRepo = new Mock<IRepositorio<Cuenta>>();
+        mockRepo.Setup(r => r.ObtenerTodos()).Returns(cuentas);
+
+        var servicio = new ServicioCuenta(mockRepo.Object);
+
+        // Act
+        var resultado = servicio.ObtenerTodas();
+
+        // Assert
+        var cuentaDto = resultado.First();
+        Assert.AreEqual(2, cuentaDto.Roles.Count());
+        Assert.IsTrue(cuentaDto.Roles.Contains(Rol.Administrador.ToString()));
+        Assert.IsTrue(cuentaDto.Roles.Contains(Rol.Operador.ToString()));
+    }
+
+    #endregion
 }

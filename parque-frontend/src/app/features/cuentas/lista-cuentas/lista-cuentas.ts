@@ -27,18 +27,18 @@ export class ListaCuentasComponent implements OnInit {
   }
 
   cargarCuentas(): void {
-    // this.loading = true;
-    // this.cuentaService.obtenerCuentas().subscribe({
-    //   next: (response) => {
-    //     this.cuentas = response.content;
-    //     this.loading = false;
-    //   },
-    //   error: (error) => {
-    //     console.error('Error al cargar cuentas:', error);
-    //     this.errorMessage = 'Error al cargar las cuentas';
-    //     this.loading = false;
-    //   }
-    // });
+    this.loading = true;
+    this.cuentaService.obtenerCuentas().subscribe({
+      next: (response) => {
+        this.cuentas = response.content;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error al cargar cuentas:', error);
+        this.errorMessage = 'Error al cargar las cuentas';
+        this.loading = false;
+      }
+    });
   }
 
   abrirModalMembresia(cuenta: CuentaDto): void {

@@ -9,6 +9,20 @@ namespace Parque.WebApi.Controllers.Usuarios;
 [ApiController]
 public class CuentaController(IServicioCuenta servicioCuenta) : ControllerBase
 {
+    [HttpGet]
+    [AuthorizationFilter("Administrador")]
+    public IActionResult ObtenerTodas()
+    {
+        var cuentas = servicioCuenta.ObtenerTodas();
+
+        return Ok(new ResponseDto
+        {
+            Content = cuentas,
+            ExecutionSuccessful = true,
+            Message = "Cuentas obtenidas exitosamente"
+        });
+    }
+
     [HttpPost("registro")]
     public IActionResult RegistrarVisitante([FromBody] RegistrarVisitanteDto dto)
     {
