@@ -62,7 +62,7 @@ export class RecompensasList {
       return;
     }
 
-    const confirmar = confirm(`¿Canjear "${recompensa.nombre}" por ${recompensa.costoEnPuntos} puntos?`);
+    const confirmar = confirm(`¿Canjear "${recompensa.nombre}" por ${recompensa.costoEnPuntos} puntos?`);  // ← Usar PascalCase
     if (!confirmar) return;
 
     this.recompensasService.canjear({
@@ -71,14 +71,15 @@ export class RecompensasList {
     }).subscribe({
       next: (resp) => {
         alert(resp.mensaje || 'Recompensa canjeada exitosamente');
-        this.cargarRecompensas(); // Recargar para ver stock actualizado
+        this.cargarRecompensas();
       },
       error: (err) => {
         console.error('Error al canjear:', err);
-        alert(err.error?.message || 'Error al canjear la recompensa');
+        alert(err.error?.mensaje || 'Error al canjear la recompensa');
       }
     });
   }
+
 
   verHistorial() {
     this.router.navigate(['/recompensas/historial']);
@@ -100,5 +101,24 @@ export class RecompensasList {
     const nombreNivel = (this.nivelesMap as any)[nivel];
     if (!nombreNivel) return '';
     return `nivel-${nombreNivel.toLowerCase()}`;
+  }
+  editarRecompensa(id: string) {
+    this.router.navigate(['/recompensas/editar', id]);
+  }
+
+  eliminarRecompensa(recompensa: Recompensa) {
+    const confirmar = confirm(`¿Estás seguro de eliminar "${recompensa.nombre}"?`);  // ← Cambiar a PascalCase
+    if (!confirmar) return;
+
+    this.recompensasService.delete(recompensa.id).subscribe({  // ← Cambiar de Eliminar() a delete() y usar PascalCase
+      next: () => {
+        alert('Recompensa eliminada exitosamente');
+        this.cargarRecompensas();
+      },
+      error: (err) => {
+        console.error('Error al eliminar:', err);
+        alert(err.error?.mensaje || 'Error al eliminar la recompensa');
+      }
+    });
   }
 }

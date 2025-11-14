@@ -129,4 +129,19 @@ public class RecompensasController(IServicioRecompensa servicioRecompensa) : Con
             })
         });
     }
+
+    [HttpDelete("{id}")]
+    [AuthorizationFilter("Administrador")]
+    public IActionResult EliminarRecompensa(Guid id)
+    {
+        try
+        {
+            servicioRecompensa.EliminarRecompensa(id);
+            return Ok(new { mensaje = "Recompensa eliminada exitosamente" });
+        }
+        catch(InvalidOperationException ex)
+        {
+            return NotFound(new { mensaje = ex.Message });
+        }
+    }
 }

@@ -171,4 +171,15 @@ public class ServicioRecompensa(
 
         return dtos;
     }
+
+    public void EliminarRecompensa(Guid id)
+    {
+        var recompesa = repoRecompensa.Encontrar(r => r.Id == id);
+        if (recompesa == null)  // ← Agregar validación
+        {
+            throw new InvalidOperationException($"Recompensa con ID {id} no encontrada");
+        }
+
+        repoRecompensa.Eliminar(r => r.Id == id);
+    }
 }

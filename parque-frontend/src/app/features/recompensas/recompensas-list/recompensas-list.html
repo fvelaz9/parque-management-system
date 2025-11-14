@@ -54,6 +54,7 @@
       </div>
 
       <div class="card-actions">
+        <!-- Botón Canjear (Solo Visitantes) -->
         <button
           class="btn btn-canjear"
           *ngIf="isVisitante"
@@ -62,12 +63,19 @@
           {{ r.cantidadDisponible === 0 ? 'Agotado' : 'Canjear' }}
         </button>
 
-        <a
-          routerLink="/recompensas/editar/{{ r.id }}"
-          class="btn btn-editar"
-          *ngIf="isAdmin">
-          Editar
-        </a>
+        <!-- Botones Admin (Editar y Eliminar) -->
+        <div class="admin-actions" *ngIf="isAdmin">
+          <button
+            class="btn btn-editar"
+            (click)="editarRecompensa(r.id)">
+            Editar
+          </button>
+          <button
+            class="btn btn-eliminar"
+            (click)="eliminarRecompensa(r)">
+            Eliminar
+          </button>
+        </div>
       </div>
     </article>
   </div>

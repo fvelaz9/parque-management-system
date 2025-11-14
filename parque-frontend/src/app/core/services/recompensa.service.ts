@@ -50,4 +50,7 @@ export class RecompensasService {
   getHistorial(visitanteId: string): Observable<{ visitanteId: string; totalCanjes: number; historial: HistorialCanjeDto[] }> {
     return this.http.get<{ visitanteId: string; totalCanjes: number; historial: HistorialCanjeDto[] }>(`${this.apiUrl}/historial/${visitanteId}`, { headers: this.getHeaders() });
   }
+  delete(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+  }
 }
