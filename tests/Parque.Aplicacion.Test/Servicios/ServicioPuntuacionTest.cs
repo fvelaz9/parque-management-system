@@ -404,7 +404,7 @@ public class ServicioPuntuacionTest
     public void ObtenerEstrategiaActiva_SinEstrategiasRegistradas_LanzaExcepcion()
     {
         var configuracionesVacias = new List<ConfiguracionEstrategia>();
-        var servicioFechaHoraMockNuevo = new Mock<IServicioFechaHora>(MockBehavior.Loose); // ⚠️ CAMBIO: Loose
+        var servicioFechaHoraMockNuevo = new Mock<IServicioFechaHora>(MockBehavior.Loose);
 
         var repoVisitanteMock = new Mock<IRepositorio<Visitante>>(MockBehavior.Strict);
         var servicioSinEstrategias = new ServicioPuntuacion(
