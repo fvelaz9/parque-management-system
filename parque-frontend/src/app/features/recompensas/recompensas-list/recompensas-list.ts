@@ -60,7 +60,8 @@ export class RecompensasList {
 
   get visitanteId(): string | null {
     const usuario = this.authService.getUsuario();
-    return usuario?.visitante?.id || usuario?.id || null;
+    // ✅ CORRECTO - usar el ID del visitante asociado
+    return usuario?.visitante?.id || null;
   }
 
   canjearRecompensa(recompensa: Recompensa) {
