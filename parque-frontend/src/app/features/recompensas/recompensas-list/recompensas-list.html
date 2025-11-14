@@ -54,7 +54,6 @@
       </div>
 
       <div class="card-actions">
-        <!-- Botón Canjear (Solo Visitantes) -->
         <button
           class="btn btn-canjear"
           *ngIf="isVisitante"
@@ -63,7 +62,6 @@
           {{ r.cantidadDisponible === 0 ? 'Agotado' : 'Canjear' }}
         </button>
 
-        <!-- Botones Admin (Editar y Eliminar) -->
         <div class="admin-actions" *ngIf="isAdmin">
           <button
             class="btn btn-editar"

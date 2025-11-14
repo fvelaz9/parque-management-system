@@ -226,6 +226,12 @@
   flex: 1;
 }
 
+.btn-eliminar{
+  background: #bc3a3a;
+  color: white;
+  flex: 1;
+}
+
 .btn-editar:hover {
   background: #fb8c00;
 }
