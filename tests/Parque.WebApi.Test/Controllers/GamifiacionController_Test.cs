@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Dynamic;
+using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Parque.Aplicacion.DTOs.Gamificacion;
 using Parque.Aplicacion.Servicios.Gamificacion;
@@ -239,8 +240,11 @@ public class GamifiacionController_Test
         // Assert
         Assert.IsNotNull(result);
 
-        dynamic payload = result!.Value!;
-        Assert.AreEqual(1, payload.totalVisitantes);
-        Assert.AreEqual(60, payload.ranking[0].PuntosDiarios);
+        // Convertimos el objeto anónimo -> JSON -> ExpandoObject
+        var json = System.Text.Json.JsonSerializer.Serialize(result!.Value);
+        dynamic payload = Newtonsoft.Json.JsonConvert.DeserializeObject<ExpandoObject>(json)!;
+
+        Assert.AreEqual(1, (int)payload.totalVisitantes);
+        Assert.AreEqual(60, (int)payload.ranking[0].PuntosDiarios);
     }
 }
