@@ -1,5 +1,4 @@
-﻿using System.Dynamic;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Parque.Aplicacion.DTOs.Gamificacion;
 using Parque.Aplicacion.Servicios.Gamificacion;

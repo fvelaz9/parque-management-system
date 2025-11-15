@@ -140,114 +140,114 @@ public class ServicioPuntuacionTest
     }
 
     [TestMethod]
-public void CalcularYRegistrarPuntos_PuntuacionNuevaVisitante_CreaPuntuacion()
-{
-    var registroVisitaId = 1;
-    var cuentaId = Guid.NewGuid();
-    var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
-    var fechaRegistro = new DateTime(2025, 10, 8, 10, 0, 0);
-    var registro = new RegistroVisita
+    public void CalcularYRegistrarPuntos_PuntuacionNuevaVisitante_CreaPuntuacion()
     {
-        Id = registroVisitaId,
-        AtraccionId = 1,
-        Identificador = Guid.NewGuid(),
-        FechaIngreso = fechaRegistro
-    };
-    var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.Simulador, 12, 20, "Rápida");
-    var ticket = new Dominio.Ticket(cuentaId, fechaVisita, 1, TipoTicket.General, fechaVisita);
-    var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("test@test.com"), "password123", Rol.Visitante);
-    var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
-    typeof(Cuenta).GetProperty("Visitante")!.SetValue(cuenta, visitante);
-    var visitanteId = visitante.Id;
-    var registrosVacios = new List<RegistroVisita>();
-    var eventosVacios = new List<Evento>();
-    var configuraciones = new List<ConfiguracionEstrategia> { new ConfiguracionEstrategia("TestStrategy") };
-    var puntuacionesVacias = new List<PuntuacionVisitante>();
+        var registroVisitaId = 1;
+        var cuentaId = Guid.NewGuid();
+        var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
+        var fechaRegistro = new DateTime(2025, 10, 8, 10, 0, 0);
+        var registro = new RegistroVisita
+        {
+            Id = registroVisitaId,
+            AtraccionId = 1,
+            Identificador = Guid.NewGuid(),
+            FechaIngreso = fechaRegistro
+        };
+        var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.Simulador, 12, 20, "Rápida");
+        var ticket = new Dominio.Ticket(cuentaId, fechaVisita, 1, TipoTicket.General, fechaVisita);
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("test@test.com"), "password123", Rol.Visitante);
+        var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
+        typeof(Cuenta).GetProperty("Visitante")!.SetValue(cuenta, visitante);
+        var visitanteId = visitante.Id;
+        var registrosVacios = new List<RegistroVisita>();
+        var eventosVacios = new List<Evento>();
+        var configuraciones = new List<ConfiguracionEstrategia> { new ConfiguracionEstrategia("TestStrategy") };
+        var puntuacionesVacias = new List<PuntuacionVisitante>();
 
-    _repoRegistrosMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<RegistroVisita, bool>>>()))
-        .Returns(registro);
-    _repoAtraccionesMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
-        .Returns(atraccion);
-    _repoTicketsMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
-        .Returns(ticket);
-    _repoCuentasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
-        .Returns(cuenta);
-    _repoRegistrosMock.Setup(r => r.ObtenerTodos()).Returns(registrosVacios);
-    _repoEventosMock!.Setup(r => r.ObtenerTodos()).Returns(eventosVacios);
-    _repoConfiguracionMock!.Setup(r => r.ObtenerTodos()).Returns(configuraciones);
-    _estrategiaMock!.Setup(e => e.Nombre).Returns("TestStrategy");
-    _estrategiaMock.Setup(e => e.CalcularPuntos(registro, atraccion, It.IsAny<List<RegistroVisita>>(), null))
-        .Returns(50);
-    _repoPuntuacionesMock!.Setup(r => r.ObtenerTodos()).Returns(puntuacionesVacias);
-    _repoPuntuacionesMock.Setup(r => r.Agregar(It.IsAny<PuntuacionVisitante>()));
+        _repoRegistrosMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<RegistroVisita, bool>>>()))
+            .Returns(registro);
+        _repoAtraccionesMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
+            .Returns(atraccion);
+        _repoTicketsMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
+            .Returns(ticket);
+        _repoCuentasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
+        _repoRegistrosMock.Setup(r => r.ObtenerTodos()).Returns(registrosVacios);
+        _repoEventosMock!.Setup(r => r.ObtenerTodos()).Returns(eventosVacios);
+        _repoConfiguracionMock!.Setup(r => r.ObtenerTodos()).Returns(configuraciones);
+        _estrategiaMock!.Setup(e => e.Nombre).Returns("TestStrategy");
+        _estrategiaMock.Setup(e => e.CalcularPuntos(registro, atraccion, It.IsAny<List<RegistroVisita>>(), null))
+            .Returns(50);
+        _repoPuntuacionesMock!.Setup(r => r.ObtenerTodos()).Returns(puntuacionesVacias);
+        _repoPuntuacionesMock.Setup(r => r.Agregar(It.IsAny<PuntuacionVisitante>()));
 
-    _repoVisitanteMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
-        .Returns(visitante);
-    _repoVisitanteMock.Setup(r => r.Editar(It.IsAny<Visitante>()));
+        _repoVisitanteMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
+            .Returns(visitante);
+        _repoVisitanteMock.Setup(r => r.Editar(It.IsAny<Visitante>()));
 
-    _servicio!.CalcularYRegistrarPuntos(registroVisitaId);
+        _servicio!.CalcularYRegistrarPuntos(registroVisitaId);
 
-    _repoPuntuacionesMock.Verify(r => r.Agregar(It.Is<PuntuacionVisitante>(
-        p => p.VisitanteId == visitanteId
-             && p.Fecha == fechaRegistro.Date
-             && p.PuntosDiarios == 50
-             && p.PuntosTotales == 50)), Times.Once);
-}
+        _repoPuntuacionesMock.Verify(r => r.Agregar(It.Is<PuntuacionVisitante>(
+            p => p.VisitanteId == visitanteId
+                 && p.Fecha == fechaRegistro.Date
+                 && p.PuntosDiarios == 50
+                 && p.PuntosTotales == 50)), Times.Once);
+    }
 
     [TestMethod]
-public void CalcularYRegistrarPuntos_PuntuacionExistente_ActualizaPuntuacion()
-{
-    var registroVisitaId = 1;
-    var cuentaId = Guid.NewGuid();
-    var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
-    var fechaRegistro = new DateTime(2025, 10, 8, 10, 0, 0);
-
-    var registro = new RegistroVisita
+    public void CalcularYRegistrarPuntos_PuntuacionExistente_ActualizaPuntuacion()
     {
-        Id = registroVisitaId,
-        AtraccionId = 1,
-        Identificador = Guid.NewGuid(),
-        FechaIngreso = fechaRegistro
-    };
-    var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.Simulador, 12, 20, "Rápida");
-    var ticket = new Dominio.Ticket(cuentaId, fechaVisita, 1, TipoTicket.General, fechaVisita);
-    var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("test@test.com"), "password123", Rol.Visitante);
-    var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
-    typeof(Cuenta).GetProperty("Visitante")!.SetValue(cuenta, visitante);
-    var puntuacionExistente = new PuntuacionVisitante(visitante.Id, fechaRegistro.Date, 30);
-    var registrosVacios = new List<RegistroVisita>();
-    var eventosVacios = new List<Evento>();
-    var configuraciones = new List<ConfiguracionEstrategia> { new ConfiguracionEstrategia("TestStrategy") };
-    var puntuaciones = new List<PuntuacionVisitante> { puntuacionExistente };
+        var registroVisitaId = 1;
+        var cuentaId = Guid.NewGuid();
+        var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
+        var fechaRegistro = new DateTime(2025, 10, 8, 10, 0, 0);
 
-    _repoRegistrosMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<RegistroVisita, bool>>>()))
-        .Returns(registro);
-    _repoAtraccionesMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
-        .Returns(atraccion);
-    _repoTicketsMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
-        .Returns(ticket);
-    _repoCuentasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
-        .Returns(cuenta);
-    _repoRegistrosMock.Setup(r => r.ObtenerTodos()).Returns(registrosVacios);
-    _repoEventosMock!.Setup(r => r.ObtenerTodos()).Returns(eventosVacios);
-    _repoConfiguracionMock!.Setup(r => r.ObtenerTodos()).Returns(configuraciones);
-    _estrategiaMock!.Setup(e => e.Nombre).Returns("TestStrategy");
-    _estrategiaMock.Setup(e => e.CalcularPuntos(registro, atraccion, It.IsAny<List<RegistroVisita>>(), null))
-        .Returns(20);
-    _repoPuntuacionesMock!.Setup(r => r.ObtenerTodos()).Returns(puntuaciones);
-    _repoPuntuacionesMock.Setup(r => r.Editar(It.IsAny<PuntuacionVisitante>()));
+        var registro = new RegistroVisita
+        {
+            Id = registroVisitaId,
+            AtraccionId = 1,
+            Identificador = Guid.NewGuid(),
+            FechaIngreso = fechaRegistro
+        };
+        var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.Simulador, 12, 20, "Rápida");
+        var ticket = new Dominio.Ticket(cuentaId, fechaVisita, 1, TipoTicket.General, fechaVisita);
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("test@test.com"), "password123", Rol.Visitante);
+        var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
+        typeof(Cuenta).GetProperty("Visitante")!.SetValue(cuenta, visitante);
+        var puntuacionExistente = new PuntuacionVisitante(visitante.Id, fechaRegistro.Date, 30);
+        var registrosVacios = new List<RegistroVisita>();
+        var eventosVacios = new List<Evento>();
+        var configuraciones = new List<ConfiguracionEstrategia> { new ConfiguracionEstrategia("TestStrategy") };
+        var puntuaciones = new List<PuntuacionVisitante> { puntuacionExistente };
 
-    _repoVisitanteMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
-        .Returns(visitante);
-    _repoVisitanteMock.Setup(r => r.Editar(It.IsAny<Visitante>()));
+        _repoRegistrosMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<RegistroVisita, bool>>>()))
+            .Returns(registro);
+        _repoAtraccionesMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
+            .Returns(atraccion);
+        _repoTicketsMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
+            .Returns(ticket);
+        _repoCuentasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
+        _repoRegistrosMock.Setup(r => r.ObtenerTodos()).Returns(registrosVacios);
+        _repoEventosMock!.Setup(r => r.ObtenerTodos()).Returns(eventosVacios);
+        _repoConfiguracionMock!.Setup(r => r.ObtenerTodos()).Returns(configuraciones);
+        _estrategiaMock!.Setup(e => e.Nombre).Returns("TestStrategy");
+        _estrategiaMock.Setup(e => e.CalcularPuntos(registro, atraccion, It.IsAny<List<RegistroVisita>>(), null))
+            .Returns(20);
+        _repoPuntuacionesMock!.Setup(r => r.ObtenerTodos()).Returns(puntuaciones);
+        _repoPuntuacionesMock.Setup(r => r.Editar(It.IsAny<PuntuacionVisitante>()));
 
-    _servicio!.CalcularYRegistrarPuntos(registroVisitaId);
+        _repoVisitanteMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
+            .Returns(visitante);
+        _repoVisitanteMock.Setup(r => r.Editar(It.IsAny<Visitante>()));
 
-    _repoPuntuacionesMock.Verify(r => r.Editar(It.Is<PuntuacionVisitante>(
-        p => p.VisitanteId == visitante.Id
-             && p.PuntosDiarios == 50
-             && p.PuntosTotales == 50)), Times.Once);
-}
+        _servicio!.CalcularYRegistrarPuntos(registroVisitaId);
+
+        _repoPuntuacionesMock.Verify(r => r.Editar(It.Is<PuntuacionVisitante>(
+            p => p.VisitanteId == visitante.Id
+                 && p.PuntosDiarios == 50
+                 && p.PuntosTotales == 50)), Times.Once);
+    }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]
@@ -412,7 +412,8 @@ public void CalcularYRegistrarPuntos_PuntuacionExistente_ActualizaPuntuacion()
     [ExpectedException(typeof(InvalidOperationException))]
     public void ObtenerEstrategiaActiva_SinEstrategiasRegistradas_LanzaExcepcion()
     {
-        var configuracionesVacias = new List<ConfiguracionEstrategia>();
+        _repoConfiguracionMock?.Setup(r => r.ObtenerTodos()).Returns([]);
+
         var servicioFechaHoraMockNuevo = new Mock<IServicioFechaHora>(MockBehavior.Loose);
 
         var repoVisitanteMock = new Mock<IRepositorio<Visitante>>(MockBehavior.Strict);
@@ -424,72 +425,70 @@ public void CalcularYRegistrarPuntos_PuntuacionExistente_ActualizaPuntuacion()
             _repoCuentasMock!.Object,
             _repoEventosMock!.Object,
             _repoConfiguracionMock!.Object,
-            new List<IEstrategiaPuntuacion> { },  // lista vacía
+            new List<IEstrategiaPuntuacion>(),
             servicioFechaHoraMockNuevo.Object,
             repoVisitanteMock.Object);
-
-        _repoConfiguracionMock.Setup(r => r.ObtenerTodos()).Returns(configuracionesVacias);
 
         servicioSinEstrategias.ObtenerEstrategiaActiva();
     }
 
     [TestMethod]
-public void CalcularYRegistrarPuntos_UtilizaEstrategiaActivaParaCalcularPuntos()
-{
-    var registroVisitaId = 1;
-    var cuentaId = Guid.NewGuid();
-    var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
-    var fechaRegistro = new DateTime(2025, 10, 8, 10, 0, 0);
-
-    var registro = new RegistroVisita
+    public void CalcularYRegistrarPuntos_UtilizaEstrategiaActivaParaCalcularPuntos()
     {
-        Id = registroVisitaId,
-        AtraccionId = 1,
-        Identificador = Guid.NewGuid(),
-        FechaIngreso = fechaRegistro
-    };
-    var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.Simulador, 12, 20, "Rápida");
-    var ticket = new Dominio.Ticket(cuentaId, fechaVisita, 1, TipoTicket.General, fechaVisita);
-    var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("test@test.com"), "password123", Rol.Visitante);
-    var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
-    typeof(Cuenta).GetProperty("Visitante")!.SetValue(cuenta, visitante);
+        var registroVisitaId = 1;
+        var cuentaId = Guid.NewGuid();
+        var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
+        var fechaRegistro = new DateTime(2025, 10, 8, 10, 0, 0);
 
-    var registrosVacios = new List<RegistroVisita>();
-    var eventosVacios = new List<Evento>();
-    var configuraciones = new List<ConfiguracionEstrategia> { new ConfiguracionEstrategia("TestStrategy") };
-    var puntuacionesVacias = new List<PuntuacionVisitante>();
+        var registro = new RegistroVisita
+        {
+            Id = registroVisitaId,
+            AtraccionId = 1,
+            Identificador = Guid.NewGuid(),
+            FechaIngreso = fechaRegistro
+        };
+        var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.Simulador, 12, 20, "Rápida");
+        var ticket = new Dominio.Ticket(cuentaId, fechaVisita, 1, TipoTicket.General, fechaVisita);
+        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("test@test.com"), "password123", Rol.Visitante);
+        var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
+        typeof(Cuenta).GetProperty("Visitante")!.SetValue(cuenta, visitante);
 
-    _repoRegistrosMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<RegistroVisita, bool>>>()))
-        .Returns(registro);
-    _repoAtraccionesMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
-        .Returns(atraccion);
-    _repoTicketsMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
-        .Returns(ticket);
-    _repoCuentasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
-        .Returns(cuenta);
-    _repoRegistrosMock.Setup(r => r.ObtenerTodos()).Returns(registrosVacios);
-    _repoEventosMock!.Setup(r => r.ObtenerTodos()).Returns(eventosVacios);
-    _repoConfiguracionMock!.Setup(r => r.ObtenerTodos()).Returns(configuraciones);
-    _estrategiaMock!.Setup(e => e.Nombre).Returns("TestStrategy");
-    _estrategiaMock.Setup(e => e.CalcularPuntos(registro, atraccion, It.IsAny<List<RegistroVisita>>(), null))
-        .Returns(75);
-    _repoPuntuacionesMock!.Setup(r => r.ObtenerTodos()).Returns(puntuacionesVacias);
-    _repoPuntuacionesMock.Setup(r => r.Agregar(It.IsAny<PuntuacionVisitante>()));
+        var registrosVacios = new List<RegistroVisita>();
+        var eventosVacios = new List<Evento>();
+        var configuraciones = new List<ConfiguracionEstrategia> { new ConfiguracionEstrategia("TestStrategy") };
+        var puntuacionesVacias = new List<PuntuacionVisitante>();
 
-    _repoVisitanteMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
-        .Returns(visitante);
-    _repoVisitanteMock.Setup(r => r.Editar(It.IsAny<Visitante>()));
+        _repoRegistrosMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<RegistroVisita, bool>>>()))
+            .Returns(registro);
+        _repoAtraccionesMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
+            .Returns(atraccion);
+        _repoTicketsMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
+            .Returns(ticket);
+        _repoCuentasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
+            .Returns(cuenta);
+        _repoRegistrosMock.Setup(r => r.ObtenerTodos()).Returns(registrosVacios);
+        _repoEventosMock!.Setup(r => r.ObtenerTodos()).Returns(eventosVacios);
+        _repoConfiguracionMock!.Setup(r => r.ObtenerTodos()).Returns(configuraciones);
+        _estrategiaMock!.Setup(e => e.Nombre).Returns("TestStrategy");
+        _estrategiaMock.Setup(e => e.CalcularPuntos(registro, atraccion, It.IsAny<List<RegistroVisita>>(), null))
+            .Returns(75);
+        _repoPuntuacionesMock!.Setup(r => r.ObtenerTodos()).Returns(puntuacionesVacias);
+        _repoPuntuacionesMock.Setup(r => r.Agregar(It.IsAny<PuntuacionVisitante>()));
 
-    _servicio!.CalcularYRegistrarPuntos(registroVisitaId);
+        _repoVisitanteMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
+            .Returns(visitante);
+        _repoVisitanteMock.Setup(r => r.Editar(It.IsAny<Visitante>()));
 
-    _repoConfiguracionMock.Verify(r => r.ObtenerTodos(), Times.Once,
-        "Debe obtener configuraciones para determinar estrategia activa");
-    _estrategiaMock.Verify(e => e.CalcularPuntos(registro, atraccion, It.IsAny<List<RegistroVisita>>(), null),
-        Times.Once,
-        "Debe usar la estrategia activa obtenida para calcular puntos");
-    _repoPuntuacionesMock.Verify(r => r.Agregar(It.Is<PuntuacionVisitante>(
-        p => p.PuntosDiarios == 75 && p.PuntosTotales == 75)), Times.Once);
-}
+        _servicio!.CalcularYRegistrarPuntos(registroVisitaId);
+
+        _repoConfiguracionMock.Verify(r => r.ObtenerTodos(), Times.Once,
+            "Debe obtener configuraciones para determinar estrategia activa");
+        _estrategiaMock.Verify(e => e.CalcularPuntos(registro, atraccion, It.IsAny<List<RegistroVisita>>(), null),
+            Times.Once,
+            "Debe usar la estrategia activa obtenida para calcular puntos");
+        _repoPuntuacionesMock.Verify(r => r.Agregar(It.Is<PuntuacionVisitante>(
+            p => p.PuntosDiarios == 75 && p.PuntosTotales == 75)), Times.Once);
+    }
 
     [TestMethod]
     public void ObtenerHistorialPuntuacionesDto_DebeRetornarLista()
