@@ -156,15 +156,26 @@ public class GamifiacionController_Test
     }
 
     [TestMethod]
-    public void CambiarEstrategiaActiva_EstrategiaNoExiste_LanzaExcepcion()
+    public void CambiarEstrategiaActiva_EstrategiaNoExiste_RetornaBadRequest()
     {
         // Arrange
         var request = new CambiarEstrategiaRequest { NombreEstrategia = "NoExiste" };
         _serviceMock!.Setup(s => s.CambiarEstrategiaActiva("NoExiste"))
             .Throws(new ArgumentException("Estrategia 'NoExiste' no encontrada"));
 
-        // Act & Assert
-        Assert.ThrowsException<ArgumentException>(() => _controller!.CambiarEstrategiaActiva(request));
+        // Act
+        var result = _controller!.CambiarEstrategiaActiva(request) as BadRequestObjectResult;
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(400, result.StatusCode);
+
+        // Serializar y deserializar para verificar contenido
+        var json = System.Text.Json.JsonSerializer.Serialize(result.Value);
+        using var jsonDoc = System.Text.Json.JsonDocument.Parse(json);
+        var mensaje = jsonDoc.RootElement.GetProperty("mensaje").GetString();
+
+        Assert.AreEqual("Estrategia 'NoExiste' no encontrada", mensaje);
     }
 
     #endregion
@@ -190,4 +201,49 @@ public class GamifiacionController_Test
     }
 
     #endregion
+
+    [TestMethod]
+    public void ObtenerHistorialPuntuaciones_VisitanteValido_RetornaHistorial()
+    {
+        // Arrange
+        var visitanteId = Guid.NewGuid();
+        var historialEsperado = new List<HistorialPuntuacionDto>
+        {
+            new() { EstrategiaActiva = "X", OrigenPuntos = "A", Puntos = 10, FechaHora = DateTime.UtcNow },
+            new() { EstrategiaActiva = "Y", OrigenPuntos = "B", Puntos = 20, FechaHora = DateTime.UtcNow }
+        };
+
+        _serviceMock!
+            .Setup(s => s.ObtenerHistorialVisitante(visitanteId))
+            .Returns(historialEsperado);
+
+        // Act
+        var result = _controller!.ObtenerHistorialPuntuaciones(visitanteId);
+
+        // Assert
+        Assert.IsNotNull(result.Value);
+        Assert.AreEqual(2, result.Value.Count);
+    }
+
+    [TestMethod]
+    public void ObtenerRankingDiario_ValidaContenidoRetornado()
+    {
+        var ranking = new List<RankingVisitanteDto>
+        {
+            new() { VisitanteId = Guid.NewGuid(), PuntosDiarios = 60, PuntosTotales = 200, Posicion = 1 }
+        };
+
+        _serviceMock!
+            .Setup(s => s.ObtenerRankingDiario(null, 10))
+            .Returns(ranking);
+
+        var result = _controller!.ObtenerRankingDiario(null, 10) as OkObjectResult;
+
+        Assert.IsNotNull(result);
+
+        var jsonElement = System.Text.Json.JsonSerializer.SerializeToElement(result!.Value);
+        Assert.AreEqual(DateTime.Today.Date, jsonElement.GetProperty("fecha").GetDateTime());
+        Assert.AreEqual(1, jsonElement.GetProperty("totalVisitantes").GetInt32());
+        Assert.AreEqual(60, jsonElement.GetProperty("ranking")[0].GetProperty("PuntosDiarios").GetInt32());
+    }
 }

@@ -39,8 +39,15 @@ public class GamificacionController(IServicioPuntuacion servicioPuntuacion) : Co
     [AuthorizationFilter("Administrador")]
     public IActionResult CambiarEstrategiaActiva([FromBody] CambiarEstrategiaRequest request)
     {
-        servicioPuntuacion.CambiarEstrategiaActiva(request.NombreEstrategia);
-        return Ok(new { mensaje = "Estrategia cambiada exitosamente", nuevaEstrategia = request.NombreEstrategia });
+        try
+        {
+            servicioPuntuacion.CambiarEstrategiaActiva(request.NombreEstrategia);
+            return Ok(new { mensaje = "Estrategia cambiada exitosamente", nuevaEstrategia = request.NombreEstrategia });
+        }
+        catch(ArgumentException ex)
+        {
+            return BadRequest(new { mensaje = ex.Message });
+        }
     }
 
     [HttpGet("estrategias/activa")]
@@ -49,5 +56,13 @@ public class GamificacionController(IServicioPuntuacion servicioPuntuacion) : Co
     {
         var estrategiaActiva = servicioPuntuacion.ObtenerEstrategiaActiva();
         return Ok(new { estrategiaActiva });
+    }
+
+    [HttpGet("historial")]
+    [AuthorizationFilter("any")]
+    public ActionResult<List<HistorialPuntuacionDto>> ObtenerHistorialPuntuaciones([FromQuery] Guid visitanteId)
+    {
+        var historial = servicioPuntuacion.ObtenerHistorialVisitante(visitanteId);
+        return historial;
     }
 }
