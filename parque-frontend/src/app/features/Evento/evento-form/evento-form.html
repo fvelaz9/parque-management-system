@@ -73,17 +73,16 @@
     </div>
 
     <div class="form-field" *ngIf="atraccionesDisponibles.length > 0">
-      <label for="atraccionIds" class="form-label">Atracciones</label>
-      <select
-        id="atraccionIds"
-        name="atraccionIds"
-        multiple
-        [(ngModel)]="evento.atraccionIds"
-        class="form-select">
-        <option *ngFor="let atraccion of atraccionesDisponibles" [value]="atraccion.id">
+      <label class="form-label">Atracciones</label>
+      <div *ngFor="let atraccion of atraccionesDisponibles">
+        <label>
+          <input type="checkbox"
+                 [value]="atraccion.id"
+                 [checked]="evento.atraccionIds.includes(atraccion.id)"
+                 (change)="onToggleAtraccion(atraccion.id, $event.target.checked)">
           {{ atraccion.nombre }}
-        </option>
-      </select>
+        </label>
+      </div>
     </div>
 
     <div class="form-field">

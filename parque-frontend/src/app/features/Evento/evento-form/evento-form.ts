@@ -4,12 +4,12 @@ import { EventoService } from '../../../core/services/evento.service';
 import { AtraccionesService } from '../../../core/services/atracciones.service';
 import { EstadoEvento } from '../../../core/models/evento.model';
 import {Router, RouterLink} from '@angular/router';
-import {NgIf} from '@angular/common';
+import {NgIf, NgForOf} from '@angular/common';
 
 @Component({
   selector: 'app-evento-form',
   standalone: true,
-  imports: [FormsModule, NgIf, RouterLink],
+  imports: [FormsModule, NgIf, NgForOf, RouterLink],
   templateUrl: './evento-form.html',
   styleUrls: ['./evento-form.css'],
 })
@@ -55,5 +55,12 @@ export class EventoForm {
         alert('Error al crear evento');
       }
     });
+  }
+  onToggleAtraccion(id: number, checked: boolean) {
+    if (checked) {
+      this.evento.atraccionIds.push(id);
+    } else {
+      this.evento.atraccionIds = this.evento.atraccionIds.filter(a => a !== id);
+    }
   }
 }
