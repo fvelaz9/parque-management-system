@@ -163,9 +163,9 @@ public class ServicioRecompensa(
                 Id = canje.Id,
                 VisitanteId = canje.VisitanteId,
                 RecompensaId = canje.RecompensaId,
-                NombreRecompensa = recompensa?.Nombre ?? "Recompensa no encontrada",
                 PuntosCanjeados = canje.PuntosCanjeados,
-                FechaCanje = canje.FechaCanje
+                FechaCanje = canje.FechaCanje,
+                NombreRecompensa = recompensa?.Nombre,
             });
         }
 

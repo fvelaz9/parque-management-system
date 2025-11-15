@@ -124,6 +124,7 @@ public class RecompensasController(IServicioRecompensa servicioRecompensa) : Con
                 h.Id,
                 h.VisitanteId,
                 h.RecompensaId,
+                h.NombreRecompensa,
                 h.PuntosCanjeados,
                 h.FechaCanje
             })
