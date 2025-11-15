@@ -92,12 +92,19 @@
               <!-- Columna Acciones -->
               <div class="col-md-2 text-end">
                 <button
+                  class="btn btn-outline-primary me-2"
+                  (click)="editarMantenimiento(mantenimiento.id)"
+                  title="Editar mantenimiento">
+                  <i class="bi bi-pencil"></i> Editar
+                </button>
+                <button
                   class="btn btn-outline-danger"
                   (click)="eliminarMantenimiento(mantenimiento.id)"
                   title="Eliminar mantenimiento">
                   <i class="bi bi-trash"></i> Eliminar
                 </button>
               </div>
+
             </div>
           </div>
         </div>

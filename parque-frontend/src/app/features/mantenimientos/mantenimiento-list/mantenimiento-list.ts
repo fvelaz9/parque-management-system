@@ -1,7 +1,7 @@
 // src/app/features/mantenimientos/mantenimiento-list/mantenimiento-list.ts
 import { Component, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MantenimientoPreventivo } from '../../../core/models/mantenimiento.model';
 import { MantenimientosService } from '../../../core/services/mantenimiento.service';
 
@@ -14,6 +14,7 @@ import { MantenimientosService } from '../../../core/services/mantenimiento.serv
 })
 export class MantenimientoList {
   private readonly mantenimientosService = inject(MantenimientosService);
+  private readonly router = inject(Router);
 
   public mantenimientos = signal<MantenimientoPreventivo[]>([]);
   public loading = signal(true);
@@ -52,6 +53,9 @@ export class MantenimientoList {
         }
       });
     }
+  }
+  editarMantenimiento(id: number) {
+    this.router.navigate(['/mantenimientos/editar', id]);
   }
 
   formatearDuracion(duracion: string): string {
