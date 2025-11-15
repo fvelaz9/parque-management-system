@@ -158,17 +158,24 @@ public class GamifiacionController_Test
     [TestMethod]
     public void CambiarEstrategiaActiva_EstrategiaNoExiste_RetornaBadRequest()
     {
+        // Arrange
         var request = new CambiarEstrategiaRequest { NombreEstrategia = "NoExiste" };
         _serviceMock!.Setup(s => s.CambiarEstrategiaActiva("NoExiste"))
             .Throws(new ArgumentException("Estrategia 'NoExiste' no encontrada"));
 
+        // Act
         var result = _controller!.CambiarEstrategiaActiva(request) as BadRequestObjectResult;
 
+        // Assert
         Assert.IsNotNull(result);
         Assert.AreEqual(400, result.StatusCode);
 
-        dynamic payload = result.Value;
-        Assert.AreEqual("Estrategia 'NoExiste' no encontrada", payload.mensaje);
+        // Serializar y deserializar para verificar contenido
+        var json = System.Text.Json.JsonSerializer.Serialize(result.Value);
+        using var jsonDoc = System.Text.Json.JsonDocument.Parse(json);
+        var mensaje = jsonDoc.RootElement.GetProperty("mensaje").GetString();
+
+        Assert.AreEqual("Estrategia 'NoExiste' no encontrada", mensaje);
     }
 
     #endregion

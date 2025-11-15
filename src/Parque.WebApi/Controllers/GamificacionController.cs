@@ -39,8 +39,15 @@ public class GamificacionController(IServicioPuntuacion servicioPuntuacion) : Co
     [AuthorizationFilter("Administrador")]
     public IActionResult CambiarEstrategiaActiva([FromBody] CambiarEstrategiaRequest request)
     {
-        servicioPuntuacion.CambiarEstrategiaActiva(request.NombreEstrategia);
-        return Ok(new { mensaje = "Estrategia cambiada exitosamente", nuevaEstrategia = request.NombreEstrategia });
+        try
+        {
+            servicioPuntuacion.CambiarEstrategiaActiva(request.NombreEstrategia);
+            return Ok(new { mensaje = "Estrategia cambiada exitosamente", nuevaEstrategia = request.NombreEstrategia });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { mensaje = ex.Message });
+        }
     }
 
     [HttpGet("estrategias/activa")]
