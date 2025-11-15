@@ -10,7 +10,9 @@ export interface RegistrarCuentaDto {
   apellido: string;
   email: string;
   password: string;
-  roles: string[];
+  rol: number;
+  fechaNacimiento?: string | null;
+  nivelMembresia?: number | null;
 }
 
 export interface ModificarPerfilDto {
@@ -18,6 +20,12 @@ export interface ModificarPerfilDto {
   apellido?: string;
   email?: string;
   password?: string;
+}
+
+export enum Rol {
+  Administrador = 1,
+  Operador = 2,
+  Visitante = 3
 }
 
 export enum NivelMembresia {
@@ -44,5 +52,5 @@ export interface CuentaDto {
 export interface VisitanteDto {
   id: string;
   puntos?: number;
-  nivelMembresia?: NivelMembresia;
+  nivelMembresia: NivelMembresia;
 }

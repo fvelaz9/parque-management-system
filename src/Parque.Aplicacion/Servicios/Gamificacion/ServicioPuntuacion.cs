@@ -10,7 +10,7 @@ namespace Parque.Aplicacion.Servicios.Gamificacion;
 public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, IRepositorio<Dominio.Ticket> repoTickets,
     IRepositorio<RegistroVisita> repoRegistros, IRepositorio<PuntuacionVisitante> repoPuntuaciones, IRepositorio<Cuenta> repoCuentas,
     IRepositorio<Evento> repoEventos, IRepositorio<ConfiguracionEstrategia> repoConfiguracion, IEnumerable<IEstrategiaPuntuacion> estrategias,
-    IServicioFechaHora servicioFechaHora) : IServicioPuntuacion
+    IServicioFechaHora servicioFechaHora, IRepositorio<Visitante> repoVisitante) : IServicioPuntuacion
 {
     public void CalcularYRegistrarPuntos(int registroVisitaId)
     {
@@ -75,6 +75,26 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
 
             repoPuntuaciones.Editar(puntuacion);
         }
+
+        var nombreEstrategia = estrategiaActiva.Nombre;
+        var origenPuntuacion = " ";
+        if(eventoActivo != null)
+        {
+            origenPuntuacion = $"Evento: {eventoActivo.Titulo}";
+        }
+        else
+        {
+            origenPuntuacion = $"Atraccion: {atraccion.Nombre}";
+        }
+
+        var visitante = repoVisitante.Encontrar(c => c.Id == visitanteId);
+        if(visitante == null)
+        {
+            throw new InvalidOperationException($"Visitante con ID no encontrado");
+        }
+
+        AgregarPuntuacionAVisitante(visitante, puntos, origenPuntuacion, nombreEstrategia);
+        repoVisitante.Editar(visitante);
     }
 
     public List<RankingVisitanteDto> ObtenerRankingDiario(DateTime? fecha, int top)
@@ -167,5 +187,38 @@ public class ServicioPuntuacion(IRepositorio<AtraccionParque> repoAtracciones, I
         }
 
         return estrategia;
+    }
+
+    public void AgregarPuntuacionAVisitante(Visitante visitante, int puntos, string origenPuntos, string estrategia)
+    {
+        var fechaActual = servicioFechaHora.ObtenerFechaActual();
+        var puntuacion = new HistorialPuntuacion(fechaActual, origenPuntos, estrategia, puntos);
+        visitante.AgregarPuntuacionAHistorial(puntuacion);
+    }
+
+    public List<HistorialPuntuacionDto> ObtenerHistorialVisitante(Guid visitanteId)
+    {
+        var visitante = ObtenerVisitante(visitanteId);
+
+        return visitante.HistorialPuntuaciones
+            .OrderByDescending(x => x.FechaHora)
+            .Select(x => new HistorialPuntuacionDto
+            {
+                FechaHora = x.FechaHora,
+                EstrategiaActiva = x.EstrategiaActiva,
+                OrigenPuntos = x.OrigenPuntos,
+                Puntos = x.Puntos
+            }).ToList();
+    }
+
+    public Visitante ObtenerVisitante(Guid visitanteId)
+    {
+        var visitante = repoVisitante.Encontrar(v => v.Id == visitanteId);
+        if(visitante == null)
+        {
+            throw new InvalidOperationException($"Visitante con ID {visitanteId} no encontrado");
+        }
+
+        return visitante;
     }
 }
