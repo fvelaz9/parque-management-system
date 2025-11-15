@@ -78,12 +78,12 @@ export class RecompensasList {
       recompensaId: recompensa.id
     }).subscribe({
       next: (resp) => {
-        alert(resp.mensaje || 'Recompensa canjeada exitosamente');
+        alert(resp.message || 'Recompensa canjeada exitosamente');
         this.cargarRecompensas();
       },
       error: (err) => {
         console.error('Error al canjear:', err);
-        alert(err.error?.mensaje || 'Error al canjear la recompensa');
+        alert(err.error?.message || 'Error al canjear la recompensa');
       }
     });
   }
