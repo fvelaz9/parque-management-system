@@ -44,7 +44,7 @@ public class GamificacionController(IServicioPuntuacion servicioPuntuacion) : Co
             servicioPuntuacion.CambiarEstrategiaActiva(request.NombreEstrategia);
             return Ok(new { mensaje = "Estrategia cambiada exitosamente", nuevaEstrategia = request.NombreEstrategia });
         }
-        catch (ArgumentException ex)
+        catch(ArgumentException ex)
         {
             return BadRequest(new { mensaje = ex.Message });
         }

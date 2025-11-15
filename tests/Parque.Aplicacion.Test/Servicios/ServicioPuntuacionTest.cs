@@ -425,7 +425,7 @@ public class ServicioPuntuacionTest
             _repoCuentasMock!.Object,
             _repoEventosMock!.Object,
             _repoConfiguracionMock!.Object,
-            new List<IEstrategiaPuntuacion>(),
+            Array.Empty<IEstrategiaPuntuacion>(),
             servicioFechaHoraMockNuevo.Object,
             repoVisitanteMock.Object);
 
