@@ -1,0 +1,121 @@
+<div class="container">
+  <h1>Crear nuevo Evento</h1>
+
+  <form (ngSubmit)="onSubmit()" #eventoForm="ngForm" class="evento-form">
+
+    <div class="form-field">
+      <label for="titulo" class="form-label">Título</label>
+      <input
+        type="text"
+        id="titulo"
+        name="titulo"
+        [(ngModel)]="evento.titulo"
+        class="form-input"
+        required />
+    </div>
+
+    <div class="form-field">
+      <label for="descripcion" class="form-label">Descripción</label>
+      <textarea
+        id="descripcion"
+        name="descripcion"
+        [(ngModel)]="evento.descripcion"
+        class="form-textarea"
+        rows="3"
+        required>
+      </textarea>
+    </div>
+
+    <div class="form-field">
+      <label for="inicio" class="form-label">Fecha y hora de inicio</label>
+      <input
+        type="datetime-local"
+        id="inicio"
+        name="inicio"
+        [(ngModel)]="evento.inicio"
+        class="form-input"
+        required />
+    </div>
+
+    <div class="form-field">
+      <label for="fin" class="form-label">Fecha y hora de fin</label>
+      <input
+        type="datetime-local"
+        id="fin"
+        name="fin"
+        [(ngModel)]="evento.fin"
+        class="form-input"
+        required />
+    </div>
+
+    <div class="form-field">
+      <label for="aforoMaximo" class="form-label">Aforo máximo</label>
+      <input
+        type="number"
+        id="aforoMaximo"
+        name="aforoMaximo"
+        [(ngModel)]="evento.aforoMaximo"
+        class="form-input"
+        min="1"
+        required />
+    </div>
+
+    <div class="form-field">
+      <label for="costoAdicional" class="form-label">Costo adicional</label>
+      <input
+        type="number"
+        id="costoAdicional"
+        name="costoAdicional"
+        [(ngModel)]="evento.costoAdicional"
+        class="form-input"
+        min="0"
+        required />
+    </div>
+
+    <div class="form-field" *ngIf="atraccionesDisponibles.length > 0">
+      <label class="form-label">Atracciones</label>
+      <div *ngFor="let atraccion of atraccionesDisponibles">
+        <label>
+          <input type="checkbox"
+                 [value]="atraccion.id"
+                 [checked]="evento.atraccionIds.includes(atraccion.id)"
+                 (change)="onToggleAtraccion(atraccion.id, $event.target.checked)">
+          {{ atraccion.nombre }}
+        </label>
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label for="estado" class="form-label">Estado</label>
+      <select
+        id="estado"
+        name="estado"
+        [(ngModel)]="evento.estado"
+        class="form-select"
+        required>
+        <option value="" disabled selected>Selecciona el estado</option>
+        <option [ngValue]="estadoEnum.Programado">Programado</option>
+        <option [ngValue]="estadoEnum.Activo">Activo</option>
+        <option [ngValue]="estadoEnum.Finalizado">Finalizado</option>
+        <option [ngValue]="estadoEnum.Cancelado">Cancelado</option>
+      </select>
+    </div>
+
+    <div class="form-actions">
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="eventoForm.invalid">
+        Crear
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-secondary"
+        routerLink="/eventos">
+        Volver
+      </button>
+    </div>
+
+  </form>
+</div>

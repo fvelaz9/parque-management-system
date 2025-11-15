@@ -41,7 +41,17 @@ export const routes: Routes = [
       .then(m => m.RegistroVisitanteComponent)
   },
   {
-    path: 'cuentas',
+    path: 'eventos',
+    loadComponent: () => import('./features/Evento/evento-list/evento-list.component')
+      .then(m => m.EventoListComponent)
+  },
+  {
+    path: 'eventos/nuevo',
+    loadComponent: () => import('./features/Evento/evento-form/evento-form')
+      .then(m => m.EventoForm)
+  },
+  {
+   path: 'cuentas',
     loadComponent: () => import('./features/cuentas/lista-cuentas/lista-cuentas')
       .then(m => m.ListaCuentasComponent),
     canActivate: [adminGuard]
@@ -62,6 +72,8 @@ export const routes: Routes = [
   {
     path: "**",
     component: NotFoundComponent
-  }
+  },
+
+
 
 ];

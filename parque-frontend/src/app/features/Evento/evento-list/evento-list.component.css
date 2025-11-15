@@ -1,0 +1,88 @@
+.evento-list-container {
+  max-width: 600px;
+  margin: 40px auto;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  box-shadow: 0 6px 24px rgba(66, 54, 150, 0.16);
+  padding: 32px 24px;
+}
+
+.evento-list {
+  list-style: none;
+  padding: 0;
+}
+
+.evento-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(104, 104, 224, 0.19);
+}
+
+.evento-item:last-child {
+  border-bottom: none;
+}
+
+.btn-eliminar {
+  background: linear-gradient(90deg, #ef476f, #d72360 80%);
+  border: none;
+  color: #fff;
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(239, 71, 111, 0.17);
+}
+
+.btn-eliminar:hover {
+  background: linear-gradient(90deg, #b61a42, #9b1d35 80%);
+  box-shadow: 0 4px 16px rgba(239, 71, 111, 0.22);
+}
+
+.btn-agregar {
+  display: block;
+  margin: 32px auto 0 auto;
+  background: linear-gradient(90deg, #6246ea, #4d35c7 80%);
+  border: none;
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: 9px;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 16px rgba(98, 70, 234, 0.17);
+  transition: background 0.2s;
+}
+
+.btn-agregar:hover {
+  background: linear-gradient(90deg, #3823ac 70%, #3d27c1 100%);
+}
+
+h2 {
+  color: #111;
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 32px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+/* Texto de evento */
+.evento-item strong {
+  color: #fff;
+  font-size: 1.12rem;
+}
+.evento-item div {
+  color: #222;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+.error {
+  color: #d32f2f;
+  background-color: #ffebee;
+  border-radius: 8px;
+  padding: 1rem;
+}
