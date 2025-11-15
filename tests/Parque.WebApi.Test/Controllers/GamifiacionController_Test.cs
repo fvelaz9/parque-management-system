@@ -157,15 +157,19 @@ public class GamifiacionController_Test
     }
 
     [TestMethod]
-    public void CambiarEstrategiaActiva_EstrategiaNoExiste_LanzaExcepcion()
+    public void CambiarEstrategiaActiva_EstrategiaNoExiste_RetornaBadRequest()
     {
-        // Arrange
         var request = new CambiarEstrategiaRequest { NombreEstrategia = "NoExiste" };
         _serviceMock!.Setup(s => s.CambiarEstrategiaActiva("NoExiste"))
             .Throws(new ArgumentException("Estrategia 'NoExiste' no encontrada"));
 
-        // Act & Assert
-        Assert.ThrowsException<ArgumentException>(() => _controller!.CambiarEstrategiaActiva(request));
+        var result = _controller!.CambiarEstrategiaActiva(request) as BadRequestObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(400, result.StatusCode);
+
+        dynamic payload = result.Value;
+        Assert.AreEqual("Estrategia 'NoExiste' no encontrada", payload.mensaje);
     }
 
     #endregion
@@ -218,7 +222,6 @@ public class GamifiacionController_Test
     [TestMethod]
     public void ObtenerRankingDiario_ValidaContenidoRetornado()
     {
-        // Arrange
         var ranking = new List<RankingVisitanteDto>
         {
             new() { VisitanteId = Guid.NewGuid(), PuntosDiarios = 60, PuntosTotales = 200, Posicion = 1 }
@@ -228,18 +231,13 @@ public class GamifiacionController_Test
             .Setup(s => s.ObtenerRankingDiario(null, 10))
             .Returns(ranking);
 
-        // Act
         var result = _controller!.ObtenerRankingDiario(null, 10) as OkObjectResult;
 
-        // Assert
         Assert.IsNotNull(result);
 
-        var json = System.Text.Json.JsonSerializer.Serialize(result!.Value);
-        dynamic payload = Newtonsoft.Json.JsonConvert.DeserializeObject<ExpandoObject>(json)!;
-
-        Assert.AreEqual(DateTime.Today.Date, (DateTime)payload.fecha);
-
-        Assert.AreEqual(1, (int)payload.totalVisitantes);
-        Assert.AreEqual(60, (int)payload.ranking[0].PuntosDiarios);
+        var jsonElement = System.Text.Json.JsonSerializer.SerializeToElement(result!.Value);
+        Assert.AreEqual(DateTime.Today.Date, jsonElement.GetProperty("fecha").GetDateTime());
+        Assert.AreEqual(1, jsonElement.GetProperty("totalVisitantes").GetInt32());
+        Assert.AreEqual(60, jsonElement.GetProperty("ranking")[0].GetProperty("PuntosDiarios").GetInt32());
     }
 }
