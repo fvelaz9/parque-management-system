@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { HistorialCanjes } from './historial-canjes';
+import { RecompensaHistorial } from './recompensa-historial';
 
-describe('HistorialCanjes', () => {
-  let component: HistorialCanjes;
-  let fixture: ComponentFixture<HistorialCanjes>;
+describe('RecompensaHistorial', () => {
+  let component: RecompensaHistorial;
+  let fixture: ComponentFixture<RecompensaHistorial>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HistorialCanjes]
+      imports: [RecompensaHistorial]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(HistorialCanjes);
+    fixture = TestBed.createComponent(RecompensaHistorial);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

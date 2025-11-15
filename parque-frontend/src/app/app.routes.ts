@@ -5,6 +5,7 @@ import { authGuard } from './auth-guard';
 import {MantenimientoList} from './features/mantenimientos/mantenimiento-list/mantenimiento-list';
 import {MantenimientoForm} from './features/mantenimientos/mantenimiento-form/mantenimiento-form';
 import {RecompensaEditar} from './features/recompensas/recompensa-editar/recompensa-editar';
+import {HistorialCanje} from './features/recompensas/recompensa-historial/recompensa-historial';
 
 export const routes: Routes = [
   {
@@ -67,13 +68,13 @@ export const routes: Routes = [
     loadComponent: () => import('./features/recompensas/recompensa-editar/recompensa-editar')
       .then(m => m.RecompensaEditar)
   },
-  /*
+
   {
     path: 'recompensas/historial',
-    loadComponent: () => import('./features/recompensas/recompensas-historial/recompensas-historial')
-      .then(m => m.RecompensasHistorial)
+    loadComponent: () => import('./features/recompensas/recompensa-historial/recompensa-historial')
+      .then(m => m.HistorialCanje)
   },
-  */
+
 
   // Not Found route - debe ser la última
   {
