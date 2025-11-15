@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Parque.Aplicacion.DTOs;
 using Parque.Aplicacion.Servicios.Mantenimiento;
+using Parque.WebApi.Filtros;
 
 namespace Parque.WebApi.Controllers;
 
@@ -12,7 +13,7 @@ public class MantenimientosController(IServicioMantenimiento servicio) : Control
 {
     [HttpGet]
 
-    // [AuthorizationFilter("Administrador")]
+    [AuthorizationFilter("Administrador")]
     public IActionResult GetAll()
     {
         var mantenimientos = servicio.ListarMantenimientos();
@@ -21,7 +22,7 @@ public class MantenimientosController(IServicioMantenimiento servicio) : Control
 
     [HttpPost]
 
-    // [AuthorizationFilter("Administrador")]
+    [AuthorizationFilter("Administrador")]
     public IActionResult Create([FromBody] CrearMantenimientoRequest request)
     {
         try
@@ -37,7 +38,7 @@ public class MantenimientosController(IServicioMantenimiento servicio) : Control
 
     [HttpDelete("{id}")]
 
-    // [AuthorizationFilter("Administrador")]
+    [AuthorizationFilter("Administrador")]
     public IActionResult Delete(int id)
     {
         try
@@ -48,6 +49,33 @@ public class MantenimientosController(IServicioMantenimiento servicio) : Control
         catch(ArgumentException ex)
         {
             return NotFound(new { mensaje = ex.Message });
+        }
+    }
+    
+    [HttpPut("{id}")]
+    [AuthorizationFilter("Administrador")]
+    public IActionResult ActualizarMantenimiento(int id, [FromBody] CrearMantenimientoRequest dto)
+    {
+        try
+        {
+            var mantenimiento = servicio.ActualizarMantenimiento(id, dto);
+            return Ok(new
+            {
+                mensaje = "Mantenimiento actualizado exitosamente",
+                mantenimiento = new
+                {
+                    mantenimiento.Id,
+                    mantenimiento.AtraccionId,
+                    mantenimiento.FechaProgramada,
+                    mantenimiento.HoraInicio,
+                    mantenimiento.DuracionEstimada,
+                    mantenimiento.Descripcion
+                }
+            });
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { mensaje = ex.Message });
         }
     }
 }
