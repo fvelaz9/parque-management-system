@@ -12,7 +12,6 @@ namespace Parque.WebApi.Controllers;
 public class MantenimientosController(IServicioMantenimiento servicio) : ControllerBase
 {
     [HttpGet]
-
     [AuthorizationFilter("Administrador")]
     public IActionResult GetAll()
     {
@@ -51,7 +50,7 @@ public class MantenimientosController(IServicioMantenimiento servicio) : Control
             return NotFound(new { mensaje = ex.Message });
         }
     }
-    
+
     [HttpPut("{id}")]
     [AuthorizationFilter("Administrador")]
     public IActionResult ActualizarMantenimiento(int id, [FromBody] CrearMantenimientoRequest dto)

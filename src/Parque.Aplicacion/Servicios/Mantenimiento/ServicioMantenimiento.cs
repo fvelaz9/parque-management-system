@@ -78,14 +78,13 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
         {
             throw new ArgumentException("Mantenimiento no encontrado");
         }
-        
+
         mantenimiento.AtraccionId = request.AtraccionId;
         mantenimiento.FechaProgramada = request.FechaProgramada;
         mantenimiento.HoraInicio = request.HoraInicio;
         mantenimiento.DuracionEstimada = request.DuracionEstimada;
         mantenimiento.Descripcion = request.Descripcion;
         mantenimiento.IncidenciaId = mantenimiento.IncidenciaId;
-        
         repoMantenimiento.Editar(mantenimiento);
         return mantenimiento;
     }
