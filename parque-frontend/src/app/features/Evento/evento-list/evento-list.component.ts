@@ -1,7 +1,8 @@
 import { Component, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Evento } from '../../../core/models/evento.model';
+import { Evento} from '../../../core/models/evento.model';
 import { EventoService } from '../../../core/services/evento.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-evento-list',
@@ -16,6 +17,7 @@ export class EventoListComponent {
   public eventos = signal<Evento[]>([]);
   public loading = signal<boolean>(true);
   public error = signal<string>('');
+  private readonly router = inject(Router);
 
   private readonly loadEventosEffect = effect(() => {
     this.cargarEventos();
@@ -52,6 +54,6 @@ export class EventoListComponent {
   }
 
   agregarEvento() {
-    alert('Funcionalidad para agregar evento por implementar');
+    this.router.navigate(['/eventos/nuevo']);
   }
 }

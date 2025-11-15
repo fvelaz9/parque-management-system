@@ -43,6 +43,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/Evento/evento-list/evento-list.component')
       .then(m => m.EventoListComponent)
   },
+  {
+    path: 'eventos/nuevo',
+    loadComponent: () => import('./features/Evento/evento-form/evento-form')
+      .then(m => m.EventoForm)
+  },
   // Not Found route - debe ser la última
   {
     path: "**",

@@ -15,7 +15,7 @@
 .evento-item {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   margin-bottom: 24px;
   padding: 18px 0;
   border-bottom: 1px solid rgba(104, 104, 224, 0.19);
@@ -76,7 +76,7 @@ h2 {
   font-size: 1.12rem;
 }
 .evento-item div {
-  color: #ecebee;
+  color: #222;
   font-size: 1rem;
   line-height: 1.7;
 }
