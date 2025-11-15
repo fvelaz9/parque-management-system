@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Evento } from '../models/evento.model';
+import {CreateEventoRequest, Evento, EventoOutDto} from '../models/evento.model';
 import { environment } from '../../../environments/environment.development';
 
 @Injectable({
@@ -17,8 +17,8 @@ export class EventoService {
   }
 
  // Crear un evento
-  crearEvento(evento: Evento): Observable<Evento> {
-    return this.http.post<Evento>(this.apiUrl, evento);
+  crearEvento(evento: CreateEventoRequest): Observable<EventoOutDto> {
+    return this.http.post<EventoOutDto>(this.apiUrl, evento);
   }
 
   // Eliminar un evento
