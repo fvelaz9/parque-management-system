@@ -2,8 +2,9 @@ import { Routes } from '@angular/router';
 import { HomeComponent } from './features/home/home';
 import { NotFoundComponent } from './features/not-found/not-found';
 import { authGuard } from './core/guards/auth.guard';
-import { visitanteGuard } from './core/guards/visitante.guard'; 
+import { visitanteGuard } from './core/guards/visitante.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import {AccesoHome} from './features/Acceso/acceso-home/acceso-home';
 
 export const routes: Routes = [
   {
@@ -43,12 +44,14 @@ export const routes: Routes = [
   {
     path: 'eventos',
     loadComponent: () => import('./features/Evento/evento-list/evento-list.component')
-      .then(m => m.EventoListComponent)
+      .then(m => m.EventoListComponent),
+    canActivate: [authGuard]
   },
   {
     path: 'eventos/nuevo',
     loadComponent: () => import('./features/Evento/evento-form/evento-form')
-      .then(m => m.EventoForm)
+      .then(m => m.EventoForm),
+    canActivate: [authGuard]
   },
   {
    path: 'cuentas',
@@ -67,6 +70,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/cuentas/modificar-perfil/modificar-perfil')
       .then(m => m.ModificarPerfilComponent),
     canActivate: [visitanteGuard]
+  },
+  {
+    path: 'acceso',
+    loadComponent: () => import('./features/Acceso/acceso-home/acceso-home')
+  .then(m => m.AccesoHome),
+  canActivate: [authGuard]
   },
   // Not Found route - debe ser la última
   {
