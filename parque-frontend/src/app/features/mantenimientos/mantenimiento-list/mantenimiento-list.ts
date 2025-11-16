@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { MantenimientoPreventivo } from '../../../core/models/mantenimiento.model';
 import { MantenimientosService } from '../../../core/services/mantenimiento.service';
 import { AuthService } from '../../../core/services/auth.service';
+import {TipoAtraccion} from '../../../core/models/atraccion.model';
 
 @Component({
   selector: 'app-mantenimiento-list',
@@ -26,6 +27,17 @@ export class MantenimientoList {
     this.cargarMantenimientos();
   });
 
+  getNombreTipo(tipoId: TipoAtraccion): string {
+    const tipo = this.tiposDisponibles.find(t => t.id === tipoId);
+    return tipo ? tipo.nombre : 'Desconocido';
+  }
+
+  tiposDisponibles = [
+    { id: TipoAtraccion.MontañaRusa, nombre: 'Montaña Rusa' },
+    { id: TipoAtraccion.Simulador, nombre: 'Simulador' },
+    { id: TipoAtraccion.Espectaculo, nombre: 'Espectaculo' },
+    { id: TipoAtraccion.ZonaInteractiva, nombre: 'Zona Interactiva' }
+  ];
   private cargarMantenimientos() {
     this.loading.set(true);
     this.mantenimientosService.getAllMantenimientos().subscribe({

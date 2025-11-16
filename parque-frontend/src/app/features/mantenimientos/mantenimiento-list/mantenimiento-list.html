@@ -10,7 +10,6 @@
           </h2>
           <p class="text-muted mb-0">Gestión y programación de mantenimientos</p>
         </div>
-        <!-- ✅ Solo Admin y Operador pueden crear -->
         <a
           *ngIf="puedeGestionar"
           routerLink="/mantenimientos/nuevo"
@@ -71,9 +70,9 @@
 
               <!-- Columna Información Principal -->
               <div [ngClass]="puedeGestionar ? 'col-md-3' : 'col-md-4'">
-                <h5 class="mb-1">Mantenimiento #{{ mantenimiento.id }}</h5>
+                <h5 class="mb-1">Mantenimiento{{ getNombreTipo(mantenimiento.atraccionId) }}</h5>
                 <p class="text-muted mb-0">
-                  <i class="bi bi-building"></i> Atracción ID: {{ mantenimiento.atraccionId }}
+                  <i class="bi bi-building"></i> Mantenimiento #{{ mantenimiento.id }}
                 </p>
               </div>
 

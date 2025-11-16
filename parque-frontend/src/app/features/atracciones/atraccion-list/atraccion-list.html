@@ -1,11 +1,20 @@
 <!-- src/app/features/atracciones/atraccion-list/atraccion-list.html -->
 <div class="container">
-  @if (isAdmin) {
-    <div class="d-flex gap-2">
-      <button type="button" class="btn btn-success" [routerLink]="['/atracciones', 'nueva']"> Crear nueva atracción</button>
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h2 class="mb-1">
+            <i class="bi bi-tools text-warning"></i> Atracciones
+          </h2>
+          <p class="text-muted mb-0">Gestión y informacion de atracciones</p>
+        </div>
+        @if (isAdmin) {
+          <button type="button" class="btn btn-primary btn-lg" [routerLink]="['/atracciones', 'nueva']"> Crear nueva atracción</button>
+        }
+      </div>
     </div>
-  }
-  <h1>Atracciones del Parque</h1>
+  </div>
 
   @if (loading()) {
     <div class="loading">
