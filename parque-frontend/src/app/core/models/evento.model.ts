@@ -28,5 +28,12 @@ export interface CreateEventoRequest {
   estado: EstadoEvento;
 }
 export interface EventoOutDto {
+  id: number;
   titulo: string;
+  descripcion: string;
+  inicio: string;
+  fin: string;
+  aforoMaximo: number;
+  costoAdicional: number;
+  estado: EstadoEvento;
 }
