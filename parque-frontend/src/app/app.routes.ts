@@ -80,8 +80,8 @@ export const routes: Routes = [
   {
     path: 'acceso/validar',
     loadComponent: () => import('./features/Acceso/acceso-validar/acceso-validar')
-      .then(m => m.AccesoValidar)
-    // canActivate: [operadorGuard]
+      .then(m => m.AccesoValidar),
+     canActivate: [operadorGuard]
   },
   // Not Found route - debe ser la última
   {
