@@ -1,4 +1,4 @@
-﻿using System.Linq.Expressions;
+﻿﻿using System.Linq.Expressions;
 using Moq;
 using Parque.Aplicacion.DTOs;
 using Parque.Aplicacion.Servicios;
@@ -90,52 +90,6 @@ public class ServicioMantenimientoTest
     }
 
     [TestMethod]
-    public void CrearMantenimiento_DatosValidos_CreaMantenimientoEIncidencia()
-    {
-        var fechaActual = DateTime.Now;
-        _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual()).Returns(fechaActual);
-
-        var atraccion = new AtraccionParque("Atraccion1", TipoAtraccion.MontañaRusa, 10, 20, "desc") { Id = 1 };
-        _mockRepoAtracciones.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
-            .Returns(atraccion);
-
-        Incidencia? incidenciaCapturada = null;
-        _mockRepoIncidencias.Setup(r => r.Agregar(It.IsAny<Incidencia>()))
-            .Callback<Incidencia>(i =>
-            {
-                i.Id = 1;
-                incidenciaCapturada = i;
-            });
-
-        MantenimientoPreventivo? mantenimientoCapturado = null;
-        _mockRepoMantenimientos.Setup(r => r.Agregar(It.IsAny<MantenimientoPreventivo>()))
-            .Callback<MantenimientoPreventivo>(m =>
-            {
-                m.Id = 1;
-                mantenimientoCapturado = m;
-            });
-
-        var request = new CrearMantenimientoRequest
-        {
-            AtraccionId = 1,
-            FechaProgramada = fechaActual.AddDays(1),
-            HoraInicio = TimeSpan.FromHours(14),
-            DuracionEstimada = TimeSpan.FromHours(2),
-            Descripcion = "Prueba mantenimiento"
-        };
-
-        var resultado = _servicio.CrearMantenimiento(request);
-
-        Assert.IsNotNull(resultado);
-        Assert.AreEqual(1, resultado.AtraccionId);
-        Assert.AreEqual("Prueba mantenimiento", resultado.Descripcion);
-        Assert.IsNotNull(incidenciaCapturada);
-        Assert.AreEqual(incidenciaCapturada.Id, resultado.IncidenciaId);
-        _mockRepoIncidencias.Verify(r => r.Agregar(It.IsAny<Incidencia>()), Times.Once);
-        _mockRepoMantenimientos.Verify(r => r.Agregar(It.IsAny<MantenimientoPreventivo>()), Times.Once);
-    }
-
-    [TestMethod]
     public void EliminarMantenimiento_NoExiste_LanzaExcepcion()
     {
         _mockRepoMantenimientos.Setup(r => r.Encontrar(It.IsAny<Expression<Func<MantenimientoPreventivo, bool>>>()))
@@ -203,5 +157,351 @@ public class ServicioMantenimientoTest
         Assert.IsNotNull(resultados);
         Assert.AreEqual(0, resultados.Count());
         _mockRepoMantenimientos.Verify(r => r.ObtenerTodos(), Times.Once);
+    }
+
+    [TestMethod]
+    public void CrearMantenimiento_HorariosSolapados_LanzaArgumentException()
+    {
+        // Arrange
+        var fechaActual = DateTime.Now;
+        _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual()).Returns(fechaActual);
+
+        var atraccion = new AtraccionParque("Atraccion1", TipoAtraccion.MontañaRusa, 10, 20, "desc") { Id = 1 };
+        _mockRepoAtracciones.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
+            .Returns(atraccion);
+
+        // Mantenimiento existente de 14:00 a 16:00
+        var mantenimientoExistente = new MantenimientoPreventivo
+        {
+            Id = 1,
+            AtraccionId = 1,
+            FechaProgramada = fechaActual.AddDays(1).Date,
+            HoraInicio = TimeSpan.FromHours(14),
+            DuracionEstimada = TimeSpan.FromHours(2)
+        };
+
+        _mockRepoMantenimientos.Setup(r => r.ObtenerTodos())
+            .Returns(new List<MantenimientoPreventivo> { mantenimientoExistente });
+
+        // Nuevo mantenimiento de 15:00 a 17:00 (se solapa)
+        var request = new CrearMantenimientoRequest
+        {
+            AtraccionId = 1,
+            FechaProgramada = fechaActual.AddDays(1).Date,
+            HoraInicio = TimeSpan.FromHours(15),
+            DuracionEstimada = TimeSpan.FromHours(2),
+            Descripcion = "Mantenimiento nuevo"
+        };
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ArgumentException>(() => _servicio.CrearMantenimiento(request));
+        Assert.IsTrue(ex.Message.Contains("Ya existe un mantenimiento programado"));
+    }
+
+    [TestMethod]
+    public void CrearMantenimiento_HorariosSinSolapamiento_CreaExitosamente()
+    {
+        // Arrange
+        var fechaActual = DateTime.Now;
+        _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual()).Returns(fechaActual);
+
+        var atraccion = new AtraccionParque("Atraccion1", TipoAtraccion.MontañaRusa, 10, 20, "desc") { Id = 1 };
+        _mockRepoAtracciones.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
+            .Returns(atraccion);
+
+        // Mantenimiento existente de 14:00 a 16:00
+        var mantenimientoExistente = new MantenimientoPreventivo
+        {
+            Id = 1,
+            AtraccionId = 1,
+            FechaProgramada = fechaActual.AddDays(1).Date,
+            HoraInicio = TimeSpan.FromHours(14),
+            DuracionEstimada = TimeSpan.FromHours(2)
+        };
+
+        _mockRepoMantenimientos.Setup(r => r.ObtenerTodos())
+            .Returns(new List<MantenimientoPreventivo> { mantenimientoExistente });
+
+        _mockRepoIncidencias.Setup(r => r.Agregar(It.IsAny<Incidencia>()))
+            .Callback<Incidencia>(i => i.Id = 2);
+
+        _mockRepoMantenimientos.Setup(r => r.Agregar(It.IsAny<MantenimientoPreventivo>()))
+            .Callback<MantenimientoPreventivo>(m => m.Id = 2);
+
+        // Nuevo mantenimiento de 17:00 a 19:00 (NO se solapa)
+        var request = new CrearMantenimientoRequest
+        {
+            AtraccionId = 1,
+            FechaProgramada = fechaActual.AddDays(1).Date,
+            HoraInicio = TimeSpan.FromHours(17),
+            DuracionEstimada = TimeSpan.FromHours(2),
+            Descripcion = "Mantenimiento sin solapamiento"
+        };
+
+        // Act
+        var resultado = _servicio.CrearMantenimiento(request);
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(1, resultado.AtraccionId);
+        _mockRepoMantenimientos.Verify(r => r.Agregar(It.IsAny<MantenimientoPreventivo>()), Times.Once);
+    }
+
+    [TestMethod]
+    public void CrearMantenimiento_SolapamientoCompleto_LanzaArgumentException()
+    {
+        // Arrange
+        var fechaActual = DateTime.Now;
+        _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual()).Returns(fechaActual);
+
+        var atraccion = new AtraccionParque("Atraccion1", TipoAtraccion.MontañaRusa, 10, 20, "desc") { Id = 1 };
+        _mockRepoAtracciones.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
+            .Returns(atraccion);
+
+        // Mantenimiento existente de 14:00 a 16:00
+        var mantenimientoExistente = new MantenimientoPreventivo
+        {
+            Id = 1,
+            AtraccionId = 1,
+            FechaProgramada = fechaActual.AddDays(1).Date,
+            HoraInicio = TimeSpan.FromHours(14),
+            DuracionEstimada = TimeSpan.FromHours(2)
+        };
+
+        _mockRepoMantenimientos.Setup(r => r.ObtenerTodos())
+            .Returns(new List<MantenimientoPreventivo> { mantenimientoExistente });
+
+        // Nuevo mantenimiento de 13:00 a 17:00 (contiene completamente al existente)
+        var request = new CrearMantenimientoRequest
+        {
+            AtraccionId = 1,
+            FechaProgramada = fechaActual.AddDays(1).Date,
+            HoraInicio = TimeSpan.FromHours(13),
+            DuracionEstimada = TimeSpan.FromHours(4),
+            Descripcion = "Mantenimiento que contiene al existente"
+        };
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ArgumentException>(() => _servicio.CrearMantenimiento(request));
+        Assert.IsTrue(ex.Message.Contains("Ya existe un mantenimiento programado"));
+    }
+
+    [TestMethod]
+    public void CrearMantenimiento_DiferenteAtraccion_NoValidaSolapamiento()
+    {
+        // Arrange
+        var fechaActual = DateTime.Now;
+        _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual()).Returns(fechaActual);
+
+        var atraccion1 = new AtraccionParque("Atraccion1", TipoAtraccion.MontañaRusa, 10, 20, "desc") { Id = 1 };
+        var atraccion2 = new AtraccionParque("Atraccion2", TipoAtraccion.Simulador, 8, 15, "desc") { Id = 2 };
+
+        _mockRepoAtracciones.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
+            .Returns<Expression<Func<AtraccionParque, bool>>>(expr =>
+            {
+                var compiled = expr.Compile();
+                return compiled(atraccion1) ? atraccion1 : compiled(atraccion2) ? atraccion2 : null;
+            });
+
+        // Mantenimiento existente en atraccion 1
+        var mantenimientoExistente = new MantenimientoPreventivo
+        {
+            Id = 1,
+            AtraccionId = 1,
+            FechaProgramada = fechaActual.AddDays(1).Date,
+            HoraInicio = TimeSpan.FromHours(14),
+            DuracionEstimada = TimeSpan.FromHours(2)
+        };
+
+        _mockRepoMantenimientos.Setup(r => r.ObtenerTodos())
+            .Returns(new List<MantenimientoPreventivo> { mantenimientoExistente });
+
+        _mockRepoIncidencias.Setup(r => r.Agregar(It.IsAny<Incidencia>()))
+            .Callback<Incidencia>(i => i.Id = 2);
+
+        _mockRepoMantenimientos.Setup(r => r.Agregar(It.IsAny<MantenimientoPreventivo>()))
+            .Callback<MantenimientoPreventivo>(m => m.Id = 2);
+
+        // Nuevo mantenimiento en atraccion 2 (mismo horario pero diferente atracción)
+        var request = new CrearMantenimientoRequest
+        {
+            AtraccionId = 2,
+            FechaProgramada = fechaActual.AddDays(1).Date,
+            HoraInicio = TimeSpan.FromHours(14),
+            DuracionEstimada = TimeSpan.FromHours(2),
+            Descripcion = "Mantenimiento en diferente atracción"
+        };
+
+        // Act
+        var resultado = _servicio.CrearMantenimiento(request);
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(2, resultado.AtraccionId);
+        _mockRepoMantenimientos.Verify(r => r.Agregar(It.IsAny<MantenimientoPreventivo>()), Times.Once);
+    }
+
+    // ========== TESTS PARA ACTUALIZAR MANTENIMIENTO ==========
+
+    [TestMethod]
+    public void ActualizarMantenimiento_MantenimientoNoExiste_LanzaArgumentException()
+    {
+        var fechaActual = DateTime.Now;
+        _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual()).Returns(fechaActual);
+        var atraccion = new AtraccionParque("Atraccion1", TipoAtraccion.MontañaRusa, 10, 20, "desc") { Id = 1 };
+        _mockRepoAtracciones.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
+            .Returns(atraccion);
+        _mockRepoMantenimientos.Setup(r => r.Encontrar(It.IsAny<Expression<Func<MantenimientoPreventivo, bool>>>()))
+            .Returns((MantenimientoPreventivo?)null);
+        var request = new CrearMantenimientoRequest
+        {
+            AtraccionId = 1,
+            FechaProgramada = fechaActual.AddDays(1),
+            HoraInicio = TimeSpan.FromHours(14),
+            DuracionEstimada = TimeSpan.FromHours(2),
+            Descripcion = "Actualización"
+        };
+        var ex = Assert.ThrowsException<ArgumentException>(() => _servicio.ActualizarMantenimiento(999, request));
+        Assert.AreEqual("Mantenimiento no encontrado", ex.Message);
+    }
+
+    [TestMethod]
+    public void ActualizarMantenimiento_DatosValidos_ActualizaCorrectamente()
+    {
+        // Arrange
+        var fechaActual = DateTime.Now;
+        _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual()).Returns(fechaActual);
+
+        var atraccion = new AtraccionParque("Atraccion1", TipoAtraccion.MontañaRusa, 10, 20, "desc") { Id = 1 };
+        _mockRepoAtracciones.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
+            .Returns(atraccion);
+
+        var mantenimientoExistente = new MantenimientoPreventivo
+        {
+            Id = 1,
+            AtraccionId = 1,
+            FechaProgramada = fechaActual.AddDays(1).Date,
+            HoraInicio = TimeSpan.FromHours(10),
+            DuracionEstimada = TimeSpan.FromHours(2),
+            Descripcion = "Descripción antigua",
+            IncidenciaId = 1
+        };
+
+        _mockRepoMantenimientos.Setup(r => r.Encontrar(It.IsAny<Expression<Func<MantenimientoPreventivo, bool>>>()))
+            .Returns(mantenimientoExistente);
+
+        _mockRepoMantenimientos.Setup(r => r.ObtenerTodos())
+            .Returns(new List<MantenimientoPreventivo> { mantenimientoExistente });
+
+        var request = new CrearMantenimientoRequest
+        {
+            AtraccionId = 1,
+            FechaProgramada = fechaActual.AddDays(2).Date,
+            HoraInicio = TimeSpan.FromHours(15),
+            DuracionEstimada = TimeSpan.FromHours(3),
+            Descripcion = "Descripción actualizada"
+        };
+
+        // Act
+        var resultado = _servicio.ActualizarMantenimiento(1, request);
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual("Descripción actualizada", resultado.Descripcion);
+        Assert.AreEqual(TimeSpan.FromHours(15), resultado.HoraInicio);
+        Assert.AreEqual(TimeSpan.FromHours(3), resultado.DuracionEstimada);
+        _mockRepoMantenimientos.Verify(r => r.Editar(It.IsAny<MantenimientoPreventivo>()), Times.Once);
+    }
+
+    [TestMethod]
+    public void ActualizarMantenimiento_SolapamientoConOtro_LanzaArgumentException()
+    {
+        // Arrange
+        var fechaActual = DateTime.Now;
+        _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual()).Returns(fechaActual);
+
+        var atraccion = new AtraccionParque("Atraccion1", TipoAtraccion.MontañaRusa, 10, 20, "desc") { Id = 1 };
+        _mockRepoAtracciones.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
+            .Returns(atraccion);
+
+        var mantenimientoActual = new MantenimientoPreventivo
+        {
+            Id = 1,
+            AtraccionId = 1,
+            FechaProgramada = fechaActual.AddDays(1).Date,
+            HoraInicio = TimeSpan.FromHours(10),
+            DuracionEstimada = TimeSpan.FromHours(2)
+        };
+
+        var otroMantenimiento = new MantenimientoPreventivo
+        {
+            Id = 2,
+            AtraccionId = 1,
+            FechaProgramada = fechaActual.AddDays(1).Date,
+            HoraInicio = TimeSpan.FromHours(14),
+            DuracionEstimada = TimeSpan.FromHours(2)
+        };
+
+        _mockRepoMantenimientos.Setup(r => r.Encontrar(It.IsAny<Expression<Func<MantenimientoPreventivo, bool>>>()))
+            .Returns(mantenimientoActual);
+
+        _mockRepoMantenimientos.Setup(r => r.ObtenerTodos())
+            .Returns(new List<MantenimientoPreventivo> { mantenimientoActual, otroMantenimiento });
+
+        // Intentar actualizar para que se solape con el otro
+        var request = new CrearMantenimientoRequest
+        {
+            AtraccionId = 1,
+            FechaProgramada = fechaActual.AddDays(1).Date,
+            HoraInicio = TimeSpan.FromHours(15), // Se solapará con el de 14:00-16:00
+            DuracionEstimada = TimeSpan.FromHours(2),
+            Descripcion = "Actualización con solapamiento"
+        };
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<ArgumentException>(() => _servicio.ActualizarMantenimiento(1, request));
+        Assert.IsTrue(ex.Message.Contains("Ya existe un mantenimiento programado"));
+    }
+
+    // ========== TEST PARA VERIFICAR QUE SE CAMBIA ESTADO DE ATRACCIÓN ==========
+
+    [TestMethod]
+    public void CrearMantenimiento_CambiaEstadoAtraccionAFueraDeServicio()
+    {
+        // Arrange
+        var fechaActual = DateTime.Now;
+        _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual()).Returns(fechaActual);
+
+        var atraccion = new AtraccionParque("Atraccion1", TipoAtraccion.MontañaRusa, 10, 20, "desc") { Id = 1 };
+        atraccion.Estado = EstadoAtraccion.Disponible;
+
+        _mockRepoAtracciones.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
+            .Returns(atraccion);
+
+        _mockRepoMantenimientos.Setup(r => r.ObtenerTodos())
+            .Returns(new List<MantenimientoPreventivo>());
+
+        _mockRepoIncidencias.Setup(r => r.Agregar(It.IsAny<Incidencia>()))
+            .Callback<Incidencia>(i => i.Id = 1);
+
+        _mockRepoMantenimientos.Setup(r => r.Agregar(It.IsAny<MantenimientoPreventivo>()))
+            .Callback<MantenimientoPreventivo>(m => m.Id = 1);
+
+        var request = new CrearMantenimientoRequest
+        {
+            AtraccionId = 1,
+            FechaProgramada = fechaActual.AddDays(1),
+            HoraInicio = TimeSpan.FromHours(14),
+            DuracionEstimada = TimeSpan.FromHours(2),
+            Descripcion = "Mantenimiento preventivo"
+        };
+
+        // Act
+        var resultado = _servicio.CrearMantenimiento(request);
+
+        // Assert
+        Assert.AreEqual(EstadoAtraccion.FueraDeServicio, atraccion.Estado);
+        _mockRepoIncidencias.Verify(r => r.Agregar(It.IsAny<Incidencia>()), Times.Once);
+        _mockRepoMantenimientos.Verify(r => r.Agregar(It.IsAny<MantenimientoPreventivo>()), Times.Once);
     }
 }
