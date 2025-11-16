@@ -4,7 +4,7 @@ using Parque.Dominio.Gamificacion;
 
 namespace Parque.Plugin.PuntuacionPorHora;
 
-public class PuntuacionPorHora : IEstrategiaPuntuacion
+public class PuntuacionPorHoraEstrategia : IEstrategiaPuntuacion
 {
     private const int PUNTOS_BASE = 10;
     private const int MULTIPLICADOR_PICO = 2;
