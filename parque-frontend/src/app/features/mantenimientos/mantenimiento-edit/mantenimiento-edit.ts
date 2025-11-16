@@ -41,7 +41,7 @@ export class MantenimientoEdit {
       fechaProgramada: ['', Validators.required],
       horaInicio: ['', Validators.required],
       duracionEstimada: ['', Validators.required],
-      descripcion: ['', [Validators.required, Validators.minLength(10)]]
+      descripcion: ['', [Validators.required]]
     });
   }
 

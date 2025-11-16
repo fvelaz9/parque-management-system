@@ -18,6 +18,9 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
         var fechaHoraFin = fechaHoraInicio.Add(request.DuracionEstimada);
         VerificarMantenimiento(request);
 
+        // ✅ AGREGAR: Validar que no haya solapamiento
+        ValidarSolapamientoHorarios(request.AtraccionId, fechaHoraInicio, fechaHoraFin);
+
         var incidencia = CrearIncidenciaTemporal(request, fechaHoraInicio, fechaHoraFin);
         repoIncidencias.Agregar(incidencia);
 
@@ -70,6 +73,29 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
         }
     }
 
+    // ✅ NUEVO MÉTODO: Validar solapamiento de horarios
+    private void ValidarSolapamientoHorarios(int atraccionId, DateTime inicioNuevo, DateTime finNuevo)
+    {
+        var mantenimientosExistentes = repoMantenimiento
+            .ObtenerTodos()
+            .Where(m => m.AtraccionId == atraccionId);
+
+        foreach (var mantenimiento in mantenimientosExistentes)
+        {
+            var inicioExistente = mantenimiento.FechaProgramada.Add(mantenimiento.HoraInicio);
+            var finExistente = inicioExistente.Add(mantenimiento.DuracionEstimada);
+
+            // Verificar solapamiento: dos rangos se solapan si inicio1 < fin2 && inicio2 < fin1
+            if (inicioNuevo < finExistente && inicioExistente < finNuevo)
+            {
+                throw new ArgumentException(
+                    $"Ya existe un mantenimiento programado para esta atracción en el horario solicitado. " +
+                    $"Mantenimiento existente: {inicioExistente:dd/MM/yyyy HH:mm} - {finExistente:dd/MM/yyyy HH:mm}"
+                );
+            }
+        }
+    }
+
     public MantenimientoPreventivo ActualizarMantenimiento(int id, CrearMantenimientoRequest request)
     {
         VerificarMantenimiento(request);
@@ -79,6 +105,11 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
             throw new ArgumentException("Mantenimiento no encontrado");
         }
 
+        var fechaHoraInicio = request.FechaProgramada.Add(request.HoraInicio);
+        var fechaHoraFin = fechaHoraInicio.Add(request.DuracionEstimada);
+
+        // ✅ AGREGAR: Validar solapamiento excluyendo el mantenimiento actual
+        ValidarSolapamientoHorariosParaActualizacion(id, request.AtraccionId, fechaHoraInicio, fechaHoraFin);
         mantenimiento.AtraccionId = request.AtraccionId;
         mantenimiento.FechaProgramada = request.FechaProgramada;
         mantenimiento.HoraInicio = request.HoraInicio;
@@ -87,6 +118,28 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
         mantenimiento.IncidenciaId = mantenimiento.IncidenciaId;
         repoMantenimiento.Editar(mantenimiento);
         return mantenimiento;
+    }
+
+    // ✅ NUEVO MÉTODO: Validar solapamiento excluyendo el mantenimiento actual (para actualización)
+    private void ValidarSolapamientoHorariosParaActualizacion(int mantenimientoIdActual, int atraccionId, DateTime inicioNuevo, DateTime finNuevo)
+    {
+        var mantenimientosExistentes = repoMantenimiento
+            .ObtenerTodos()
+            .Where(m => m.AtraccionId == atraccionId && m.Id != mantenimientoIdActual);
+
+        foreach (var mantenimiento in mantenimientosExistentes)
+        {
+            var inicioExistente = mantenimiento.FechaProgramada.Add(mantenimiento.HoraInicio);
+            var finExistente = inicioExistente.Add(mantenimiento.DuracionEstimada);
+
+            if (inicioNuevo < finExistente && inicioExistente < finNuevo)
+            {
+                throw new ArgumentException(
+                    $"Ya existe un mantenimiento programado para esta atracción en el horario solicitado. " +
+                    $"Mantenimiento existente: {inicioExistente:dd/MM/yyyy HH:mm} - {finExistente:dd/MM/yyyy HH:mm}"
+                );
+            }
+        }
     }
 
     public void EliminarMantenimiento(int id)
