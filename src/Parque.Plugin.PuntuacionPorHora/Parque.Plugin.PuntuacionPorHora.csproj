@@ -6,11 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-	<ItemGroup>
-		<Reference Include="Parque.Dominio">
-			<HintPath>..\Parque.Dominio\bin\Debug\net8.0\Parque.Dominio.dll</HintPath>
-			<Private>false</Private>
-		</Reference>
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Parque.Dominio\Parque.Dominio.csproj">
+      <Private>false</Private>
+    </ProjectReference>
+  </ItemGroup>
 
 </Project>

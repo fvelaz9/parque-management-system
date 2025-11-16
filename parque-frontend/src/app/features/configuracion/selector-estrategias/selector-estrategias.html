@@ -1,0 +1,103 @@
+<div class="selector-estrategias-container">
+  <h2>Configuración de Estrategias de Puntaje</h2>
+
+  <!-- Mensajes -->
+  <div *ngIf="errorMessage" class="alert alert-error">
+    {{ errorMessage }}
+    <button (click)="limpiarMensajes()" class="close-btn">&times;</button>
+  </div>
+
+  <div *ngIf="successMessage" class="alert alert-success">
+    {{ successMessage }}
+    <button (click)="limpiarMensajes()" class="close-btn">&times;</button>
+  </div>
+
+  <!-- Estrategia Actual -->
+  <div class="estrategia-actual" *ngIf="estrategiaActual">
+    <h3>Estrategia Activa</h3>
+    <div class="estrategia-info">
+      <span class="badge" [class.badge-base]="estrategiaActual.origen === 'Base'" 
+            [class.badge-plugin]="estrategiaActual.origen === 'Plugin'">
+        {{ estrategiaActual.origen }}
+      </span>
+      <strong>{{ estrategiaActual.nombre }}</strong>
+      <p>{{ estrategiaActual.descripcion }}</p>
+    </div>
+  </div>
+
+  <!-- Selector de Estrategia -->
+  <div class="selector-form">
+    <h3>Cambiar Estrategia</h3>
+    
+    <div class="form-group">
+      <label for="estrategia">Selecciona una estrategia:</label>
+      <select 
+        id="estrategia" 
+        [(ngModel)]="estrategiaSeleccionada" 
+        [disabled]="loading"
+        class="form-control">
+        <option value="">-- Selecciona --</option>
+        <optgroup label="Estrategias Base" *ngIf="estrategiasBase.length > 0">
+          <option *ngFor="let estrategia of estrategiasBase" [value]="estrategia.nombre">
+            {{ estrategia.nombre }} - {{ estrategia.descripcion }}
+          </option>
+        </optgroup>
+        <optgroup label="Estrategias Plugin" *ngIf="estrategiasPlugin.length > 0">
+          <option *ngFor="let estrategia of estrategiasPlugin" [value]="estrategia.nombre">
+            {{ estrategia.nombre }} - {{ estrategia.descripcion }}
+          </option>
+        </optgroup>
+      </select>
+    </div>
+
+    <button 
+      (click)="cambiarEstrategia()" 
+      [disabled]="!estrategiaSeleccionada || loading"
+      class="btn btn-primary">
+      <span *ngIf="!loading">Aplicar Estrategia</span>
+      <span *ngIf="loading">Aplicando...</span>
+    </button>
+  </div>
+
+  <!-- Lista de Estrategias -->
+  <div class="estrategias-lista">
+    <div class="lista-header">
+      <h3>Estrategias Disponibles</h3>
+      <button 
+        (click)="recargarPlugins()" 
+        [disabled]="loadingRecargar"
+        class="btn btn-secondary">
+        <span *ngIf="!loadingRecargar">🔄 Recargar Plugins</span>
+        <span *ngIf="loadingRecargar">Recargando...</span>
+      </button>
+    </div>
+
+    <div class="stats">
+      <span class="stat">Base: {{ cantidadBase }}</span>
+      <span class="stat">Plugins: {{ cantidadPlugins }}</span>
+      <span class="stat">Total: {{ estrategias.length }}</span>
+    </div>
+
+    <div class="estrategias-grid">
+      <div 
+        *ngFor="let estrategia of estrategias" 
+        class="estrategia-card"
+        [class.activa]="estrategia.esActiva">
+        <div class="card-header">
+          <span class="badge" [class.badge-base]="estrategia.origen === 'Base'" 
+                [class.badge-plugin]="estrategia.origen === 'Plugin'">
+            {{ estrategia.origen }}
+          </span>
+          <span *ngIf="estrategia.esActiva" class="badge badge-activa">ACTIVA</span>
+        </div>
+        <h4>{{ estrategia.nombre }}</h4>
+        <p>{{ estrategia.descripcion }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div *ngIf="loading" class="loading-overlay">
+    <div class="spinner"></div>
+  </div>
+</div>

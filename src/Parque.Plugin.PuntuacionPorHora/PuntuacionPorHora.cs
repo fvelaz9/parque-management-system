@@ -12,7 +12,7 @@ public class PuntuacionPorHoraEstrategia : IEstrategiaPuntuacion
 
     public string Nombre => "PorHora";
 
-    int IEstrategiaPuntuacion.CalcularPuntos(
+    public int CalcularPuntos(
         RegistroVisita registro,
         AtraccionParque atraccionParque,
         List<RegistroVisita> historialDiario,
@@ -41,10 +41,5 @@ public class PuntuacionPorHoraEstrategia : IEstrategiaPuntuacion
     private static bool EsHorarioValle(int hora)
     {
         return hora < 10 || hora >= 20;
-    }
-
-    public int CalcularPuntos(RegistroVisita registro, AtraccionParque atraccionParque, List<RegistroVisita> historialDiario, Evento? eventoActivo)
-    {
-        throw new NotImplementedException();
     }
 }

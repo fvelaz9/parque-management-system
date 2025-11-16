@@ -3,11 +3,12 @@ using Moq;
 using Parque.Aplicacion.DTOs.Gamificacion;
 using Parque.Aplicacion.Servicios.Gamificacion;
 using Parque.WebApi.Controllers;
+using Parque.WebApi.Filtros;
 
 namespace Parque.WebApi.Test.Controllers;
 
 [TestClass]
-public class GamifiacionController_Test
+public class GamifiacionControllerTest
 {
     private Mock<IServicioPuntuacion>? _serviceMock;
     private GamificacionController? _controller;
@@ -108,99 +109,7 @@ public class GamifiacionController_Test
 
     #endregion
 
-    #region ListarEstrategias Tests
-
-    [TestMethod]
-    public void ListarEstrategias_RetornaListaDeEstrategias()
-    {
-        // Arrange
-        var estrategiasEsperadas = new List<EstrategiaDto>
-        {
-            new EstrategiaDto { Nombre = "porAtraccion", EsActiva = true },
-            new EstrategiaDto { Nombre = "Combo", EsActiva = false },
-            new EstrategiaDto { Nombre = "PorEvento", EsActiva = false }
-        };
-
-        _serviceMock!.Setup(s => s.ListarEstrategias())
-            .Returns(estrategiasEsperadas);
-
-        // Act
-        var result = _controller!.ListarEstrategias();
-
-        // Assert
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-        var okResult = result as OkObjectResult;
-        Assert.IsNotNull(okResult);
-        Assert.AreEqual(200, okResult.StatusCode);
-    }
-
-    #endregion
-
-    #region CambiarEstrategiaActiva Tests
-
-    [TestMethod]
-    public void CambiarEstrategiaActiva_EstrategiaValida_RetornaOk()
-    {
-        // Arrange
-        var request = new CambiarEstrategiaRequest { NombreEstrategia = "Combo" };
-        _serviceMock!.Setup(s => s.CambiarEstrategiaActiva("Combo"));
-
-        // Act
-        var result = _controller!.CambiarEstrategiaActiva(request);
-
-        // Assert
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-        var okResult = result as OkObjectResult;
-        Assert.IsNotNull(okResult);
-        Assert.AreEqual(200, okResult.StatusCode);
-    }
-
-    [TestMethod]
-    public void CambiarEstrategiaActiva_EstrategiaNoExiste_RetornaBadRequest()
-    {
-        // Arrange
-        var request = new CambiarEstrategiaRequest { NombreEstrategia = "NoExiste" };
-        _serviceMock!.Setup(s => s.CambiarEstrategiaActiva("NoExiste"))
-            .Throws(new ArgumentException("Estrategia 'NoExiste' no encontrada"));
-
-        // Act
-        var result = _controller!.CambiarEstrategiaActiva(request) as BadRequestObjectResult;
-
-        // Assert
-        Assert.IsNotNull(result);
-        Assert.AreEqual(400, result.StatusCode);
-
-        // Serializar y deserializar para verificar contenido
-        var json = System.Text.Json.JsonSerializer.Serialize(result.Value);
-        using var jsonDoc = System.Text.Json.JsonDocument.Parse(json);
-        var mensaje = jsonDoc.RootElement.GetProperty("mensaje").GetString();
-
-        Assert.AreEqual("Estrategia 'NoExiste' no encontrada", mensaje);
-    }
-
-    #endregion
-
-    #region ObtenerEstrategiaActiva Tests
-
-    [TestMethod]
-    public void ObtenerEstrategiaActiva_RetornaNombreEstrategia()
-    {
-        // Arrange
-        var estrategiaActiva = "porAtraccion";
-        _serviceMock!.Setup(s => s.ObtenerEstrategiaActiva())
-            .Returns(estrategiaActiva);
-
-        // Act
-        var result = _controller!.ObtenerEstrategiaActiva();
-
-        // Assert
-        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
-        var okResult = result as OkObjectResult;
-        Assert.IsNotNull(okResult);
-        Assert.AreEqual(200, okResult.StatusCode);
-    }
-
-    #endregion
+    #region ObtenerHistorialPuntuaciones Tests
 
     [TestMethod]
     public void ObtenerHistorialPuntuaciones_VisitanteValido_RetornaHistorial()
@@ -221,9 +130,22 @@ public class GamifiacionController_Test
         var result = _controller!.ObtenerHistorialPuntuaciones(visitanteId);
 
         // Assert
-        Assert.IsNotNull(result.Value);
-        Assert.AreEqual(2, result.Value.Count);
+        Assert.IsInstanceOfType(result.Result, typeof(OkObjectResult));
+        var okResult = result.Result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+
+        var responseDto = okResult.Value as ResponseDto;
+        Assert.IsNotNull(responseDto);
+        Assert.IsTrue(responseDto.ExecutionSuccessful);
+
+        var historial = responseDto.Content as List<HistorialPuntuacionDto>;
+        Assert.IsNotNull(historial);
+        Assert.AreEqual(2, historial.Count);
     }
+
+    #endregion
+
+    #region ObtenerRankingDiario Validacion Tests
 
     [TestMethod]
     public void ObtenerRankingDiario_ValidaContenidoRetornado()
@@ -241,9 +163,15 @@ public class GamifiacionController_Test
 
         Assert.IsNotNull(result);
 
-        var jsonElement = System.Text.Json.JsonSerializer.SerializeToElement(result!.Value);
+        var responseDto = result.Value as ResponseDto;
+        Assert.IsNotNull(responseDto);
+        Assert.IsTrue(responseDto.ExecutionSuccessful);
+
+        var jsonElement = System.Text.Json.JsonSerializer.SerializeToElement(responseDto.Content);
         Assert.AreEqual(DateTime.Today.Date, jsonElement.GetProperty("fecha").GetDateTime());
         Assert.AreEqual(1, jsonElement.GetProperty("totalVisitantes").GetInt32());
         Assert.AreEqual(60, jsonElement.GetProperty("ranking")[0].GetProperty("PuntosDiarios").GetInt32());
     }
+
+    #endregion
 }

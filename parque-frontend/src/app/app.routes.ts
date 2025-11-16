@@ -68,6 +68,12 @@ export const routes: Routes = [
       .then(m => m.ModificarPerfilComponent),
     canActivate: [visitanteGuard]
   },
+  {
+    path: 'configuracion/estrategias',
+    loadComponent: () => import('./features/configuracion/selector-estrategias/selector-estrategias')
+      .then(m => m.SelectorEstrategiasComponent),
+    canActivate: [authGuard]
+  },
   // Not Found route - debe ser la última
   {
     path: "**",

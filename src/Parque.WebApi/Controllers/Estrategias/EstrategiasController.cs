@@ -13,7 +13,6 @@ public class EstrategiasController(IServicioPuntuacion servicioPuntuacion) : Con
 
     [HttpGet("disponibles")]
     [AuthorizationFilter("Administrador")]
-    [ProducesResponseType(typeof(ResponseDto), StatusCodes.Status200OK)]
     public IActionResult ObtenerEstrategiasDisponibles()
     {
         var estrategias = _servicioPuntuacion.ListarEstrategias();
@@ -28,7 +27,6 @@ public class EstrategiasController(IServicioPuntuacion servicioPuntuacion) : Con
 
     [HttpGet("activa")]
     [AuthorizationFilter("Administrador")]
-    [ProducesResponseType(typeof(ResponseDto), StatusCodes.Status200OK)]
     public IActionResult ObtenerEstrategiaActiva()
     {
         var estrategiaActiva = _servicioPuntuacion.ObtenerEstrategiaActiva();
@@ -43,8 +41,6 @@ public class EstrategiasController(IServicioPuntuacion servicioPuntuacion) : Con
 
     [HttpPut("activa")]
     [AuthorizationFilter("Administrador")]
-    [ProducesResponseType(typeof(ResponseDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseDto), StatusCodes.Status400BadRequest)]
     public IActionResult CambiarEstrategiaActiva([FromBody] CambiarEstrategiaRequest request)
     {
         if(string.IsNullOrWhiteSpace(request?.NombreEstrategia))
@@ -90,8 +86,6 @@ public class EstrategiasController(IServicioPuntuacion servicioPuntuacion) : Con
 
     [HttpPost("plugins/recargar")]
     [AuthorizationFilter("Administrador")]
-    [ProducesResponseType(typeof(ResponseDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseDto), StatusCodes.Status500InternalServerError)]
     public IActionResult RecargarPlugins()
     {
         try
