@@ -1,8 +1,10 @@
+<!-- src/app/features/atracciones/atraccion-list/atraccion-list.html -->
 <div class="container">
-  <div class="d-flex gap-2">
-    <button type="button" class="btn btn-success" [routerLink]="['/atracciones', 'nueva']"> Crear nueva atracción</button>
-    <button type="button" class="btn btn-primary" routerLink="/">Menu</button>
-  </div>
+  @if (isAdmin) {
+    <div class="d-flex gap-2">
+      <button type="button" class="btn btn-success" [routerLink]="['/atracciones', 'nueva']"> Crear nueva atracción</button>
+    </div>
+  }
   <h1>Atracciones del Parque</h1>
 
   @if (loading()) {
@@ -21,14 +23,19 @@
             <h2>{{ atraccion.nombre }}</h2>
           </div>
           <div class="card-body">
-            <p><strong>Tipo:</strong> {{ atraccion.tipo }}</p>
+            <!-- CAMBIADO: Mostrar nombre del tipo en lugar del ID -->
+            <p><strong>Tipo:</strong> {{ getNombreTipo(atraccion.tipo) }}</p>
             <p><strong>Edad mínima:</strong> {{ atraccion.edadMinima }} años</p>
             <p><strong>Capacidad:</strong> {{ atraccion.capacidad }} personas</p>
+            <!-- CAMBIADO: Usar el pipe para mostrar estado legible -->
+            <p><strong>Estado:</strong> {{ getEstadoNombre(atraccion.estado)}}</p>
             <p class="descripcion">{{ atraccion.descripcion }}</p>
-            <div class="d-flex gap-2">
-              <button class="btn btn-warning" [routerLink]="['/atracciones', 'editar', atraccion.id]">Editar</button>
-              <button class="btn btn-danger" (click)="borrarAtraccion(atraccion)">Borrar</button>
-            </div>
+            @if (isAdmin) {
+              <div class="d-flex gap-2">
+                <button class="btn btn-warning" [routerLink]="['/atracciones', 'editar', atraccion.id]">Editar</button>
+                <button class="btn btn-danger" (click)="borrarAtraccion(atraccion)">Borrar</button>
+              </div>
+            }
           </div>
         </div>
       } @empty {
