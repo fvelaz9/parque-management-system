@@ -221,7 +221,7 @@
 }
 
 .btn-editar {
-  background: #ff9800;
+  background: #f1ae51;
   color: white;
   flex: 1;
 }
@@ -230,6 +230,7 @@
   background: #bc3a3a;
   color: white;
   flex: 1;
+  margin-left: 15px;
 }
 
 .btn-editar:hover {

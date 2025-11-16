@@ -10,7 +10,11 @@
           </h2>
           <p class="text-muted mb-0">Gestión y programación de mantenimientos</p>
         </div>
-        <a routerLink="/mantenimientos/nuevo" class="btn btn-primary btn-lg">
+        <!-- ✅ Solo Admin y Operador pueden crear -->
+        <a
+          *ngIf="puedeGestionar"
+          routerLink="/mantenimientos/nuevo"
+          class="btn btn-primary btn-lg">
           <i class="bi bi-plus-circle"></i> Nuevo Mantenimiento
         </a>
       </div>
@@ -42,7 +46,11 @@
         <i class="bi bi-calendar-x text-muted" style="font-size: 4rem;"></i>
         <h4 class="mt-3">No hay mantenimientos programados</h4>
         <p class="text-muted mb-4">Comienza agregando un nuevo mantenimiento preventivo</p>
-        <a routerLink="/mantenimientos/nuevo" class="btn btn-primary">
+        <!-- ✅ Solo si puede gestionar -->
+        <a
+          *ngIf="puedeGestionar"
+          routerLink="/mantenimientos/nuevo"
+          class="btn btn-primary">
           <i class="bi bi-plus-circle"></i> Programar Mantenimiento
         </a>
       </div>
@@ -62,7 +70,7 @@
               </div>
 
               <!-- Columna Información Principal -->
-              <div class="col-md-3">
+              <div [ngClass]="puedeGestionar ? 'col-md-3' : 'col-md-4'">
                 <h5 class="mb-1">Mantenimiento #{{ mantenimiento.id }}</h5>
                 <p class="text-muted mb-0">
                   <i class="bi bi-building"></i> Atracción ID: {{ mantenimiento.atraccionId }}
@@ -70,7 +78,7 @@
               </div>
 
               <!-- Columna Fecha y Hora -->
-              <div class="col-md-3">
+              <div [ngClass]="puedeGestionar ? 'col-md-3' : 'col-md-4'">
                 <p class="mb-1">
                   <i class="bi bi-calendar-event text-primary"></i>
                   <strong>{{ mantenimiento.fechaProgramada | date: 'dd/MM/yyyy' }}</strong>
@@ -82,29 +90,30 @@
               </div>
 
               <!-- Columna Descripción -->
-              <div class="col-md-4">
+              <div [ngClass]="puedeGestionar ? 'col-md-4' : 'col-md-4'">
                 <p class="mb-0 text-truncate" style="max-width: 300px;" [title]="mantenimiento.descripcion">
                   <i class="bi bi-file-text text-secondary"></i>
                   {{ mantenimiento.descripcion }}
                 </p>
               </div>
 
-              <!-- Columna Acciones -->
-              <div class="col-md-2 text-end">
-                <button
-                  class="btn btn-outline-primary me-2"
-                  (click)="editarMantenimiento(mantenimiento.id)"
-                  title="Editar mantenimiento">
-                  <i class="bi bi-pencil"></i> Editar
-                </button>
-                <button
-                  class="btn btn-outline-danger"
-                  (click)="eliminarMantenimiento(mantenimiento.id)"
-                  title="Eliminar mantenimiento">
-                  <i class="bi bi-trash"></i> Eliminar
-                </button>
+              <!-- ✅ Columna Acciones - Solo Admin y Operador -->
+              <div *ngIf="puedeGestionar">
+                <div class="col-md-2 text-end">
+                  <button
+                    class="btn btn-outline-primary me-2"
+                    (click)="editarMantenimiento(mantenimiento.id)"
+                    title="Editar mantenimiento">
+                    <i class="bi bi-pencil"></i> Editar
+                  </button>
+                  <button
+                    class="btn btn-outline-danger"
+                    (click)="eliminarMantenimiento(mantenimiento.id)"
+                    title="Eliminar mantenimiento">
+                    <i class="bi bi-trash"></i> Eliminar
+                  </button>
+                </div>
               </div>
-
             </div>
           </div>
         </div>

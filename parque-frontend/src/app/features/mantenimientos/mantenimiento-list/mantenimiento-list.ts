@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { MantenimientoPreventivo } from '../../../core/models/mantenimiento.model';
 import { MantenimientosService } from '../../../core/services/mantenimiento.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-mantenimiento-list',
@@ -14,6 +15,7 @@ import { MantenimientosService } from '../../../core/services/mantenimiento.serv
 })
 export class MantenimientoList {
   private readonly mantenimientosService = inject(MantenimientosService);
+  private readonly authService = inject(AuthService);  // ← AGREGAR
   private readonly router = inject(Router);
 
   public mantenimientos = signal<MantenimientoPreventivo[]>([]);
@@ -40,12 +42,25 @@ export class MantenimientoList {
     });
   }
 
+  // ← AGREGAR ESTOS GETTERS (igual que recompensas)
+  get isAdmin(): boolean {
+    return this.authService.getUsuario()?.roles?.includes('Administrador') || false;
+  }
+
+  get isOperador(): boolean {
+    return this.authService.getUsuario()?.roles?.includes('Operador') || false;
+  }
+
+  get puedeGestionar(): boolean {
+    return this.isAdmin || this.isOperador;
+  }
+
   eliminarMantenimiento(id: number) {
     if (confirm('¿Estás seguro de que deseas eliminar este mantenimiento?')) {
       this.mantenimientosService.deleteMantenimiento(id).subscribe({
         next: () => {
           console.log('Mantenimiento eliminado');
-          this.cargarMantenimientos(); // Recargar lista
+          this.cargarMantenimientos();
         },
         error: (err) => {
           console.error('Error al eliminar mantenimiento:', err);
@@ -54,6 +69,7 @@ export class MantenimientoList {
       });
     }
   }
+
   editarMantenimiento(id: number) {
     this.router.navigate(['/mantenimientos/editar', id]);
   }

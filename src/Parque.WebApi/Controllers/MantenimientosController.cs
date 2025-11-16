@@ -12,7 +12,7 @@ namespace Parque.WebApi.Controllers;
 public class MantenimientosController(IServicioMantenimiento servicio) : ControllerBase
 {
     [HttpGet]
-    [AuthorizationFilter("Administrador")]
+    [AllowAnonymous]
     public IActionResult GetAll()
     {
         var mantenimientos = servicio.ListarMantenimientos();
@@ -21,7 +21,7 @@ public class MantenimientosController(IServicioMantenimiento servicio) : Control
 
     [HttpPost]
 
-    [AuthorizationFilter("Administrador")]
+    [AuthorizationFilter("Administrador", "Operador")]
     public IActionResult Create([FromBody] CrearMantenimientoRequest request)
     {
         try
@@ -37,7 +37,7 @@ public class MantenimientosController(IServicioMantenimiento servicio) : Control
 
     [HttpDelete("{id}")]
 
-    [AuthorizationFilter("Administrador")]
+    [AuthorizationFilter("Administrador", "Operador")]
     public IActionResult Delete(int id)
     {
         try
@@ -52,7 +52,7 @@ public class MantenimientosController(IServicioMantenimiento servicio) : Control
     }
 
     [HttpPut("{id}")]
-    [AuthorizationFilter("Administrador")]
+    [AuthorizationFilter("Administrador", "Operador")]
     public IActionResult ActualizarMantenimiento(int id, [FromBody] CrearMantenimientoRequest dto)
     {
         try
