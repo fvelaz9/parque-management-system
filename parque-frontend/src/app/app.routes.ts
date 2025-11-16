@@ -74,8 +74,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/recompensas/recompensa-historial/recompensa-historial')
       .then(m => m.HistorialCanje)
   },
-
-
+  {
+    path: 'mantenimientos/editar/:id',
+    loadComponent: () => import('./features/mantenimientos/mantenimiento-edit/mantenimiento-edit')
+      .then(m => m.MantenimientoEdit)
+  },
   // Not Found route - debe ser la última
   {
     path: "**",

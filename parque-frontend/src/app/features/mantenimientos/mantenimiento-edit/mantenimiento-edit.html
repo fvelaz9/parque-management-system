@@ -1,1 +1,118 @@
-<p>mantenimiento-edit works!</p>
+<!-- src/app/features/mantenimientos/mantenimiento-edit/mantenimiento-edit.component.html -->
+<div class="container mt-4">
+  <!-- Loading -->
+  <div *ngIf="loading()" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Cargando...</span>
+    </div>
+    <p class="mt-3 text-muted">Cargando datos del mantenimiento...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error()" class="alert alert-danger d-flex align-items-center shadow-sm" role="alert">
+    <i class="bi bi-exclamation-triangle-fill fs-4 me-3"></i>
+    <div>
+      <strong>Error</strong>
+      <p class="mb-0">{{ error() }}</p>
+    </div>
+  </div>
+
+  <!-- Formulario -->
+  <div *ngIf="!loading() && !error()" class="card shadow-sm">
+    <div class="card-body atraccion-form">
+      <form [formGroup]="mantenimientoForm" (ngSubmit)="onSubmit()">
+
+        <!-- Atracción ID (Solo lectura) -->
+        <div class="form-field">
+          <label for="atraccionId" class="form-label">
+            <i class="bi bi-building"></i> ID de Atracción
+          </label>
+          <input
+            type="number"
+            class="form-input"
+            id="atraccionId"
+            formControlName="atraccionId"
+            readonly
+            style="background-color: #f8f9fa; cursor: not-allowed;">
+        </div>
+
+        <!-- Fecha Programada -->
+        <div class="form-field">
+          <label for="fechaProgramada" class="form-label">
+            <i class="bi bi-calendar-event"></i> Fecha Programada *
+          </label>
+          <input
+            type="date"
+            class="form-input"
+            id="fechaProgramada"
+            formControlName="fechaProgramada"
+            [class.is-invalid]="mantenimientoForm.get('fechaProgramada')?.invalid && mantenimientoForm.get('fechaProgramada')?.touched">
+          <div class="invalid-feedback">
+            La fecha programada es requerida
+          </div>
+        </div>
+
+        <!-- Hora Inicio -->
+        <div class="form-field">
+          <label for="horaInicio" class="form-label">
+            <i class="bi bi-clock"></i> Hora de Inicio *
+          </label>
+          <input
+            type="time"
+            class="form-input"
+            id="horaInicio"
+            formControlName="horaInicio"
+            [class.is-invalid]="mantenimientoForm.get('horaInicio')?.invalid && mantenimientoForm.get('horaInicio')?.touched">
+          <div class="invalid-feedback">
+            La hora de inicio es requerida
+          </div>
+        </div>
+
+        <!-- Duración Estimada -->
+        <div class="form-field">
+          <label for="duracionEstimada" class="form-label">
+            <i class="bi bi-hourglass-split"></i> Duración Estimada (HH:MM:SS) *
+          </label>
+          <input
+            type="text"
+            class="form-input"
+            id="duracionEstimada"
+            formControlName="duracionEstimada"
+            placeholder="Ej: 02:30:00"
+            [class.is-invalid]="mantenimientoForm.get('duracionEstimada')?.invalid && mantenimientoForm.get('duracionEstimada')?.touched">
+          <div class="invalid-feedback">
+            La duración estimada es requerida
+          </div>
+        </div>
+
+        <!-- Descripción -->
+        <div class="form-field">
+          <label for="descripcion" class="form-label">
+            <i class="bi bi-file-text"></i> Descripción *
+          </label>
+          <textarea
+            class="form-textarea"
+            id="descripcion"
+            formControlName="descripcion"
+            rows="4"
+            placeholder="Describe el mantenimiento a realizar"
+            [class.is-invalid]="mantenimientoForm.get('descripcion')?.invalid && mantenimientoForm.get('descripcion')?.touched">
+          </textarea>
+          <div class="invalid-feedback">
+            La descripción es requerida (mínimo 10 caracteres)
+          </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="form-actions">
+          <button type="button" class="btn btn-secondary" (click)="volver()">
+            <i class="bi bi-x-circle"></i> Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary" [disabled]="mantenimientoForm.invalid">
+            <i class="bi bi-check-circle"></i> Actualizar Mantenimiento
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
