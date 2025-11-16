@@ -4,7 +4,7 @@ import { NotFoundComponent } from './features/not-found/not-found';
 import { authGuard } from './core/guards/auth.guard';
 import { visitanteGuard } from './core/guards/visitante.guard';
 import { adminGuard } from './core/guards/admin.guard';
-import {AccesoHome} from './features/Acceso/acceso-home/acceso-home';
+import {operadorGuard} from './core/guards/operador.guard';
 
 export const routes: Routes = [
   {
@@ -76,6 +76,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/Acceso/acceso-home/acceso-home')
   .then(m => m.AccesoHome),
   canActivate: [authGuard]
+  },
+  {
+    path: 'acceso/validar',
+    loadComponent: () => import('./features/Acceso/acceso-validar/acceso-validar')
+      .then(m => m.AccesoValidar)
+    // canActivate: [operadorGuard]
   },
   // Not Found route - debe ser la última
   {
