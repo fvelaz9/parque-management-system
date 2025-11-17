@@ -68,10 +68,10 @@ export class MantenimientoList {
   }
 
   eliminarMantenimiento(id: number) {
-    if (confirm('¿Estás seguro de que deseas eliminar este mantenimiento?')) {
+    if (confirm('¿Estás seguro de que deseas dar de alta este mantenimiento?')) {
       this.mantenimientosService.deleteMantenimiento(id).subscribe({
         next: () => {
-          console.log('Mantenimiento eliminado');
+          console.log('Mantenimiento completado');
           this.cargarMantenimientos();
         },
         error: (err) => {

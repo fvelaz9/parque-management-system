@@ -96,7 +96,7 @@
                 </p>
               </div>
 
-              <!-- ✅ Columna Acciones - Solo Admin y Operador -->
+              <!--  Columna Acciones - Solo Admin y Operador -->
               <div *ngIf="puedeGestionar">
                 <div class="col-md-2 text-end">
                   <button
@@ -106,10 +106,10 @@
                     <i class="bi bi-pencil"></i> Editar
                   </button>
                   <button
-                    class="btn btn-outline-danger"
+                    class="btn btn-success"
                     (click)="eliminarMantenimiento(mantenimiento.id)"
                     title="Eliminar mantenimiento">
-                    <i class="bi bi-trash"></i> Eliminar
+                    <i class="bi bi-trash"></i> Alta
                   </button>
                 </div>
               </div>
