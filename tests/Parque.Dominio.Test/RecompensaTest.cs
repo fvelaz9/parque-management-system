@@ -1,9 +1,8 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Parque.Dominio.Excepciones;
+﻿using Parque.Dominio.Excepciones;
 using Parque.Dominio.Gamificacion;
 using Parque.Dominio.Usuarios;
 
-namespace Parque.Dominio.Tests.Gamificacion;
+namespace Parque.Dominio.Test;
 
 [TestClass]
 public class RecompensaTest
@@ -68,7 +67,7 @@ public class RecompensaTest
         };
 
         // Act & Assert
-        Assert.ThrowsException<ExcepcionDominio>(() => recompensa.ReducirStock());
+        Assert.ThrowsException<ExcepcionDominio>(recompensa.ReducirStock);
         Assert.AreEqual(recompensa.Nombre, "Test");
         Assert.AreEqual(recompensa.Descripcion, "Carlitos");
         Assert.AreEqual(recompensa.NivelMembresiaRequerido, NivelMembresia.Premium);

@@ -1,5 +1,4 @@
-using System.ComponentModel.DataAnnotations;
-using Parque.Dominio.Usuarios;
+﻿using Parque.Dominio.Usuarios;
 
 namespace Parque.Aplicacion.DTOs.RecompensasDtos;
 public class RecompensaDto

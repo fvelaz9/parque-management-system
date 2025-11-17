@@ -1,7 +1,4 @@
-using Parque.Dominio.Excepciones;
-using Parque.Dominio.Usuarios;
-
-namespace Parque.Dominio.Gamificacion;
+﻿namespace Parque.Dominio.Gamificacion;
 
 public class HistorialCanje
 {
@@ -11,5 +8,7 @@ public class HistorialCanje
     public int PuntosCanjeados { get; set; }
     public DateTime FechaCanje { get; set; }
 
-    public HistorialCanje() { }
+    public HistorialCanje()
+    {
+    }
 }

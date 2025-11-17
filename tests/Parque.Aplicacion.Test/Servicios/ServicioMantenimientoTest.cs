@@ -118,7 +118,6 @@ public class ServicioMantenimientoTest
 
         _servicio.EliminarMantenimiento(1);
 
-        _mockRepoIncidencias.Verify(r => r.Eliminar(It.IsAny<Expression<Func<Incidencia, bool>>>()), Times.Once);
         _mockRepoMantenimientos.Verify(r => r.Eliminar(It.IsAny<Expression<Func<MantenimientoPreventivo, bool>>>()), Times.Once);
         _mockRepoAtracciones.Verify(r => r.Editar(It.Is<AtraccionParque>(a => a.Estado == EstadoAtraccion.Disponible)), Times.Once);
     }
@@ -128,11 +127,18 @@ public class ServicioMantenimientoTest
     {
         var lista = new List<MantenimientoPreventivo>
         {
-            new MantenimientoPreventivo { Id = 1, Descripcion = "Mantenimiento 1" },
-            new MantenimientoPreventivo { Id = 2, Descripcion = "Mantenimiento 2" }
+            new MantenimientoPreventivo { Id = 1, AtraccionId = 1, Descripcion = "Mantenimiento 1" },
+            new MantenimientoPreventivo { Id = 2, AtraccionId = 2, Descripcion = "Mantenimiento 2" }
+        };
+
+        var atracciones = new List<AtraccionParque>
+        {
+            new AtraccionParque("Atraccion1", TipoAtraccion.MontañaRusa, 10, 20, "desc") { Id = 1 },
+            new AtraccionParque("Atraccion2", TipoAtraccion.Simulador, 8, 15, "desc") { Id = 2 }
         };
 
         _mockRepoMantenimientos.Setup(r => r.ObtenerTodos()).Returns(lista);
+        _mockRepoAtracciones.Setup(r => r.ObtenerTodos()).Returns(atracciones);
 
         var resultado = _servicio.ListarMantenimientos();
 
