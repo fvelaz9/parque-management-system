@@ -1,7 +1,5 @@
 <nav class="navbar">
   <div class="navbar-container">
-
-
     <ul class="navbar-menu">
       <li>
         <a routerLink="/home" routerLinkActive="active" class="nav-link">
@@ -32,6 +30,19 @@
           Eventos
         </a>
       </li>
+
+      <!-- ✅ AGREGAR: Dropdown Administración (Solo Admin) -->
+      @if (isAdmin) {
+        <li class="dropdown">
+          <a class="nav-link dropdown-toggle" (click)="toggleAdminDropdown($event)">
+            Administración
+          </a>
+          <ul class="dropdown-menu" [class.show]="isAdminDropdownOpen">
+            <li><a routerLink="/configuracion/estrategias" routerLinkActive="active" (click)="isAdminDropdownOpen = false">Estrategias</a></li>
+            <li><a routerLink="/cuentas" routerLinkActive="active" (click)="isAdminDropdownOpen = false">Cuentas</a></li>
+          </ul>
+        </li>
+      }
 
       @if (isLoggedIn) {
         <li>
