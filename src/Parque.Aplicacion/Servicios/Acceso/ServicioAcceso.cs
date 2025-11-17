@@ -232,6 +232,12 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             Identificador = codigoTicket,
             FechaIngreso = servicioFechaHora.ObtenerFechaActual()
         };
+        var ticket = repoTickets.Encontrar(t => t.Codigo == codigoTicket);
+        if (ticket != null)
+        {
+            ticket.MarcarComoUsado();
+            repoTickets.Editar(ticket);
+        }
 
         repoRegistros.Agregar(registro);
         return registro;
