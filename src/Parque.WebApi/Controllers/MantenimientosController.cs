@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Parque.Aplicacion.DTOs;
 using Parque.Aplicacion.Servicios.Mantenimiento;
@@ -72,7 +72,7 @@ public class MantenimientosController(IServicioMantenimiento servicio) : Control
                 }
             });
         }
-        catch (ArgumentException ex)
+        catch(ArgumentException ex)
         {
             return BadRequest(new { mensaje = ex.Message });
         }
