@@ -1,4 +1,4 @@
-using Parque.Aplicacion.DTOs;
+﻿using Parque.Aplicacion.DTOs;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
 using Parque.Infraestructura.Repositorios;
@@ -78,18 +78,17 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
             .ObtenerTodos()
             .Where(m => m.AtraccionId == atraccionId);
 
-        foreach (var mantenimiento in mantenimientosExistentes)
+        foreach(var mantenimiento in mantenimientosExistentes)
         {
             var inicioExistente = mantenimiento.FechaProgramada.Add(mantenimiento.HoraInicio);
             var finExistente = inicioExistente.Add(mantenimiento.DuracionEstimada);
 
             // Verificar solapamiento: dos rangos se solapan si inicio1 < fin2 && inicio2 < fin1
-            if (inicioNuevo < finExistente && inicioExistente < finNuevo)
+            if(inicioNuevo < finExistente && inicioExistente < finNuevo)
             {
                 throw new ArgumentException(
                     $"Ya existe un mantenimiento programado para esta atracción en el horario solicitado. " +
-                    $"Mantenimiento existente: {inicioExistente:dd/MM/yyyy HH:mm} - {finExistente:dd/MM/yyyy HH:mm}"
-                );
+                    $"Mantenimiento existente: {inicioExistente:dd/MM/yyyy HH:mm} - {finExistente:dd/MM/yyyy HH:mm}");
             }
         }
     }
@@ -123,17 +122,16 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
             .ObtenerTodos()
             .Where(m => m.AtraccionId == atraccionId && m.Id != mantenimientoIdActual);
 
-        foreach (var mantenimiento in mantenimientosExistentes)
+        foreach(var mantenimiento in mantenimientosExistentes)
         {
             var inicioExistente = mantenimiento.FechaProgramada.Add(mantenimiento.HoraInicio);
             var finExistente = inicioExistente.Add(mantenimiento.DuracionEstimada);
 
-            if (inicioNuevo < finExistente && inicioExistente < finNuevo)
+            if(inicioNuevo < finExistente && inicioExistente < finNuevo)
             {
                 throw new ArgumentException(
                     $"Ya existe un mantenimiento programado para esta atracción en el horario solicitado. " +
-                    $"Mantenimiento existente: {inicioExistente:dd/MM/yyyy HH:mm} - {finExistente:dd/MM/yyyy HH:mm}"
-                );
+                    $"Mantenimiento existente: {inicioExistente:dd/MM/yyyy HH:mm} - {finExistente:dd/MM/yyyy HH:mm}");
             }
         }
     }
@@ -167,7 +165,7 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
     {
         var mantenimientos = repoMantenimiento.ObtenerTodos();
         var atracciones = repoAtracciones.ObtenerTodos();
-        if (mantenimientos == null)
+        if(mantenimientos == null)
         {
             return Enumerable.Empty<CrearMantenimientoRequest>();
         }

@@ -1,4 +1,4 @@
-using Parque.Aplicacion.DTOs.RecompensasDtos;
+﻿using Parque.Aplicacion.DTOs.RecompensasDtos;
 using Parque.Dominio.Gamificacion;
 using Parque.Dominio.Usuarios;
 using Parque.Infraestructura.Repositorios;
@@ -35,27 +35,27 @@ public class ServicioRecompensa(
 
     private void VerificacionRecompensa(RecompensaDto dto)
     {
-        if (string.IsNullOrWhiteSpace(dto.Nombre))
+        if(string.IsNullOrWhiteSpace(dto.Nombre))
         {
             throw new InvalidOperationException("El nombre es obligatorio");
         }
 
-        if (dto.Nombre.Length > 100)
+        if(dto.Nombre.Length > 100)
         {
             throw new InvalidOperationException("El nombre no puede exceder los 100 caracteres");
         }
 
-        if (dto.CostoEnPuntos <= 0)
+        if(dto.CostoEnPuntos <= 0)
         {
             throw new InvalidOperationException("El costo en puntos debe ser mayor a 0");
         }
 
-        if (dto.CantidadDisponible < 0)
+        if(dto.CantidadDisponible < 0)
         {
             throw new InvalidOperationException("La cantidad disponible no puede ser negativa");
         }
 
-        if (dto.Descripcion != null && dto.Descripcion.Length > 200)
+        if(dto.Descripcion != null && dto.Descripcion.Length > 200)
         {
             throw new InvalidOperationException("La descripción no puede exceder 500 caracteres");
         }
@@ -66,7 +66,7 @@ public class ServicioRecompensa(
         VerificacionRecompensa(dto);
 
         var recompensa = repoRecompensa.Encontrar(r => r.Id == id);
-        if (recompensa == null)
+        if(recompensa == null)
         {
             throw new InvalidOperationException($"Recompensa con ID {id} no encontrada");
         }
@@ -91,7 +91,7 @@ public class ServicioRecompensa(
     {
         var recompensa = repoRecompensa.Encontrar(r => r.Id == id);
 
-        if (recompensa == null)
+        if(recompensa == null)
         {
             throw new InvalidOperationException($"Recompensa con ID {id} no encontrada");
         }
@@ -108,12 +108,12 @@ public class ServicioRecompensa(
         }
 
         var recompensa = repoRecompensa.Encontrar(r => r.Id == request.RecompensaId);
-        if (recompensa == null)
+        if(recompensa == null)
         {
             throw new InvalidOperationException($"Recompensa con ID {request.RecompensaId} no encontrada");
         }
 
-        if (recompensa.NivelMembresiaRequerido.HasValue &&
+        if(recompensa.NivelMembresiaRequerido.HasValue &&
             visitante.NivelMembresia < recompensa.NivelMembresiaRequerido.Value)
         {
             throw new InvalidOperationException("Nivel de membresía insuficiente para canjear esta recompensa");
@@ -121,7 +121,7 @@ public class ServicioRecompensa(
 
         var puntuaciones = repoPuntuacion.ObtenerTodos();
         var puntuacionVisitante = puntuaciones.FirstOrDefault(p => p.VisitanteId == request.VisitanteId);
-        if (puntuacionVisitante == null || puntuacionVisitante.PuntosTotales < recompensa.CostoEnPuntos)
+        if(puntuacionVisitante == null || puntuacionVisitante.PuntosTotales < recompensa.CostoEnPuntos)
         {
             throw new InvalidOperationException("Puntos insuficientes para canjear esta recompensa");
         }
@@ -154,7 +154,7 @@ public class ServicioRecompensa(
 
         var dtos = new List<HistorialCanjeDto>();
 
-        foreach (var canje in historial)
+        foreach(var canje in historial)
         {
             var recompensa = repoRecompensa.Encontrar(r => r.Id == canje.RecompensaId);
 
@@ -175,7 +175,7 @@ public class ServicioRecompensa(
     public void EliminarRecompensa(Guid id)
     {
         var recompesa = repoRecompensa.Encontrar(r => r.Id == id);
-        if (recompesa == null)
+        if(recompesa == null)
         {
             throw new InvalidOperationException($"Recompensa con ID {id} no encontrada");
         }
