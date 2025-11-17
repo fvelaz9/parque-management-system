@@ -1,11 +1,23 @@
 <div class="acceso-home-container">
-  <h2>Panel de Acceso</h2>
-  <p>Seleccione una opción para continuar:</p>
+  <h2>Control de Acceso a Atracción</h2>
 
-  <div class="botones-menu">
-    <button (click)="irAValidarAcceso()" aria-label="Validar Acceso">Validar Acceso</button>
-    <button (click)="irARegistrarIngreso()" aria-label="Registrar Ingreso">Registrar Ingreso</button>
-    <button (click)="irARegistrarEgreso()" aria-label="Registrar Egreso">Registrar Egreso</button>
-    <button (click)="irAObtenerAforo()" aria-label="Ver Aforo">Ver Aforo</button>
+  <div *ngIf="atraccion">
+    <h3>{{ atraccion?.nombre }}</h3>
+
+    <div class="aforo-info" *ngIf="aforo">
+      <p><strong>Aforo actual:</strong> {{ aforo?.aforoActual }}</p>
+      <p><strong>Capacidad máxima:</strong> {{ aforo?.capacidadMaxima }}</p>
+      <p><strong>Disponible:</strong> {{ aforo?.disponible }}</p>
+      <p *ngIf="aforo?.disponible <= 0" class="alerta">¡Aforo completo! No se permite más ingreso.</p>
+    </div>
+
+    <div class="botones-control">
+      <button type="button" disabled>Registrar Ingreso</button>
+      <button type="button" disabled>Registrar Egreso</button>
+    </div>
+  </div>
+
+  <div *ngIf="!atraccion">
+    <p>Cargando atracción...</p>
   </div>
 </div>
