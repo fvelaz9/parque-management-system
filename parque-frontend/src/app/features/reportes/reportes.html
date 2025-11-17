@@ -1,1 +1,150 @@
-<p>reportes works!</p>
+<!-- src/app/features/reportes/reportes.component.html -->
+<div class="container mt-4">
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <h2 class="mb-1">
+        <i class="bi bi-bar-chart-fill text-primary"></i> Reportes Administrativos
+      </h2>
+      <p class="text-muted mb-0">Estadísticas y reportes del parque</p>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- ============ RANKING DIARIO ============ -->
+    <div class="col-12 col-lg-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-primary text-white">
+          <h4 class="mb-0">
+            <i class="bi bi-trophy-fill"></i> Ranking Diario
+          </h4>
+        </div>
+        <div class="card-body">
+          <!-- Filtros -->
+          <div class="mb-3">
+            <label for="fechaRanking" class="form-label">Fecha</label>
+            <input
+              type="date"
+              id="fechaRanking"
+              class="form-control"
+              [(ngModel)]="fechaRanking">
+          </div>
+          <div class="mb-3">
+            <label for="topRanking" class="form-label">Top</label>
+            <input
+              type="number"
+              id="topRanking"
+              class="form-control"
+              [(ngModel)]="topRanking"
+              min="1"
+              max="100">
+          </div>
+          <button
+            class="btn btn-primary w-100 mb-3"
+            (click)="cargarRankingDiario()"
+            [disabled]="loadingRanking()">
+            <span *ngIf="loadingRanking()" class="spinner-border spinner-border-sm me-2"></span>
+            {{ loadingRanking() ? 'Cargando...' : 'Consultar Ranking' }}
+          </button>
+
+          <!-- Error -->
+          <div *ngIf="errorRanking()" class="alert alert-danger">
+            {{ errorRanking() }}
+          </div>
+
+          <!-- Resultados -->
+          <div *ngIf="!loadingRanking() && !errorRanking() && rankingVisitantes().length > 0">
+            <h5 class="mb-3">Top {{ rankingVisitantes().length }} Visitantes</h5>
+            <div class="list-group">
+              <div
+                *ngFor="let visitante of rankingVisitantes()"
+                class="list-group-item d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                  <span class="badge bg-primary rounded-pill me-3 fs-6">
+                    #{{ visitante.posicion }}
+                  </span>
+                  <div>
+                    <strong>{{ visitante.nombreVisitante }}</strong>
+                  </div>
+                </div>
+                <span class="badge bg-success">
+                  {{ visitante.puntosTotales }} pts
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sin resultados -->
+          <div *ngIf="!loadingRanking() && !errorRanking() && rankingVisitantes().length === 0" class="alert alert-info">
+            No hay visitantes en el ranking para esta fecha
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ REPORTE DE USO DE ATRACCIONES ============ -->
+    <div class="col-12 col-lg-6">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-success text-white">
+          <h4 class="mb-0">
+            <i class="bi bi-graph-up"></i> Reporte de Uso
+          </h4>
+        </div>
+        <div class="card-body">
+          <!-- Filtros -->
+          <div class="mb-3">
+            <label for="fechaDesde" class="form-label">Desde</label>
+            <input
+              type="date"
+              id="fechaDesde"
+              class="form-control"
+              [(ngModel)]="fechaDesde">
+          </div>
+          <div class="mb-3">
+            <label for="fechaHasta" class="form-label">Hasta</label>
+            <input
+              type="date"
+              id="fechaHasta"
+              class="form-control"
+              [(ngModel)]="fechaHasta">
+          </div>
+          <button
+            class="btn btn-success w-100 mb-3"
+            (click)="cargarReporteAtracciones()"
+            [disabled]="loadingReporte()">
+            <span *ngIf="loadingReporte()" class="spinner-border spinner-border-sm me-2"></span>
+            {{ loadingReporte() ? 'Cargando...' : 'Generar Reporte' }}
+          </button>
+
+          <!-- Error -->
+          <div *ngIf="errorReporte()" class="alert alert-danger">
+            {{ errorReporte() }}
+          </div>
+
+          <!-- Resultados -->
+          <div *ngIf="!loadingReporte() && !errorReporte() && reporteAtracciones().length > 0">
+            <h5 class="mb-3">Uso de Atracciones</h5>
+            <div class="list-group">
+              <div
+                *ngFor="let atraccion of reporteAtracciones()"
+                class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                  <strong>{{ atraccion.nombreAtraccion }}</strong>
+                  <br>
+                  <small class="text-muted">ID: {{ atraccion.atraccionId }}</small>
+                </div>
+                <span class="badge bg-primary rounded-pill">
+                  {{ atraccion.cantidadVisitas }} visitas
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Sin resultados -->
+          <div *ngIf="!loadingReporte() && !errorReporte() && reporteAtracciones().length === 0" class="alert alert-info">
+            No hay visitas registradas en el rango seleccionado
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

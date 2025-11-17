@@ -6,7 +6,7 @@ import {MantenimientoForm} from './features/mantenimientos/mantenimiento-form/ma
 import {RecompensaEditar} from './features/recompensas/recompensa-editar/recompensa-editar';
 import {HistorialCanje} from './features/recompensas/recompensa-historial/recompensa-historial';
 import { authGuard } from './core/guards/auth.guard';
-import { visitanteGuard } from './core/guards/visitante.guard'; 
+import { visitanteGuard } from './core/guards/visitante.guard';
 import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
@@ -117,6 +117,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/configuracion/selector-estrategias/selector-estrategias')
       .then(m => m.SelectorEstrategiasComponent),
     canActivate: [authGuard]
+  },
+  {
+    path: 'reportes',
+    loadComponent: () => import('./features/reportes/reportes')
+      .then(m => m.ReportesComponent),
+    canActivate: [adminGuard]
   },
   // Not Found route - debe ser la última
   {

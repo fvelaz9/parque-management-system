@@ -1,0 +1,23 @@
+/* src/app/features/reportes/reportes.component.css */
+.card-header {
+  font-weight: bold;
+}
+
+.list-group-item {
+  transition: all 0.2s;
+}
+
+.list-group-item:hover {
+  background-color: #f8f9fa;
+  transform: translateX(5px);
+}
+
+.badge {
+  font-size: 0.9rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+}
