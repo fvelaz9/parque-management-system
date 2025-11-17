@@ -1,6 +1,10 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './features/home/home';
 import { NotFoundComponent } from './features/not-found/not-found';
+import {MantenimientoList} from './features/mantenimientos/mantenimiento-list/mantenimiento-list';
+import {MantenimientoForm} from './features/mantenimientos/mantenimiento-form/mantenimiento-form';
+import {RecompensaEditar} from './features/recompensas/recompensa-editar/recompensa-editar';
+import {HistorialCanje} from './features/recompensas/recompensa-historial/recompensa-historial';
 import { authGuard } from './core/guards/auth.guard';
 import { visitanteGuard } from './core/guards/visitante.guard'; 
 import { adminGuard } from './core/guards/admin.guard';
@@ -39,6 +43,46 @@ export const routes: Routes = [
     path: 'registro-visitante',
     loadComponent: () => import('./features/cuentas/registro-visitante/registro-visitante')
       .then(m => m.RegistroVisitanteComponent)
+  },
+  {
+    path: 'mantenimientos',
+    loadComponent: () => import('./features/mantenimientos/mantenimiento-list/mantenimiento-list')
+      .then(m => m.MantenimientoList)
+  },
+  {
+    path: 'mantenimientos/nuevo',
+    loadComponent: () => import('./features/mantenimientos/mantenimiento-form/mantenimiento-form')
+      .then(m => m.MantenimientoForm)
+  },
+  {
+    path: 'recompensas',
+    loadComponent: () => import('./features/recompensas/recompensas-list/recompensas-list')
+      .then(m => m.RecompensasList)
+  },
+  {
+    path: 'recompensas/nueva',
+    loadComponent: () => import('./features/recompensas/recompensa-form/recompensa-form')
+      .then(m => m.RecompensaForm)
+  },
+  {
+    path: 'recompensas/editar/:id',
+    loadComponent: () => import('./features/recompensas/recompensa-editar/recompensa-editar')
+      .then(m => m.RecompensaEditar)
+  },
+  {
+    path: 'recompensas/historial',
+    loadComponent: () => import('./features/recompensas/recompensa-historial/recompensa-historial')
+      .then(m => m.HistorialCanje)
+  },
+  {
+    path: 'mantenimientos/editar/:id',
+    loadComponent: () => import('./features/mantenimientos/mantenimiento-edit/mantenimiento-edit')
+      .then(m => m.MantenimientoEdit)
+  },
+  {
+    path: 'incidencias',
+    loadComponent: () => import('./features/incidencias/incidencias-list/incidencias-list')
+      .then(m => m.IncidenciasListComponent)
   },
   {
     path: 'eventos',

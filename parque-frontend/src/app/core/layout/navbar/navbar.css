@@ -43,6 +43,7 @@
   padding: 0.5rem 1rem;
   border-radius: 8px;
   transition: background 0.3s;
+  cursor: pointer;
 }
 
 .nav-link:hover,
@@ -69,6 +70,79 @@
 .btn-logout:hover {
   background: white;
   color: #667eea;
+}
+
+/* ✅ ESTILOS DEL DROPDOWN (ACTUALIZADO) */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.dropdown-toggle::after {
+  content: '▼';
+  font-size: 0.7rem;
+  transition: transform 0.3s;
+}
+
+/* ✅ Rotar flecha cuando está abierto */
+.dropdown-menu.show ~ .dropdown-toggle::after,
+.dropdown-toggle:has(~ .dropdown-menu.show)::after {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  min-width: 240px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0;
+  list-style: none;
+  z-index: 1001;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+/* ✅ Mostrar dropdown cuando tiene clase .show */
+.dropdown-menu.show {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dropdown-menu li {
+  padding: 0;
+}
+
+.dropdown-menu a {
+  display: block;
+  padding: 0.75rem 1.25rem;
+  color: #333;
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.dropdown-menu a:hover {
+  background: #f8f9fa;
+  color: #667eea;
+  padding-left: 1.5rem;
+}
+
+.dropdown-menu a.active {
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  border-left: 3px solid #667eea;
 }
 
 @media (max-width: 768px) {

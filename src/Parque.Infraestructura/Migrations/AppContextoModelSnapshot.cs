@@ -168,6 +168,66 @@ namespace Parque.Infraestructura.Migrations
                     b.ToTable("ConfiguracionesEstrategia");
                 });
 
+            modelBuilder.Entity("Parque.Dominio.Gamificacion.HistorialCanje", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("FechaCanje")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PuntosCanjeados")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("RecompensaId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("VisitanteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FechaCanje");
+
+                    b.HasIndex("RecompensaId");
+
+                    b.HasIndex("VisitanteId");
+
+                    b.ToTable("HistorialCanjes");
+                });
+
+            modelBuilder.Entity("Parque.Dominio.Gamificacion.Recompensa", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("CantidadDisponible")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CostoEnPuntos")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("NivelMembresiaRequerido")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Recompensas");
+                });
+
             modelBuilder.Entity("Parque.Dominio.Incidencia", b =>
                 {
                     b.Property<int>("Id")

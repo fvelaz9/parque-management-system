@@ -189,6 +189,7 @@ public class ServicioPuntuacion : IServicioPuntuacion
             throw new InvalidOperationException($"Cuenta con ID {ticket.CuentaId} no encontrada");
         }
 
+        // Ahora cuenta.Visitante NO será NULL
         var visitanteId = cuenta.Visitante!.Id;
 
         var fechaRegistro = registro.FechaIngreso.Date;
