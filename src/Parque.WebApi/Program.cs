@@ -48,7 +48,7 @@ using(var scope = app.Services.CreateScope())
     }
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 app.UseCors("AllowFrontend");
 app.UseAuthorization();
 app.MapControllers();

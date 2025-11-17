@@ -1,4 +1,5 @@
 ﻿using Parque.Aplicacion.DTOs.Gamificacion;
+using Parque.Dominio.Usuarios;
 
 namespace Parque.Aplicacion.Servicios.Gamificacion;
 
@@ -9,4 +10,8 @@ public interface IServicioPuntuacion
     List<EstrategiaDto> ListarEstrategias();
     void CambiarEstrategiaActiva(string nombreEstrategia);
     string ObtenerEstrategiaActiva();
+    void AgregarPuntuacionAVisitante(Visitante visitante, int puntos, string origenPuntos, string estrategia);
+    List<HistorialPuntuacionDto> ObtenerHistorialVisitante(Guid visitanteId);
+    Visitante ObtenerVisitante(Guid visitanteId);
+    void RecargarPlugins();
 }
