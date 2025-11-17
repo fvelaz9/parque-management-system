@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 import { AtraccionesService } from '../../../core/services/atracciones.service';
 import { AtraccionParque, AforoAtraccionDto } from '../../../core/models/atraccion.model';
 import {CommonModule} from '@angular/common';
@@ -9,7 +9,7 @@ import {CommonModule} from '@angular/common';
   templateUrl: './acceso-home.html',
   styleUrls: ['./acceso-home.css'],
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
 })
 export class AccesoHome implements OnInit {
   atraccionId!: number;

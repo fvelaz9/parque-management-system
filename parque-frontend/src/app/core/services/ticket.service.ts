@@ -1,18 +1,18 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthService } from './auth.service';
-import {AforoResponse, RegistrarIngresoRequest} from '../models/acceso.model';
 import { environment } from '../../../environments/environment.development';
+import { AuthService } from './auth.service';
+import { Ticket } from '../models/ticket.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class AccesoService {
+export class TicketService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
 
-  private apiUrl = `${environment.apiUrl}/acceso`;
+  private apiUrl = `${environment.apiUrl}/tickets`;
 
   private getHeaders(): HttpHeaders {
     const token = this.authService.getToken();
@@ -23,16 +23,9 @@ export class AccesoService {
   }
 
 
-  obtenerAforo(atraccionId: number): Observable<AforoResponse> {
-    return this.http.get<AforoResponse>(`${this.apiUrl}/atraccion/${atraccionId}/aforo`, {
+  getTicketsPorUsuario(usuarioId: string): Observable<Ticket[]> {
+    return this.http.get<Ticket[]>(`${this.apiUrl}/por-usuario/${usuarioId}`, {
       headers: this.getHeaders(),
     });
-  }
-  registrarIngreso(atraccionId: number, request: RegistrarIngresoRequest): Observable<any> {
-    return this.http.post(
-      `${this.apiUrl}/atraccion/${atraccionId}/ingreso`,
-      request,
-      { headers: this.getHeaders() }
-    );
   }
 }

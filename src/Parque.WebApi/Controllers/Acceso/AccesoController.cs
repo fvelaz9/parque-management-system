@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Parque.Aplicacion.DTOs;
+using Parque.Aplicacion.Servicios;
 using Parque.Aplicacion.Servicios.Acceso;
 using Parque.WebApi.Controllers.Acceso.Models;
 using Parque.WebApi.Filtros;
@@ -8,7 +9,7 @@ namespace Parque.WebApi.Controllers.Acceso;
 
 [ApiController]
 [Route("api/acceso")]
-public class AccesoController(IServicioAcceso servicio) : ControllerBase
+public class AccesoController(IServicioAcceso servicio, IServicioCuenta servicioCuenta) : ControllerBase
 {
     [HttpPost("validar")]
     [AuthorizationFilter("Operador")]
@@ -28,14 +29,10 @@ public class AccesoController(IServicioAcceso servicio) : ControllerBase
     [AuthorizationFilter("Operador")]
     public IActionResult RegistrarIngreso(int atraccionId, [FromBody] RegistrarIngresoRequest request)
     {
-        var registro = servicio.RegistrarIngreso(request.CodigoTicket, atraccionId, request.CuentaVisitante);
+        var cuentaVisitante = servicioCuenta.ObtenerCuenta(request.CuentaVisitanteId);
+        var registro = servicio.RegistrarIngreso(request.CodigoTicket, atraccionId, cuentaVisitante);
 
-        return Ok(new
-        {
-            mensaje = "Ingreso registrado exitosamente",
-            registro,
-            fechaIngreso = registro.FechaIngreso
-        });
+        return Ok(new { mensaje = "Ingreso registrado exitosamente", registro });
     }
 
     [HttpPost("atraccion/{atraccionId}/egreso")]

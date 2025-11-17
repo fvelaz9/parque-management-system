@@ -70,4 +70,12 @@ public class TicketController(IServicioTicket service) : ControllerBase
 
         return Ok(ticket);
     }
+
+    [HttpGet("por-usuario/{usuarioId:guid}")]
+    [AuthorizationFilter("Operador")]
+    public IActionResult GetTicketsPorUsuario(Guid usuarioId)
+    {
+        var tickets = service.ListarTickets().Where(t => t.CuentaId == usuarioId);
+        return Ok(tickets);
+    }
 }

@@ -142,7 +142,7 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
         return Cuenta.Crear(nombre, apellido, emailObj, password, rolInicial);
     }
 
-    private Cuenta ObtenerCuenta(Guid cuentaId)
+    public Cuenta ObtenerCuenta(Guid cuentaId)
     {
         return cuentaRepo.EncontrarConRelaciones(c => c.Id == cuentaId, "Visitante")
             ?? throw new ExcepcionEntidadNoEncontrada("Cuenta no encontrada");

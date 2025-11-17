@@ -96,7 +96,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             };
         }
 
-        var evento = repoEvento.Encontrar(e => e.Id == ticket.EventoId.Value);
+        var evento = repoEvento.EncontrarConRelaciones(e => e.Id == ticket.EventoId.Value, "Atracciones");
 
         if(evento == null)
         {
