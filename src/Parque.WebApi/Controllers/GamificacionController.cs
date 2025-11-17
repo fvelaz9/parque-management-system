@@ -12,8 +12,6 @@ public class GamificacionController(IServicioPuntuacion servicioPuntuacion) : Co
 
     [HttpGet("ranking/diario")]
     [AuthorizationFilter("any")]
-    [ProducesResponseType(typeof(ResponseDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseDto), StatusCodes.Status400BadRequest)]
     public IActionResult ObtenerRankingDiario([FromQuery] DateTime? fecha, [FromQuery] int top = 10)
     {
         if(top <= 0)
@@ -43,8 +41,6 @@ public class GamificacionController(IServicioPuntuacion servicioPuntuacion) : Co
 
     [HttpGet("historial")]
     [AuthorizationFilter("any")]
-    [ProducesResponseType(typeof(ResponseDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(ResponseDto), StatusCodes.Status404NotFound)]
     public ActionResult<ResponseDto> ObtenerHistorialPuntuaciones([FromQuery] Guid visitanteId)
     {
         try

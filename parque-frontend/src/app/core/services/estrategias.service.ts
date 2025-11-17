@@ -28,7 +28,7 @@ export interface CambiarEstrategiaRequest {
 export class EstrategiasService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
-  private apiUrl = `${environment.apiUrl}/cuentas`;
+  private apiUrl = `${environment.apiUrl}/estrategias`;
 
   private getHeaders(): HttpHeaders {
     const token = this.authService.getToken();

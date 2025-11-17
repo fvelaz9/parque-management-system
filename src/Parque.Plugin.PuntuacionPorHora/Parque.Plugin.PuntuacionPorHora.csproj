@@ -7,9 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Parque.Dominio\Parque.Dominio.csproj">
-      <Private>false</Private>
-    </ProjectReference>
+    <ProjectReference Include="..\Parque.Dominio\Parque.Dominio.csproj" />
   </ItemGroup>
 
+  <Target Name="CopyToPluginsFolder" AfterTargets="Build">
+    <ItemGroup>
+      <PluginFiles Include="$(OutputPath)$(AssemblyName).dll" />
+    </ItemGroup>
+    <Copy 
+      SourceFiles="@(PluginFiles)" 
+      DestinationFolder="..\Parque.WebApi\bin\$(Configuration)\net8.0\Plugins\" 
+      SkipUnchangedFiles="true" />
+    <Message Importance="high" Text="Plugin copiado a: ..\Parque.WebApi\bin\$(Configuration)\net8.0\Plugins\$(AssemblyName).dll" />
+  </Target>
 </Project>
