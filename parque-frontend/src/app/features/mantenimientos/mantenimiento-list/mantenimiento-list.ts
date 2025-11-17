@@ -27,17 +27,14 @@ export class MantenimientoList {
     this.cargarMantenimientos();
   });
 
-  getNombreTipo(tipoId: TipoAtraccion): string {
-    const tipo = this.tiposDisponibles.find(t => t.id === tipoId);
-    return tipo ? tipo.nombre : 'Desconocido';
-  }
+  puedeEditar(mantenimiento: any): boolean {
+    const fechaActual = new Date();
+    const fechaHoraInicio = new Date(mantenimiento.fechaProgramada);
+    const [horas, minutos, segundos] = mantenimiento.horaInicio.split(':').map(Number);
+    fechaHoraInicio.setHours(horas, minutos, segundos);
 
-  tiposDisponibles = [
-    { id: TipoAtraccion.MontañaRusa, nombre: 'Montaña Rusa' },
-    { id: TipoAtraccion.Simulador, nombre: 'Simulador' },
-    { id: TipoAtraccion.Espectaculo, nombre: 'Espectaculo' },
-    { id: TipoAtraccion.ZonaInteractiva, nombre: 'Zona Interactiva' }
-  ];
+    return fechaHoraInicio > fechaActual;
+  }
   private cargarMantenimientos() {
     this.loading.set(true);
     this.mantenimientosService.getAllMantenimientos().subscribe({

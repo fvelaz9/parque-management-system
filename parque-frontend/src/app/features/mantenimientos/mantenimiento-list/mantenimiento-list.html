@@ -70,7 +70,7 @@
 
               <!-- Columna Información Principal -->
               <div [ngClass]="puedeGestionar ? 'col-md-3' : 'col-md-4'">
-                <h5 class="mb-1">Mantenimiento {{ getNombreTipo(mantenimiento.atraccionId) }}</h5>
+                <h5 class="mb-1">Mantenimiento {{mantenimiento.nombreAtraccion}}</h5>
                 <p class="text-muted mb-0">
                   <i class="bi bi-building"></i> Mantenimiento #{{ mantenimiento.id }}
                 </p>
@@ -97,21 +97,21 @@
               </div>
 
               <!--  Columna Acciones - Solo Admin y Operador -->
-              <div *ngIf="puedeGestionar">
-                <div class="col-md-2 text-end">
-                  <button
-                    class="btn btn-outline-primary me-2"
-                    (click)="editarMantenimiento(mantenimiento.id)"
-                    title="Editar mantenimiento">
-                    <i class="bi bi-pencil"></i> Editar
-                  </button>
-                  <button
-                    class="btn btn-success"
-                    (click)="eliminarMantenimiento(mantenimiento.id)"
-                    title="Eliminar mantenimiento">
-                    <i class="bi bi-trash"></i> Alta
-                  </button>
-                </div>
+              <div *ngIf="puedeGestionar" class="col-md-2 text-end">
+                <button
+                  class="btn btn-outline-primary btn-sm me-1"
+                  (click)="editarMantenimiento(mantenimiento.id)"
+                  [disabled]="!puedeEditar(mantenimiento)"
+                  [title]="puedeEditar(mantenimiento) ? 'Editar mantenimiento' : 'No se puede editar un mantenimiento que ya ha comenzado'">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button
+                  class="btn btn-outline-danger btn-sm"
+                  (click)="eliminarMantenimiento(mantenimiento.id)"
+                  [disabled]="!puedeEditar(mantenimiento)"
+                  [title]="puedeEditar(mantenimiento) ? 'Eliminar mantenimiento' : 'No se puede eliminar un mantenimiento que ya ha comenzado'">
+                  <i class="bi bi-trash"></i>
+                </button>
               </div>
             </div>
           </div>

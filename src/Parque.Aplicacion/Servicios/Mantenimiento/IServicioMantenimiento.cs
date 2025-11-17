@@ -8,5 +8,5 @@ public interface IServicioMantenimiento
     MantenimientoPreventivo CrearMantenimiento(CrearMantenimientoRequest request);
     MantenimientoPreventivo ActualizarMantenimiento(int id, CrearMantenimientoRequest request);
     void EliminarMantenimiento(int id);
-    IEnumerable<MantenimientoPreventivo> ListarMantenimientos();
+    IEnumerable<CrearMantenimientoRequest> ListarMantenimientos();
 }

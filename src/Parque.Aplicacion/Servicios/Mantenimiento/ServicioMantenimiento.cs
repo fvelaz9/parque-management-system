@@ -164,14 +164,25 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
         }
     }
 
-    public IEnumerable<MantenimientoPreventivo> ListarMantenimientos()
+    public IEnumerable<CrearMantenimientoRequest> ListarMantenimientos()
     {
         var mantenimientos = repoMantenimiento.ObtenerTodos();
-        if(mantenimientos == null)
+        var atracciones = repoAtracciones.ObtenerTodos();
+        if (mantenimientos == null)
         {
-            return Enumerable.Empty<MantenimientoPreventivo>();
+            return Enumerable.Empty<CrearMantenimientoRequest>();
         }
 
-        return mantenimientos;
+        return mantenimientos.Select(m => new CrearMantenimientoRequest
+        {
+            Id = m.Id,
+            AtraccionId = m.AtraccionId,
+            NombreAtraccion = atracciones.FirstOrDefault(a => a.Id == m.AtraccionId)?.Nombre ?? "Atracción no encontrada",
+            FechaProgramada = m.FechaProgramada,
+            HoraInicio = m.HoraInicio,
+            DuracionEstimada = m.DuracionEstimada,
+            Descripcion = m.Descripcion,
+            IncidenciaId = m.IncidenciaId
+        });
     }
 }

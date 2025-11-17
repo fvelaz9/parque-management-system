@@ -8,8 +8,8 @@ public class MantenimientoPreventivo
     public TimeSpan HoraInicio { get; set; }
     public TimeSpan DuracionEstimada { get; set; }
     public string? Descripcion { get; set; }
-    public int IncidenciaId { get; set; } // FK
-    public Incidencia IncidenciaAsociada { get; set; } = null!; // Navegación
+    public int IncidenciaId { get; set; }
+    public Incidencia IncidenciaAsociada { get; set; } = null!;
     public MantenimientoPreventivo()
     {
     }

@@ -2,6 +2,7 @@
 export interface MantenimientoPreventivo {
   id: number;
   atraccionId: number;
+  nombreAtraccion: string;
   fechaProgramada: string;
   horaInicio: string;
   duracionEstimada: string;
