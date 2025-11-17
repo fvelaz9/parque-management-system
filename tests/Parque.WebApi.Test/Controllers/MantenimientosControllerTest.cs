@@ -26,9 +26,9 @@ public class MantenimientosControllerTest
         // Arrange - Ahora usa CrearMantenimientoRequest con las propiedades opcionales
         var mantenimientos = new List<CrearMantenimientoRequest>
         {
-            new CrearMantenimientoRequest 
-            { 
-                Id = 1, 
+            new CrearMantenimientoRequest
+            {
+                Id = 1,
                 AtraccionId = 1,
                 NombreAtraccion = "Montaña Rusa",
                 FechaProgramada = DateTime.Now.AddDays(1),
@@ -37,9 +37,9 @@ public class MantenimientosControllerTest
                 Descripcion = "Mantenimiento 1",
                 IncidenciaId = 100
             },
-            new CrearMantenimientoRequest 
-            { 
-                Id = 2, 
+            new CrearMantenimientoRequest
+            {
+                Id = 2,
                 AtraccionId = 2,
                 NombreAtraccion = "Rueda de la Fortuna",
                 FechaProgramada = DateTime.Now.AddDays(2),
@@ -59,16 +59,18 @@ public class MantenimientosControllerTest
         var okResult = resultado as OkObjectResult;
         Assert.IsNotNull(okResult);
         Assert.AreEqual(200, okResult.StatusCode);
-    
+
+        // ✅ CAMBIAR: Ahora es IEnumerable<CrearMantenimientoRequest>
         var lista = okResult.Value as IEnumerable<CrearMantenimientoRequest>;
         Assert.IsNotNull(lista);
         Assert.AreEqual(2, lista.Count());
-    
+
+        // Verificar que contiene las propiedades esperadas
         var primerMantenimiento = lista.First();
         Assert.AreEqual(1, primerMantenimiento.Id);
         Assert.AreEqual("Montaña Rusa", primerMantenimiento.NombreAtraccion);
         Assert.AreEqual("Mantenimiento 1", primerMantenimiento.Descripcion);
-    
+
         _mockServicio.Verify(s => s.ListarMantenimientos(), Times.Once);
     }
 
