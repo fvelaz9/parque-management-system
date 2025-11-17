@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Parque.Aplicacion.DTOs.Gamificacion;
 using Parque.Aplicacion.Servicios.Gamificacion;
 using Parque.WebApi.Filtros;
 
@@ -9,60 +8,59 @@ namespace Parque.WebApi.Controllers;
 [Route("api/gamificacion")]
 public class GamificacionController(IServicioPuntuacion servicioPuntuacion) : ControllerBase
 {
+    private readonly IServicioPuntuacion _servicioPuntuacion = servicioPuntuacion;
+
     [HttpGet("ranking/diario")]
     [AuthorizationFilter("any")]
     public IActionResult ObtenerRankingDiario([FromQuery] DateTime? fecha, [FromQuery] int top = 10)
     {
         if(top <= 0)
         {
-            return BadRequest(new { mensaje = "El parámetro 'top' debe ser mayor a 0" });
+            return BadRequest(new ResponseDto
+            {
+                Content = null,
+                ExecutionSuccessful = false,
+                Message = "El parámetro 'top' debe ser mayor a 0"
+            });
         }
 
-        var ranking = servicioPuntuacion.ObtenerRankingDiario(fecha, top);
-        return Ok(new
+        var ranking = _servicioPuntuacion.ObtenerRankingDiario(fecha, top);
+
+        return Ok(new ResponseDto
         {
-            fecha = fecha?.Date ?? DateTime.Today,
-            totalVisitantes = ranking.Count,
-            ranking
+            Content = new
+            {
+                fecha = fecha?.Date ?? DateTime.Today,
+                totalVisitantes = ranking.Count,
+                ranking
+            },
+            ExecutionSuccessful = true,
+            Message = $"Ranking obtenido correctamente ({ranking.Count} visitantes)"
         });
-    }
-
-    [HttpGet("estrategias")]
-    [AuthorizationFilter("Administrador")]
-    public IActionResult ListarEstrategias()
-    {
-        var estrategias = servicioPuntuacion.ListarEstrategias();
-        return Ok(new { estrategias });
-    }
-
-    [HttpPut("estrategias/activa")]
-    [AuthorizationFilter("Administrador")]
-    public IActionResult CambiarEstrategiaActiva([FromBody] CambiarEstrategiaRequest request)
-    {
-        try
-        {
-            servicioPuntuacion.CambiarEstrategiaActiva(request.NombreEstrategia);
-            return Ok(new { mensaje = "Estrategia cambiada exitosamente", nuevaEstrategia = request.NombreEstrategia });
-        }
-        catch(ArgumentException ex)
-        {
-            return BadRequest(new { mensaje = ex.Message });
-        }
-    }
-
-    [HttpGet("estrategias/activa")]
-    [AuthorizationFilter("Administrador")]
-    public IActionResult ObtenerEstrategiaActiva()
-    {
-        var estrategiaActiva = servicioPuntuacion.ObtenerEstrategiaActiva();
-        return Ok(new { estrategiaActiva });
     }
 
     [HttpGet("historial")]
     [AuthorizationFilter("any")]
-    public ActionResult<List<HistorialPuntuacionDto>> ObtenerHistorialPuntuaciones([FromQuery] Guid visitanteId)
+    public ActionResult<ResponseDto> ObtenerHistorialPuntuaciones([FromQuery] Guid visitanteId)
     {
-        var historial = servicioPuntuacion.ObtenerHistorialVisitante(visitanteId);
-        return historial;
+        try
+        {
+            var historial = _servicioPuntuacion.ObtenerHistorialVisitante(visitanteId);
+            return Ok(new ResponseDto
+            {
+                Content = historial,
+                ExecutionSuccessful = true,
+                Message = $"Historial obtenido ({historial.Count} registros)"
+            });
+        }
+        catch(InvalidOperationException ex)
+        {
+            return NotFound(new ResponseDto
+            {
+                Content = null,
+                ExecutionSuccessful = false,
+                Message = ex.Message
+            });
+        }
     }
 }

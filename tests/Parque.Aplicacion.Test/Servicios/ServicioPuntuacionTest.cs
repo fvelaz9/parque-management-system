@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Parque.Aplicacion.DTOs.Gamificacion;
 using Parque.Aplicacion.Servicios;
@@ -25,6 +26,8 @@ public class ServicioPuntuacionTest
     private Mock<IEstrategiaPuntuacion>? _estrategiaMock;
     private ServicioPuntuacion? _servicio;
     private Mock<IRepositorio<Visitante>>? _repoVisitanteMock;
+    private Mock<ILogger<ServicioPuntuacion>>? _loggerMock;
+    private Mock<ILogger<PluginLoader>>? _pluginLoggerMock;
     private readonly DateTime _fechaActual = new(2025, 10, 8, 12, 0, 0);
 
     [TestInitialize]
@@ -37,9 +40,11 @@ public class ServicioPuntuacionTest
         _repoCuentasMock = new Mock<IRepositorio<Cuenta>>(MockBehavior.Strict);
         _repoEventosMock = new Mock<IRepositorio<Evento>>(MockBehavior.Strict);
         _repoConfiguracionMock = new Mock<IRepositorio<ConfiguracionEstrategia>>(MockBehavior.Strict);
-        _servicioFechaHoraMock = new Mock<IServicioFechaHora>(MockBehavior.Loose); // ⚠️ CAMBIO: Loose en lugar de Strict
+        _servicioFechaHoraMock = new Mock<IServicioFechaHora>(MockBehavior.Loose);
         _estrategiaMock = new Mock<IEstrategiaPuntuacion>(MockBehavior.Strict);
         _repoVisitanteMock = new Mock<IRepositorio<Visitante>>(MockBehavior.Strict);
+        _loggerMock = new Mock<ILogger<ServicioPuntuacion>>(MockBehavior.Loose);
+        _pluginLoggerMock = new Mock<ILogger<PluginLoader>>(MockBehavior.Loose);
 
         // Configurar fecha por defecto para TODOS los tests
         _servicioFechaHoraMock.Setup(s => s.ObtenerFechaActual())
@@ -57,7 +62,9 @@ public class ServicioPuntuacionTest
             _repoConfiguracionMock.Object,
             estrategias,
             _servicioFechaHoraMock.Object,
-            _repoVisitanteMock.Object);
+            _repoVisitanteMock.Object,
+            _loggerMock.Object,
+            _pluginLoggerMock.Object);
     }
 
     [TestCleanup]
@@ -415,6 +422,8 @@ public class ServicioPuntuacionTest
         _repoConfiguracionMock?.Setup(r => r.ObtenerTodos()).Returns([]);
 
         var servicioFechaHoraMockNuevo = new Mock<IServicioFechaHora>(MockBehavior.Loose);
+        var loggerMockNuevo = new Mock<ILogger<ServicioPuntuacion>>(MockBehavior.Loose);
+        var pluginLoggerMockNuevo = new Mock<ILogger<PluginLoader>>(MockBehavior.Loose);
 
         var repoVisitanteMock = new Mock<IRepositorio<Visitante>>(MockBehavior.Strict);
         var servicioSinEstrategias = new ServicioPuntuacion(
@@ -427,7 +436,9 @@ public class ServicioPuntuacionTest
             _repoConfiguracionMock!.Object,
             Array.Empty<IEstrategiaPuntuacion>(),
             servicioFechaHoraMockNuevo.Object,
-            repoVisitanteMock.Object);
+            repoVisitanteMock.Object,
+            loggerMockNuevo.Object,
+            pluginLoggerMockNuevo.Object);
 
         servicioSinEstrategias.ObtenerEstrategiaActiva();
     }
