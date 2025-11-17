@@ -6,6 +6,7 @@ public class Visitante
     public Guid Id { get; private set; }
     public DateTime FechaNacimiento { get; private set; }
     public NivelMembresia NivelMembresia { get; private set; }
+    public List<HistorialPuntuacion> HistorialPuntuaciones { get; private set; } = [];
     private Visitante()
     {
     }
@@ -45,5 +46,10 @@ public class Visitante
     public void AsignarMembresia(NivelMembresia nivel)
     {
         NivelMembresia = nivel;
+    }
+
+    public void AgregarPuntuacionAHistorial(HistorialPuntuacion historial)
+    {
+        HistorialPuntuaciones.Add(historial);
     }
 }

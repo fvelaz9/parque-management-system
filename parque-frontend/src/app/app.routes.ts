@@ -1,11 +1,13 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './features/home/home';
 import { NotFoundComponent } from './features/not-found/not-found';
-import { authGuard } from './auth-guard';
 import {MantenimientoList} from './features/mantenimientos/mantenimiento-list/mantenimiento-list';
 import {MantenimientoForm} from './features/mantenimientos/mantenimiento-form/mantenimiento-form';
 import {RecompensaEditar} from './features/recompensas/recompensa-editar/recompensa-editar';
 import {HistorialCanje} from './features/recompensas/recompensa-historial/recompensa-historial';
+import { authGuard } from './core/guards/auth.guard';
+import { visitanteGuard } from './core/guards/visitante.guard'; 
+import { adminGuard } from './core/guards/admin.guard';
 
 export const routes: Routes = [
   {
@@ -57,7 +59,6 @@ export const routes: Routes = [
     loadComponent: () => import('./features/recompensas/recompensas-list/recompensas-list')
       .then(m => m.RecompensasList)
   },
-
   {
     path: 'recompensas/nueva',
     loadComponent: () => import('./features/recompensas/recompensa-form/recompensa-form')
@@ -68,7 +69,6 @@ export const routes: Routes = [
     loadComponent: () => import('./features/recompensas/recompensa-editar/recompensa-editar')
       .then(m => m.RecompensaEditar)
   },
-
   {
     path: 'recompensas/historial',
     loadComponent: () => import('./features/recompensas/recompensa-historial/recompensa-historial')
@@ -84,10 +84,46 @@ export const routes: Routes = [
     loadComponent: () => import('./features/incidencias/incidencias-list/incidencias-list')
       .then(m => m.IncidenciasListComponent)
   },
+  {
+    path: 'eventos',
+    loadComponent: () => import('./features/Evento/evento-list/evento-list.component')
+      .then(m => m.EventoListComponent)
+  },
+  {
+    path: 'eventos/nuevo',
+    loadComponent: () => import('./features/Evento/evento-form/evento-form')
+      .then(m => m.EventoForm)
+  },
+  {
+   path: 'cuentas',
+    loadComponent: () => import('./features/cuentas/lista-cuentas/lista-cuentas')
+      .then(m => m.ListaCuentasComponent),
+    canActivate: [adminGuard]
+  },
+  {
+    path: 'cuentas/crear',
+    loadComponent: () => import('./features/cuentas/crear-cuenta/crear-cuenta')
+      .then(m => m.CrearCuentaComponent),
+    canActivate: [adminGuard]
+  },
+  {
+    path: 'modificar-perfil',
+    loadComponent: () => import('./features/cuentas/modificar-perfil/modificar-perfil')
+      .then(m => m.ModificarPerfilComponent),
+    canActivate: [visitanteGuard]
+  },
+  {
+    path: 'configuracion/estrategias',
+    loadComponent: () => import('./features/configuracion/selector-estrategias/selector-estrategias')
+      .then(m => m.SelectorEstrategiasComponent),
+    canActivate: [authGuard]
+  },
   // Not Found route - debe ser la última
   {
     path: "**",
     component: NotFoundComponent
-  }
+  },
+
+
 
 ];

@@ -32,10 +32,8 @@ public class ServicioSesion(IRepositorio<Sesion> sesionRepo, IRepositorio<Cuenta
         var sesion = sesionRepo.Encontrar(s => s.Token == token)
                      ?? throw new ExcepcionDominio("Token inválido");
 
-        // ✅ USAR EncontrarConRelaciones en lugar de Encontrar
-        var cuenta = cuentaRepo.EncontrarConRelaciones(
-                         c => c.Id == sesion.UsuarioId, nameof(Cuenta.Visitante))
-                     ?? throw new ExcepcionDominio("Usuario no encontrado");
+        var cuenta = cuentaRepo.EncontrarConRelaciones(c => c.Id == sesion.UsuarioId, "Visitante")
+            ?? throw new ExcepcionDominio("Usuario no encontrado");
 
         return cuenta;
     }

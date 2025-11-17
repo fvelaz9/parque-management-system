@@ -10,4 +10,5 @@ public interface IServicioCuenta
     void CambiarNivelMembresia(Guid cuentaId, NivelMembresia nuevoNivel);
     CuentaDto ObtenerPorId(Guid id);
     CuentaDto ObtenerPorEmail(string email);
+    IEnumerable<CuentaDto> ObtenerTodas();
 }
