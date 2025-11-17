@@ -2,18 +2,22 @@
   <h2>Control de Acceso a Atracción</h2>
 
   <div *ngIf="atraccion">
-    <h3>{{ atraccion?.nombre }}</h3>
+    <h3>{{ atraccion.nombre }}</h3>
 
-    <div class="aforo-info" *ngIf="aforo">
-      <p><strong>Aforo actual:</strong> {{ aforo?.aforoActual }}</p>
-      <p><strong>Capacidad máxima:</strong> {{ aforo?.capacidadMaxima }}</p>
-      <p><strong>Disponible:</strong> {{ aforo?.disponible }}</p>
-      <p *ngIf="aforo?.disponible <= 0" class="alerta">¡Aforo completo! No se permite más ingreso.</p>
+    <div *ngIf="aforo">
+      <p><strong>Aforo actual:</strong> {{ aforo.aforoActual }}</p>
+      <p><strong>Capacidad máxima:</strong> {{ aforo.capacidadMaxima }}</p>
+      <p><strong>Disponible:</strong> {{ aforo.disponible }}</p>
+      <p *ngIf="aforo.disponible <= 0" class="alerta">
+        ¡Aforo completo! No se permite más ingreso.
+      </p>
     </div>
 
+
+
     <div class="botones-control">
-      <button type="button" disabled>Registrar Ingreso</button>
-      <button type="button" disabled>Registrar Egreso</button>
+      <button type="button" [disabled]="aforo ? aforo.disponible === 0 : true">Registrar Ingreso</button>
+      <button type="button" [disabled]="aforo ? aforo.aforoActual === 0 : true">Registrar Egreso</button>
     </div>
   </div>
 

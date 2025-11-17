@@ -2,11 +2,14 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AtraccionesService } from '../../../core/services/atracciones.service';
 import { AtraccionParque, AforoAtraccionDto } from '../../../core/models/atraccion.model';
+import {CommonModule} from '@angular/common';
 
 @Component({
   selector: 'app-acceso-home',
   templateUrl: './acceso-home.html',
-  styleUrls: ['./acceso-home.css']
+  styleUrls: ['./acceso-home.css'],
+  standalone: true,
+  imports: [CommonModule],
 })
 export class AccesoHome implements OnInit {
   atraccionId!: number;
