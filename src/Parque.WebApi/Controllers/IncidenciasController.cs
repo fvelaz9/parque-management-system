@@ -10,7 +10,7 @@ namespace Parque.WebApi.Controllers;
 public class IncidenciasController(IServicioIncidencia servicio) : ControllerBase
 {
     [HttpPost]
-    [AuthorizationFilter("Operador")]
+    [AuthorizationFilter("Administrador", "Operador")]
     public IActionResult CrearIncidencia([FromBody] CrearIncidenciaRequest request)
     {
         var incidencia = servicio.CrearIncidencia(request);
@@ -20,7 +20,7 @@ public class IncidenciasController(IServicioIncidencia servicio) : ControllerBas
     }
 
     [HttpDelete("{incidenciaId}")]
-    [AuthorizationFilter("Operador")]
+    [AuthorizationFilter("Administrador", "Operador")]
     public IActionResult ResolverIncidencia(int incidenciaId)
     {
         servicio.ResolverIncidencia(incidenciaId);
@@ -28,7 +28,7 @@ public class IncidenciasController(IServicioIncidencia servicio) : ControllerBas
     }
 
     [HttpGet("atraccion/{atraccionId}/disponible")]
-    [AuthorizationFilter("Operador")]
+    [AuthorizationFilter("Administrador", "Operador")]
     public IActionResult VerificarDisponibilidad(int atraccionId)
     {
         var disponible = servicio.EstaDisponible(atraccionId);

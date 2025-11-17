@@ -23,7 +23,12 @@ export class IncidenciasListComponent {
   public error = signal('');
 
   private readonly loadIncidenciasEffect = effect(() => {
-    this.cargarIncidencias();
+    // Solo cargar si tiene permisos
+    if (this.puedeGestionar) {
+      this.cargarIncidencias();
+    } else {
+      this.loading.set(false);
+    }
   });
 
   private cargarIncidencias() {
@@ -52,5 +57,20 @@ export class IncidenciasListComponent {
 
   get puedeGestionar(): boolean {
     return this.isAdmin || this.isOperador;
+  }
+
+  eliminarIncidencia(id: number) {
+    if (confirm('¿Estás seguro de que deseas resolver esta incidencia?')) {
+      this.incidenciasService.resolverIncidencia(id).subscribe({
+        next: () => {
+          console.log('Incidencia eliminada exitosamente');
+          this.cargarIncidencias();
+        },
+        error: (err) => {
+          console.error('Error al eliminar incidencia:', err);
+          alert('Error al eliminar la incidencia');
+        }
+      });
+    }
   }
 }

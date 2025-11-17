@@ -18,7 +18,6 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
         var fechaHoraFin = fechaHoraInicio.Add(request.DuracionEstimada);
         VerificarMantenimiento(request);
 
-        // ✅ AGREGAR: Validar que no haya solapamiento
         ValidarSolapamientoHorarios(request.AtraccionId, fechaHoraInicio, fechaHoraFin);
 
         var incidencia = CrearIncidenciaTemporal(request, fechaHoraInicio, fechaHoraFin);
@@ -147,7 +146,7 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
             throw new ArgumentException("Mantenimiento no encontrado");
         }
 
-        repoIncidencias.Eliminar(i => i.Id == mantenimiento.IncidenciaId);
+        // repoIncidencias.Eliminar(i => i.Id == mantenimiento.IncidenciaId);
         repoMantenimiento.Eliminar(m => m.Id == id);
         var atraccion = repoAtracciones.Encontrar(a => a.Id == mantenimiento.AtraccionId);
         if(atraccion != null)
