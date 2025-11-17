@@ -53,19 +53,4 @@ export class IncidenciasListComponent {
   get puedeGestionar(): boolean {
     return this.isAdmin || this.isOperador;
   }
-
-  resolverIncidencia(id: number) {
-    if (confirm('¿Estás seguro de que deseas resolver esta incidencia?')) {
-      this.incidenciasService.resolverIncidencia(id).subscribe({
-        next: () => {
-          console.log('Incidencia resuelta');
-          this.cargarIncidencias();
-        },
-        error: (err) => {
-          console.error('Error al resolver incidencia:', err);
-          alert('Error al resolver la incidencia');
-        }
-      });
-    }
-  }
 }

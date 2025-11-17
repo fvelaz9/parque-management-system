@@ -63,9 +63,9 @@
 
               <!-- Columna Información Principal -->
               <div [ngClass]="puedeGestionar ? 'col-md-3' : 'col-md-4'">
-                <h5 class="mb-1">Incidencia #{{ incidencia.id }}</h5>
+                <h5 class="mb-1">Incidencia {{ incidencia.nombreAtraccion }}</h5>
                 <p class="text-muted mb-0">
-                  <i class="bi bi-building"></i> {{ incidencia.nombreAtraccion }}
+                  <i class="bi bi-building"></i> #{{ incidencia.id }}
                 </p>
               </div>
 
@@ -87,16 +87,6 @@
                   <i class="bi bi-calendar-check"></i>
                   <strong>Resolución:</strong> {{ incidencia.fechaResolucionEstimada | date: 'dd/MM/yyyy HH:mm' }}
                 </p>
-              </div>
-
-              <!-- Columna Acciones - Solo Admin y Operador -->
-              <div *ngIf="puedeGestionar && incidencia.estaActiva" class="col-md-2 text-end">
-                <button
-                  class="btn btn-success btn-sm"
-                  (click)="resolverIncidencia(incidencia.id)"
-                  title="Resolver incidencia">
-                  <i class="bi bi-check-circle"></i> Resolver
-                </button>
               </div>
             </div>
           </div>

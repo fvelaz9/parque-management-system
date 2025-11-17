@@ -73,7 +73,6 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
         }
     }
 
-    // ✅ NUEVO MÉTODO: Validar solapamiento de horarios
     private void ValidarSolapamientoHorarios(int atraccionId, DateTime inicioNuevo, DateTime finNuevo)
     {
         var mantenimientosExistentes = repoMantenimiento
@@ -108,7 +107,6 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
         var fechaHoraInicio = request.FechaProgramada.Add(request.HoraInicio);
         var fechaHoraFin = fechaHoraInicio.Add(request.DuracionEstimada);
 
-        // ✅ AGREGAR: Validar solapamiento excluyendo el mantenimiento actual
         ValidarSolapamientoHorariosParaActualizacion(id, request.AtraccionId, fechaHoraInicio, fechaHoraFin);
         mantenimiento.AtraccionId = request.AtraccionId;
         mantenimiento.FechaProgramada = request.FechaProgramada;
@@ -120,7 +118,6 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
         return mantenimiento;
     }
 
-    // ✅ NUEVO MÉTODO: Validar solapamiento excluyendo el mantenimiento actual (para actualización)
     private void ValidarSolapamientoHorariosParaActualizacion(int mantenimientoIdActual, int atraccionId, DateTime inicioNuevo, DateTime finNuevo)
     {
         var mantenimientosExistentes = repoMantenimiento
