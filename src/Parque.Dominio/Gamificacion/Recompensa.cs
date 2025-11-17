@@ -1,4 +1,4 @@
-using Parque.Dominio.Excepciones;
+﻿using Parque.Dominio.Excepciones;
 using Parque.Dominio.Usuarios;
 
 namespace Parque.Dominio.Gamificacion;
@@ -19,7 +19,7 @@ public class Recompensa
 
     public void ReducirStock()
     {
-        if (CantidadDisponible <= 0)
+        if(CantidadDisponible <= 0)
         {
             throw new ExcepcionDominio("No hay stock disponible para reducir.");
         }

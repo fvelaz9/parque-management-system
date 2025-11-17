@@ -1,17 +1,13 @@
-using System.Linq.Expressions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Linq.Expressions;
 using Moq;
-using Parque.Aplicacion.DTOs;
 using Parque.Aplicacion.DTOs.RecompensasDtos;
 using Parque.Aplicacion.Servicios;
-using Parque.Aplicacion.Servicios.Gamificacion;
 using Parque.Aplicacion.Servicios.Recompensas;
-using Parque.Dominio.Excepciones;
 using Parque.Dominio.Gamificacion;
 using Parque.Dominio.Usuarios;
 using Parque.Infraestructura.Repositorios;
 
-namespace Parque.Aplicacion.Tests.Servicios;
+namespace Parque.Aplicacion.Test.Servicios;
 
 [TestClass]
 public class ServicioRecompensaTest
@@ -33,7 +29,7 @@ public class ServicioRecompensaTest
         _mockServicioFechaHora = new Mock<IServicioFechaHora>();
         _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual())
             .Returns(new DateTime(2025, 11, 11, 22, 0, 0));
-        _servicio = new ServicioRecompensa(_mockRepoRecompensa.Object,_mockRepoHistorial.Object, _mockRepoPuntuacion.Object,_mockRepoVisitante.Object, _mockServicioFechaHora.Object );
+        _servicio = new ServicioRecompensa(_mockRepoRecompensa.Object, _mockRepoHistorial.Object, _mockRepoPuntuacion.Object, _mockRepoVisitante.Object, _mockServicioFechaHora.Object);
     }
 
     [TestMethod]
@@ -277,7 +273,7 @@ public class ServicioRecompensaTest
     public void ObtenerRecompensas_SinRecompensas_DebeRetornarListaVacia()
     {
         // Arrange
-        _mockRepoRecompensa.Setup(r => r.ObtenerTodos()).Returns(new List<Recompensa>());
+        _mockRepoRecompensa.Setup(r => r.ObtenerTodos()).Returns([]);
 
         // Act
         var resultado = _servicio.ObtenerRecompensas();
@@ -359,7 +355,7 @@ public class ServicioRecompensaTest
         _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>()))
             .Returns(recompensa);
         _mockRepoPuntuacion.Setup(r => r.ObtenerTodos())
-            .Returns(new List<PuntuacionVisitante> { puntuacion });
+            .Returns([puntuacion]);
 
         var request = new CanjearRecompensaRequest
         {
@@ -410,7 +406,7 @@ public class ServicioRecompensaTest
         _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>()))
             .Returns(recompensa);
         _mockRepoPuntuacion.Setup(r => r.ObtenerTodos())
-            .Returns(new List<PuntuacionVisitante> { puntuacion });
+            .Returns([puntuacion]);
 
         var request = new CanjearRecompensaRequest { VisitanteId = visitanteId, RecompensaId = recompensaId };
 
@@ -449,7 +445,7 @@ public class ServicioRecompensaTest
         _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>()))
             .Returns(recompensa);
         _mockRepoPuntuacion.Setup(r => r.ObtenerTodos())
-            .Returns(new List<PuntuacionVisitante> { puntuacion });
+            .Returns([puntuacion]);
 
         var request = new CanjearRecompensaRequest { VisitanteId = visitanteId, RecompensaId = recompensaId };
 
@@ -531,7 +527,7 @@ public class ServicioRecompensaTest
         // Assert
         Assert.IsNotNull(resultado);
         Assert.AreEqual(1, resultado.Count);
-        Assert.AreEqual(visitanteId, resultado_obj.VisitanteId);
+        Assert.AreEqual(visitanteId, resultado_obj!.VisitanteId);
         Assert.AreEqual(recompensaId, resultado_obj.RecompensaId);
         Assert.AreEqual("Premio Test", resultado_obj.NombreRecompensa);
         Assert.AreEqual(100, resultado_obj.PuntosCanjeados);
@@ -541,7 +537,7 @@ public class ServicioRecompensaTest
     public void ObtenerHistorialCanjes_SinCanjes_DebeRetornarListaVacia()
     {
         var visitanteId = Guid.NewGuid();
-        _mockRepoHistorial.Setup(r => r.ObtenerTodos()).Returns(new List<HistorialCanje>());
+        _mockRepoHistorial.Setup(r => r.ObtenerTodos()).Returns([]);
 
         var resultado = _servicio.ObtenerHistorialCanjes(visitanteId);
 

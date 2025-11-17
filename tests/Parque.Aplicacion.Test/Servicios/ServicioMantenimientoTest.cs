@@ -181,7 +181,7 @@ public class ServicioMantenimientoTest
         };
 
         _mockRepoMantenimientos.Setup(r => r.ObtenerTodos())
-            .Returns(new List<MantenimientoPreventivo> { mantenimientoExistente });
+            .Returns([mantenimientoExistente]);
 
         // Nuevo mantenimiento de 15:00 a 17:00 (se solapa)
         var request = new CrearMantenimientoRequest
@@ -220,7 +220,7 @@ public class ServicioMantenimientoTest
         };
 
         _mockRepoMantenimientos.Setup(r => r.ObtenerTodos())
-            .Returns(new List<MantenimientoPreventivo> { mantenimientoExistente });
+            .Returns([mantenimientoExistente]);
 
         _mockRepoIncidencias.Setup(r => r.Agregar(It.IsAny<Incidencia>()))
             .Callback<Incidencia>(i => i.Id = 2);
@@ -269,7 +269,7 @@ public class ServicioMantenimientoTest
         };
 
         _mockRepoMantenimientos.Setup(r => r.ObtenerTodos())
-            .Returns(new List<MantenimientoPreventivo> { mantenimientoExistente });
+            .Returns([mantenimientoExistente]);
 
         // Nuevo mantenimiento de 13:00 a 17:00 (contiene completamente al existente)
         var request = new CrearMantenimientoRequest
@@ -314,7 +314,7 @@ public class ServicioMantenimientoTest
         };
 
         _mockRepoMantenimientos.Setup(r => r.ObtenerTodos())
-            .Returns(new List<MantenimientoPreventivo> { mantenimientoExistente });
+            .Returns([mantenimientoExistente]);
 
         _mockRepoIncidencias.Setup(r => r.Agregar(It.IsAny<Incidencia>()))
             .Callback<Incidencia>(i => i.Id = 2);
@@ -391,7 +391,7 @@ public class ServicioMantenimientoTest
             .Returns(mantenimientoExistente);
 
         _mockRepoMantenimientos.Setup(r => r.ObtenerTodos())
-            .Returns(new List<MantenimientoPreventivo> { mantenimientoExistente });
+            .Returns([mantenimientoExistente]);
 
         var request = new CrearMantenimientoRequest
         {
@@ -446,7 +446,7 @@ public class ServicioMantenimientoTest
             .Returns(mantenimientoActual);
 
         _mockRepoMantenimientos.Setup(r => r.ObtenerTodos())
-            .Returns(new List<MantenimientoPreventivo> { mantenimientoActual, otroMantenimiento });
+            .Returns([mantenimientoActual, otroMantenimiento]);
 
         // Intentar actualizar para que se solape con el otro
         var request = new CrearMantenimientoRequest
@@ -479,7 +479,7 @@ public class ServicioMantenimientoTest
             .Returns(atraccion);
 
         _mockRepoMantenimientos.Setup(r => r.ObtenerTodos())
-            .Returns(new List<MantenimientoPreventivo>());
+            .Returns([]);
 
         _mockRepoIncidencias.Setup(r => r.Agregar(It.IsAny<Incidencia>()))
             .Callback<Incidencia>(i => i.Id = 1);

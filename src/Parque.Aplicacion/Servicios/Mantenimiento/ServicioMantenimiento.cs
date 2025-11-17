@@ -32,7 +32,7 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
             Descripcion = request.Descripcion,
             IncidenciaId = incidencia.Id
         };
-        atraccion.Estado = EstadoAtraccion.FueraDeServicio;
+        atraccion!.Estado = EstadoAtraccion.FueraDeServicio;
         repoMantenimiento.Agregar(mantenimiento);
 
         return mantenimiento;
@@ -178,7 +178,7 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
             FechaProgramada = m.FechaProgramada,
             HoraInicio = m.HoraInicio,
             DuracionEstimada = m.DuracionEstimada,
-            Descripcion = m.Descripcion,
+            Descripcion = m.Descripcion ?? string.Empty,
             IncidenciaId = m.IncidenciaId
         });
     }

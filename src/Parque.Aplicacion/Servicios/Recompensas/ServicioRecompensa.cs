@@ -165,7 +165,7 @@ public class ServicioRecompensa(
                 RecompensaId = canje.RecompensaId,
                 PuntosCanjeados = canje.PuntosCanjeados,
                 FechaCanje = canje.FechaCanje,
-                NombreRecompensa = recompensa?.Nombre,
+                NombreRecompensa = recompensa!.Nombre,
             });
         }
 
