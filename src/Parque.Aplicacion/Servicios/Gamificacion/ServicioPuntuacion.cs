@@ -64,7 +64,7 @@ public class ServicioPuntuacion : IServicioPuntuacion
             _estrategiasPlugins = _pluginLoader.CargarEstrategiasDesdePlugins();
             _logger.LogInformation("Cargadas {Count} estrategias desde plugins", _estrategiasPlugins.Count);
         }
-        catch (Exception ex)
+        catch(Exception ex)
         {
             _logger.LogWarning(ex, "Error al cargar plugins de estrategias");
             _estrategiasPlugins = [];
@@ -73,7 +73,7 @@ public class ServicioPuntuacion : IServicioPuntuacion
 
     public void RecargarPlugins()
     {
-        lock (_lockPlugins)
+        lock(_lockPlugins)
         {
             _logger.LogInformation("Recargando plugins de estrategias");
             CargarPlugins();
