@@ -8,6 +8,7 @@ import {HistorialCanje} from './features/recompensas/recompensa-historial/recomp
 import { authGuard } from './core/guards/auth.guard';
 import { visitanteGuard } from './core/guards/visitante.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import {ReporteUsoComponent} from './features/reportes/reportes';
 
 export const routes: Routes = [
   {
@@ -119,10 +120,14 @@ export const routes: Routes = [
     canActivate: [authGuard]
   },
   {
+    path: 'ranking',
+    loadComponent: () => import('./features/ranking/ranking')
+      .then(m => m.RankingComponent)
+  },
+  {
     path: 'reportes',
     loadComponent: () => import('./features/reportes/reportes')
-      .then(m => m.ReportesComponent),
-    canActivate: [adminGuard]
+      .then(m => m.ReporteUsoComponent)
   },
   // Not Found route - debe ser la última
   {
