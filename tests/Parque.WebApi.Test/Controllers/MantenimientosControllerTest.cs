@@ -23,11 +23,31 @@ public class MantenimientosControllerTest
     [TestMethod]
     public void GetAll_RetornaOkConListaDeMantenimientos()
     {
-        // Arrange
-        var mantenimientos = new List<MantenimientoPreventivo>
+        // Arrange - Ahora usa CrearMantenimientoRequest con las propiedades opcionales
+        var mantenimientos = new List<CrearMantenimientoRequest>
         {
-            new MantenimientoPreventivo { Id = 1, Descripcion = "Mantenimiento 1" },
-            new MantenimientoPreventivo { Id = 2, Descripcion = "Mantenimiento 2" }
+            new CrearMantenimientoRequest 
+            { 
+                Id = 1, 
+                AtraccionId = 1,
+                NombreAtraccion = "Montaña Rusa",
+                FechaProgramada = DateTime.Now.AddDays(1),
+                HoraInicio = TimeSpan.FromHours(10),
+                DuracionEstimada = TimeSpan.FromHours(2),
+                Descripcion = "Mantenimiento 1",
+                IncidenciaId = 100
+            },
+            new CrearMantenimientoRequest 
+            { 
+                Id = 2, 
+                AtraccionId = 2,
+                NombreAtraccion = "Rueda de la Fortuna",
+                FechaProgramada = DateTime.Now.AddDays(2),
+                HoraInicio = TimeSpan.FromHours(14),
+                DuracionEstimada = TimeSpan.FromHours(3),
+                Descripcion = "Mantenimiento 2",
+                IncidenciaId = 101
+            }
         };
         _mockServicio.Setup(s => s.ListarMantenimientos()).Returns(mantenimientos);
 
@@ -39,9 +59,16 @@ public class MantenimientosControllerTest
         var okResult = resultado as OkObjectResult;
         Assert.IsNotNull(okResult);
         Assert.AreEqual(200, okResult.StatusCode);
-        var lista = okResult.Value as IEnumerable<MantenimientoPreventivo>;
+    
+        var lista = okResult.Value as IEnumerable<CrearMantenimientoRequest>;
         Assert.IsNotNull(lista);
         Assert.AreEqual(2, lista.Count());
+    
+        var primerMantenimiento = lista.First();
+        Assert.AreEqual(1, primerMantenimiento.Id);
+        Assert.AreEqual("Montaña Rusa", primerMantenimiento.NombreAtraccion);
+        Assert.AreEqual("Mantenimiento 1", primerMantenimiento.Descripcion);
+    
         _mockServicio.Verify(s => s.ListarMantenimientos(), Times.Once);
     }
 
