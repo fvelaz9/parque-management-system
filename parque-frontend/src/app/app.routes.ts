@@ -79,6 +79,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/mantenimientos/mantenimiento-edit/mantenimiento-edit')
       .then(m => m.MantenimientoEdit)
   },
+  {
+    path: 'incidencias',
+    loadComponent: () => import('./features/incidencias/incidencias-list/incidencias-list')
+      .then(m => m.IncidenciasListComponent)
+  },
   // Not Found route - debe ser la última
   {
     path: "**",

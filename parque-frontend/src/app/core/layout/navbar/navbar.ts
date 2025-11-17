@@ -13,6 +13,7 @@ import { AuthService } from '../../services/auth.service';
 export class NavbarComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
+  isDropdownOpen = false;
 
   get isLoggedIn(): boolean {
     return this.authService.isLoggedIn();
@@ -20,6 +21,15 @@ export class NavbarComponent {
 
   get usuario() {
     return this.authService.getUsuario();
+  }
+  toggleDropdown(event: Event): void {
+    event.stopPropagation();
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  // ✅ AGREGAR: Cerrar dropdown cuando se hace click afuera
+  onClickOutside(event: Event): void {
+    this.isDropdownOpen = false;
   }
 
   logout(): void {

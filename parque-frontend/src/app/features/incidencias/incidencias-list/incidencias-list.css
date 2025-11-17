@@ -1,0 +1,19 @@
+/* src/app/features/incidencias/incidencias-list/incidencias-list.component.css */
+
+.hover-card {
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
+}
+
+.hover-card:hover {
+  transform: translateX(5px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.border-danger {
+  border-left-color: #dc3545 !important;
+}
+
+.border-success {
+  border-left-color: #28a745 !important;
+}
