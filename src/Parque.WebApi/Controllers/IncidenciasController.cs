@@ -34,4 +34,12 @@ public class IncidenciasController(IServicioIncidencia servicio) : ControllerBas
         var disponible = servicio.EstaDisponible(atraccionId);
         return Ok(new { atraccionId, disponible });
     }
+    
+    [HttpGet]
+    [AuthorizationFilter("Administrador", "Operador")]
+    public IActionResult ListarIncidencias()
+    {
+        var incidencias = servicio.ListarIncidencias();
+        return Ok(incidencias);
+    }
 }
