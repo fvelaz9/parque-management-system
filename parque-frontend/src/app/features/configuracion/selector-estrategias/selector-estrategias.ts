@@ -1,7 +1,8 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { EstrategiasService, EstrategiaInfo } from '../../../core/services/estrategias.service';
+import { EstrategiasService } from '../../../core/services/estrategias.service';
+import { EstrategiaInfo } from '../../../core/models/estrategia.model';
 
 @Component({
   selector: 'app-selector-estrategias',

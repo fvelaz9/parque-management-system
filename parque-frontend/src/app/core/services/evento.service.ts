@@ -1,10 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, pipe } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { CreateEventoRequest, Evento, EventoOutDto, EstadoEvento } from '../models/evento.model';
 import { environment } from '../../../environments/environment.development';
-import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,25 +10,16 @@ import { AuthService } from './auth.service';
 export class EventoService {
   private readonly apiUrl = `${environment.apiUrl}/eventos`;
   private readonly http = inject(HttpClient);
-  private readonly authService = inject(AuthService);
-
-  private getAuthHeaders(): HttpHeaders | undefined {
-    const token = this.authService.getToken();
-    return token ? new HttpHeaders({ 'Authorization': token }) : undefined;
-  }
 
   listarEventos(): Observable<Evento[]> {
-    const headers = this.getAuthHeaders();
-    return this.http.get<Evento[]>(this.apiUrl, { headers });
+    return this.http.get<Evento[]>(this.apiUrl);
   }
 
   crearEvento(evento: CreateEventoRequest): Observable<EventoOutDto> {
-    const headers = this.getAuthHeaders();
-    return this.http.post<EventoOutDto>(this.apiUrl, evento, { headers });
+    return this.http.post<EventoOutDto>(this.apiUrl, evento);
   }
 
   deleteEvento(id: number): Observable<void> {
-    const headers = this.getAuthHeaders();
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers });
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }
