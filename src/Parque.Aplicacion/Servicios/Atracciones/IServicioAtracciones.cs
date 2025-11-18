@@ -10,7 +10,7 @@ public interface IServicioAtracciones
     AtraccionParque? BuscarAtraccion(int id);
     AtraccionParque ModificarAtraccion(int id, string nombre, TipoAtraccion tipo, int edadMinima, int capacidad, string descripcion);
     void EliminarAtraccion(int id);
-    List<ReporteAtraccionDto> ObtenerReporteUso(DateTime fechaInicio, DateTime fechaFin);
+    ReporteAtraccionDto ObtenerReporteUso(int atraccionId, DateTime fechaInicio, DateTime fechaFin);
     AforoAtraccionDto ObtenerAforoActual(int atraccionId);
     IEnumerable<AtraccionParque> ObtenerPorIds(List<int> ids);
 }

@@ -1,15 +1,20 @@
 export interface Ticket {
   id: number;
-  cuentaId: string;
-  fechaVisita: string;
-  eventoId?: number | null;
-  tipoEntrada: TipoTicket;
   codigo: string;
-  fechaEmision: string;
-  esValido: boolean;
+  fechaVisita: string;
+  tipoEntrada: TipoTicket;
+  cuentaId: number;
+  eventoId?: number;
+  estado?: string;
 }
 
 export enum TipoTicket {
   General = 0,
   EventoEspecial = 1
+}
+
+export interface CrearTicketDto {
+  fechaVisita: string;
+  tipoEntrada: TipoTicket;
+  eventoId?: number;
 }

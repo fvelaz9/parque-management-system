@@ -11,7 +11,7 @@ public class GamificacionController(IServicioPuntuacion servicioPuntuacion) : Co
     private readonly IServicioPuntuacion _servicioPuntuacion = servicioPuntuacion;
 
     [HttpGet("ranking/diario")]
-    [AuthorizationFilter("any")]
+    [AuthorizationFilter("Administrador")]
     public IActionResult ObtenerRankingDiario([FromQuery] DateTime? fecha, [FromQuery] int top = 10)
     {
         if(top <= 0)
@@ -40,7 +40,7 @@ public class GamificacionController(IServicioPuntuacion servicioPuntuacion) : Co
     }
 
     [HttpGet("historial")]
-    [AuthorizationFilter("any")]
+    [AuthorizationFilter("Administrador")]
     public ActionResult<ResponseDto> ObtenerHistorialPuntuaciones([FromQuery] Guid visitanteId)
     {
         try

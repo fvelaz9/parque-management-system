@@ -1,6 +1,7 @@
 ﻿using Parque.Aplicacion.DTOs;
 using Parque.Aplicacion.Servicios.Atracciones;
 using Parque.Dominio.Atracciones;
+using Parque.Dominio.Excepciones;
 using Parque.Infraestructura.Repositorios;
 
 public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRepositorio<RegistroVisita> repositorio2) : IServicioAtracciones
@@ -52,27 +53,25 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRep
     public void EliminarAtraccion(int id) =>
         _repositorio.Eliminar(a => a.Id == id);
 
-    public List<ReporteAtraccionDto> ObtenerReporteUso(DateTime fechaInicio, DateTime fechaFin)
+    public ReporteAtraccionDto ObtenerReporteUso(int atraccionId, DateTime fechaInicio, DateTime fechaFin)
     {
-        var registros = _repositorioRegistros.ObtenerTodos()
-            .Where(r => r.FechaIngreso >= fechaInicio && r.FechaEgreso <= fechaFin)
-            .GroupBy(r => r.AtraccionId)
-            .Select(g => new ReporteAtraccionDto { AtraccionId = g.Key, })
-            .ToList();
-        foreach(var reporte in registros)
+        // Buscar la atracción
+        var atraccion = _repositorio.Encontrar(a => a.Id == atraccionId);
+        if(atraccion == null)
         {
-            var atraccion = _repositorio.Encontrar(a => a.Id == reporte.AtraccionId);
-            if(atraccion == null)
-            {
-                reporte.NombreAtraccion = "Desconocida";
-            }
-            else
-            {
-                reporte.NombreAtraccion = atraccion.Nombre;
-            }
+            throw new ExcepcionEntidadNoEncontrada($"Atracción con ID {atraccionId} no encontrada");
         }
 
-        return registros.OrderByDescending(r => r.CantidadVisitas).ToList();
+        // Contar registros de visita por FechaIngreso en el rango
+        var cantidadVisitas = _repositorioRegistros.ObtenerTodos()
+            .Count(r => r.AtraccionId == atraccionId && r.FechaIngreso >= fechaInicio && r.FechaIngreso <= fechaFin);
+
+        return new ReporteAtraccionDto
+        {
+            AtraccionId = atraccion.Id,
+            NombreAtraccion = atraccion.Nombre,
+            CantidadVisitas = cantidadVisitas
+        };
     }
 
     public AforoAtraccionDto ObtenerAforoActual(int atraccionId)

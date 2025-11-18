@@ -266,47 +266,153 @@ public class ServicioPuntuacionTest
     [TestMethod]
     public void ObtenerRankingDiario_FechaNula_UsaFechaActual()
     {
+        var visitanteId1 = Guid.NewGuid();
+        var visitanteId2 = Guid.NewGuid();
+
         var puntuaciones = new List<PuntuacionVisitante>
-        {
-            new PuntuacionVisitante(Guid.NewGuid(), _fechaActual.Date, 100),
-            new PuntuacionVisitante(Guid.NewGuid(), _fechaActual.Date, 80)
-        };
+    {
+        new PuntuacionVisitante(visitanteId1, _fechaActual.Date, 100),
+        new PuntuacionVisitante(visitanteId2, _fechaActual.Date, 80)
+    };
         _repoPuntuacionesMock!.Setup(r => r.ObtenerTodos()).Returns(puntuaciones);
+
+        var visitanteSimulado1 = Visitante.Crear(new DateTime(2000, 1, 1));
+        var visitanteSimulado2 = Visitante.Crear(new DateTime(1995, 5, 20));
+
+        typeof(Visitante).GetProperty("Id")!.SetValue(visitanteSimulado1, visitanteId1);
+        typeof(Visitante).GetProperty("Id")!.SetValue(visitanteSimulado2, visitanteId2);
+
+        _repoVisitanteMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
+            .Returns<Expression<Func<Visitante, bool>>>(expr =>
+            {
+                var param = expr.Parameters[0];
+                if(expr.Body is MemberExpression memberExpr && memberExpr.Member.Name == "Id")
+                {
+                    var guid = (Guid)((ConstantExpression)((MemberExpression)expr.Body).Expression).Value;
+                    if(guid == visitanteId1)
+                    {
+                        return visitanteSimulado1;
+                    }
+
+                    if(guid == visitanteId2)
+                    {
+                        return visitanteSimulado2;
+                    }
+                }
+
+                return visitanteSimulado1;
+            });
+
+        var cuenta1 = Cuenta.Crear("Juan", "Perez", new Email("juan@example.com"), "pass", Rol.Visitante);
+        var cuenta2 = Cuenta.Crear("Maria", "Lopez", new Email("maria@example.com"), "pass", Rol.Visitante);
+
+        typeof(Cuenta).GetProperty("Visitante")!.SetValue(cuenta1, visitanteSimulado1);
+        typeof(Cuenta).GetProperty("Visitante")!.SetValue(cuenta2, visitanteSimulado2);
+
+        _repoCuentasMock!.Setup(r => r.ObtenerTodos()).Returns([cuenta1, cuenta2]);
 
         var resultado = _servicio!.ObtenerRankingDiario(null, 10);
 
         Assert.AreEqual(2, resultado.Count);
+
         Assert.AreEqual(1, resultado[0].Posicion);
         Assert.AreEqual(100, resultado[0].PuntosDiarios);
+        Assert.AreEqual("Juan", resultado[0].Nombre);
+
+        Assert.AreEqual(2, resultado[1].Posicion);
+        Assert.AreEqual(80, resultado[1].PuntosDiarios);
+        Assert.AreEqual("Maria", resultado[1].Nombre);
     }
 
     [TestMethod]
     public void ObtenerRankingDiario_ConFechaEspecifica_FiltraCorrectamente()
     {
-        var fecha = new DateTime(2025, 10, 1);
+        var fecha = new DateTime(2025, 10, 1).Date;
+
+        var visitanteId1 = Guid.NewGuid();
+
         var puntuaciones = new List<PuntuacionVisitante>
         {
-            new PuntuacionVisitante(Guid.NewGuid(), fecha, 100),
-            new PuntuacionVisitante(Guid.NewGuid(), _fechaActual.Date, 80)
+            new PuntuacionVisitante(visitanteId1, fecha, 100)
         };
+
         _repoPuntuacionesMock!.Setup(r => r.ObtenerTodos()).Returns(puntuaciones);
+
+        var visitanteSimulado1 = Visitante.Crear(new DateTime(2000, 1, 1));
+        typeof(Visitante).GetProperty("Id")!.SetValue(visitanteSimulado1, visitanteId1);
+
+        _repoVisitanteMock!
+            .Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
+            .Returns(visitanteSimulado1);
+
+        var cuentaSimulada = Cuenta.Crear("Juan", "Perez", new Email("juan@example.com"), "password", Rol.Visitante);
+        typeof(Cuenta).GetProperty("Visitante")!.SetValue(cuentaSimulada, visitanteSimulado1);
+
+        _repoCuentasMock!.Setup(r => r.ObtenerTodos())
+            .Returns([cuentaSimulada]);
 
         var resultado = _servicio!.ObtenerRankingDiario(fecha, 10);
 
         Assert.AreEqual(1, resultado.Count);
         Assert.AreEqual(100, resultado[0].PuntosDiarios);
+        Assert.AreEqual("Juan", resultado[0].Nombre);
     }
 
     [TestMethod]
     public void ObtenerRankingDiario_LimitaResultadosSegunTop()
     {
+        var visitanteId1 = Guid.NewGuid();
+        var visitanteId2 = Guid.NewGuid();
+        var visitanteId3 = Guid.NewGuid();
+
         var puntuaciones = new List<PuntuacionVisitante>
-        {
-            new PuntuacionVisitante(Guid.NewGuid(), _fechaActual.Date, 100),
-            new PuntuacionVisitante(Guid.NewGuid(), _fechaActual.Date, 90),
-            new PuntuacionVisitante(Guid.NewGuid(), _fechaActual.Date, 80)
-        };
+    {
+        new PuntuacionVisitante(visitanteId1, _fechaActual.Date, 100),
+        new PuntuacionVisitante(visitanteId2, _fechaActual.Date, 90),
+        new PuntuacionVisitante(visitanteId3, _fechaActual.Date, 80)
+    };
         _repoPuntuacionesMock!.Setup(r => r.ObtenerTodos()).Returns(puntuaciones);
+
+        // Crear visitantes simulados
+        var visitante1 = Visitante.Crear(new DateTime(2000, 1, 1));
+        var visitante2 = Visitante.Crear(new DateTime(1995, 5, 20));
+        var visitante3 = Visitante.Crear(new DateTime(1990, 7, 15));
+
+        typeof(Visitante).GetProperty("Id")!.SetValue(visitante1, visitanteId1);
+        typeof(Visitante).GetProperty("Id")!.SetValue(visitante2, visitanteId2);
+        typeof(Visitante).GetProperty("Id")!.SetValue(visitante3, visitanteId3);
+
+        _repoVisitanteMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
+            .Returns<Expression<Func<Visitante, bool>>>(expr =>
+            {
+                var func = expr.Compile();
+                if(func(visitante1))
+                {
+                    return visitante1;
+                }
+
+                if(func(visitante2))
+                {
+                    return visitante2;
+                }
+
+                if(func(visitante3))
+                {
+                    return visitante3;
+                }
+
+                return null;
+            });
+        var cuenta1 = Cuenta.Crear("Alice", "Smith", new Email("alice@example.com"), "pass", Rol.Visitante);
+        var cuenta2 = Cuenta.Crear("Bob", "Johnson", new Email("bob@example.com"), "pass", Rol.Visitante);
+        var cuenta3 = Cuenta.Crear("Charlie", "Brown", new Email("charlie@example.com"), "pass", Rol.Visitante);
+
+        typeof(Cuenta).GetProperty("Visitante")!.SetValue(cuenta1, visitante1);
+        typeof(Cuenta).GetProperty("Visitante")!.SetValue(cuenta2, visitante2);
+        typeof(Cuenta).GetProperty("Visitante")!.SetValue(cuenta3, visitante3);
+
+        _repoCuentasMock!.Setup(r => r.ObtenerTodos())
+            .Returns([cuenta1, cuenta2, cuenta3]);
 
         var resultado = _servicio!.ObtenerRankingDiario(null, 2);
 
@@ -318,16 +424,64 @@ public class ServicioPuntuacionTest
     [TestMethod]
     public void ObtenerRankingDiario_OrdenaDescendentePorPuntos()
     {
+        var visitanteId1 = Guid.NewGuid();
+        var visitanteId2 = Guid.NewGuid();
+        var visitanteId3 = Guid.NewGuid();
+
         var puntuaciones = new List<PuntuacionVisitante>
-        {
-            new PuntuacionVisitante(Guid.NewGuid(), _fechaActual.Date, 50),
-            new PuntuacionVisitante(Guid.NewGuid(), _fechaActual.Date, 150),
-            new PuntuacionVisitante(Guid.NewGuid(), _fechaActual.Date, 100)
-        };
+    {
+        new PuntuacionVisitante(visitanteId1, _fechaActual.Date, 50),
+        new PuntuacionVisitante(visitanteId2, _fechaActual.Date, 150),
+        new PuntuacionVisitante(visitanteId3, _fechaActual.Date, 100)
+    };
         _repoPuntuacionesMock!.Setup(r => r.ObtenerTodos()).Returns(puntuaciones);
+
+        // Crear visitantes simulados y forzar Ids
+        var visitante1 = Visitante.Crear(new DateTime(2000, 1, 1));
+        var visitante2 = Visitante.Crear(new DateTime(1995, 2, 2));
+        var visitante3 = Visitante.Crear(new DateTime(1990, 3, 3));
+
+        typeof(Visitante).GetProperty("Id")!.SetValue(visitante1, visitanteId1);
+        typeof(Visitante).GetProperty("Id")!.SetValue(visitante2, visitanteId2);
+        typeof(Visitante).GetProperty("Id")!.SetValue(visitante3, visitanteId3);
+
+        // Configurar mock Visitante para devolver según predicado
+        _repoVisitanteMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
+            .Returns<Expression<Func<Visitante, bool>>>(expr =>
+            {
+                var func = expr.Compile();
+                if(func(visitante1))
+                {
+                    return visitante1;
+                }
+
+                if(func(visitante2))
+                {
+                    return visitante2;
+                }
+
+                if(func(visitante3))
+                {
+                    return visitante3;
+                }
+
+                return null;
+            });
+
+        var cuenta1 = Cuenta.Crear("Alice", "Smith", new Email("alice@example.com"), "pass", Rol.Visitante);
+        var cuenta2 = Cuenta.Crear("Bob", "Johnson", new Email("bob@example.com"), "pass", Rol.Visitante);
+        var cuenta3 = Cuenta.Crear("Charlie", "Brown", new Email("charlie@example.com"), "pass", Rol.Visitante);
+
+        typeof(Cuenta).GetProperty("Visitante")!.SetValue(cuenta1, visitante1);
+        typeof(Cuenta).GetProperty("Visitante")!.SetValue(cuenta2, visitante2);
+        typeof(Cuenta).GetProperty("Visitante")!.SetValue(cuenta3, visitante3);
+
+        _repoCuentasMock!.Setup(r => r.ObtenerTodos())
+            .Returns([cuenta1, cuenta2, cuenta3]);
 
         var resultado = _servicio!.ObtenerRankingDiario(null, 10);
 
+        Assert.AreEqual(3, resultado.Count);
         Assert.AreEqual(150, resultado[0].PuntosDiarios);
         Assert.AreEqual(100, resultado[1].PuntosDiarios);
         Assert.AreEqual(50, resultado[2].PuntosDiarios);
