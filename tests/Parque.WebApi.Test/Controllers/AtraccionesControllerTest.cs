@@ -181,32 +181,25 @@ public class AtraccionesController_Test
     [TestMethod]
     public void ReporteUsoAtracciones_FechasValidas_DeberiaRetornarOk()
     {
+        var atraccionId = 1;
         var desde = new DateTime(2025, 1, 1);
         var hasta = new DateTime(2025, 12, 31);
-        var reporte = new List<ReporteAtraccionDto>
+
+        var reporte = new ReporteAtraccionDto
         {
-            new ReporteAtraccionDto
-            {
-                AtraccionId = 1,
-                NombreAtraccion = "Montaña Rusa",
-                CantidadVisitas = 100
-            },
-            new ReporteAtraccionDto
-            {
-                AtraccionId = 2,
-                NombreAtraccion = "Carrusel",
-                CantidadVisitas = 80
-            }
+            AtraccionId = atraccionId,
+            NombreAtraccion = "Montaña Rusa",
+            CantidadVisitas = 100
         };
+        _serviceMock!.Setup(s => s.ObtenerReporteUso(atraccionId, desde, hasta)).Returns(reporte);
 
-        _serviceMock!.Setup(s => s.ObtenerReporteUso(desde, hasta)).Returns(reporte);
-
-        var result = _controller!.ReporteUsoAtracciones(desde, hasta);
+        var result = _controller!.ReporteUsoAtracciones(atraccionId, desde, hasta);
 
         Assert.IsInstanceOfType(result, typeof(OkObjectResult));
         var okResult = result as OkObjectResult;
         Assert.IsNotNull(okResult);
         Assert.AreEqual(reporte, okResult.Value);
+
         _serviceMock.VerifyAll();
     }
 }

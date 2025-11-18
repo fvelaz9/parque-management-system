@@ -52,4 +52,12 @@ public class EventoController(IServicioEvento servicioEvento, IServicioAtraccion
         servicioEvento.EliminarEventoPorId(eventoId);
         return NoContent();
     }
+
+    [HttpGet("{eventoId}/atracciones")]
+    [AuthorizationFilter("Operador")]
+    public IActionResult GetAtraccionesPorEvento(int eventoId)
+    {
+        var atracciones = servicioEvento.ObtenerAtraccionesPorEvento(eventoId);
+        return Ok(atracciones);
+    }
 }

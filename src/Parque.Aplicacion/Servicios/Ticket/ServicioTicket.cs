@@ -1,4 +1,5 @@
-﻿using Parque.Dominio;
+﻿using Parque.Aplicacion.DTOs;
+using Parque.Dominio;
 using Parque.Dominio.Excepciones;
 using Parque.Infraestructura.Repositorios;
 
@@ -7,6 +8,30 @@ namespace Parque.Aplicacion.Servicios.Ticket;
 public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositorio<Evento> repositorioEvento,
     IServicioFechaHora servicioFechaHora) : IServicioTicket
 {
+    public Dominio.Ticket CrearTicket(Guid cuentaId, CrearTicketDto ticketDto)
+    {
+        ValidarFechaFutura(ticketDto.FechaVisita);
+
+        if(ticketDto.TipoEntrada == TipoTicket.EventoEspecial)
+        {
+            if(!ticketDto.EventoId.HasValue)
+            {
+                throw new ArgumentException("Debe especificar el eventoId para tickets de evento especial");
+            }
+
+            ValidarEventoParaTicketEspecial(ticketDto.EventoId!.Value, ticketDto.FechaVisita);
+            return CrearTicketEventoEspecial(cuentaId, ticketDto.FechaVisita, ticketDto.EventoId.Value);
+        }
+        else if(ticketDto.TipoEntrada == TipoTicket.General)
+        {
+            return CrearTicketGeneral(cuentaId, ticketDto.FechaVisita);
+        }
+        else
+        {
+            throw new ArgumentException("Tipo de ticket no válido");
+        }
+    }
+
     public Dominio.Ticket CrearTicketGeneral(Guid cuentaId, DateTime fechaVisita)
     {
         ValidarFechaFutura(fechaVisita);
@@ -19,7 +44,7 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
     public Dominio.Ticket CrearTicketEventoEspecial(Guid cuentaId, DateTime fechaVisita, int eventoId)
     {
         ValidarFechaFutura(fechaVisita);
-        ValidarEventoParaTicketEspecial(eventoId);
+        ValidarEventoParaTicketEspecial(eventoId, fechaVisita);
         Dominio.Ticket ticket = ConstruirTicket(cuentaId, fechaVisita, eventoId, TipoTicket.EventoEspecial);
         repositorio.Agregar(ticket);
         return ticket;
@@ -55,7 +80,7 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
 
         if(tipoTicket == TipoTicket.EventoEspecial && eventoId.HasValue)
         {
-            ValidarEventoParaTicketEspecial(eventoId.Value);
+            ValidarEventoParaTicketEspecial(eventoId.Value, fechaVisita);
         }
 
         ticket.CuentaId = cuentaId;
@@ -86,12 +111,17 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
         }
     }
 
-    private void ValidarEventoParaTicketEspecial(int eventoId)
+    private void ValidarEventoParaTicketEspecial(int eventoId, DateTime fechaVisita)
     {
         var evento = repositorioEvento.Encontrar(e => e.Id == eventoId);
         if(evento == null)
         {
             throw new ExcepcionEntidadNoEncontrada("Evento no encontrado");
+        }
+
+        if(fechaVisita.Date < evento.Inicio.Date || fechaVisita.Date > evento.Fin.Date)
+        {
+            throw new ArgumentException("La fecha de visita debe estar dentro del rango del evento especial");
         }
 
         var ticketsVendidos = repositorio.ObtenerTodos()
@@ -115,5 +145,36 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
             FechaEmision = servicioFechaHora.ObtenerFechaActual(),
             EsValido = true
         };
+    }
+
+    public List<Dominio.Ticket> ObtenerTicketsPorUsuarioYEvento(Guid usuarioId, int eventoId)
+    {
+        var evento = repositorioEvento.Encontrar(e => e.Id == eventoId);
+        if(evento == null)
+        {
+            throw new ExcepcionEntidadNoEncontrada("Evento no encontrado");
+        }
+
+        var tickets = repositorio.ObtenerTodos()
+            .Where(t => t.CuentaId == usuarioId &&
+                        t.EventoId == eventoId &&
+                        t.EsValido &&
+                        t.TipoEntrada == TipoTicket.EventoEspecial &&
+                        t.FechaVisita.Date >= servicioFechaHora.ObtenerFechaActual().Date)
+            .ToList();
+
+        return tickets;
+    }
+
+    public List<Dominio.Ticket> ListarTicketsValidosGeneral(Guid usuarioId)
+    {
+        var fechaActual = servicioFechaHora.ObtenerFechaActual();
+
+        return repositorio.ObtenerTodos()
+            .Where(t => t.CuentaId == usuarioId &&
+                        t.EsValido &&
+                        t.TipoEntrada == TipoTicket.General &&
+                        t.FechaVisita.Date >= fechaActual.Date)
+            .ToList();
     }
 }

@@ -90,7 +90,7 @@ export class ComprarTicketComponent implements OnInit {
       },
       error: (err) => {
         this.loading = false;
-        this.error = err.error?.mensaje || 'Error al comprar el ticket. Verifique el aforo disponible.';
+        this.error = err.error?.mensaje || err.error?.message || err.message || 'Error al comprar el ticket';
         console.error('Error al crear ticket:', err);
       }
     });
@@ -105,6 +105,11 @@ export class ComprarTicketComponent implements OnInit {
   generarQRUrl(codigo: string): string {
     return `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${codigo}`;
   }
+
+  obtenerNombreTipoTicket(tipo: TipoTicket): string {
+    return tipo === TipoTicket.General ? 'Entrada General' : 'Evento Especial';
+  }
+
 
   cerrarResultado(): void {
     this.ticketCreado = undefined;

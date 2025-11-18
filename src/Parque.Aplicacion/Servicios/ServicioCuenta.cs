@@ -142,7 +142,7 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
         return Cuenta.Crear(nombre, apellido, emailObj, password, rolInicial);
     }
 
-    private Cuenta ObtenerCuenta(Guid cuentaId)
+    public Cuenta ObtenerCuenta(Guid cuentaId)
     {
         return cuentaRepo.EncontrarConRelaciones(c => c.Id == cuentaId, "Visitante")
             ?? throw new ExcepcionEntidadNoEncontrada("Cuenta no encontrada");
@@ -172,5 +172,20 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
         {
             cuenta.Visitante.ActualizarFecha(fecha.Value);
         }
+    }
+
+    public List<CuentaDto> ObtenerCuentasVisitantes()
+    {
+        var todasLasCuentas = cuentaRepo.ObtenerConRelaciones(
+            c => true,
+            "Visitante");
+
+        var cuentasVisitantes = todasLasCuentas
+            .Where(c => c.Roles.Any(r => r == Rol.Visitante))
+            .ToList();
+
+        var resultado = cuentasVisitantes.Select(c => c.ToDto()).ToList();
+
+        return resultado;
     }
 }

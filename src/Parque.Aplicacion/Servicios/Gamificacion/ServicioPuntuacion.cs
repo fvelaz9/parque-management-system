@@ -184,12 +184,11 @@ public class ServicioPuntuacion : IServicioPuntuacion
         }
 
         var cuenta = _repoCuentas.Encontrar(c => c.Id == ticket.CuentaId);
-        if(cuenta == null)
+        if(cuenta == null || cuenta.Visitante == null)
         {
-            throw new InvalidOperationException($"Cuenta con ID {ticket.CuentaId} no encontrada");
+            throw new InvalidOperationException($"Cuenta o Visitante no encontrado para ticket {registro.Identificador}");
         }
 
-        // Ahora cuenta.Visitante NO será NULL
         var visitanteId = cuenta.Visitante!.Id;
 
         var fechaRegistro = registro.FechaIngreso.Date;
@@ -250,17 +249,23 @@ public class ServicioPuntuacion : IServicioPuntuacion
         }
 
         var fechaConsulta = fecha?.Date ?? _servicioFechaHora.ObtenerFechaActual().Date;
-
         var ranking = _repoPuntuaciones
             .ObtenerTodos()
             .Where(p => p.Fecha == fechaConsulta)
             .OrderByDescending(p => p.PuntosDiarios)
             .Take(top)
-            .Select((p, index) => new RankingVisitanteDto
+            .Select(p => new
             {
-                VisitanteId = p.VisitanteId,
-                PuntosDiarios = p.PuntosDiarios,
-                PuntosTotales = p.PuntosTotales,
+                Puntuacion = p,
+                Visitante = _repoVisitante.Encontrar(v => v.Id == p.VisitanteId),
+                Cuenta = _repoCuentas.ObtenerTodos().FirstOrDefault(c => c.Visitante != null && c.Visitante.Id == p.VisitanteId)
+            })
+            .Select((x, index) => new RankingVisitanteDto
+            {
+                VisitanteId = x.Puntuacion.VisitanteId,
+                Nombre = x.Cuenta?.Nombre,
+                PuntosDiarios = x.Puntuacion.PuntosDiarios,
+                PuntosTotales = x.Puntuacion.PuntosTotales,
                 Posicion = index + 1
             })
             .ToList();

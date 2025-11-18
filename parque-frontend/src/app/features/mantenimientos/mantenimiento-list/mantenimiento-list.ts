@@ -5,7 +5,6 @@ import { Router, RouterLink } from '@angular/router';
 import { MantenimientoPreventivo } from '../../../core/models/mantenimiento.model';
 import { MantenimientosService } from '../../../core/services/mantenimiento.service';
 import { AuthService } from '../../../core/services/auth.service';
-import {TipoAtraccion} from '../../../core/models/atraccion.model';
 
 @Component({
   selector: 'app-mantenimiento-list',

@@ -16,30 +16,13 @@ public class TicketController(IServicioTicket service) : ControllerBase
     public IActionResult Create([FromBody] CrearTicketDto request)
     {
         var usuario = HttpContext.Items["user"] as Cuenta;
-        if(usuario == null)
+
+        if(request.TipoEntrada == TipoTicket.EventoEspecial && !request.EventoId.HasValue)
         {
-            return Unauthorized(new { mensaje = "Usuario no autenticado" });
+            return BadRequest(new { mensaje = "Debe especificar el eventoId para tickets de evento especial" });
         }
 
-        Dominio.Ticket creado;
-
-        if(request.TipoEntrada == TipoTicket.General)
-        {
-            creado = service.CrearTicketGeneral(usuario.Id, request.FechaVisita);
-        }
-        else if(request.TipoEntrada == TipoTicket.EventoEspecial)
-        {
-            if(!request.EventoId.HasValue)
-            {
-                return BadRequest(new { mensaje = "Debe especificar el eventoId para tickets de evento especial" });
-            }
-
-            creado = service.CrearTicketEventoEspecial(usuario.Id, request.FechaVisita, request.EventoId.Value);
-        }
-        else
-        {
-            return BadRequest(new { mensaje = "Tipo de ticket no válido" });
-        }
+        var creado = service.CrearTicket(usuario!.Id, request);
 
         return CreatedAtAction(nameof(GetByCodigo), new { codigo = creado.Codigo }, creado);
     }
@@ -69,5 +52,21 @@ public class TicketController(IServicioTicket service) : ControllerBase
         }
 
         return Ok(ticket);
+    }
+
+    [HttpGet("por-usuario/{usuarioId:guid}")]
+    [AuthorizationFilter("Operador")]
+    public IActionResult GetTicketsPorUsuario(Guid usuarioId)
+    {
+        var tickets = service.ListarTicketsValidosGeneral(usuarioId);
+        return Ok(tickets);
+    }
+
+    [HttpGet("por-usuario/{usuarioId:guid}/evento/{eventoId:int}")]
+    [AuthorizationFilter("Operador")]
+    public IActionResult GetTicketsPorUsuarioYEvento(Guid usuarioId, int eventoId)
+    {
+        var tickets = service.ObtenerTicketsPorUsuarioYEvento(usuarioId, eventoId);
+        return Ok(tickets);
     }
 }

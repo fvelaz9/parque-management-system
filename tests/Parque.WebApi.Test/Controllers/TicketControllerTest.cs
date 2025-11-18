@@ -86,7 +86,7 @@ public class TicketControllerTest
         };
 
         var expectedTicket = new Dominio.Ticket(_usuarioAutenticado!.Id, request.FechaVisita, 0, TipoTicket.General, _fechaActual);
-        _servicioMock!.Setup(s => s.CrearTicketGeneral(_usuarioAutenticado.Id, request.FechaVisita))
+        _servicioMock!.Setup(s => s.CrearTicket(_usuarioAutenticado.Id, request))
             .Returns(expectedTicket);
 
         // Act
@@ -132,7 +132,7 @@ public class TicketControllerTest
         };
 
         var expectedTicket = new Dominio.Ticket(_usuarioAutenticado!.Id, request.FechaVisita, 5, TipoTicket.EventoEspecial, _fechaActual);
-        _servicioMock!.Setup(s => s.CrearTicketEventoEspecial(_usuarioAutenticado.Id, request.FechaVisita, request.EventoId.Value))
+        _servicioMock!.Setup(s => s.CrearTicket(_usuarioAutenticado.Id, request))
             .Returns(expectedTicket);
 
         // Act
@@ -146,24 +146,6 @@ public class TicketControllerTest
     }
 
     [TestMethod]
-    public void Create_SinUsuarioAutenticado_RetornaUnauthorized()
-    {
-        // Arrange
-        _controller!.ControllerContext.HttpContext.Items["user"] = null;
-        var request = new CrearTicketDto
-        {
-            FechaVisita = new DateTime(2025, 10, 10, 14, 0, 0),
-            TipoEntrada = TipoTicket.General
-        };
-
-        // Act
-        var result = _controller.Create(request);
-
-        // Assert
-        Assert.IsInstanceOfType(result, typeof(UnauthorizedObjectResult));
-    }
-
-    [TestMethod]
     public void Create_ExcepcionDelServicio_NoManejadaPorController()
     {
         // Arrange
@@ -174,7 +156,7 @@ public class TicketControllerTest
             TipoEntrada = TipoTicket.General
         };
 
-        _servicioMock!.Setup(s => s.CrearTicketGeneral(_usuarioAutenticado!.Id, request.FechaVisita))
+        _servicioMock!.Setup(s => s.CrearTicket(_usuarioAutenticado!.Id, request))
             .Throws(new ArgumentException("Fecha inválida"));
 
         // Act & Assert

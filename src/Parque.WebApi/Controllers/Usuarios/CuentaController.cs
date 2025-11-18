@@ -10,7 +10,7 @@ namespace Parque.WebApi.Controllers.Usuarios;
 public class CuentaController(IServicioCuenta servicioCuenta) : ControllerBase
 {
     [HttpGet]
-    [AuthorizationFilter("Administrador")]
+    [AuthorizationFilter("Administrador", "Operador")]
     public IActionResult ObtenerTodas()
     {
         var cuentas = servicioCuenta.ObtenerTodas();
@@ -87,6 +87,20 @@ public class CuentaController(IServicioCuenta servicioCuenta) : ControllerBase
             Content = null,
             ExecutionSuccessful = true,
             Message = "Nivel de membresía actualizado exitosamente"
+        });
+    }
+
+    [HttpGet("visitantes")]
+    [AuthorizationFilter("Operador")]
+    public IActionResult ObtenerCuentasVisitantes()
+    {
+        var cuentas = servicioCuenta.ObtenerCuentasVisitantes();
+
+        return Ok(new ResponseDto
+        {
+            Content = cuentas,
+            ExecutionSuccessful = true,
+            Message = "Visitantes obtenidos exitosamente"
         });
     }
 }

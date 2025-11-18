@@ -1,6 +1,6 @@
 import { Component, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Evento} from '../../../core/models/evento.model';
+import {EstadoEvento, Evento} from '../../../core/models/evento.model';
 import { EventoService } from '../../../core/services/evento.service';
 import { Router } from '@angular/router';
 
@@ -40,6 +40,11 @@ export class EventoListComponent {
   }
 
   eliminarEvento(evento: Evento) {
+    console.log('ID evento a eliminar:', evento.id);
+    if (!evento.id) {
+      alert('ID de evento inválido.');
+      return;
+    }
     if (confirm(`¿Seguro que deseas borrar "${evento.titulo}"?`)) {
       this.eventoService.deleteEvento(evento.id).subscribe({
         next: () => {
@@ -51,8 +56,18 @@ export class EventoListComponent {
       });
     }
   }
+  verAtracciones(evento: Evento) {
+    if (!evento.id) {
+      alert('Evento sin ID válido');
+      return;
+    }
+    this.router.navigate(['/evento-atracciones'], {
+      queryParams: { eventoId: evento.id }
+    });
+  }
 
   agregarEvento() {
     this.router.navigate(['/eventos/nuevo']);
   }
+  protected readonly EstadoEvento = EstadoEvento;
 }

@@ -1,5 +1,3 @@
-// src/app/core/services/atracciones.service.ts
-
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
