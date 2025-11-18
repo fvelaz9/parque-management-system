@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Parque.Aplicacion.Servicios.Atracciones;
 using Parque.Dominio.Atracciones;
+using Parque.Dominio.Excepciones;
+using Parque.WebApi.Filtros;
 
 namespace Parque.WebApi.Controllers;
 
@@ -24,8 +26,7 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
     }
 
     [HttpPost]
-
-    // [AuthorizationFilter("Administrador")]
+    [AuthorizationFilter("Administrador")]
     public IActionResult Create([FromBody] AtraccionParque atraccion)
     {
         var creada = servicioAtracciones.CrearAtraccion(
@@ -38,8 +39,7 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
     }
 
     [HttpPut("{id}")]
-
-    // [AuthorizationFilter("Administrador")]
+    [AuthorizationFilter("Administrador")]
     public IActionResult Update(int id, [FromBody] AtraccionParque atraccion)
     {
         var modificada = servicioAtracciones.ModificarAtraccion(
@@ -53,8 +53,7 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
     }
 
     [HttpDelete("{id}")]
-
-    // [AuthorizationFilter("Administrador")]
+    [AuthorizationFilter("Administrador")]
     public IActionResult Delete(int id)
     {
         servicioAtracciones.EliminarAtraccion(id);
@@ -62,17 +61,23 @@ public class AtraccionesController(IServicioAtracciones servicioAtracciones) : C
     }
 
     [HttpGet("reporte-uso")]
-
-    // [AuthorizationFilter("Administrador")]
-    public IActionResult ReporteUsoAtracciones([FromQuery] DateTime desde, [FromQuery] DateTime hasta)
+    [AuthorizationFilter("Administrador")]
+    public IActionResult ReporteUsoAtracciones([FromQuery] int atraccionId, [FromQuery] DateTime desde, [FromQuery] DateTime hasta)
     {
         if(desde > hasta)
         {
             return BadRequest(new { mensaje = "La fecha 'desde' no puede ser mayor a 'hasta'" });
         }
 
-        var reporte = servicioAtracciones.ObtenerReporteUso(desde, hasta);
-        return Ok(reporte);
+        try
+        {
+            var reporte = servicioAtracciones.ObtenerReporteUso(atraccionId, desde, hasta);
+            return Ok(reporte);
+        }
+        catch(ExcepcionEntidadNoEncontrada ex)
+        {
+            return NotFound(new { mensaje = ex.Message });
+        }
     }
 
     [HttpGet("{id}/aforo")]

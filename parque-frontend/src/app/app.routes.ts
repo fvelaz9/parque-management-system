@@ -8,6 +8,7 @@ import {HistorialCanje} from './features/recompensas/recompensa-historial/recomp
 import { authGuard } from './core/guards/auth.guard';
 import { visitanteGuard } from './core/guards/visitante.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import {ReportesComponent} from './features/reportes/reportes';
 import {operadorGuard} from './core/guards/operador.guard';
 
 export const routes: Routes = [
@@ -138,6 +139,16 @@ export const routes: Routes = [
     loadComponent: () => import('./features/configuracion/selector-estrategias/selector-estrategias')
       .then(m => m.SelectorEstrategiasComponent),
     canActivate: [authGuard]
+  },
+  {
+    path: 'ranking',
+    loadComponent: () => import('./features/ranking/ranking')
+      .then(m => m.RankingComponent)
+  },
+  {
+    path: 'reportes',
+    loadComponent: () => import('./features/reportes/reportes')
+      .then(m => m.ReportesComponent)
   },
   {
     path: 'tickets/comprar',

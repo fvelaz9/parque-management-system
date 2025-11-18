@@ -1,0 +1,12 @@
+/* src/app/features/ranking/ranking.component.css */
+.list-group-item {
+  transition: all 0.2s;
+}
+
+.list-group-item:hover {
+  transform: translateX(5px);
+}
+
+.badge {
+  font-weight: bold;
+}
