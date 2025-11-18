@@ -1,4 +1,6 @@
 ﻿using Parque.Dominio;
+using Parque.Dominio.Atracciones;
+
 namespace Parque.Aplicacion.Servicios;
 
 public interface IServicioEvento
@@ -8,4 +10,5 @@ public interface IServicioEvento
     Evento ObtenerEventoPorId(int eventoId);
     List<Evento> ListarEventos();
     void ActualizarEvento(Evento evento);
+    List<AtraccionParque> ObtenerAtraccionesPorEvento(int eventoId);
 }

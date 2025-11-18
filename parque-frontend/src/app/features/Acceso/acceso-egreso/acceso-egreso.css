@@ -1,0 +1,499 @@
+.contenedor-egreso {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 3px solid #3498db;
+  flex-wrap: wrap;
+  gap: 15px;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+}
+
+.header h2 {
+  margin: 0;
+  color: #2c3e50;
+  font-size: 28px;
+  font-weight: 700;
+  flex: 1;
+  min-width: 200px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+}
+
+.info-atraccion {
+  display: flex;
+  gap: 10px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 8px 16px;
+  background: linear-gradient(45deg, #e74c3c, #c0392b);
+  color: white;
+  border-radius: 25px;
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+}
+
+.btn-volver {
+  padding: 10px 20px;
+  background: linear-gradient(45deg, #95a5a6, #7f8c8d);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(149, 165, 166, 0.3);
+}
+
+.btn-volver:hover {
+  background: linear-gradient(45deg, #7f8c8d, #95a5a6);
+  transform: translateX(-3px);
+  box-shadow: 0 4px 12px rgba(149, 165, 166, 0.4);
+}
+
+/* Secciones */
+.seccion-cuentas,
+.seccion-registros {
+  margin: 20px 0;
+  padding: 25px;
+  background: white;
+  border: 2px solid #bdc3c7;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.seccion-cuentas:hover,
+.seccion-registros:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-color: #3498db;
+}
+
+.seccion-cuentas h3,
+.seccion-registros h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-size: 20px;
+  font-weight: 700;
+  border-left: 4px solid #3498db;
+  padding-left: 15px;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #7f8c8d;
+  font-size: 16px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.loading p {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* Lista Wrapper */
+.lista-wrapper {
+  margin: 15px 0;
+}
+
+.registros-header {
+  padding: 12px 20px;
+  background: linear-gradient(45deg, #3498db, #2980b9);
+  border-radius: 10px 10px 0 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: white;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+.total {
+  color: #ecf0f1;
+  opacity: 0.9;
+}
+
+/* Listas */
+.lista-cuentas,
+.lista-registros {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-radius: 0 0 10px 10px;
+  overflow: hidden;
+  border: 2px solid #3498db;
+  background: white;
+}
+
+.lista-cuentas li,
+.lista-registros li {
+  padding: 18px;
+  margin: 0;
+  background: white;
+  border-bottom: 2px solid #ecf0f1;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lista-cuentas li:last-child,
+.lista-registros li:last-child {
+  border-bottom: none;
+}
+
+.lista-cuentas li:hover,
+.lista-registros li:hover {
+  background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+  border-left: 5px solid #e74c3c;
+  padding-left: 15px;
+  transform: translateX(5px);
+}
+
+.cuenta-seleccionada,
+.registro-seleccionado {
+  background: linear-gradient(135deg, #3498db, #9b59b6);
+  color: white;
+  border-left: 5px solid #e74c3c;
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+}
+
+.cuenta-seleccionada .nombre,
+.cuenta-seleccionada .email,
+.cuenta-seleccionada .roles,
+.registro-seleccionado .label {
+  color: inherit;
+}
+
+/* Información de Cuenta */
+.cuenta-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.nombre {
+  font-weight: 700;
+  font-size: 16px;
+  color: #2c3e50;
+}
+
+.cuenta-seleccionada .nombre {
+  color: white;
+}
+
+.email {
+  font-size: 13px;
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+.roles {
+  font-size: 12px;
+  color: #95a5a6;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.puntos {
+  font-weight: 700;
+  font-size: 14px;
+  padding: 6px 12px;
+  background: linear-gradient(45deg, #f39c12, #e67e22);
+  color: white;
+  border-radius: 20px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
+}
+
+/* Información de Registro */
+.registro-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 25px;
+  flex: 1;
+}
+
+.codigo-ticket,
+.tiempo-ingreso,
+.atraccion-id {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #7f8c8d;
+}
+
+.registro-seleccionado .label {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.valor {
+  font-size: 15px;
+  font-weight: 600;
+  color: #2c3e50;
+  font-family: 'Courier New', monospace;
+}
+
+.registro-seleccionado .valor {
+  color: white;
+}
+
+/* Sin Registros */
+.sin-registros {
+  text-align: center;
+  padding: 40px;
+  background: white;
+  border-radius: 10px;
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+/* Acciones */
+.acciones {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+  padding-top: 25px;
+  border-top: 3px solid #bdc3c7;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 12px 25px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  flex: 1;
+  min-width: 160px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-primary {
+  background: linear-gradient(45deg, #27ae60, #2ecc71);
+  color: white;
+  box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: linear-gradient(45deg, #229954, #27ae60);
+  box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+  transform: translateY(-3px);
+}
+
+.btn-primary:active:not(:disabled) {
+  background: linear-gradient(45deg, #1e8449, #229954);
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: linear-gradient(45deg, #e74c3c, #c0392b);
+  color: white;
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(45deg, #c0392b, #a93226);
+  box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
+  transform: translateY(-3px);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Mensajes */
+.mensaje {
+  margin-top: 20px;
+  padding: 15px 20px;
+  border-radius: 10px;
+  border-left: 5px solid;
+  font-weight: 600;
+  font-size: 15px;
+  animation: slideIn 0.4s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mensaje-exito {
+  background: linear-gradient(135deg, #d5f4e6, #e8f8f5);
+  border-color: #27ae60;
+  color: #27ae60;
+}
+
+.mensaje-error {
+  background: linear-gradient(135deg, #fadbd8, #fdebd0);
+  border-color: #e74c3c;
+  color: #e74c3c;
+}
+
+.mensaje-info {
+  background: linear-gradient(135deg, #d6eaf8, #daf7a6);
+  border-color: #3498db;
+  color: #2980b9;
+}
+
+/* Redirección */
+.redireccion-mensaje {
+  color: #27ae60;
+  font-weight: 700;
+  font-style: italic;
+  margin-top: 15px;
+  padding: 12px;
+  background: rgba(39, 174, 96, 0.1);
+  border-radius: 8px;
+  text-align: center;
+  border-left: 4px solid #27ae60;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+/* Errores e Info */
+.error {
+  color: #e74c3c;
+  font-weight: 700;
+  margin-top: 15px;
+  padding: 12px;
+  background: linear-gradient(135deg, #fadbd8, #fdebd0);
+  border-radius: 8px;
+  border-left: 4px solid #e74c3c;
+  box-shadow: 0 2px 10px rgba(231, 76, 60, 0.2);
+}
+
+.info {
+  color: #3498db;
+  font-style: italic;
+  text-align: center;
+  padding: 25px;
+  margin: 0;
+  background: white;
+  border-radius: 10px;
+  border: 2px dashed #3498db;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .contenedor-egreso {
+    padding: 15px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .header h2 {
+    width: 100%;
+    min-width: auto;
+    font-size: 24px;
+  }
+
+  .btn-volver {
+    width: 100%;
+    text-align: center;
+  }
+
+  .registro-info {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .acciones {
+    flex-direction: column;
+  }
+
+  .btn {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .lista-cuentas li,
+  .lista-registros li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .puntos {
+    align-self: flex-start;
+    margin-top: 8px;
+  }
+}
+
+@media (max-width: 480px) {
+  .seccion-cuentas,
+  .seccion-registros {
+    padding: 20px;
+  }
+
+  .header h2 {
+    font-size: 22px;
+  }
+
+  .btn {
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+
+  .registros-header {
+    font-size: 12px;
+  }
+
+  .valor {
+    font-size: 13px;
+  }
+
+  .badge {
+    font-size: 10px;
+    padding: 6px 12px;
+  }
+}

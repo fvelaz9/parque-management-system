@@ -1,7 +1,5 @@
 <nav class="navbar">
   <div class="navbar-container">
-
-
     <ul class="navbar-menu">
       <li>
         <a routerLink="/home" routerLinkActive="active" class="nav-link">
@@ -13,15 +11,17 @@
           Atracciones
         </a>
       </li>
-      <li class="dropdown">
-        <a class="nav-link dropdown-toggle" (click)="toggleDropdown($event)">
-          Mantenimiento
-        </a>
-        <ul class="dropdown-menu" [class.show]="isDropdownOpen">
-          <li><a routerLink="/mantenimientos" routerLinkActive="active" (click)="isDropdownOpen = false">Mantenimientos Preventivos</a></li>
-          <li><a routerLink="/incidencias" routerLinkActive="active" (click)="isDropdownOpen = false">Incidencias</a></li>
-        </ul>
-      </li>
+      @if (isAdmin || isOperador) {
+        <li class="dropdown">
+          <a class="nav-link dropdown-toggle" (click)="toggleDropdown($event)">
+            Mantenimiento
+          </a>
+          <ul class="dropdown-menu" [class.show]="isDropdownOpen">
+            <li><a routerLink="/mantenimientos" routerLinkActive="active" (click)="isDropdownOpen = false">Mantenimientos Preventivos</a></li>
+            <li><a routerLink="/incidencias" routerLinkActive="active" (click)="isDropdownOpen = false">Incidencias</a></li>
+          </ul>
+        </li>
+      }
       <li>
         <a routerLink="/recompensas" routerLinkActive="active" class="nav-link">
           Recompensas
@@ -33,8 +33,32 @@
         </a>
       </li>
 
+      <!-- ✅ AGREGAR: Dropdown Administración (Solo Admin) -->
       @if (isLoggedIn) {
+        <!-- Si es Admin: nombre con dropdown -->
+        @if (isAdmin) {
+          <li class="dropdown">
+            <a class="nav-link dropdown-toggle usuario-nombre" (click)="toggleAdminDropdown($event)">
+              {{ usuario?.nombre }}
+            </a>
+            <ul class="dropdown-menu" [class.show]="isAdminDropdownOpen">
+              <li><a routerLink="/configuracion/estrategias" routerLinkActive="active" (click)="isAdminDropdownOpen = false">Estrategias</a></li>
+              <li><a routerLink="/cuentas" routerLinkActive="active" (click)="isAdminDropdownOpen = false">Cuentas</a></li>
+              <li><a routerLink="/reportes" routerLinkActive="active" (click)="isAdminDropdownOpen = false">Reportes</a></li>
+              <li><a routerLink="/ranking" routerLinkActive="active" (click)="isAdminDropdownOpen = false">Ranking</a></li>
+            </ul>
+          </li>
+        } @else {
+          <!-- Si es Operador o Visitante: solo el nombre sin dropdown -->
+          <li>
+            <span class="usuario-nombre">{{ usuario?.nombre }}</span>
+          </li>
+        }
+
+        <!-- Botón de Logout -->
         <li>
+          <button class="btn-logout" (click)="logout()">
+            Cerrar Sesión
           <a routerLink="/tickets/comprar" routerLinkActive="active" *ngIf="usuario?.rol === 'Visitante'">
             Comprar Tickets
           </a>
@@ -47,7 +71,7 @@
             Cerrar sesión
           </button>
         </li>
-      } @else {
+      }  @else {
         <li>
           <a routerLink="/login" routerLinkActive="active" class="nav-link">
             Iniciar sesión

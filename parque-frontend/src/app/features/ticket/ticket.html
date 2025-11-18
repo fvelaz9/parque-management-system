@@ -4,12 +4,10 @@
   <!-- Mensajes de error -->
   <div *ngIf="error" class="alert alert-error">
     <span>{{ error }}</span>
-    <button type="button" class="close-btn" (click)="error = ''">&times;</button>
   </div>
 
   <!-- Ticket creado con QR -->
   <div *ngIf="ticketCreado" class="ticket-resultado">
-    <button type="button" class="close-btn-resultado" (click)="cerrarResultado()">&times;</button>
     <h3>¡Ticket Comprado Exitosamente!</h3>
     <div class="qr-container">
       <img [src]="generarQRUrl(ticketCreado.codigo)" alt="Código QR del ticket">
@@ -17,9 +15,10 @@
     <div class="ticket-info">
       <p><strong>Código:</strong> {{ ticketCreado.codigo }}</p>
       <p><strong>Fecha de visita:</strong> {{ ticketCreado.fechaVisita | date:'dd/MM/yyyy' }}</p>
-      <p><strong>Tipo:</strong> {{ ticketCreado.tipoEntrada }}</p>
+      <p><strong>Tipo:</strong> {{ obtenerNombreTipoTicket(ticketCreado.tipoEntrada) }}</p>
     </div>
     <p class="info-text">Guarde este código QR para presentarlo el día de su visita</p>
+    <button type="button" class="btn-cerrar" (click)="cerrarResultado()">Aceptar</button>
   </div>
 
   <!-- Formulario de compra -->

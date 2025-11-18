@@ -6,8 +6,10 @@ import {MantenimientoForm} from './features/mantenimientos/mantenimiento-form/ma
 import {RecompensaEditar} from './features/recompensas/recompensa-editar/recompensa-editar';
 import {HistorialCanje} from './features/recompensas/recompensa-historial/recompensa-historial';
 import { authGuard } from './core/guards/auth.guard';
-import { visitanteGuard } from './core/guards/visitante.guard'; 
+import { visitanteGuard } from './core/guards/visitante.guard';
 import { adminGuard } from './core/guards/admin.guard';
+import {ReportesComponent} from './features/reportes/reportes';
+import {operadorGuard} from './core/guards/operador.guard';
 
 export const routes: Routes = [
   {
@@ -87,12 +89,20 @@ export const routes: Routes = [
   {
     path: 'eventos',
     loadComponent: () => import('./features/Evento/evento-list/evento-list.component')
-      .then(m => m.EventoListComponent)
+      .then(m => m.EventoListComponent),
+    canActivate: [authGuard]
   },
   {
     path: 'eventos/nuevo',
     loadComponent: () => import('./features/Evento/evento-form/evento-form')
-      .then(m => m.EventoForm)
+      .then(m => m.EventoForm),
+    canActivate: [authGuard]
+  },
+  {
+    path: 'evento-atracciones',
+    loadComponent: () => import('./features/Evento/evento-atracciones/evento-atracciones')
+      .then(m => m.EventoAtracciones),
+    canActivate: [operadorGuard]
   },
   {
    path: 'cuentas',
@@ -113,10 +123,38 @@ export const routes: Routes = [
     canActivate: [visitanteGuard]
   },
   {
+    path: 'acceso',
+    loadComponent: () => import('./features/Acceso/acceso-home/acceso-home')
+  .then(m => m.AccesoHome),
+    canActivate: [operadorGuard]
+  },
+  {
+    path: 'acceso-ingreso',
+    loadComponent: () => import('./features/Acceso/acceso-ingreso/acceso-ingreso')
+      .then(m => m.AccesoIngreso),
+    canActivate: [operadorGuard]
+  },
+  {
+    path: 'acceso-egreso',
+    loadComponent: () => import('./features/Acceso/acceso-egreso/acceso-egreso')
+      .then(m => m.AccesoEgreso),
+    canActivate: [operadorGuard]
+  },
+  {
     path: 'configuracion/estrategias',
     loadComponent: () => import('./features/configuracion/selector-estrategias/selector-estrategias')
       .then(m => m.SelectorEstrategiasComponent),
     canActivate: [authGuard]
+  },
+  {
+    path: 'ranking',
+    loadComponent: () => import('./features/ranking/ranking')
+      .then(m => m.RankingComponent)
+  },
+  {
+    path: 'reportes',
+    loadComponent: () => import('./features/reportes/reportes')
+      .then(m => m.ReportesComponent)
   },
   {
     path: 'tickets/comprar',
@@ -129,7 +167,4 @@ export const routes: Routes = [
     path: "**",
     component: NotFoundComponent
   },
-
-
-
 ];

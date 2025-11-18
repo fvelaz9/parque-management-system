@@ -48,6 +48,15 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             };
         }
 
+        if(ticket.TipoEntrada == TipoTicket.General)
+        {
+            var validacionGeneral = ValidarAtraccionParaTicketGeneral(request.AtraccionId, atraccion);
+            if(validacionGeneral != null)
+            {
+                return validacionGeneral;
+            }
+        }
+
         if(ticket.TipoEntrada == TipoTicket.EventoEspecial)
         {
             var errorEvento = VerificarEvento(ticket, atraccion, request.AtraccionId);
@@ -96,7 +105,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             };
         }
 
-        var evento = repoEvento.Encontrar(e => e.Id == ticket.EventoId.Value);
+        var evento = repoEvento.EncontrarConRelaciones(e => e.Id == ticket.EventoId.Value, "Atracciones");
 
         if(evento == null)
         {
@@ -212,6 +221,31 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
         return null;
     }
 
+    private ValidarAccesoResponse? ValidarAtraccionParaTicketGeneral(int atraccionId, AtraccionParque atraccion)
+    {
+        var fechaActual = servicioFechaHora.ObtenerFechaActual().Date;
+        var eventosActivos = repoEvento.ObtenerConRelaciones(
+            e => fechaActual >= e.Inicio.Date && fechaActual <= e.Fin.Date,
+            "Atracciones");
+
+        var eventoConAtraccion = eventosActivos
+            .FirstOrDefault(e => e.Atracciones.Any(a => a.Id == atraccionId));
+
+        if(eventoConAtraccion != null)
+        {
+            return new ValidarAccesoResponse
+            {
+                AccesoPermitido = false,
+                Mensaje = $"Esta atracción forma parte del evento '{eventoConAtraccion.Titulo}'. " +
+                          $"Se requiere ticket de Evento Especial. " +
+                          $"Evento activo hasta {eventoConAtraccion.Fin:dd/MM/yyyy}",
+                NombreAtraccion = atraccion.Nombre
+            };
+        }
+
+        return null;
+    }
+
     public RegistroVisita RegistrarIngreso(Guid codigoTicket, int atraccionId, Cuenta cuentaVisitante)
     {
         var validacion = ValidarAcceso(new ValidarAccesoRequest
@@ -232,6 +266,12 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             Identificador = codigoTicket,
             FechaIngreso = servicioFechaHora.ObtenerFechaActual()
         };
+        var ticket = repoTickets.Encontrar(t => t.Codigo == codigoTicket);
+        if(ticket != null)
+        {
+            ticket.MarcarComoUsado();
+            repoTickets.Editar(ticket);
+        }
 
         repoRegistros.Agregar(registro);
         return registro;
@@ -280,5 +320,27 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             PorcentajeOcupacion = Math.Round(porcentajeOcupacion, 2),
             AforoCompleto = visitantesActuales >= atraccion.Capacidad
         };
+    }
+
+    public List<RegistroVisitaDto> ObtenerRegistrosActivosPorUsuario(Guid usuarioId, int atraccionId)
+    {
+        var registrosActivos = repoRegistros.ObtenerTodos()
+            .Where(r => r.FechaEgreso == null && r.AtraccionId == atraccionId)
+            .ToList();
+
+        var ids = registrosActivos.Select(r => r.Identificador).ToList();
+
+        var tickets = repoTickets.Obtener(t => ids.Contains(t.Codigo) && t.CuentaId == usuarioId);
+
+        return registrosActivos
+            .Where(r => tickets.Any(t => t.Codigo == r.Identificador))
+            .Select(r => new RegistroVisitaDto
+            {
+                Id = r.Id,
+                Identificador = r.Identificador,
+                FechaIngreso = r.FechaIngreso,
+                AtraccionId = r.AtraccionId
+            })
+            .ToList();
     }
 }

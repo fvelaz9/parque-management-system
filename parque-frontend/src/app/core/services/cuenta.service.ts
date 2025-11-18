@@ -1,60 +1,47 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { 
-  RegistrarVisitanteDto, 
-  RegistrarCuentaDto, 
-  ModificarPerfilDto, 
+import {
+  RegistrarVisitanteDto,
+  RegistrarCuentaDto,
+  ModificarPerfilDto,
   NivelMembresia,
   ResponseDto,
-  CuentaDto 
+  CuentaDto
 } from '../models/cuenta.model';
 import { environment } from '../../../environments/environment.development';
-import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CuentaService {
   private http = inject(HttpClient);
-  private authService = inject(AuthService);
   private apiUrl = `${environment.apiUrl}/cuentas`;
 
-  private getHeaders(): HttpHeaders {
-    const token = this.authService.getToken();
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `${token}`
-    });
+  obtenerCuentas(): Observable<ResponseDto<CuentaDto[]>> {
+    return this.http.get<ResponseDto<CuentaDto[]>>(this.apiUrl);
   }
 
-  obtenerCuentas(): Observable<ResponseDto<CuentaDto[]>> {
-    return this.http.get<ResponseDto<CuentaDto[]>>(this.apiUrl, {
-      headers: this.getHeaders()
-    });
-  }
-  
   registrarVisitante(dto: RegistrarVisitanteDto): Observable<ResponseDto<CuentaDto>> {
     return this.http.post<ResponseDto<CuentaDto>>(`${this.apiUrl}/registro`, dto);
   }
 
   crearCuenta(dto: RegistrarCuentaDto): Observable<ResponseDto<CuentaDto>> {
-    return this.http.post<ResponseDto<CuentaDto>>(this.apiUrl, dto, {
-      headers: this.getHeaders()
-    });
+    return this.http.post<ResponseDto<CuentaDto>>(this.apiUrl, dto);
   }
 
   modificarPerfil(dto: ModificarPerfilDto): Observable<ResponseDto<null>> {
-    return this.http.put<ResponseDto<null>>(`${this.apiUrl}/perfil`, dto, {
-      headers: this.getHeaders()
-    });
+    return this.http.put<ResponseDto<null>>(`${this.apiUrl}/perfil`, dto);
   }
 
   cambiarNivelMembresia(id: string, nuevoNivel: NivelMembresia): Observable<ResponseDto<null>> {
     return this.http.patch<ResponseDto<null>>(
-      `${this.apiUrl}/${id}/membresia`, 
+      `${this.apiUrl}/${id}/membresia`,
       nuevoNivel,
-      { headers: this.getHeaders() }
     );
+  }
+  
+  obtenerCuentasVisitantes(): Observable<ResponseDto<CuentaDto[]>> {
+    return this.http.get<ResponseDto<CuentaDto[]>>(`${this.apiUrl}/visitantes`);
   }
 }

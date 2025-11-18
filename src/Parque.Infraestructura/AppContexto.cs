@@ -21,6 +21,7 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
     public DbSet<ConfiguracionFechaHora> ConfiguracionFechaHora { get; set; }
     public DbSet<Incidencia> Incidencias { get; set; }
     public DbSet<MantenimientoPreventivo> MantenimientosPreventivos { get; set; }
+    public DbSet<HistorialPuntuacion> HistorialPuntuaciones { get; set; }
     public DbSet<Recompensa> Recompensas { get; set; }
     public DbSet<HistorialCanje> HistorialCanjes { get; set; }
 
@@ -45,6 +46,7 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
                 .WithOne()
                 .HasForeignKey<Cuenta>("VisitanteId")
                 .IsRequired(false);
+            builder.Navigation(c => c.Visitante).AutoInclude();
 
             // Mapear la colección de Roles
             builder.Property<HashSet<Rol>>("_roles")
@@ -96,6 +98,20 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
                 entity.Property(e => e.FechaHoraConfigurada).IsRequired();
             });
         });
+        modelBuilder.Entity<HistorialPuntuacion>(builder =>
+        {
+            builder.HasKey(h => h.Id);
+            builder.Property(h => h.FechaHora).IsRequired();
+            builder.Property(h => h.OrigenPuntos).IsRequired(false).HasMaxLength(500);
+            builder.Property(h => h.EstrategiaActiva).IsRequired(false).HasMaxLength(200);
+            builder.Property(h => h.Puntos).IsRequired();
+        });
+
+        modelBuilder.Entity<Visitante>()
+            .HasMany(v => v.HistorialPuntuaciones)
+            .WithOne()
+            .HasForeignKey("VisitanteId")
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<HistorialCanje>(builder =>
         {
