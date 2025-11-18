@@ -49,7 +49,6 @@ export class AtraccionListComponent {
     this.loading.set(true);
     this.atraccionesService.getAllAtracciones().subscribe({
       next: (result) => {
-        console.log('Atracciones cargadas:', result);
         this.atracciones.set(result);
         this.loading.set(false);
         this.error.set('');

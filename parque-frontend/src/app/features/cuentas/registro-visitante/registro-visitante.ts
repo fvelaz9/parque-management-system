@@ -26,6 +26,7 @@ export class RegistroVisitanteComponent {
       nombre: ['', [Validators.required, Validators.minLength(2)]],
       apellido: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
+      fechaNacimiento: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirmPassword: ['', Validators.required]
     }, {
@@ -65,7 +66,6 @@ export class RegistroVisitanteComponent {
 
     this.cuentaService.registrarVisitante(dto).subscribe({
       next: (response) => {
-        console.log('Registro exitoso:', response);
         this.successMessage = response.message;
         
         setTimeout(() => {
