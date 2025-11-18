@@ -81,7 +81,7 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
     public IEnumerable<CuentaDto> ObtenerTodas()
     {
         var cuentas = cuentaRepo.ObtenerConRelaciones(c => true, "Visitante");
-        return cuentas.Select(c => c.ToDto());
+        return (cuentas ?? Enumerable.Empty<Cuenta>()).Select(c => c.ToDto());
     }
 
     private void AsignarPerfilVisitante(Cuenta cuenta, RegistrarCuentaDto dto)
