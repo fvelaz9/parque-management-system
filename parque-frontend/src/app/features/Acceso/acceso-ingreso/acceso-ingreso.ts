@@ -113,6 +113,9 @@ export class AccesoIngreso implements OnInit {
       next: (response) => {
         this.mensajeRespuesta = response.mensaje || 'Ingreso registrado exitosamente';
         this.cargarUsuarios();
+        setTimeout(() => {
+          this.router.navigate(['/atracciones']);
+        }, 3000);
       },
       error: (error) => {
         console.error('Error:', error);

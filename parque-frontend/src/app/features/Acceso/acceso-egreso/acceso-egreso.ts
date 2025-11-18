@@ -102,11 +102,14 @@ export class AccesoEgreso implements OnInit {
           this.registroSeleccionado = null;
 
           setTimeout(() => {
-            this.cargarUsuarios();
-          }, 2000);
+            this.router.navigate(['/atracciones']);
+          }, 3000);
         } else {
           this.mensajeRespuesta = 'Egreso registrado';
           this.tipoMensaje = 'exito';
+          setTimeout(() => {
+            this.router.navigate(['/atracciones']);
+          }, 3000);
         }
       },
       error: (error: ResponseDto) => {
