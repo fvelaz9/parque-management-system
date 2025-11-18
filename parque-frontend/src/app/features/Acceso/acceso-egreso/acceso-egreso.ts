@@ -11,7 +11,7 @@ import {CuentaService} from '../../../core/services/cuenta.service';
   templateUrl: './acceso-egreso.html',
   styleUrls: ['./acceso-egreso.css'],
   standalone: true,
-  imports: [CommonModule, RouterLink]
+  imports: [CommonModule]
 })
 export class AccesoEgreso implements OnInit {
   atraccionId: number = 0;

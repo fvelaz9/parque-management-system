@@ -116,11 +116,10 @@ export const routes: Routes = [
     canActivate: [visitanteGuard]
   },
   {
-<<<<<<< HEAD
     path: 'acceso',
     loadComponent: () => import('./features/Acceso/acceso-home/acceso-home')
   .then(m => m.AccesoHome),
-  canActivate: [operadorGuard]
+    canActivate: [operadorGuard]
   },
   {
     path: 'acceso-ingreso',
@@ -133,19 +132,16 @@ export const routes: Routes = [
     loadComponent: () => import('./features/Acceso/acceso-egreso/acceso-egreso')
       .then(m => m.AccesoEgreso),
     canActivate: [operadorGuard]
-=======
+  },
+  {
     path: 'configuracion/estrategias',
     loadComponent: () => import('./features/configuracion/selector-estrategias/selector-estrategias')
       .then(m => m.SelectorEstrategiasComponent),
     canActivate: [authGuard]
->>>>>>> develop
   },
   // Not Found route - debe ser la última
   {
     path: "**",
     component: NotFoundComponent
   },
-
-
-
 ];
