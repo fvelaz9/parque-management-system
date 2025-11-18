@@ -1,11 +1,16 @@
 services:
   sqlserver:
-    image: mcr.microsoft.com/azure-sql-edge
+    image: mcr.microsoft.com/mssql/server:2019-latest
     container_name: sqlserver
     environment:
       SA_PASSWORD: "Passw1rd"
       ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
     ports:
       - "1433:1433"
     volumes:
-      - ./data:/var/opt/mssql/data
+      - sqlserver_data:/var/opt/mssql
+    restart: unless-stopped
+
+volumes:
+  sqlserver_data:

@@ -2,9 +2,10 @@
 export interface MantenimientoPreventivo {
   id: number;
   atraccionId: number;
-  fechaProgramada: string; // formato: YYYY-MM-DD
-  horaInicio: string; // formato: HH:mm:ss
-  duracionEstimada: string; // formato: HH:mm:ss
+  nombreAtraccion: string;
+  fechaProgramada: string;
+  horaInicio: string;
+  duracionEstimada: string;
   descripcion: string;
   incidenciaId: number;
 }

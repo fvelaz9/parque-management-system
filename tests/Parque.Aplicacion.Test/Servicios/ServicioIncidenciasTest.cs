@@ -186,4 +186,170 @@ public class ServicioIncidenciasTest
         // Act
         _servicio.ResolverIncidencia(99);
     }
+
+    [TestMethod]
+    public void ListarIncidencias_ConIncidencias_RetornaListaConNombreAtraccion()
+    {
+        var fechaActual = new DateTime(2025, 10, 8, 12, 0, 0);
+        _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual()).Returns(fechaActual);
+
+        var atracciones = new List<AtraccionParque>
+    {
+        new AtraccionParque("Montaña Rusa", TipoAtraccion.MontañaRusa, 12, 24, "Test") { Id = 1 },
+        new AtraccionParque("Carrusel", TipoAtraccion.Simulador, 0, 30, "Test") { Id = 2 }
+    };
+
+        var incidencias = new List<Incidencia>
+    {
+        new Incidencia
+        {
+            Id = 1,
+            AtraccionId = 1,
+            Descripcion = "Falla en motor",
+            FechaReporte = fechaActual.AddDays(-1),
+            FechaResolucionEstimada = fechaActual.AddDays(1)
+        },
+        new Incidencia
+        {
+            Id = 2,
+            AtraccionId = 2,
+            Descripcion = "Problema eléctrico",
+            FechaReporte = fechaActual.AddDays(-2),
+            FechaResolucionEstimada = fechaActual.AddDays(3)
+        }
+    };
+
+        _mockRepoIncidencias.Setup(r => r.ObtenerTodos()).Returns(incidencias);
+        _mockRepoAtracciones.Setup(r => r.ObtenerTodos()).Returns(atracciones);
+
+        // Act
+        var resultado = _servicio.ListarIncidencias().ToList();
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(2, resultado.Count);
+
+        // Verificar primera incidencia
+        var incidencia1 = resultado[0];
+        var propId1 = incidencia1.GetType().GetProperty("Id");
+        var propDesc1 = incidencia1.GetType().GetProperty("Descripcion");
+        var propAtraccion1 = incidencia1.GetType().GetProperty("NombreAtraccion");
+        var propActiva1 = incidencia1.GetType().GetProperty("EstaActiva");
+
+        Assert.AreEqual(1, propId1?.GetValue(incidencia1));
+        Assert.AreEqual("Falla en motor", propDesc1?.GetValue(incidencia1));
+        Assert.AreEqual("Montaña Rusa", propAtraccion1?.GetValue(incidencia1));
+        Assert.AreEqual(true, propActiva1?.GetValue(incidencia1));
+
+        // Verificar segunda incidencia
+        var incidencia2 = resultado[1];
+        var propId2 = incidencia2.GetType().GetProperty("Id");
+        var propDesc2 = incidencia2.GetType().GetProperty("Descripcion");
+        var propAtraccion2 = incidencia2.GetType().GetProperty("NombreAtraccion");
+        var propActiva2 = incidencia2.GetType().GetProperty("EstaActiva");
+
+        Assert.AreEqual(2, propId2?.GetValue(incidencia2));
+        Assert.AreEqual("Problema eléctrico", propDesc2?.GetValue(incidencia2));
+        Assert.AreEqual("Carrusel", propAtraccion2?.GetValue(incidencia2));
+        Assert.AreEqual(true, propActiva2?.GetValue(incidencia2));
+
+        _mockRepoIncidencias.Verify(r => r.ObtenerTodos(), Times.Once);
+        _mockRepoAtracciones.Verify(r => r.ObtenerTodos(), Times.Once);
+    }
+
+    [TestMethod]
+    public void ListarIncidencias_ConIncidenciaInactiva_RetornaEstaActivaFalse()
+    {
+        // Arrange
+        var fechaActual = new DateTime(2025, 10, 8, 12, 0, 0);
+        _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual()).Returns(fechaActual);
+
+        var atracciones = new List<AtraccionParque>
+        {
+            new AtraccionParque("Montaña Rusa", TipoAtraccion.MontañaRusa, 12, 24, "Test") { Id = 1 }
+        };
+
+        var incidencias = new List<Incidencia>
+        {
+            new Incidencia
+            {
+                Id = 1,
+                AtraccionId = 1,
+                Descripcion = "Falla resuelta",
+                FechaReporte = fechaActual.AddDays(-5),
+                FechaResolucionEstimada = fechaActual.AddDays(-1) // Fecha pasada = inactiva
+            }
+        };
+
+        _mockRepoIncidencias.Setup(r => r.ObtenerTodos()).Returns(incidencias);
+        _mockRepoAtracciones.Setup(r => r.ObtenerTodos()).Returns(atracciones);
+
+        // Act
+        var resultado = _servicio.ListarIncidencias().ToList();
+
+        // Assert
+        Assert.AreEqual(1, resultado.Count);
+
+        var incidencia = resultado[0];
+        var propActiva = incidencia.GetType().GetProperty("EstaActiva");
+        Assert.AreEqual(false, propActiva?.GetValue(incidencia));
+    }
+
+    [TestMethod]
+    public void ListarIncidencias_AtraccionNoEncontrada_RetornaNombrePorDefecto()
+    {
+        // Arrange
+        var fechaActual = new DateTime(2025, 10, 8, 12, 0, 0);
+        _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual()).Returns(fechaActual);
+
+        var atracciones = new List<AtraccionParque>(); // Lista vacía
+
+        var incidencias = new List<Incidencia>
+        {
+            new Incidencia
+            {
+                Id = 1,
+                AtraccionId = 99, // ID que no existe en atracciones
+                Descripcion = "Falla desconocida",
+                FechaReporte = fechaActual.AddDays(-1),
+                FechaResolucionEstimada = fechaActual.AddDays(1)
+            }
+        };
+
+        _mockRepoIncidencias.Setup(r => r.ObtenerTodos()).Returns(incidencias);
+        _mockRepoAtracciones.Setup(r => r.ObtenerTodos()).Returns(atracciones);
+
+        // Act
+        var resultado = _servicio.ListarIncidencias().ToList();
+
+        // Assert
+        Assert.AreEqual(1, resultado.Count);
+
+        var incidencia = resultado[0];
+        var propAtraccion = incidencia.GetType().GetProperty("NombreAtraccion");
+        Assert.AreEqual("Atracción no encontrada", propAtraccion?.GetValue(incidencia));
+    }
+
+    [TestMethod]
+    public void ListarIncidencias_SinIncidencias_RetornaListaVacia()
+    {
+        // Arrange
+        var fechaActual = new DateTime(2025, 10, 8, 12, 0, 0);
+        _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual()).Returns(fechaActual);
+
+        var incidencias = new List<Incidencia>();
+        var atracciones = new List<AtraccionParque>();
+
+        _mockRepoIncidencias.Setup(r => r.ObtenerTodos()).Returns(incidencias);
+        _mockRepoAtracciones.Setup(r => r.ObtenerTodos()).Returns(atracciones);
+
+        // Act
+        var resultado = _servicio.ListarIncidencias().ToList();
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(0, resultado.Count);
+        _mockRepoIncidencias.Verify(r => r.ObtenerTodos(), Times.Once);
+        _mockRepoAtracciones.Verify(r => r.ObtenerTodos(), Times.Once);
+    }
 }

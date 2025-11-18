@@ -75,7 +75,15 @@ public class ServicioAtraccionesTest
     public void ModificarAtraccion_Existe_ModificaCorrectamente()
     {
         var atraccion = new AtraccionParque("Carrusel", TipoAtraccion.Simulador, 0, 30, "Clásico") { Id = 1 };
-        _mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>())).Returns(atraccion);
+
+        _mockRepo.Setup(r => r.Encontrar(It.Is<Expression<Func<AtraccionParque, bool>>>(expr =>
+            expr.ToString().Contains("Id"))))
+            .Returns(atraccion);
+
+        _mockRepo.Setup(r => r.Encontrar(It.Is<Expression<Func<AtraccionParque, bool>>>(expr =>
+            expr.ToString().Contains("Nombre"))))
+            .Returns((AtraccionParque?)null);
+
         _servicio.ModificarAtraccion(1, "Nuevo Carrusel", TipoAtraccion.Simulador, 0, 25, "Actualizado");
         Assert.AreEqual("Nuevo Carrusel", atraccion.Nombre);
         Assert.AreEqual(25, atraccion.Capacidad);

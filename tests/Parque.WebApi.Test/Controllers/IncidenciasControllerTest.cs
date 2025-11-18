@@ -64,13 +64,10 @@ public class IncidenciasControllerTest
             FechaResolucionEstimada = DateTime.Now.AddDays(1)
         };
 
-        _servicioMock!.Setup(s => s.CrearIncidencia(request))
-            .Throws(new ArgumentException("Atraccion no encontrada"));
-
-        // Act
+        _servicioMock!.Setup(s => s.CrearIncidencia(request)).Throws(new ArgumentException("Atraccion no encontrada"));
         _controller!.CrearIncidencia(request);
-
-        // Assert
+        var lista = _controller.ListarIncidencias();
+        Assert.IsNotNull(lista);
     }
 
     [TestMethod]

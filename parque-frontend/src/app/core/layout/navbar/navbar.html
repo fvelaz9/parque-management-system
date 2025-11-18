@@ -1,18 +1,30 @@
 <nav class="navbar">
   <div class="navbar-container">
-    <a routerLink="/home" class="navbar-brand">
-      🎢 Parque
-    </a>
+
 
     <ul class="navbar-menu">
       <li>
         <a routerLink="/home" routerLinkActive="active" class="nav-link">
-          Inicio
+          Incio
         </a>
       </li>
       <li>
         <a routerLink="/atracciones" routerLinkActive="active" class="nav-link">
           Atracciones
+        </a>
+      </li>
+      <li class="dropdown">
+        <a class="nav-link dropdown-toggle" (click)="toggleDropdown($event)">
+          Mantenimiento
+        </a>
+        <ul class="dropdown-menu" [class.show]="isDropdownOpen">
+          <li><a routerLink="/mantenimientos" routerLinkActive="active" (click)="isDropdownOpen = false">Mantenimientos Preventivos</a></li>
+          <li><a routerLink="/incidencias" routerLinkActive="active" (click)="isDropdownOpen = false">Incidencias</a></li>
+        </ul>
+      </li>
+      <li>
+        <a routerLink="/recompensas" routerLinkActive="active" class="nav-link">
+          Recompensas
         </a>
       </li>
       <li>

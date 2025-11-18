@@ -96,7 +96,7 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRep
         };
     }
 
-    private static void ValidarDatosAtraccion(string nombre, string descripcion, int edadMinima, int capacidad)
+    private void ValidarDatosAtraccion(string nombre, string descripcion, int edadMinima, int capacidad)
     {
         if(string.IsNullOrWhiteSpace(nombre))
         {
@@ -116,6 +116,12 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRep
         if(capacidad <= 0)
         {
             throw new ArgumentException("La capacidad debe ser mayor a 0");
+        }
+
+        var atraccionRepe = _repositorio.Encontrar(a => a.Nombre == nombre);
+        if(atraccionRepe != null)
+        {
+            throw new ArgumentException("Ese nombre de atraccion ya existe");
         }
     }
 }

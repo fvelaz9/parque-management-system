@@ -86,4 +86,20 @@ public class ServicioIncidencia(IRepositorio<Incidencia> repoIncidencias, IRepos
         repoAtracciones.Editar(atraccion);
         return false;
     }
+
+    public IEnumerable<object> ListarIncidencias()
+    {
+        var incidencias = repoIncidencias.ObtenerTodos();
+        var atracciones = repoAtracciones.ObtenerTodos();
+        return incidencias.Select(i => new
+        {
+            i.Id,
+            i.Descripcion,
+            i.FechaReporte,
+            i.FechaResolucionEstimada,
+            AtraccionId = i.AtraccionId,
+            NombreAtraccion = atracciones.FirstOrDefault(a => a.Id == i.AtraccionId)?.Nombre ?? "Atracción no encontrada",
+            EstaActiva = i.EstaActiva(servicioFechaHora.ObtenerFechaActual())
+        });
+    }
 }

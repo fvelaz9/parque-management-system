@@ -7,14 +7,15 @@ using Parque.Dominio.Excepciones;
 
 namespace Parque.WebApi.Filtros;
 
-public class AuthorizationFilter(string rol) : Attribute, IAuthorizationFilter
+// ✅ CAMBIO: Usar params string[] para aceptar múltiples roles
+public class AuthorizationFilter(params string[] roles) : Attribute, IAuthorizationFilter
 {
     private const string AUTHORIZATION_HEADER = "Authorization";
-    private readonly string _rol = rol ?? throw new ArgumentNullException(nameof(rol));
+    private readonly string[] _roles = roles ?? throw new ArgumentNullException(nameof(roles));
 
     public void OnAuthorization(AuthorizationFilterContext context)
     {
-        // ✅ AGREGAR: Verificar si el endpoint tiene [AllowAnonymous]
+        // ✅ Verificar si el endpoint tiene [AllowAnonymous]
         var hasAllowAnonymous = context.ActionDescriptor.EndpointMetadata
             .Any(m => m is IAllowAnonymous);
 
@@ -54,7 +55,18 @@ public class AuthorizationFilter(string rol) : Attribute, IAuthorizationFilter
 
         try
         {
-            if(!servicioSesion.ValidarSesion(token, _rol))
+            // ✅ CAMBIO: Verificar si el usuario tiene al menos uno de los roles permitidos
+            var tieneRolPermitido = false;
+            foreach(var rol in _roles)
+            {
+                if(servicioSesion.ValidarSesion(token, rol))
+                {
+                    tieneRolPermitido = true;
+                    break;
+                }
+            }
+
+            if(!tieneRolPermitido)
             {
                 context.Result = new ObjectResult(new ResponseDto
                 {

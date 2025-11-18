@@ -1,9 +1,20 @@
+<!-- src/app/features/atracciones/atraccion-list/atraccion-list.html -->
 <div class="container">
-  <div class="d-flex gap-2">
-    <button type="button" class="btn btn-success" [routerLink]="['/atracciones', 'nueva']"> Crear nueva atracción</button>
-    <button type="button" class="btn btn-primary" routerLink="/">Menu</button>
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h2 class="mb-1">
+            <i class="bi bi-tools text-warning"></i> Atracciones
+          </h2>
+          <p class="text-muted mb-0">Gestión y informacion de atracciones</p>
+        </div>
+        @if (isAdmin) {
+          <button type="button" class="btn btn-primary btn-lg" [routerLink]="['/atracciones', 'nueva']"> Crear nueva atracción</button>
+        }
+      </div>
+    </div>
   </div>
-  <h1>Atracciones del Parque</h1>
 
   @if (loading()) {
     <div class="loading">
@@ -21,15 +32,27 @@
             <h2>{{ atraccion.nombre }}</h2>
           </div>
           <div class="card-body">
-            <p><strong>Tipo:</strong> {{ atraccion.tipo }}</p>
+            <!-- CAMBIADO: Mostrar nombre del tipo en lugar del ID -->
+            <p><strong>Tipo:</strong> {{ getNombreTipo(atraccion.tipo) }}</p>
             <p><strong>Edad mínima:</strong> {{ atraccion.edadMinima }} años</p>
             <p><strong>Capacidad:</strong> {{ atraccion.capacidad }} personas</p>
+            <!-- CAMBIADO: Usar el pipe para mostrar estado legible -->
+            <p><strong>Estado:</strong> {{ getEstadoNombre(atraccion.estado)}}</p>
             <p class="descripcion">{{ atraccion.descripcion }}</p>
+<<<<<<< HEAD
             <div class="d-flex gap-2">
               <button class="btn btn-info" [routerLink]="['/acceso']" [queryParams]="{ atraccionId: atraccion.id }">Acceso</button>
               <button class="btn btn-warning" [routerLink]="['/atracciones', 'editar', atraccion.id]">Editar</button>
               <button class="btn btn-danger" (click)="borrarAtraccion(atraccion)">Borrar</button>
             </div>
+=======
+            @if (isAdmin) {
+              <div class="d-flex gap-2">
+                <button class="btn btn-warning" [routerLink]="['/atracciones', 'editar', atraccion.id]">Editar</button>
+                <button class="btn btn-danger" (click)="borrarAtraccion(atraccion)">Borrar</button>
+              </div>
+            }
+>>>>>>> develop
           </div>
         </div>
       } @empty {

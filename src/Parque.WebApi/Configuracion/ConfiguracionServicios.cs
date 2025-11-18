@@ -5,6 +5,7 @@ using Parque.Aplicacion.Servicios.Atracciones;
 using Parque.Aplicacion.Servicios.Gamificacion;
 using Parque.Aplicacion.Servicios.Incidencias;
 using Parque.Aplicacion.Servicios.Mantenimiento;
+using Parque.Aplicacion.Servicios.Recompensas;
 using Parque.Aplicacion.Servicios.Ticket;
 using Parque.Dominio.Gamificacion;
 using Parque.Infraestructura;
@@ -30,6 +31,7 @@ public static class ConfiguracionServicios
         services.AddScoped<IServicioAcceso, ServicioAcceso>();
         services.AddScoped<IServicioIncidencia, ServicioIncidencia>();
         services.AddScoped<IServicioMantenimiento, ServicioMantenimiento>();
+        services.AddScoped<IServicioRecompensa, ServicioRecompensa>();
 
         // Estrategias de puntuacion
         services.AddScoped<IEstrategiaPuntuacion, PuntuacionPorAtraccion>(sp =>
