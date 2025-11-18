@@ -294,23 +294,19 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             .Where(r => r.FechaEgreso == null && r.AtraccionId == atraccionId)
             .ToList();
 
-        var resultado = new List<RegistroVisitaDto>();
+        var ids = registrosActivos.Select(r => r.Identificador).ToList();
 
-        foreach (var registro in registrosActivos)
-        {
-            var ticket = repoTickets.Encontrar(t => t.Codigo == registro.Identificador);
-            if (ticket != null && ticket.CuentaId == usuarioId)
+        var tickets = repoTickets.Obtener(t => ids.Contains(t.Codigo) && t.CuentaId == usuarioId);
+
+        return registrosActivos
+            .Where(r => tickets.Any(t => t.Codigo == r.Identificador))
+            .Select(r => new RegistroVisitaDto
             {
-                resultado.Add(new RegistroVisitaDto
-                {
-                    Id = registro.Id,
-                    Identificador = registro.Identificador,
-                    FechaIngreso = registro.FechaIngreso,
-                    AtraccionId = registro.AtraccionId
-                });
-            }
-        }
-
-        return resultado;
+                Id = r.Id,
+                Identificador = r.Identificador,
+                FechaIngreso = r.FechaIngreso,
+                AtraccionId = r.AtraccionId
+            })
+            .ToList();
     }
 }
