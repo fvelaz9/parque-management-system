@@ -45,12 +45,13 @@ public class AccesoController(IServicioAcceso servicio, IServicioCuenta servicio
             ? (registro.FechaEgreso.Value - registro.FechaIngreso).TotalMinutes
             : 0;
 
-        return Ok(new
+        var respuesta = new
         {
-            mensaje = "Egreso registrado exitosamente. Puntos calculados.",
-            registro,
+            mensaje = "Egreso registrado exitosamente",
             tiempoVisitaMinutos = Math.Round(tiempoVisita, 2)
-        });
+        };
+
+        return Ok(respuesta);
     }
 
     [HttpGet("atraccion/{atraccionId}/aforo")]
@@ -59,5 +60,13 @@ public class AccesoController(IServicioAcceso servicio, IServicioCuenta servicio
     {
         var aforo = servicio.ObtenerAforoAtraccion(atraccionId);
         return Ok(aforo);
+    }
+
+    [HttpGet("registros-activos/{usuarioId:guid}/{atraccionId:int}")]
+    [AuthorizationFilter("Operador")]
+    public IActionResult GetRegistrosActivos(Guid usuarioId, int atraccionId)
+    {
+        var registrosActivos = servicio.ObtenerRegistrosActivosPorUsuario(usuarioId, atraccionId);
+        return Ok(registrosActivos);
     }
 }

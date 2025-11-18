@@ -83,6 +83,12 @@ export const routes: Routes = [
       .then(m => m.AccesoIngreso),
     canActivate: [operadorGuard]
   },
+  {
+    path: 'acceso-egreso',
+    loadComponent: () => import('./features/Acceso/acceso-egreso/acceso-egreso')
+      .then(m => m.AccesoEgreso),
+    canActivate: [operadorGuard]
+  },
   // Not Found route - debe ser la última
   {
     path: "**",

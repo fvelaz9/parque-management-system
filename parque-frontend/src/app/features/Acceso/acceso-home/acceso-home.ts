@@ -1,52 +1,46 @@
-import { Component, OnInit } from '@angular/core';
-import {ActivatedRoute, RouterLink} from '@angular/router';
-import { AtraccionesService } from '../../../core/services/atracciones.service';
-import { AtraccionParque, AforoAtraccionDto } from '../../../core/models/atraccion.model';
-import {CommonModule} from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { AccesoService } from '../../../core/services/acceso.service';
+import { AforoResponse } from '../../../core/models/acceso.model';
 
 @Component({
   selector: 'app-acceso-home',
   templateUrl: './acceso-home.html',
   styleUrls: ['./acceso-home.css'],
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink]
 })
 export class AccesoHome implements OnInit {
-  atraccionId!: number;
-  atraccion: AtraccionParque | null = null;
-  aforo: AforoAtraccionDto | null = null;
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private accesoService = inject(AccesoService);
 
-  constructor(
-    private route: ActivatedRoute,
-    private atraccionesService: AtraccionesService
-  ) {}
+  atraccionId: number = 0;
+  atraccion: any = null;
+  aforo: AforoResponse | null = null;
+  loading: boolean = false;
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.atraccionId = +params['atraccionId'] || 0;
-
       if (this.atraccionId) {
-        this.cargarDatos(this.atraccionId);
+        this.cargarAforo();
       }
     });
   }
 
-  cargarDatos(id: number) {
-    this.atraccionesService.getAtraccionById(id).subscribe({
-      next: (res) => {
-        this.atraccion = res;
+  cargarAforo(): void {
+    this.loading = true;
+    this.accesoService.obtenerAforo(this.atraccionId).subscribe({
+      next: (response: AforoResponse) => {
+        this.aforo = response;
+        this.atraccion = { nombre: `Atracción ${this.atraccionId}` };
+        this.loading = false;
       },
-      error: (err) => {
-        console.error('Error al obtener atracción', err);
-      }
-    });
-
-    this.atraccionesService.getAforoActual(id).subscribe({
-      next: (res: AforoAtraccionDto) => {
-        this.aforo = res;
-      },
-      error: (err) => {
-        console.error('Error al obtener aforo', err);
+      error: (error: any) => {
+        console.error('Error al cargar aforo:', error);
+        this.loading = false;
       }
     });
   }

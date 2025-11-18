@@ -287,4 +287,30 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             AforoCompleto = visitantesActuales >= atraccion.Capacidad
         };
     }
+
+    public List<RegistroVisitaDto> ObtenerRegistrosActivosPorUsuario(Guid usuarioId, int atraccionId)
+    {
+        var registrosActivos = repoRegistros.ObtenerTodos()
+            .Where(r => r.FechaEgreso == null && r.AtraccionId == atraccionId)
+            .ToList();
+
+        var resultado = new List<RegistroVisitaDto>();
+
+        foreach (var registro in registrosActivos)
+        {
+            var ticket = repoTickets.Encontrar(t => t.Codigo == registro.Identificador);
+            if (ticket != null && ticket.CuentaId == usuarioId)
+            {
+                resultado.Add(new RegistroVisitaDto
+                {
+                    Id = registro.Id,
+                    Identificador = registro.Identificador,
+                    FechaIngreso = registro.FechaIngreso,
+                    AtraccionId = registro.AtraccionId
+                });
+            }
+        }
+
+        return resultado;
+    }
 }

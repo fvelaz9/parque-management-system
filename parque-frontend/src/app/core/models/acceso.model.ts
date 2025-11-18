@@ -14,3 +14,20 @@ export interface AforoResponse {
   porcentajeOcupacion: number;
   aforoCompleto: boolean;
 }
+export interface RegistrarEgresoRequest {
+  codigoTicket: string;
+}
+
+export interface RegistrarEgresoResponse {
+  mensaje: string;
+  registro: RegistroVisitaDto;
+  tiempoVisitaMinutos: number;
+}
+
+export interface RegistroVisitaDto {
+  id: number;
+  atraccionId: number;
+  identificador: string;
+  fechaIngreso: Date;
+  fechaEgreso?: Date;
+}

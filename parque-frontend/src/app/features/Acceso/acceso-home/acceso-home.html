@@ -17,7 +17,8 @@
 
     <div class="botones-control">
       <button type="button" [disabled]="aforo ? aforo.disponible === 0 : true" [routerLink]="['/acceso-ingreso']" [queryParams]="{ atraccionId: atraccionId }">Registrar Ingreso</button>
-      <button type="button" [disabled]="aforo ? aforo.aforoActual === 0 : true">Registrar Egreso</button>
+      <button type="button" [disabled]="aforo ? aforo.aforoActual === 0 : true" [routerLink]="['/acceso-egreso']" [queryParams]="{ atraccionId: atraccionId }">Registrar Egreso</button>
+      <button type="submit" routerLink="/atracciones">Volver</button>
     </div>
   </div>
 

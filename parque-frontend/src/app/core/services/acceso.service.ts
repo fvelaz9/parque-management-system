@@ -2,8 +2,14 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
-import {AforoResponse, RegistrarIngresoRequest} from '../models/acceso.model';
+import {
+  AforoResponse,
+  RegistrarEgresoRequest, RegistrarEgresoResponse,
+  RegistrarIngresoRequest,
+  RegistroVisitaDto
+} from '../models/acceso.model';
 import { environment } from '../../../environments/environment.development';
+import {ResponseDto} from '../models/cuenta.model';
 
 @Injectable({
   providedIn: 'root',
@@ -35,4 +41,16 @@ export class AccesoService {
       { headers: this.getHeaders() }
     );
   }
+  obtenerRegistrosActivos(usuarioId: string, atraccionId: number): Observable<RegistroVisitaDto[]> {
+    return this.http.get<RegistroVisitaDto[]>(
+      `${this.apiUrl}/registros-activos/${usuarioId}/${atraccionId}`,  // ← Agregar atraccionId
+      { headers: this.getHeaders() }
+    );
+  }
+  registrarEgreso(atraccionId: number, request: RegistrarEgresoRequest): Observable<ResponseDto<RegistrarEgresoResponse>> {
+    return this.http.post<ResponseDto<RegistrarEgresoResponse>>(
+      `${this.apiUrl}/atraccion/${atraccionId}/egreso`, request, { headers: this.getHeaders() }
+    );
+  }
+
 }
