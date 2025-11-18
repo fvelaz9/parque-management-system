@@ -8,7 +8,7 @@ import {HistorialCanje} from './features/recompensas/recompensa-historial/recomp
 import { authGuard } from './core/guards/auth.guard';
 import { visitanteGuard } from './core/guards/visitante.guard';
 import { adminGuard } from './core/guards/admin.guard';
-import {ReporteUsoComponent} from './features/reportes/reportes';
+import {ReportesComponent} from './features/reportes/reportes';
 
 export const routes: Routes = [
   {
@@ -127,7 +127,7 @@ export const routes: Routes = [
   {
     path: 'reportes',
     loadComponent: () => import('./features/reportes/reportes')
-      .then(m => m.ReporteUsoComponent)
+      .then(m => m.ReportesComponent)
   },
   // Not Found route - debe ser la última
   {

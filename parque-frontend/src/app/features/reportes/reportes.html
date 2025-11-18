@@ -1,4 +1,3 @@
-<!-- src/app/features/reporte-uso/reporte-uso.component.html -->
 <div class="container mt-4">
   <!-- Header -->
   <div class="card shadow-sm mb-4">
@@ -10,11 +9,32 @@
     </div>
   </div>
 
-  <!-- Filtros -->
+  <!-- Formulario -->
   <div class="card shadow-sm mb-4">
     <div class="card-body">
       <div class="row g-3">
-        <div class="col-md-4">
+        <!-- Selector de Atracción -->
+        <div class="col-md-12">
+          <label for="atraccionSelect" class="form-label">Atracción</label>
+          <select
+            id="atraccionSelect"
+            class="form-select"
+            [(ngModel)]="atraccionSeleccionadaId">
+            <option value="0" disabled>Seleccione una atracción</option>
+            <option *ngFor="let atraccion of atracciones()" [value]="atraccion.id">
+              {{ atraccion.nombre }}
+            </option>
+          </select>
+          <div *ngIf="loading()" class="mt-2">
+            <small class="text-muted">
+              <span class="spinner-border spinner-border-sm me-1"></span>
+              Cargando atracciones...
+            </small>
+          </div>
+        </div>
+
+        <!-- Fecha Desde -->
+        <div class="col-md-5">
           <label for="fechaDesde" class="form-label">Fecha Desde</label>
           <input
             type="date"
@@ -22,7 +42,9 @@
             class="form-control"
             [(ngModel)]="fechaDesde">
         </div>
-        <div class="col-md-4">
+
+        <!-- Fecha Hasta -->
+        <div class="col-md-5">
           <label for="fechaHasta" class="form-label">Fecha Hasta</label>
           <input
             type="date"
@@ -30,26 +52,27 @@
             class="form-control"
             [(ngModel)]="fechaHasta">
         </div>
-        <div class="col-md-4 d-flex align-items-end">
+
+        <!-- Botón Generar -->
+        <div class="col-md-2 d-flex align-items-end">
           <button
             class="btn btn-success w-100"
             (click)="cargarReporte()"
-            [disabled]="loading()">
-            <span *ngIf="loading()" class="spinner-border spinner-border-sm me-2"></span>
-            <i *ngIf="!loading()" class="bi bi-file-earmark-bar-graph me-2"></i>
-            {{ loading() ? 'Generando...' : 'Generar Reporte' }}
+            [disabled]="submitting() || loading()">
+            <span *ngIf="submitting()" class="spinner-border spinner-border-sm me-2"></span>
+            <i *ngIf="!submitting()" class="bi bi-file-earmark-bar-graph me-2"></i>
+            {{ submitting() ? 'Generando...' : 'Generar' }}
           </button>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Loading -->
-  <div *ngIf="loading()" class="text-center py-5">
-    <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;">
-      <span class="visually-hidden">Generando reporte...</span>
-    </div>
-    <p class="mt-3 text-muted">Generando reporte...</p>
+  <!-- Mensaje de éxito -->
+  <div *ngIf="successMessage()" class="alert alert-success alert-dismissible fade show shadow-sm" role="alert">
+    <i class="bi bi-check-circle-fill me-2"></i>
+    <strong>¡Éxito!</strong> {{ successMessage() }}
+    <button type="button" class="btn-close" (click)="successMessage.set('')"></button>
   </div>
 
   <!-- Error -->
@@ -61,52 +84,52 @@
     </div>
   </div>
 
-  <!-- Resultados -->
-  <div *ngIf="!loading() && !error() && reporteAtracciones().length > 0">
+  <!-- Loading -->
+  <div *ngIf="submitting()" class="text-center py-5">
+    <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;">
+      <span class="visually-hidden">Generando reporte...</span>
+    </div>
+    <p class="mt-3 text-muted">Generando reporte...</p>
+  </div>
+
+  <!-- Resultado -->
+  <div *ngIf="!submitting() && !error() && reporte()">
     <div class="card shadow-sm">
       <div class="card-header bg-success text-white">
         <h4 class="mb-0">
-          <i class="bi bi-bar-chart-fill"></i> Resultados del Reporte
+          <i class="bi bi-bar-chart-fill"></i> Resultado del Reporte
         </h4>
       </div>
-      <div class="card-body p-0">
-        <div class="table-responsive">
-          <table class="table table-hover mb-0">
-            <thead class="table-light">
-            <tr>
-              <th>ID</th>
-              <th>Atracción</th>
-              <th class="text-end">Cantidad de Visitas</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let atraccion of reporteAtracciones()">
-              <td>{{ atraccion.atraccionId }}</td>
-              <td>
-                <strong>{{ atraccion.nombreAtraccion }}</strong>
-              </td>
-              <td class="text-end">
-                  <span class="badge bg-primary rounded-pill fs-6">
-                    {{ atraccion.cantidadVisitas }}
-                  </span>
-              </td>
-            </tr>
-            </tbody>
-          </table>
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <h5>Atracción</h5>
+            <p class="fs-4 text-primary">
+              <i class="bi bi-geo-alt-fill"></i> {{ reporte()?.nombreAtraccion }}
+            </p>
+          </div>
+          <div class="col-md-6 text-end">
+            <h5>Total de Visitas</h5>
+            <p class="fs-1 text-success fw-bold">
+              {{ reporte()?.cantidadVisitas }}
+            </p>
+          </div>
+        </div>
+        <hr>
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-0">
+              <strong>Período:</strong>
+              {{ fechaDesde | date:'dd/MM/yyyy' }} - {{ fechaHasta | date:'dd/MM/yyyy' }}
+            </p>
+          </div>
+          <div class="col-md-6 text-end">
+            <p class="mb-0 text-muted">
+              <small>ID Atracción: {{ reporte()?.atraccionId }}</small>
+            </p>
+          </div>
         </div>
       </div>
-      <div class="card-footer text-muted">
-        Total de atracciones: {{ reporteAtracciones().length }}
-      </div>
-    </div>
-  </div>
-
-  <!-- Sin resultados -->
-  <div *ngIf="!loading() && !error() && reporteAtracciones().length === 0" class="card shadow-sm">
-    <div class="card-body text-center py-5">
-      <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
-      <h4 class="mt-3">No hay datos</h4>
-      <p class="text-muted mb-0">No hay visitas registradas en el rango seleccionado</p>
     </div>
   </div>
 </div>
