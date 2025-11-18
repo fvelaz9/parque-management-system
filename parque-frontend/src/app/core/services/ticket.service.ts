@@ -28,4 +28,10 @@ export class TicketService {
       headers: this.getHeaders(),
     });
   }
+  getTicketsPorUsuarioYEvento(usuarioId: string, eventoId: number): Observable<Ticket[]> {
+    return this.http.get<Ticket[]>(
+        `${this.apiUrl}/por-usuario/${usuarioId}/evento/${eventoId}`,
+        { headers: this.getHeaders() }
+    );
+  }
 }

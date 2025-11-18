@@ -48,6 +48,15 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             };
         }
 
+        if(ticket.TipoEntrada == TipoTicket.General)
+        {
+            var validacionGeneral = ValidarAtraccionParaTicketGeneral(request.AtraccionId, atraccion);
+            if(validacionGeneral != null)
+            {
+                return validacionGeneral;
+            }
+        }
+
         if(ticket.TipoEntrada == TipoTicket.EventoEspecial)
         {
             var errorEvento = VerificarEvento(ticket, atraccion, request.AtraccionId);
@@ -205,6 +214,31 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             {
                 AccesoPermitido = false,
                 Mensaje = $"Aforo completo ({atraccion.Capacidad} personas)",
+                NombreAtraccion = atraccion.Nombre
+            };
+        }
+
+        return null;
+    }
+
+    private ValidarAccesoResponse? ValidarAtraccionParaTicketGeneral(int atraccionId, AtraccionParque atraccion)
+    {
+        var fechaActual = servicioFechaHora.ObtenerFechaActual().Date;
+        var eventosActivos = repoEvento.ObtenerConRelaciones(
+            e => fechaActual >= e.Inicio.Date && fechaActual <= e.Fin.Date,
+            "Atracciones");
+
+        var eventoConAtraccion = eventosActivos
+            .FirstOrDefault(e => e.Atracciones.Any(a => a.Id == atraccionId));
+
+        if (eventoConAtraccion != null)
+        {
+            return new ValidarAccesoResponse
+            {
+                AccesoPermitido = false,
+                Mensaje = $"Esta atracción forma parte del evento '{eventoConAtraccion.Titulo}'. " +
+                          $"Se requiere ticket de Evento Especial. " +
+                          $"Evento activo hasta {eventoConAtraccion.Fin:dd/MM/yyyy}",
                 NombreAtraccion = atraccion.Nombre
             };
         }

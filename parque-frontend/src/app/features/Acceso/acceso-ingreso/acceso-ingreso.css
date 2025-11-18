@@ -1,62 +1,261 @@
+/* Contenedor principal */
+:host {
+    display: block;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Secciones */
+.seccion-usuarios,
+.seccion-tickets {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    border: 1px solid #e2e8f0;
+}
+
+.seccion-usuarios h3,
+.seccion-tickets h3 {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.5rem;
+    color: #2d3748;
+    font-weight: 700;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 0.75rem;
+}
+
+/* Listas modernizadas */
 .lista-usuarios,
 .lista-tickets {
     list-style-type: none;
     padding: 0;
-    margin: 0 0 1em 0;
-    max-height: 200px;
+    margin: 0 0 1.5rem 0;
+    max-height: 300px;
     overflow-y: auto;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    background: #f7fafc;
+    animation: slideDown 0.3s ease-out;
 }
 
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Scrollbar personalizado */
+.lista-usuarios::-webkit-scrollbar,
+.lista-tickets::-webkit-scrollbar {
+    width: 8px;
+}
+
+.lista-usuarios::-webkit-scrollbar-track,
+.lista-tickets::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.lista-usuarios::-webkit-scrollbar-thumb,
+.lista-tickets::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 10px;
+}
+
+.lista-usuarios::-webkit-scrollbar-thumb:hover,
+.lista-tickets::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
+}
+
+/* Items de lista modernizados */
 .lista-usuarios li,
 .lista-tickets li {
-    padding: 0.5em 1em;
+    padding: 1rem 1.5rem;
     cursor: pointer;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.lista-usuarios li::before,
+.lista-tickets li::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    transition: left 0.3s ease;
+}
+
+.lista-usuarios li:hover::before,
+.lista-tickets li:hover::before {
+    left: 0;
 }
 
 .lista-usuarios li:hover,
 .lista-tickets li:hover {
-    background-color: #f0f0f0;
+    background-color: #edf2f7;
+    transform: translateX(5px);
 }
 
+/* Estados seleccionados */
 .usuario-seleccionado,
 .ticket-seleccionado {
-    background-color: #007bff;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    font-weight: bold;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    transform: translateX(10px);
+}
+
+.usuario-seleccionado::before,
+.ticket-seleccionado::before {
+    display: none;
+}
+
+/* Botones modernizados */
+.botones-container {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    width: 100%;
 }
 
 button {
-    margin-right: 1em;
-    padding: 0.5em 1.2em;
-    font-size: 1em;
-    cursor: pointer;
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 600;
     border: none;
-    border-radius: 3px;
-    background-color: #007bff;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-width: 140px;
+}
+
+button:first-of-type {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+button:first-of-type:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+button:last-of-type {
+    background: #e2e8f0;
+    color: #4a5568;
+}
+
+button:last-of-type:hover:not(:disabled) {
+    background: #cbd5e0;
+    transform: translateY(-1px);
 }
 
 button:disabled {
-    background-color: #999;
+    opacity: 0.6;
     cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
 }
 
-button:hover:not(:disabled) {
-    background-color: #0056b3;
-}
-
+/* Mensajes */
 .error {
-    color: #bb0000;
-    font-weight: bold;
-    margin-top: 1em;
+    background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+    color: #c53030;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    border: 1px solid #fc8181;
+    font-weight: 600;
+    margin-top: 1rem;
+    animation: slideDown 0.3s ease-out;
 }
 
 .mensaje-respuesta {
-    margin-top: 1em;
-    font-weight: bold;
-    color: #007b00;
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    margin-top: 1rem;
+    animation: slideDown 0.3s ease-out;
+    border: 1px solid;
+}
+
+.mensaje-respuesta.success {
+    background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%);
+    color: #2f855a;
+    border-color: #68d391;
+}
+
+.mensaje-respuesta.error {
+    background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+    color: #c53030;
+    border-color: #fc8181;
+}
+
+/* Loading */
+.loading {
+    text-align: center;
+    padding: 2rem;
+    color: #718096;
+    font-style: italic;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    :host {
+        padding: 1rem;
+    }
+
+    .seccion-usuarios,
+    .seccion-tickets {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .lista-usuarios,
+    .lista-tickets {
+        max-height: 250px;
+    }
+
+    .lista-usuarios li,
+    .lista-tickets li {
+        padding: 0.875rem 1rem;
+    }
+
+    .botones-container {
+        flex-direction: column;
+    }
+
+    button {
+        width: 100%;
+        min-width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .seccion-usuarios h3,
+    .seccion-tickets h3 {
+        font-size: 1.25rem;
+    }
+
+    .lista-usuarios,
+    .lista-tickets {
+        max-height: 200px;
+    }
 }

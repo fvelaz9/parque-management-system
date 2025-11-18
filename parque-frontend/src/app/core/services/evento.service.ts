@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { CreateEventoRequest, Evento, EventoOutDto } from '../models/evento.model';
 import { environment } from '../../../environments/environment.development';
 import { AuthService } from './auth.service';
+import {AtraccionParque} from '../models/atraccion.model';
 
 @Injectable({
   providedIn: 'root'
@@ -31,5 +32,12 @@ export class EventoService {
   deleteEvento(id: number): Observable<void> {
     const headers = this.getAuthHeaders();
     return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers });
+  }
+  obtenerAtraccionesPorEvento(eventoId: number): Observable<AtraccionParque[]> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<AtraccionParque[]>(
+      `${this.apiUrl}/${eventoId}/atracciones`,
+      { headers }
+    );
   }
 }

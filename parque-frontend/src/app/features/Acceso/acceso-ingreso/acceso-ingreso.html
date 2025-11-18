@@ -18,7 +18,8 @@
             <li *ngFor="let ticket of ticketsUsuario"
                 (click)="ticketSeleccionado = ticket"
                 [class.ticket-seleccionado]="ticket === ticketSeleccionado">
-                {{ ticket.codigo }}
+                Código: {{ ticket.codigo }} |
+                Tipo: {{ TipoTicket[ticket.tipoEntrada] }}
             </li>
         </ul>
 

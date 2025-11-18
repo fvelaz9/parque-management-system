@@ -10,7 +10,7 @@ namespace Parque.WebApi.Controllers.Usuarios;
 public class CuentaController(IServicioCuenta servicioCuenta) : ControllerBase
 {
     [HttpGet]
-    [AuthorizationFilter("Administrador")]
+    [AuthorizationFilter("Administrador", "Operador")]
     public IActionResult ObtenerTodas()
     {
         var cuentas = servicioCuenta.ObtenerTodas();

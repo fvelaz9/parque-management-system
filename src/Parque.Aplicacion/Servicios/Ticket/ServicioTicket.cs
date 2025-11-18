@@ -116,4 +116,35 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
             EsValido = true
         };
     }
+
+    public List<Dominio.Ticket> ObtenerTicketsPorUsuarioYEvento(Guid usuarioId, int eventoId)
+    {
+        var evento = repositorioEvento.Encontrar(e => e.Id == eventoId);
+        if (evento == null)
+        {
+            throw new ExcepcionEntidadNoEncontrada("Evento no encontrado");
+        }
+
+        var tickets = repositorio.ObtenerTodos()
+            .Where(t => t.CuentaId == usuarioId &&
+                        t.EventoId == eventoId &&
+                        t.EsValido &&
+                        t.TipoEntrada == TipoTicket.EventoEspecial &&
+                        t.FechaVisita.Date >= servicioFechaHora.ObtenerFechaActual().Date)
+            .ToList();
+
+        return tickets;
+    }
+
+    public List<Dominio.Ticket> ListarTicketsValidosGeneral(Guid usuarioId)
+    {
+        var fechaActual = servicioFechaHora.ObtenerFechaActual();
+
+        return repositorio.ObtenerTodos()
+            .Where(t => t.CuentaId == usuarioId &&
+                        t.EsValido &&
+                        t.TipoEntrada == TipoTicket.General &&
+                        t.FechaVisita.Date >= fechaActual.Date)
+            .ToList();
+    }
 }

@@ -57,6 +57,15 @@ export class EventoListComponent {
       });
     }
   }
+  verAtracciones(evento: Evento) {
+    if (!evento.id) {
+      alert('Evento sin ID válido');
+      return;
+    }
+    this.router.navigate(['/evento-atracciones'], {
+      queryParams: { eventoId: evento.id }
+    });
+  }
 
   agregarEvento() {
     this.router.navigate(['/eventos/nuevo']);
