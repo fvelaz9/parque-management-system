@@ -9,8 +9,8 @@ export interface Ticket {
 }
 
 export enum TipoTicket {
-  General = 'General',
-  EventoEspecial = 'EventoEspecial'
+  General = 0,
+  EventoEspecial = 1
 }
 
 export interface CrearTicketDto {

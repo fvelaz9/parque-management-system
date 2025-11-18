@@ -39,7 +39,7 @@ export class ComprarTicketComponent implements OnInit {
   }
 
   cargarEventos(): void {
-    this.eventoService.obtenerEventosDisponibles().subscribe({
+    this.eventoService.listarEventos().subscribe({
       next: (eventos) => {
         this.eventos = eventos;
       },

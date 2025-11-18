@@ -27,7 +27,6 @@ export class EventoListComponent {
     this.loading.set(true);
     this.eventoService.listarEventos().subscribe({
       next: (result) => {
-        console.log('Eventos cargados:', result);
         this.eventos.set(result);
         this.loading.set(false);
         this.error.set('');
