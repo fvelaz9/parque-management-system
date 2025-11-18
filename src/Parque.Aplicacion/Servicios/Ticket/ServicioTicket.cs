@@ -120,7 +120,7 @@ public class ServicioTicket(IRepositorio<Dominio.Ticket> repositorio, IRepositor
     public List<Dominio.Ticket> ObtenerTicketsPorUsuarioYEvento(Guid usuarioId, int eventoId)
     {
         var evento = repositorioEvento.Encontrar(e => e.Id == eventoId);
-        if (evento == null)
+        if(evento == null)
         {
             throw new ExcepcionEntidadNoEncontrada("Evento no encontrado");
         }

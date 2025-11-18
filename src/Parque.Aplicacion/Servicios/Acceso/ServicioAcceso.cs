@@ -231,7 +231,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
         var eventoConAtraccion = eventosActivos
             .FirstOrDefault(e => e.Atracciones.Any(a => a.Id == atraccionId));
 
-        if (eventoConAtraccion != null)
+        if(eventoConAtraccion != null)
         {
             return new ValidarAccesoResponse
             {

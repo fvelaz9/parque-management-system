@@ -99,11 +99,11 @@ public class ServicioEvento(IRepositorio<Evento> repositorioEvento) : IServicioE
     public List<AtraccionParque> ObtenerAtraccionesPorEvento(int eventoId)
     {
         var evento = repositorioEvento.EncontrarConRelaciones(e => e.Id == eventoId, "Atracciones");
-        if (evento == null)
+        if(evento == null)
         {
             throw new ExcepcionEntidadNoEncontrada($"Evento con ID {eventoId} no encontrado");
         }
 
-        return evento.Atracciones?.ToList() ?? new List<AtraccionParque>();
+        return evento.Atracciones?.ToList() ?? [];
     }
 }
