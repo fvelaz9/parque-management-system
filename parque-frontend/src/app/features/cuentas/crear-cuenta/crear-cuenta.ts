@@ -116,11 +116,8 @@ export class CrearCuentaComponent {
       nivelMembresia: this.esVisitante ? parseInt(this.cuentaForm.value.nivelMembresia) : null
     };
 
-    console.log('📤 DTO a enviar:', dto);
-
     this.cuentaService.crearCuenta(dto).subscribe({
       next: (response) => {
-        console.log('✅ Cuenta creada:', response);
         this.successMessage = response.message || 'Cuenta creada exitosamente';
         
         this.cuentaForm.reset();

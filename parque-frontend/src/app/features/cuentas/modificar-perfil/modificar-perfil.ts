@@ -111,7 +111,6 @@ export class ModificarPerfilComponent implements OnInit {
     const formValue = this.perfilForm.value;
     const usuarioActual = this.authService.getUsuario();
 
-    // Solo agregar campos que cambiaron
     if (formValue.nombre && formValue.nombre !== usuarioActual?.nombre) {
       dto.nombre = formValue.nombre;
     }
@@ -132,7 +131,6 @@ export class ModificarPerfilComponent implements OnInit {
     console.log('✅ Perfil modificado:', response);
     this.successMessage = response.message || 'Perfil actualizado exitosamente';
     
-    // Actualizar datos en localStorage
     this.actualizarUsuarioEnLocalStorage(dto);
     
     this.loading = false;

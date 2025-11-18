@@ -40,9 +40,8 @@ export class CuentaService {
       nuevoNivel,
     );
   }
+  
   obtenerCuentasVisitantes(): Observable<ResponseDto<CuentaDto[]>> {
-    return this.http.get<ResponseDto<CuentaDto[]>>(`${this.apiUrl}/visitantes`, {
-      headers: this.getHeaders()
-    });
+    return this.http.get<ResponseDto<CuentaDto[]>>(`${this.apiUrl}/visitantes`);
   }
 }
