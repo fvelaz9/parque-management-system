@@ -1,16 +1,12 @@
-// src/app/features/ranking/ranking.component.ts
+// src/app/features/ranking/ranking.ts
+
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment.development';
-
-interface RankingVisitante {
-  visitanteId: string;
-  nombreVisitante: string;
-  puntosTotales: number;
-  posicion: number;
-}
+import { Router } from '@angular/router';
+import { RankingVisitanteDto } from '../../core/models/gamificacion.model';
+import { GamificacionService } from '../../core/services/gamificacion.service';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-ranking',
@@ -20,43 +16,59 @@ interface RankingVisitante {
   styleUrl: './ranking.css'
 })
 export class RankingComponent {
-  private readonly http = inject(HttpClient);
-  private readonly apiUrl = environment.apiUrl;
+  private readonly gamificacionService = inject(GamificacionService);
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
 
-  public rankingVisitantes = signal<RankingVisitante[]>([]);
+  public rankingVisitantes = signal<RankingVisitanteDto[]>([]);
   public loading = signal(false);
   public error = signal('');
-  public successMessage = signal('');
-  public fechaRanking: string = new Date().toISOString().split('T')[0];
+
+  // Filtros
+  public fechaRanking: string = this.formatDate(new Date());
   public topRanking: number = 10;
 
-  // ✅ QUITAR ngOnInit - No cargar nada al iniciar
-
-  cargarRanking() {
+  cargarRanking(): void {
     this.loading.set(true);
     this.error.set('');
-    this.successMessage.set(''); // Limpiar mensajes previos
 
-    const fecha = this.fechaRanking || new Date().toISOString().split('T')[0];
-    const url = `${this.apiUrl}/gamificacion/ranking/diario?fecha=${fecha}&top=${this.topRanking}`;
+    this.gamificacionService.getRankingDiario(this.fechaRanking, this.topRanking)
+      .subscribe({
+        next: (response) => {
+          if (response.executionSuccessful) {
+            const ranking = response.content.ranking || [];
+            this.rankingVisitantes.set(ranking);
 
-    this.http.get<any>(url).subscribe({
-      next: (response) => {
-        console.log('Ranking response:', response);
-        const ranking = response.content?.ranking || response.ranking || [];
-        this.rankingVisitantes.set(ranking);
+            if (ranking.length === 0) {
+              this.error.set('No hay visitantes en el ranking para la fecha seleccionada');
+            }
+          } else {
+            this.error.set(response.message || 'Error al cargar el ranking');
+          }
+          this.loading.set(false);
+        },
+        error: (err) => {
+          console.error('Error al cargar ranking:', err);
 
-        // ✅ Mostrar mensaje de éxito
-        const mensaje = response.message || `Ranking cargado correctamente (${ranking.length} visitantes)`;
-        this.successMessage.set(mensaje);
+          if (err.status === 401) {
+            this.error.set('No estás autenticado');
+            this.router.navigate(['/login']);
+          } else if (err.status === 403) {
+            this.error.set('No tienes permisos para ver el ranking');
+          } else {
+            this.error.set(err.error?.message || 'Error al cargar el ranking');
+          }
 
-        this.loading.set(false);
-      },
-      error: (err) => {
-        console.error('Error al cargar ranking:', err);
-        this.error.set('Error al cargar el ranking diario');
-        this.loading.set(false);
-      }
-    });
+          this.loading.set(false);
+        }
+      });
+  }
+
+  // Formatea fecha a yyyy-MM-dd para el input type="date"
+  private formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 }

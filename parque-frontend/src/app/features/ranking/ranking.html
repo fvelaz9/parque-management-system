@@ -1,4 +1,4 @@
-<!-- src/app/features/ranking/ranking.component.html -->
+<!-- src/app/features/ranking/ranking.html -->
 <div class="container mt-4">
   <!-- Header -->
   <div class="card shadow-sm mb-4">
@@ -75,40 +75,36 @@
         <div class="list-group list-group-flush">
           <div
             *ngFor="let visitante of rankingVisitantes()"
-            class="list-group-item d-flex align-items-center py-3"
-            [ngClass]="{
-              'bg-warning bg-opacity-10': visitante.posicion === 1,
-              'bg-secondary bg-opacity-10': visitante.posicion === 2,
-              'bg-info bg-opacity-10': visitante.posicion === 3
-            }">
+            class="list-group-item d-flex align-items-center py-3">
+            <!-- Eliminamos el [ngClass] con los colores de fondo -->
+
             <!-- Posición -->
             <div class="me-3">
-              <span
-                class="badge rounded-circle fs-5 d-flex align-items-center justify-content-center"
-                [ngClass]="{
-                  'bg-warning text-dark': visitante.posicion === 1,
-                  'bg-secondary': visitante.posicion === 2,
-                  'bg-info': visitante.posicion === 3,
-                  'bg-primary': visitante.posicion > 3
-                }"
-                style="width: 50px; height: 50px;">
-                <i *ngIf="visitante.posicion === 1" class="bi bi-trophy-fill"></i>
-                <span *ngIf="visitante.posicion !== 1">#{{ visitante.posicion }}</span>
+             <span
+              class="badge rounded-circle fs-5 d-flex align-items-center justify-content-center"
+              [ngClass]="{
+                'bg-warning text-dark': visitante.posicion === 1,
+                'bg-secondary': visitante.posicion === 2,
+                'bg-info': visitante.posicion === 3,
+                'bg-primary': visitante.posicion > 3
+              }"
+              style="width: 50px; height: 50px;">
+              <i *ngIf="visitante.posicion === 1" class="bi bi-trophy-fill"></i>
+              <span *ngIf="visitante.posicion !== 1">#{{ visitante.posicion }}</span>
               </span>
             </div>
-
             <!-- Información del visitante -->
             <div class="flex-grow-1">
-              <h5 class="mb-1">{{ visitante.nombreVisitante }}</h5>
+              <h5 class="mb-1">{{ visitante.nombre }}</h5>
               <small class="text-muted">ID: {{ visitante.visitanteId }}</small>
             </div>
 
             <!-- Puntos -->
             <div class="text-end">
               <h4 class="mb-0 text-success">
-                <i class="bi bi-star-fill"></i> {{ visitante.puntosTotales }}
+                <i class="bi bi-star-fill"></i> {{ visitante.puntosDiarios }}
               </h4>
-              <small class="text-muted">puntos</small>
+              <small class="text-muted">puntos diarios</small>
             </div>
           </div>
         </div>
