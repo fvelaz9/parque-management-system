@@ -1,0 +1,96 @@
+<div class="contenedor-egreso">
+  <div class="header">
+    <h2>Registrar Egreso</h2>
+    <div class="info-atraccion">
+      <span class="badge">Atracción {{ atraccionId }}</span>
+    </div>
+    <button class="btn-volver" (click)="volver()">← Volver</button>
+  </div>
+
+  <div class="seccion-cuentas">
+    <h3>Seleccione una cuenta</h3>
+
+    <div *ngIf="loading" class="loading">
+      <p> Cargando cuentas...</p>
+    </div>
+
+    <div *ngIf="!loading && usuarios.length > 0; else sinCuentas" class="lista-wrapper">
+      <ul class="lista-cuentas">
+        <li *ngFor="let usuario of usuarios"
+            (click)="seleccionarUsuario(usuario)"
+            [class.cuenta-seleccionada]="usuario === usuarioSeleccionado">
+          <div class="cuenta-info">
+            <span class="nombre">{{ usuario.nombre }} {{ usuario.apellido }}</span>
+            <span class="email" *ngIf="usuario.email">{{ usuario.email }}</span>
+            <span class="roles" *ngIf="usuario.roles && usuario.roles.length > 0">
+              {{ usuario.roles.join(', ') }}
+            </span>
+          </div>
+          <span class="puntos" *ngIf="usuario.visitante?.puntos">
+             {{ usuario.visitante?.puntos }} pts
+          </span>
+        </li>
+      </ul>
+    </div>
+
+    <ng-template #sinCuentas>
+      <p class="info" *ngIf="!loading">No hay cuentas disponibles</p>
+    </ng-template>
+
+    <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+  </div>
+
+  <div class="seccion-registros" *ngIf="usuarioSeleccionado">
+    <h3>Registros activos - {{ usuarioSeleccionado.nombre }} {{ usuarioSeleccionado.apellido }}</h3>
+
+    <div *ngIf="registrosActivos.length > 0; else sinRegistros" class="lista-wrapper">
+      <div class="registros-header">
+        <span class="total">Total: {{ registrosActivos.length }} registro(s)</span>
+      </div>
+
+      <ul class="lista-registros">
+        <li *ngFor="let registro of registrosActivos"
+            (click)="registroSeleccionado = registro"
+            [class.registro-seleccionado]="registro === registroSeleccionado">
+          <div class="registro-info">
+            <div class="codigo-ticket">
+              <span class="label">Ticket:</span>
+              <span class="valor">{{ registro.identificador | slice:0:8 }}...</span>
+            </div>
+            <div class="tiempo-ingreso">
+              <span class="label">Ingreso:</span>
+              <span class="valor">{{ registro.fechaIngreso | date: 'dd/MM/yyyy HH:mm:ss' }}</span>
+            </div>
+            <div class="atraccion-id">
+              <span class="label">Atracción ID:</span>
+              <span class="valor">{{ registro.atraccionId }}</span>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <ng-template #sinRegistros>
+      <div class="sin-registros">
+        <p class="info">{{ mensajeRespuesta || 'No hay registros activos para esta cuenta' }}</p>
+      </div>
+    </ng-template>
+
+    <div class="acciones" *ngIf="registrosActivos.length > 0">
+      <button class="btn btn-primary"
+              [disabled]="!registroSeleccionado"
+              (click)="registrarEgreso()">
+         Registrar Egreso
+      </button>
+      <button class="btn btn-secondary"
+              (click)="usuarioSeleccionado = null; registroSeleccionado = null">
+         Limpiar selección
+      </button>
+    </div>
+
+    <p *ngIf="mensajeRespuesta && registrosActivos.length > 0"
+       [class]="'mensaje mensaje-' + tipoMensaje">
+      {{ mensajeRespuesta }}
+    </p>
+  </div>
+</div>

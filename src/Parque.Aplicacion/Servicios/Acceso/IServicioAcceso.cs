@@ -10,4 +10,5 @@ public interface IServicioAcceso
     RegistroVisita RegistrarIngreso(Guid codigoTicket, int atraccionId, Cuenta cuentaVisitante);
     RegistroVisita RegistrarEgreso(Guid codigoTicket, int atraccionId);
     AforoResponse ObtenerAforoAtraccion(int atraccionId);
+    List<RegistroVisitaDto> ObtenerRegistrosActivosPorUsuario(Guid usuarioId, int atraccionId);
 }

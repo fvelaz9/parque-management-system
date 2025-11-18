@@ -1,0 +1,30 @@
+<div>
+    <div class="seccion-usuarios">
+        <h3>Seleccione un usuario</h3>
+        <ul class="lista-usuarios">
+            <li *ngFor="let usuario of usuarios"
+                (click)="seleccionarUsuario(usuario)"
+                [class.usuario-seleccionado]="usuario === usuarioSeleccionado">
+                {{ usuario.nombre }} {{ usuario.apellido }}
+            </li>
+        </ul>
+        <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+        <p *ngIf="loading">Cargando usuarios...</p>
+    </div>
+
+    <div class="seccion-tickets" *ngIf="usuarioSeleccionado">
+        <h3>Tickets de {{ usuarioSeleccionado.nombre }}</h3>
+        <ul class="lista-tickets">
+            <li *ngFor="let ticket of ticketsUsuario"
+                (click)="ticketSeleccionado = ticket"
+                [class.ticket-seleccionado]="ticket === ticketSeleccionado">
+                {{ ticket.codigo }}
+            </li>
+        </ul>
+
+        <button [disabled]="!ticketSeleccionado" (click)="registrarIngreso()">Registrar Ingreso</button>
+        <button type="submit" routerLink="/atracciones">Volver</button>
+
+        <p *ngIf="mensajeRespuesta" class="mensaje-respuesta">{{ mensajeRespuesta }}</p>
+    </div>
+</div>
