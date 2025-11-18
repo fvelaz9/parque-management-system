@@ -29,10 +29,13 @@ export class NavbarComponent {
     return this.authService.getUsuario();
   }
 
-  // ✅ AGREGAR: Verificar si es administrador
   get isAdmin(): boolean {
     return this.authService.getUsuario()?.roles?.includes('Administrador') || false;
   }
+  get isOperador(): boolean {
+    return this.authService.getUsuario()?.roles?.includes('Operador') || false;
+  }
+
 
   // Toggle dropdown Mantenimiento (ya existe)
   toggleDropdown(event: Event): void {
