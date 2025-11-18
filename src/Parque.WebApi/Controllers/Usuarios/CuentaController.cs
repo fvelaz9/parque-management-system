@@ -89,4 +89,18 @@ public class CuentaController(IServicioCuenta servicioCuenta) : ControllerBase
             Message = "Nivel de membresía actualizado exitosamente"
         });
     }
+
+    [HttpGet("visitantes")]
+    [AuthorizationFilter("Operador")]
+    public IActionResult ObtenerCuentasVisitantes()
+    {
+        var cuentas = servicioCuenta.ObtenerCuentasVisitantes();
+
+        return Ok(new ResponseDto
+        {
+            Content = cuentas,
+            ExecutionSuccessful = true,
+            Message = "Visitantes obtenidos exitosamente"
+        });
+    }
 }

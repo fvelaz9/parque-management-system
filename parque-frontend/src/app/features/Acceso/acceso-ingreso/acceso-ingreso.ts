@@ -44,7 +44,7 @@ export class AccesoIngreso implements OnInit {
   }
   cargarUsuarios(): void {
     this.loading = true;
-    this.cuentaService.obtenerCuentas().subscribe({
+    this.cuentaService.obtenerCuentasVisitantes().subscribe({
       next: (response) => {
         this.usuarios = response.content;
         this.loading = false;

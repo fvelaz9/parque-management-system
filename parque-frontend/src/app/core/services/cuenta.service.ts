@@ -1,13 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { 
-  RegistrarVisitanteDto, 
-  RegistrarCuentaDto, 
-  ModificarPerfilDto, 
+import {
+  RegistrarVisitanteDto,
+  RegistrarCuentaDto,
+  ModificarPerfilDto,
   NivelMembresia,
   ResponseDto,
-  CuentaDto 
+  CuentaDto
 } from '../models/cuenta.model';
 import { environment } from '../../../environments/environment.development';
 import { AuthService } from './auth.service';
@@ -33,7 +33,7 @@ export class CuentaService {
       headers: this.getHeaders()
     });
   }
-  
+
   registrarVisitante(dto: RegistrarVisitanteDto): Observable<ResponseDto<CuentaDto>> {
     return this.http.post<ResponseDto<CuentaDto>>(`${this.apiUrl}/registro`, dto);
   }
@@ -52,11 +52,16 @@ export class CuentaService {
 
   cambiarNivelMembresia(id: string, nuevoNivel: NivelMembresia): Observable<ResponseDto<null>> {
     return this.http.patch<ResponseDto<null>>(
-      `${this.apiUrl}/${id}/membresia`, 
+      `${this.apiUrl}/${id}/membresia`,
       nuevoNivel,
       {
         headers: this.getHeaders()
       }
     );
+  }
+  obtenerCuentasVisitantes(): Observable<ResponseDto<CuentaDto[]>> {
+    return this.http.get<ResponseDto<CuentaDto[]>>(`${this.apiUrl}/visitantes`, {
+      headers: this.getHeaders()
+    });
   }
 }

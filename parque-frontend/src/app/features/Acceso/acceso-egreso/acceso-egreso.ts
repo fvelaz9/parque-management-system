@@ -40,7 +40,7 @@ export class AccesoEgreso implements OnInit {
 
   cargarUsuarios(): void {
     this.loading = true;
-    this.cuentaService.obtenerCuentas().subscribe({
+    this.cuentaService.obtenerCuentasVisitantes().subscribe({
       next: (response: ResponseDto<CuentaDto[]>) => {
         this.usuarios = response.content;
         this.loading = false;

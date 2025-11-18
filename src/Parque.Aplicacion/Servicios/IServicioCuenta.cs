@@ -12,4 +12,5 @@ public interface IServicioCuenta
     CuentaDto ObtenerPorEmail(string email);
     IEnumerable<CuentaDto> ObtenerTodas();
     Cuenta ObtenerCuenta(Guid cuentaId);
+    public List<CuentaDto> ObtenerCuentasVisitantes();
 }
