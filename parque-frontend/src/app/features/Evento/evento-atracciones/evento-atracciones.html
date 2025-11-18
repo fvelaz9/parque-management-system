@@ -1,0 +1,47 @@
+<div class="evento-atracciones-container">
+  <div class="header">
+    <button (click)="volver()" class="btn-volver">← Volver a Eventos</button>
+    <h2>Atracciones del Evento</h2>
+  </div>
+
+  <div *ngIf="evento()" class="evento-info">
+    <h3>{{ evento()!.titulo }}</h3>
+    <p><strong>Descripción:</strong> {{ evento()!.descripcion }}</p>
+    <p><strong>Fecha:</strong> {{ evento()!.inicio | date:'short' }} - {{ evento()!.fin | date:'short' }}</p>
+    <p><strong>Aforo máximo:</strong> {{ evento()!.aforoMaximo }} personas</p>
+  </div>
+
+  <div *ngIf="loading()" class="loading">
+    <p>Cargando atracciones...</p>
+  </div>
+
+  <div *ngIf="!loading() && atracciones().length === 0" class="no-atracciones">
+    <p>No hay atracciones disponibles para este evento.</p>
+  </div>
+
+  <div *ngIf="!loading() && atracciones().length > 0" class="atracciones-grid">
+    <div *ngFor="let atraccion of atracciones()" class="atraccion-card">
+      <div class="atraccion-info">
+        <h4>{{ atraccion.nombre }}</h4>
+        <p><strong>Capacidad:</strong> {{ atraccion.capacidad }} personas</p>
+        <p><strong>Edad mínima:</strong> {{ atraccion.edadMinima }} años</p>
+        <p><strong>Tipo:</strong> {{ atraccion.tipo }}</p>
+        <p><strong>Estado:</strong>
+          <span [class.activa]="atraccion.estado === 0"
+                [class.inactiva]="atraccion.estado === 1">
+    {{ atraccion.estado === 0 ? 'Disponible' : 'Fuera de Servicio' }}
+  </span>
+        </p>
+
+        <div class="atraccion-actions">
+          <button
+            (click)="irAAcceso(atraccion.id)"
+            class="btn-acceso"
+            [disabled]="atraccion.estado === 1">
+            {{ atraccion.estado === 0 ? 'Gestionar Acceso' : 'Fuera de Servicio' }}
+          </button>
+        </div>
+    </div>
+  </div>
+</div>
+</div>

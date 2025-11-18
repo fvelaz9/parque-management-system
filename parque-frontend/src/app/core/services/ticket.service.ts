@@ -19,4 +19,10 @@ export class TicketService {
   obtenerMisTickets(): Observable<Ticket[]> {
     return this.http.get<Ticket[]>(`${this.apiUrl}/mis-tickets`);
   }
+  getTicketsPorUsuarioYEvento(usuarioId: string, eventoId: number): Observable<Ticket[]> {
+    return this.http.get<Ticket[]>(
+        `${this.apiUrl}/por-usuario/${usuarioId}/evento/${eventoId}`,
+        { headers: this.getHeaders() }
+    );
+  }
 }

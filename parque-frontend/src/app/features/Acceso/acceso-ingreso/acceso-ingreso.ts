@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Router, ActivatedRoute, RouterLink} from '@angular/router';
 import {CuentaDto} from '../../../core/models/cuenta.model';
-import {Ticket} from '../../../core/models/ticket.model';
+import {Ticket, TipoTicket} from '../../../core/models/ticket.model';
 import {TicketService} from '../../../core/services/ticket.service';
 import {AccesoService} from '../../../core/services/acceso.service';
 import {RegistrarIngresoRequest} from '../../../core/models/acceso.model';
@@ -25,6 +25,7 @@ export class AccesoIngreso implements OnInit {
   loading: boolean = false;
   errorMessage: string = '';
   atraccionId: number = 0;
+  eventoId?: number;
 
   constructor(
     private ticketService: TicketService,
@@ -37,12 +38,13 @@ export class AccesoIngreso implements OnInit {
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => {
       this.atraccionId = +params['atraccionId'] || 0;
+      this.eventoId = +params['eventoId'] || undefined;
     });
     this.cargarUsuarios();
   }
   cargarUsuarios(): void {
     this.loading = true;
-    this.cuentaService.obtenerCuentas().subscribe({
+    this.cuentaService.obtenerCuentasVisitantes().subscribe({
       next: (response) => {
         this.usuarios = response.content;
         this.loading = false;
@@ -61,21 +63,44 @@ export class AccesoIngreso implements OnInit {
   }
 
   cargarTickets(usuarioId: string): void {
-    this.ticketService.getTicketsPorUsuario(usuarioId).subscribe({
-      next: (tickets) => {
-        this.ticketsUsuario = tickets;
-        this.mensajeRespuesta = '';
-      },
-      error: () => {
-        this.ticketsUsuario = [];
-        this.mensajeRespuesta = 'Error cargando tickets';
-      }
-    });
+    if (this.eventoId) {
+      this.ticketService.getTicketsPorUsuarioYEvento(usuarioId, this.eventoId).subscribe({
+        next: (tickets) => {
+          this.ticketsUsuario = tickets;
+          this.mensajeRespuesta = '';
+        },
+        error: (error) => {
+          console.error('Error cargando tickets del evento:', error);
+          this.ticketsUsuario = [];
+          this.mensajeRespuesta = error.error?.message || 'Error cargando tickets del evento';
+        }
+      });
+    } else {
+      this.ticketService.getTicketsPorUsuario(usuarioId).subscribe({
+        next: (tickets) => {
+          this.ticketsUsuario = tickets;
+          this.mensajeRespuesta = '';
+        },
+        error: () => {
+          this.ticketsUsuario = [];
+          this.mensajeRespuesta = 'Error cargando tickets';
+        }
+      });
+    }
   }
 
   registrarIngreso(): void {
     if (!this.ticketSeleccionado || !this.usuarioSeleccionado) {
       this.mensajeRespuesta = 'Por favor selecciona ticket y usuario';
+      return;
+    }
+    if (this.eventoId && this.ticketSeleccionado.tipoEntrada !== 1) {
+      this.mensajeRespuesta = 'Para acceso a evento se requiere ticket de tipo Evento Especial';
+      return;
+    }
+
+    if (!this.eventoId && this.ticketSeleccionado.tipoEntrada === 1) {
+      this.mensajeRespuesta = 'Ticket de Evento Especial no válido para acceso general';
       return;
     }
 
@@ -88,6 +113,9 @@ export class AccesoIngreso implements OnInit {
       next: (response) => {
         this.mensajeRespuesta = response.mensaje || 'Ingreso registrado exitosamente';
         this.cargarUsuarios();
+        setTimeout(() => {
+          this.router.navigate(['/atracciones']);
+        }, 3000);
       },
       error: (error) => {
         console.error('Error:', error);
@@ -99,4 +127,5 @@ export class AccesoIngreso implements OnInit {
   /*volver(): void {
     this.router.navigate(['/acceso'], { queryParams: { atraccionId: this.atraccionId } });
   }*/
+  protected readonly TipoTicket = TipoTicket;
 }

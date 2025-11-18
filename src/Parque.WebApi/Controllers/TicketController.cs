@@ -58,7 +58,15 @@ public class TicketController(IServicioTicket service) : ControllerBase
     [AuthorizationFilter("Operador")]
     public IActionResult GetTicketsPorUsuario(Guid usuarioId)
     {
-        var tickets = service.ListarTickets().Where(t => t.CuentaId == usuarioId);
+        var tickets = service.ListarTicketsValidosGeneral(usuarioId);
+        return Ok(tickets);
+    }
+
+    [HttpGet("por-usuario/{usuarioId:guid}/evento/{eventoId:int}")]
+    [AuthorizationFilter("Operador")]
+    public IActionResult GetTicketsPorUsuarioYEvento(Guid usuarioId, int eventoId)
+    {
+        var tickets = service.ObtenerTicketsPorUsuarioYEvento(usuarioId, eventoId);
         return Ok(tickets);
     }
 }
