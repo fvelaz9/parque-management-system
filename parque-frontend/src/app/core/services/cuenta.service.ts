@@ -54,9 +54,7 @@ export class CuentaService {
     return this.http.patch<ResponseDto<null>>(
       `${this.apiUrl}/${id}/membresia`, 
       nuevoNivel,
-      {
-        headers: this.getHeaders()
-      }
+      { headers: this.getHeaders() }
     );
   }
 }

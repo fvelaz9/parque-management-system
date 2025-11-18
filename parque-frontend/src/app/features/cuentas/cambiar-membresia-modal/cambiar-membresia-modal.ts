@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CuentaService } from '../../../core/services/cuenta.service';
-import { CuentaDto, NivelMembresia } from '../../../core/models/cuenta.model';
+import { CuentaDto } from '../../../core/models/cuenta.model';
 
 @Component({
   selector: 'app-cambiar-membresia-modal',
@@ -18,16 +18,20 @@ export class CambiarMembresiaModalComponent {
   @Output() cerrar = new EventEmitter<void>();
   @Output() membresiaCambiada = new EventEmitter<void>();
 
-  nuevoNivel: NivelMembresia = NivelMembresia.Estandar;
+  nuevoNivel: string = 'Estandar';
   loading = false;
   errorMessage = '';
   successMessage = '';
 
   nivelesMembresia = [
-    { value: NivelMembresia.Estandar, label: 'Estandar' },
-    { value: NivelMembresia.Premium, label: 'Premium' },
-    { value: NivelMembresia.VIP, label: 'VIP' }
+    { value: '1', label: 'Estándar' },
+    { value: '2', label: 'Premium' },
+    { value: '3', label: 'VIP' }
   ];
+
+   getNivelMembresiaClass(nivel: string): string {
+    return nivel?.toLowerCase() || '';
+  }
 
   ngOnInit(): void {
     if (this.cuenta.visitante?.nivelMembresia) {
@@ -39,7 +43,7 @@ export class CambiarMembresiaModalComponent {
     this.loading = true;
     this.errorMessage = '';
 
-    this.cuentaService.cambiarNivelMembresia(this.cuenta.id, this.nuevoNivel).subscribe({
+    this.cuentaService.cambiarNivelMembresia(this.cuenta.id, Number(this.nuevoNivel)).subscribe({
       next: (response) => {
         this.successMessage = response.message;
         this.loading = false;

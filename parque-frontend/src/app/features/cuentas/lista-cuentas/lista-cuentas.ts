@@ -2,7 +2,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { CuentaService } from '../../../core/services/cuenta.service';
-import { CuentaDto, NivelMembresia } from '../../../core/models/cuenta.model';
+import { CuentaDto } from '../../../core/models/cuenta.model';
 import { CambiarMembresiaModalComponent } from "../cambiar-membresia-modal/cambiar-membresia-modal";
 
 @Component({
@@ -42,10 +42,6 @@ export class ListaCuentasComponent implements OnInit {
   }
 
   abrirModalMembresia(cuenta: CuentaDto): void {
-    if (!cuenta.visitante) {
-      alert('Solo los visitantes tienen membresía');
-      return;
-    }
     this.cuentaSeleccionada = cuenta;
     this.mostrarModal = true;
   }
@@ -57,28 +53,18 @@ export class ListaCuentasComponent implements OnInit {
 
   onMembresiaCambiada(): void {
     this.cerrarModal();
-    this.cargarCuentas(); // Recargar lista
+    this.cargarCuentas();
   }
 
   esVisitante(cuenta: CuentaDto): boolean {
     return cuenta.roles.includes('Visitante');
   }
 
-  getNivelMembresiaTexto(nivel: number): string {
-    const niveles: { [key: number]: string } = {
-      1: 'Bronce',
-      2: 'Plata',
-      3: 'Oro'
-    };
-    return niveles[nivel] || 'Sin membresía';
+  getNivelMembresiaTexto(nivel: string): string {
+    return nivel || 'Sin membresía';
   }
 
-  getNivelMembresiaClass(nivel: number): string {
-    const classes: { [key: number]: string } = {
-      1: 'bronce',
-      2: 'plata',
-      3: 'oro'
-    };
-    return classes[nivel] || '';
+  getNivelMembresiaClass(nivel: string): string {
+    return nivel?.toLowerCase() || '';
   }
 }

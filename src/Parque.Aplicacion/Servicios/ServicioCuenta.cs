@@ -80,7 +80,7 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
 
     public IEnumerable<CuentaDto> ObtenerTodas()
     {
-        var cuentas = cuentaRepo.ObtenerTodos();
+        var cuentas = cuentaRepo.ObtenerConRelaciones(c => true, "Visitante");
         return cuentas.Select(c => c.ToDto());
     }
 

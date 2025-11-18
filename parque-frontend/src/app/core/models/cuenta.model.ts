@@ -52,6 +52,9 @@ export interface CuentaDto {
 
 export interface VisitanteDto {
   id: string;
-  puntos?: number;
-  nivelMembresia: NivelMembresia;
+  fechaNacimiento: string;
+  edad: number;
+  nivelMembresia: string;
+  puntosDiarios: number;
+  puntosTotales: number;
 }

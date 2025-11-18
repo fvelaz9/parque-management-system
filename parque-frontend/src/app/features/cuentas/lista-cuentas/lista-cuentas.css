@@ -99,22 +99,9 @@
   font-size: 0.875rem;
 }
 
-.nivel-bronce {
-  background: linear-gradient(135deg, #cd7f32 0%, #8b5a00 100%);
-  color: white;
-}
-
-.nivel-plata {
-  background: linear-gradient(135deg, #c0c0c0 0%, #808080 100%);
-  color: white;
-}
-
-.nivel-oro {
-  background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);
-  color: white;
-}
-
 .text-muted {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
   color: #a0aec0;
 }
 

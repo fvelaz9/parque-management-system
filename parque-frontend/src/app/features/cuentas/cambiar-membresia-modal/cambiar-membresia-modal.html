@@ -13,8 +13,8 @@
         <p><strong>Email:</strong> {{ cuenta.email }}</p>
         @if (cuenta.visitante) {
           <p><strong>Nivel actual:</strong> 
-            <span class="membresia-badge" [class]="'nivel-' + cuenta.visitante.nivelMembresia">
-              {{ nivelesMembresia[cuenta.visitante.nivelMembresia - 1]?.label }}
+            <span class="membresia-badge" [class]="'nivel-' + getNivelMembresiaClass(cuenta.visitante.nivelMembresia)">
+              {{ cuenta.visitante.nivelMembresia }}
             </span>
           </p>
         }
