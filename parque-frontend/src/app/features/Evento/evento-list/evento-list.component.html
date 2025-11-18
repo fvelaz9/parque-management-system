@@ -9,7 +9,7 @@
         Hasta: {{ evento.fin | date:'short' }}<br>
         Aforo máximo: {{ evento.aforoMaximo }}<br>
         Costo adicional: ${{ evento.costoAdicional }}<br>
-        Estado: {{ evento.estado }}
+        Estado: {{ EstadoEvento [evento.estado] }}
       </div>
       <button (click)="eliminarEvento(evento)" class="btn-eliminar">Eliminar</button>
       <button (click)="verAtracciones(evento)" class="btn-agregar">Ver Atracciones</button>

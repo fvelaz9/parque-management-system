@@ -1,6 +1,6 @@
 import { Component, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Evento} from '../../../core/models/evento.model';
+import {EstadoEvento, Evento} from '../../../core/models/evento.model';
 import { EventoService } from '../../../core/services/evento.service';
 import { Router } from '@angular/router';
 
@@ -70,4 +70,5 @@ export class EventoListComponent {
   agregarEvento() {
     this.router.navigate(['/eventos/nuevo']);
   }
+  protected readonly EstadoEvento = EstadoEvento;
 }
