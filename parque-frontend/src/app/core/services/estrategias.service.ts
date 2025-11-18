@@ -3,25 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 import { environment } from '../../../environments/environment.development';
-// import { ResponseDto, EstrategiaInfo, CambiarEstrategiaRequest } from '../models/estrategia.model';
-
-export interface EstrategiaInfo {
-  nombre: string;
-  descripcion: string;
-  origen: 'Base' | 'Plugin';
-  esActiva: boolean;
-  parametros?: string[];
-}
-
-export interface ResponseDto<T = any> {
-  content: T;
-  executionSuccessful: boolean;
-  message: string;
-}
-
-export interface CambiarEstrategiaRequest {
-  nombreEstrategia: string;
-}
+import { ResponseDto, EstrategiaInfo, CambiarEstrategiaRequest } from '../models/estrategia.model';
 
 @Injectable({
   providedIn: 'root'
