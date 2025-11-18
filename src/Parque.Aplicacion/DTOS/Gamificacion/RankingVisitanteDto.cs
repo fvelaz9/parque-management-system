@@ -1,6 +1,4 @@
-﻿using Parque.Dominio.Usuarios;
-
-namespace Parque.Aplicacion.DTOs.Gamificacion;
+﻿namespace Parque.Aplicacion.DTOs.Gamificacion;
 
 public class RankingVisitanteDto
 {

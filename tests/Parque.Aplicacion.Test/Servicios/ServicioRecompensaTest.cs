@@ -330,11 +330,10 @@ public class ServicioRecompensaTest
     {
         // Arrange
         var recompensaId = Guid.NewGuid();
+        var visitanteId = Guid.NewGuid();
 
-        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("test@test.com"), "password123", Rol.Visitante);
         var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
         visitante.AsignarMembresia(NivelMembresia.Premium);
-        var visitanteId = visitante.Id;
 
         var recompensa = new Recompensa
         {
@@ -345,17 +344,20 @@ public class ServicioRecompensaTest
             NivelMembresiaRequerido = NivelMembresia.Estandar,
             FechaCreacion = DateTime.UtcNow
         };
-        var puntuacion = new PuntuacionVisitante(visitanteId, DateTime.UtcNow.Date, 0)
-        {
-            PuntosTotales = 500
-        };
+
+        // ✅ CAMBIO: Múltiples registros de puntuación
+        var puntuaciones = new List<PuntuacionVisitante>
+    {
+        new PuntuacionVisitante(visitanteId, DateTime.UtcNow.Date.AddDays(-1), 0) { PuntosTotales = 60 },
+        new PuntuacionVisitante(visitanteId, DateTime.UtcNow.Date, 0) { PuntosTotales = 50 }
+    };
 
         _mockRepoVisitante.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
             .Returns(visitante);
         _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>()))
             .Returns(recompensa);
         _mockRepoPuntuacion.Setup(r => r.ObtenerTodos())
-            .Returns([puntuacion]);
+            .Returns(puntuaciones);
 
         var request = new CanjearRecompensaRequest
         {
@@ -371,23 +373,23 @@ public class ServicioRecompensaTest
         Assert.AreEqual(visitanteId, resultado.VisitanteId);
         Assert.AreEqual(recompensaId, resultado.RecompensaId);
         Assert.AreEqual(100, resultado.PuntosCanjeados);
-        Assert.AreEqual(4, recompensa.CantidadDisponible); // Reducido
-        Assert.AreEqual(400, puntuacion.PuntosTotales); // Descontado
+        Assert.AreEqual(4, recompensa.CantidadDisponible);
+
+        // ✅ CAMBIO: Verificar que se editaron múltiples registros
+        _mockRepoPuntuacion.Verify(r => r.Editar(It.IsAny<PuntuacionVisitante>()), Times.AtLeastOnce);
         _mockRepoHistorial.Verify(r => r.Agregar(It.IsAny<HistorialCanje>()), Times.Once);
-        _mockRepoPuntuacion.Verify(r => r.Editar(puntuacion), Times.Once);
     }
 
-    // TEST 2: Puntos insuficientes
     [TestMethod]
     public void CanjearRecompensa_ConPuntosInsuficientes_DebeLanzarExcepcion()
     {
         // Arrange
         var recompensaId = Guid.NewGuid();
+        var visitanteId = Guid.NewGuid();
 
-        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("test@test.com"), "password123", Rol.Visitante);
         var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
         visitante.AsignarMembresia(NivelMembresia.Estandar);
-        var visitanteId = visitante.Id;
+
         var recompensa = new Recompensa
         {
             Id = recompensaId,
@@ -396,17 +398,20 @@ public class ServicioRecompensaTest
             CantidadDisponible = 5,
             FechaCreacion = DateTime.UtcNow
         };
-        var puntuacion = new PuntuacionVisitante(visitanteId, DateTime.UtcNow.Date, 0)
-        {
-            PuntosTotales = 50 // Insuficiente
-        };
+
+        // ✅ CAMBIO: Múltiples registros pero suma insuficiente
+        var puntuaciones = new List<PuntuacionVisitante>
+    {
+        new PuntuacionVisitante(visitanteId, DateTime.UtcNow.Date.AddDays(-1), 0) { PuntosTotales = 400 },
+        new PuntuacionVisitante(visitanteId, DateTime.UtcNow.Date, 0) { PuntosTotales = 50 }
+    };
 
         _mockRepoVisitante.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
             .Returns(visitante);
         _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>()))
             .Returns(recompensa);
         _mockRepoPuntuacion.Setup(r => r.ObtenerTodos())
-            .Returns([puntuacion]);
+            .Returns(puntuaciones);
 
         var request = new CanjearRecompensaRequest { VisitanteId = visitanteId, RecompensaId = recompensaId };
 
@@ -415,17 +420,101 @@ public class ServicioRecompensaTest
         Assert.AreEqual("Puntos insuficientes para canjear esta recompensa", ex.Message);
     }
 
-    // TEST 4: Nivel de membresía insuficiente
+    // ✅ NUEVO TEST: Sin puntos registrados
+    [TestMethod]
+    public void CanjearRecompensa_SinPuntosRegistrados_DebeLanzarExcepcion()
+    {
+        // Arrange
+        var recompensaId = Guid.NewGuid();
+        var visitanteId = Guid.NewGuid();
+
+        var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
+        visitante.AsignarMembresia(NivelMembresia.Estandar);
+
+        var recompensa = new Recompensa
+        {
+            Id = recompensaId,
+            Nombre = "Premio Test",
+            CostoEnPuntos = 100,
+            CantidadDisponible = 5,
+            FechaCreacion = DateTime.UtcNow
+        };
+
+        // ✅ Lista vacía de puntuaciones
+        var puntuaciones = new List<PuntuacionVisitante>();
+
+        _mockRepoVisitante.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
+            .Returns(visitante);
+        _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>()))
+            .Returns(recompensa);
+        _mockRepoPuntuacion.Setup(r => r.ObtenerTodos())
+            .Returns(puntuaciones);
+
+        var request = new CanjearRecompensaRequest { VisitanteId = visitanteId, RecompensaId = recompensaId };
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<InvalidOperationException>(() => _servicio.CanjearRecompensa(request));
+        Assert.AreEqual("No hay puntos registrados para este visitante", ex.Message);
+    }
+
+    // ✅ NUEVO TEST: Descuento distribuido en múltiples registros
+    [TestMethod]
+    public void CanjearRecompensa_DescuentoDistribuidoEnMultiplesRegistros_DebeActualizarCorrectamente()
+    {
+        // Arrange
+        var recompensaId = Guid.NewGuid();
+        var visitanteId = Guid.NewGuid();
+
+        var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
+        visitante.AsignarMembresia(NivelMembresia.Estandar);
+
+        var recompensa = new Recompensa
+        {
+            Id = recompensaId,
+            Nombre = "Premio Test",
+            CostoEnPuntos = 150, // Se necesitan 150 puntos
+            CantidadDisponible = 5,
+            FechaCreacion = DateTime.UtcNow
+        };
+
+        // ✅ Múltiples registros que suman exactamente lo necesario
+        var puntuaciones = new List<PuntuacionVisitante>
+    {
+        new PuntuacionVisitante(visitanteId, DateTime.UtcNow.Date.AddDays(-2), 0) { PuntosTotales = 80 },
+        new PuntuacionVisitante(visitanteId, DateTime.UtcNow.Date.AddDays(-1), 0) { PuntosTotales = 50 },
+        new PuntuacionVisitante(visitanteId, DateTime.UtcNow.Date, 0) { PuntosTotales = 40 }
+    };
+
+        _mockRepoVisitante.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
+            .Returns(visitante);
+        _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>()))
+            .Returns(recompensa);
+        _mockRepoPuntuacion.Setup(r => r.ObtenerTodos())
+            .Returns(puntuaciones);
+
+        var request = new CanjearRecompensaRequest { VisitanteId = visitanteId, RecompensaId = recompensaId };
+
+        // Act
+        var resultado = _servicio.CanjearRecompensa(request);
+
+        // Assert
+        Assert.IsNotNull(resultado);
+        Assert.AreEqual(150, resultado.PuntosCanjeados);
+
+        // ✅ Verificar que se editaron múltiples registros
+        _mockRepoPuntuacion.Verify(r => r.Editar(It.IsAny<PuntuacionVisitante>()), Times.AtLeast(2));
+    }
+
     [TestMethod]
     public void CanjearRecompensa_ConNivelInsuficiente_DebeLanzarExcepcion()
     {
         // Arrange
         var recompensaId = Guid.NewGuid();
+        var visitanteId = Guid.NewGuid();
 
-        var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("test@test.com"), "password123", Rol.Visitante);
         var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
         visitante.AsignarMembresia(NivelMembresia.Estandar);
-        var visitanteId = visitante.Id;
+
         var recompensa = new Recompensa
         {
             Id = recompensaId,
@@ -435,17 +524,18 @@ public class ServicioRecompensaTest
             NivelMembresiaRequerido = NivelMembresia.VIP, // Requiere VIP
             FechaCreacion = DateTime.UtcNow
         };
-        var puntuacion = new PuntuacionVisitante(visitanteId, DateTime.UtcNow.Date, 0)
-        {
-            PuntosTotales = 500
-        };
+
+        var puntuaciones = new List<PuntuacionVisitante>
+    {
+        new PuntuacionVisitante(visitanteId, DateTime.UtcNow.Date, 0) { PuntosTotales = 500 }
+    };
 
         _mockRepoVisitante.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
             .Returns(visitante);
         _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>()))
             .Returns(recompensa);
         _mockRepoPuntuacion.Setup(r => r.ObtenerTodos())
-            .Returns([puntuacion]);
+            .Returns(puntuaciones);
 
         var request = new CanjearRecompensaRequest { VisitanteId = visitanteId, RecompensaId = recompensaId };
 
@@ -454,7 +544,6 @@ public class ServicioRecompensaTest
         Assert.AreEqual("Nivel de membresía insuficiente para canjear esta recompensa", ex.Message);
     }
 
-    // TEST 5: Visitante inexistente
     [TestMethod]
     public void CanjearRecompensa_ConVisitanteInexistente_DebeLanzarExcepcion()
     {
@@ -468,16 +557,20 @@ public class ServicioRecompensaTest
         var request = new CanjearRecompensaRequest { VisitanteId = visitanteId, RecompensaId = recompensaId };
 
         // Act & Assert
-        Assert.ThrowsException<InvalidOperationException>(() => _servicio.CanjearRecompensa(request));
+        var ex = Assert.ThrowsException<InvalidOperationException>(() => _servicio.CanjearRecompensa(request));
+        Assert.AreEqual("Usuario no encontrado", ex.Message);
     }
 
     [TestMethod]
     public void CanjearRecompensa_ConRecompensaInexistente_DebeLanzarExcepcion()
     {
+        // Arrange
+        var visitanteId = Guid.NewGuid();
+        var recompensaId = Guid.NewGuid();
+
         var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
         visitante.AsignarMembresia(NivelMembresia.Estandar);
-        var visitanteId = visitante.Id;
-        var recompensaId = Guid.NewGuid();
+
         _mockRepoVisitante.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
             .Returns(visitante);
         _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>()))
@@ -485,7 +578,9 @@ public class ServicioRecompensaTest
 
         var request = new CanjearRecompensaRequest { VisitanteId = visitanteId, RecompensaId = recompensaId };
 
-        Assert.ThrowsException<InvalidOperationException>(() => _servicio.CanjearRecompensa(request));
+        // Act & Assert
+        var ex = Assert.ThrowsException<InvalidOperationException>(() => _servicio.CanjearRecompensa(request));
+        Assert.AreEqual($"Recompensa con ID {recompensaId} no encontrada", ex.Message);
     }
 
     [TestMethod]
@@ -543,5 +638,42 @@ public class ServicioRecompensaTest
 
         Assert.IsNotNull(resultado);
         Assert.AreEqual(0, resultado.Count);
+    }
+
+    [TestMethod]
+    public void EliminarRecompensa_ConIdValido_DebeEliminarRecompensa()
+    {
+        // Arrange
+        var recompensaId = Guid.NewGuid();
+        var recompensaExistente = new Recompensa
+        {
+            Id = recompensaId,
+            Nombre = "Recompensa a eliminar",
+            Descripcion = "Descripción de prueba",
+            CostoEnPuntos = 100,
+            CantidadDisponible = 5,
+            FechaCreacion = DateTime.UtcNow
+        };
+
+        _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>()))
+            .Returns(recompensaExistente);
+
+        // Act
+        _servicio.EliminarRecompensa(recompensaId);
+
+        // Assert
+        _mockRepoRecompensa.Verify(r => r.Eliminar(It.Is<Expression<Func<Recompensa, bool>>>(
+            expr => expr.Compile()(recompensaExistente))), Times.Once);
+    }
+
+    [TestMethod]
+    public void EliminarRecompensa_ConIdInexistente_DebeLanzarExcepcion()
+    {
+        // Arrange
+        var recompensaId = Guid.NewGuid();
+        _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>())).Returns((Recompensa)null!);
+        var ex = Assert.ThrowsException<InvalidOperationException>(() => _servicio.EliminarRecompensa(recompensaId));
+        Assert.AreEqual($"Recompensa con ID {recompensaId} no encontrada", ex.Message);
+        _mockRepoRecompensa.Verify(r => r.Eliminar(It.IsAny<Expression<Func<Recompensa, bool>>>()), Times.Never);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Moq;
 using Parque.Dominio.Atracciones;
+using Parque.Dominio.Excepciones;
 using Parque.Infraestructura.Repositorios;
 
 namespace Parque.Aplicacion.Test.Servicios;
@@ -160,47 +161,6 @@ public class ServicioAtraccionesTest
     }
 
     [TestMethod]
-    public void ObtenerReporteUso_ConRegistros_RetornaReporteOrdenado()
-    {
-        var fechaInicio = new DateTime(2025, 1, 1);
-        var fechaFin = new DateTime(2025, 12, 31);
-
-        var atraccion1 = new AtraccionParque("Montaña Rusa", TipoAtraccion.MontañaRusa, 12, 24, "Test") { Id = 1 };
-        var atraccion2 = new AtraccionParque("Carrusel", TipoAtraccion.Simulador, 0, 30, "Test") { Id = 2 };
-
-        var registros = new List<RegistroVisita>
-        {
-            new() { AtraccionId = 1, FechaIngreso = new DateTime(2025, 6, 1), FechaEgreso = new DateTime(2025, 6, 1, 1, 0, 0) },
-            new() { AtraccionId = 1, FechaIngreso = new DateTime(2025, 6, 2), FechaEgreso = new DateTime(2025, 6, 2, 1, 0, 0) },
-            new() { AtraccionId = 3, FechaIngreso = new DateTime(2025, 6, 3), FechaEgreso = new DateTime(2025, 6, 3, 1, 0, 0) }
-        };
-
-        _mockRepoRegistros.Setup(r => r.ObtenerTodos()).Returns(registros);
-        _mockRepo.Setup(r => r.Encontrar(It.Is<Expression<Func<AtraccionParque, bool>>>(expr => true)))
-            .Returns<Expression<Func<AtraccionParque, bool>>>(expr =>
-            {
-                var func = expr.Compile();
-                if(func(atraccion1))
-                {
-                    return atraccion1;
-                }
-
-                if(func(atraccion2))
-                {
-                    return atraccion2;
-                }
-
-                return null;
-            });
-
-        var resultado = _servicio.ObtenerReporteUso(fechaInicio, fechaFin);
-
-        Assert.AreEqual(2, resultado.Count);
-        Assert.AreEqual("Montaña Rusa", resultado[0].NombreAtraccion);
-        Assert.AreEqual("Desconocida", resultado[1].NombreAtraccion);
-    }
-
-    [TestMethod]
     public void ObtenerPorIds_IdsValidos_RetornaAtraccionesCorrespondientes()
     {
         // Arrange
@@ -225,4 +185,65 @@ public class ServicioAtraccionesTest
         Assert.IsTrue(resultado.Any(a => a.Id == 3 && a.Nombre == "Simulador VR"));
         Assert.IsFalse(resultado.Any(a => a.Id == 2 || a.Id == 4));
     }
+
+    [TestMethod]
+public void ObtenerReporteUso_AtraccionExiste_RetornaReporteConVisitas()
+{
+    // Arrange
+    var atraccionId = 1;
+    var fechaInicio = new DateTime(2025, 1, 1);
+    var fechaFin = new DateTime(2025, 12, 31);
+    var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.MontañaRusa, 12, 24, "Test") { Id = atraccionId };
+    var registros = new List<RegistroVisita>
+    {
+        new() { AtraccionId = 1, FechaIngreso = new DateTime(2025, 6, 1), FechaEgreso = new DateTime(2025, 6, 1, 1, 0, 0) },
+        new() { AtraccionId = 1, FechaIngreso = new DateTime(2025, 6, 2), FechaEgreso = new DateTime(2025, 6, 2, 1, 0, 0) },
+        new() { AtraccionId = 1, FechaIngreso = new DateTime(2025, 6, 3), FechaEgreso = new DateTime(2025, 6, 3, 1, 0, 0) },
+        new() { AtraccionId = 2, FechaIngreso = new DateTime(2025, 6, 1), FechaEgreso = new DateTime(2025, 6, 1, 1, 0, 0) }
+    };
+    _mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>()))
+        .Returns(atraccion);
+    _mockRepoRegistros.Setup(r => r.ObtenerTodos()).Returns(registros);
+
+    // Act
+    var resultado = _servicio.ObtenerReporteUso(atraccionId, fechaInicio, fechaFin);
+
+    // Assert
+    Assert.IsNotNull(resultado);
+    Assert.AreEqual(atraccionId, resultado.AtraccionId);
+    Assert.AreEqual("Montaña Rusa", resultado.NombreAtraccion);
+    Assert.AreEqual(3, resultado.CantidadVisitas);
+}
+
+[TestMethod]
+public void ObtenerReporteUso_AtraccionSinVisitas_RetornaReporteConCero()
+{
+    // Arrange
+    var atraccionId = 1;
+    var fechaInicio = new DateTime(2025, 1, 1);
+    var fechaFin = new DateTime(2025, 12, 31);
+    var atraccion = new AtraccionParque("Carrusel", TipoAtraccion.Simulador, 0, 30, "Test") { Id = atraccionId };
+    var registros = new List<RegistroVisita>
+    {
+        new() { AtraccionId = 2, FechaIngreso = new DateTime(2025, 6, 1), FechaEgreso = new DateTime(2025, 6, 1, 1, 0, 0) }
+    };
+    _mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>())).Returns(atraccion);
+    _mockRepoRegistros.Setup(r => r.ObtenerTodos()).Returns(registros);
+    var resultado = _servicio.ObtenerReporteUso(atraccionId, fechaInicio, fechaFin);
+    Assert.IsNotNull(resultado);
+    Assert.AreEqual(atraccionId, resultado.AtraccionId);
+    Assert.AreEqual("Carrusel", resultado.NombreAtraccion);
+    Assert.AreEqual(0, resultado.CantidadVisitas);
+}
+
+[TestMethod]
+[ExpectedException(typeof(ExcepcionEntidadNoEncontrada))]
+public void ObtenerReporteUso_AtraccionNoExiste_LanzaExcepcion()
+{
+    var atraccionId = 99;
+    var fechaInicio = new DateTime(2025, 1, 1);
+    var fechaFin = new DateTime(2025, 12, 31);
+    _mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>())).Returns((AtraccionParque?)null);
+    _servicio.ObtenerReporteUso(atraccionId, fechaInicio, fechaFin);
+}
 }

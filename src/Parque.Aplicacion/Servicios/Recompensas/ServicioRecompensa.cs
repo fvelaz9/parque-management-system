@@ -114,20 +114,55 @@ public class ServicioRecompensa(
         }
 
         if(recompensa.NivelMembresiaRequerido.HasValue &&
-            visitante.NivelMembresia < recompensa.NivelMembresiaRequerido.Value)
+           visitante.NivelMembresia < recompensa.NivelMembresiaRequerido.Value)
         {
             throw new InvalidOperationException("Nivel de membresía insuficiente para canjear esta recompensa");
         }
 
-        var puntuaciones = repoPuntuacion.ObtenerTodos();
-        var puntuacionVisitante = puntuaciones.FirstOrDefault(p => p.VisitanteId == request.VisitanteId);
-        if(puntuacionVisitante == null || puntuacionVisitante.PuntosTotales < recompensa.CostoEnPuntos)
+        var puntuacionesVisitante = repoPuntuacion.ObtenerTodos()
+            .Where(p => p.VisitanteId == request.VisitanteId)
+            .OrderByDescending(p => p.PuntosTotales)
+            .ToList();
+
+        if(!puntuacionesVisitante.Any())
+        {
+            throw new InvalidOperationException("No hay puntos registrados para este visitante");
+        }
+
+        // CAMBIO: Calcular el total de puntos sumando TODOS los registros
+        var puntosDisponibles = puntuacionesVisitante.Sum(p => p.PuntosTotales);
+
+        if(puntosDisponibles < recompensa.CostoEnPuntos)
         {
             throw new InvalidOperationException("Puntos insuficientes para canjear esta recompensa");
         }
 
+        var puntosADescontar = recompensa.CostoEnPuntos;
+
+        foreach(var puntuacion in puntuacionesVisitante)
+        {
+            if(puntosADescontar <= 0)
+            {
+                break;
+            }
+
+            if(puntuacion.PuntosTotales >= puntosADescontar)
+            {
+                // Este registro tiene suficientes puntos para cubrir
+                puntuacion.PuntosTotales -= puntosADescontar;
+                repoPuntuacion.Editar(puntuacion);
+                puntosADescontar = 0;
+            }
+            else if(puntuacion.PuntosTotales > 0)
+            {
+                // Este registro no tiene suficientes, descontamos lo que tiene
+                puntosADescontar -= puntuacion.PuntosTotales;
+                puntuacion.PuntosTotales = 0;
+                repoPuntuacion.Editar(puntuacion);
+            }
+        }
+
         recompensa.ReducirStock();
-        puntuacionVisitante.PuntosTotales -= recompensa.CostoEnPuntos;
 
         var historial = new HistorialCanje
         {
@@ -137,8 +172,9 @@ public class ServicioRecompensa(
             PuntosCanjeados = recompensa.CostoEnPuntos,
             FechaCanje = servicioFechaHora.ObtenerFechaActual()
         };
+
         repoHistorial.Agregar(historial);
-        repoPuntuacion.Editar(puntuacionVisitante);
+
         return historial;
     }
 
