@@ -183,23 +183,13 @@ public class ServicioPuntuacion : IServicioPuntuacion
             throw new InvalidOperationException($"Ticket con código {registro.Identificador} no encontrado");
         }
 
-<<<<<<< HEAD
-        var cuenta = repoCuentas.Encontrar(c => c.Id == ticket.CuentaId);
-        if(cuenta == null || cuenta.Visitante == null)
-=======
         var cuenta = _repoCuentas.Encontrar(c => c.Id == ticket.CuentaId);
-        if(cuenta == null)
->>>>>>> develop
+        if(cuenta == null || cuenta.Visitante == null)
         {
             throw new InvalidOperationException($"Cuenta o Visitante no encontrado para ticket {registro.Identificador}");
         }
 
-<<<<<<< HEAD
-        var visitanteId = cuenta.Visitante.Id;
-=======
-        // Ahora cuenta.Visitante NO será NULL
         var visitanteId = cuenta.Visitante!.Id;
->>>>>>> develop
 
         var fechaRegistro = registro.FechaIngreso.Date;
         var historialDiario = _repoRegistros

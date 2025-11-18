@@ -21,12 +21,9 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
     public DbSet<ConfiguracionFechaHora> ConfiguracionFechaHora { get; set; }
     public DbSet<Incidencia> Incidencias { get; set; }
     public DbSet<MantenimientoPreventivo> MantenimientosPreventivos { get; set; }
-<<<<<<< HEAD
     public DbSet<HistorialPuntuacion> HistorialPuntuaciones { get; set; }
-=======
     public DbSet<Recompensa> Recompensas { get; set; }
     public DbSet<HistorialCanje> HistorialCanjes { get; set; }
->>>>>>> develop
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -101,7 +98,6 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
                 entity.Property(e => e.FechaHoraConfigurada).IsRequired();
             });
         });
-<<<<<<< HEAD
         modelBuilder.Entity<HistorialPuntuacion>(builder =>
         {
             builder.HasKey(h => h.Id);
@@ -116,7 +112,6 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
             .WithOne()
             .HasForeignKey("VisitanteId")
             .OnDelete(DeleteBehavior.Cascade);
-=======
 
         modelBuilder.Entity<HistorialCanje>(builder =>
         {
@@ -124,6 +119,5 @@ public class AppContexto(DbContextOptions options) : DbContext(options)
             builder.HasIndex(h => h.RecompensaId);
             builder.HasIndex(h => h.FechaCanje);
         });
->>>>>>> develop
     }
 }
