@@ -555,7 +555,7 @@ public class ServicioAccesoTest
 
         var mockRepoRegistros = new Mock<IRepositorio<RegistroVisita>>();
         var mockRepoTickets = new Mock<IRepositorio<Ticket>>();
-        mockRepoRegistros.Setup(r => r.ObtenerTodos()).Returns(new List<RegistroVisita>());
+        mockRepoRegistros.Setup(r => r.ObtenerTodos()).Returns([]);
 
         var servicio = new ServicioAcceso(null!, mockRepoTickets.Object, mockRepoRegistros.Object, null!, null!, null!, null!, null!);
         var respuesta = servicio.ObtenerRegistrosActivosPorUsuario(usuarioId, atraccionId);
@@ -577,11 +577,10 @@ public class ServicioAccesoTest
             FechaIngreso = DateTime.Now,
             FechaEgreso = null
         };
-
         var mockRepoRegistros = new Mock<IRepositorio<RegistroVisita>>();
         var mockRepoTickets = new Mock<IRepositorio<Ticket>>();
-        mockRepoRegistros.Setup(r => r.ObtenerTodos()).Returns(new List<RegistroVisita> { registro });
-        mockRepoTickets.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Ticket, bool>>>())).Returns((Ticket)null!);
+        mockRepoRegistros.Setup(r => r.ObtenerTodos()).Returns([registro]);
+        mockRepoTickets.Setup(r => r.Obtener(It.IsAny<Expression<Func<Ticket, bool>>>())).Returns([]);
 
         var servicio = new ServicioAcceso(null!, mockRepoTickets.Object, mockRepoRegistros.Object, null!, null!, null!, null!, null!);
         var respuesta = servicio.ObtenerRegistrosActivosPorUsuario(usuarioId, atraccionId);
@@ -612,8 +611,13 @@ public class ServicioAccesoTest
 
         var mockRepoRegistros = new Mock<IRepositorio<RegistroVisita>>();
         var mockRepoTickets = new Mock<IRepositorio<Ticket>>();
-        mockRepoRegistros.Setup(r => r.ObtenerTodos()).Returns(new List<RegistroVisita> { registro });
-        mockRepoTickets.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Ticket, bool>>>())).Returns(ticket);
+        mockRepoRegistros.Setup(r => r.ObtenerTodos()).Returns([registro]);
+        mockRepoTickets.Setup(r => r.Obtener(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns<Expression<Func<Ticket, bool>>>(expr =>
+            {
+                var func = expr.Compile();
+                return func(ticket) ? [ticket] : [];
+            });
 
         var servicio = new ServicioAcceso(null!, mockRepoTickets.Object, mockRepoRegistros.Object, null!, null!, null!, null!, null!);
         var respuesta = servicio.ObtenerRegistrosActivosPorUsuario(usuarioId, atraccionId);
@@ -643,8 +647,13 @@ public class ServicioAccesoTest
 
         var mockRepoRegistros = new Mock<IRepositorio<RegistroVisita>>();
         var mockRepoTickets = new Mock<IRepositorio<Ticket>>();
-        mockRepoRegistros.Setup(r => r.ObtenerTodos()).Returns(new List<RegistroVisita> { registro });
-        mockRepoTickets.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Ticket, bool>>>())).Returns(ticket);
+        mockRepoRegistros.Setup(r => r.ObtenerTodos()).Returns([registro]);
+        mockRepoTickets.Setup(r => r.Obtener(It.IsAny<Expression<Func<Ticket, bool>>>()))
+            .Returns<Expression<Func<Ticket, bool>>>(expr =>
+            {
+                var func = expr.Compile();
+                return func(ticket) ? [ticket] : [];
+            });
 
         var servicio = new ServicioAcceso(null!, mockRepoTickets.Object, mockRepoRegistros.Object, null!, null!, null!, null!, null!);
         var respuesta = servicio.ObtenerRegistrosActivosPorUsuario(usuarioId, atraccionId);

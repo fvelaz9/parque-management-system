@@ -290,8 +290,8 @@ public class AccesoControllerTest
 
         var value = okResult.Value;
         var tiempoVisitaProp = value.GetType().GetProperty("tiempoVisitaMinutos")?.GetValue(value);
-
-        Assert.AreEqual(0, tiempoVisitaProp);
+        Assert.IsNotNull(tiempoVisitaProp);
+        Assert.AreEqual(0, Convert.ToInt32(tiempoVisitaProp));
     }
 
     [TestMethod]
@@ -432,7 +432,7 @@ public class AccesoControllerTest
         var atraccionId = 1;
 
         _servicioAccesoMock!.Setup(s => s.ObtenerRegistrosActivosPorUsuario(usuarioId, atraccionId))
-            .Returns(new List<RegistroVisitaDto>());
+            .Returns([]);
 
         var result = _controller!.GetRegistrosActivos(usuarioId, atraccionId);
 
