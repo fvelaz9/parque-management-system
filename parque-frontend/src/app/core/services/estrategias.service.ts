@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
 import { environment } from '../../../environments/environment.development';
+// import { ResponseDto, EstrategiaInfo, CambiarEstrategiaRequest } from '../models/estrategia.model';
 
 export interface EstrategiaInfo {
   nombre: string;
