@@ -59,6 +59,16 @@
         <li>
           <button class="btn-logout" (click)="logout()">
             Cerrar Sesión
+          <a routerLink="/tickets/comprar" routerLinkActive="active" *ngIf="usuario?.rol === 'Visitante'">
+            Comprar Tickets
+          </a>
+        </li>
+        <li>
+          <span class="usuario-nombre">{{ usuario?.nombre }}</span>
+        </li>
+        <li>
+          <button (click)="logout()" class="btn-logout">
+            Cerrar sesión
           </button>
         </li>
       }  @else {

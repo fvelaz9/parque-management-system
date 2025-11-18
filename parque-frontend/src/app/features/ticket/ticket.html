@@ -1,0 +1,91 @@
+<div class="comprar-ticket-container">
+  <h2>Comprar Ticket</h2>
+
+  <!-- Mensajes de error -->
+  <div *ngIf="error" class="alert alert-error">
+    <span>{{ error }}</span>
+  </div>
+
+  <!-- Ticket creado con QR -->
+  <div *ngIf="ticketCreado" class="ticket-resultado">
+    <h3>¡Ticket Comprado Exitosamente!</h3>
+    <div class="qr-container">
+      <img [src]="generarQRUrl(ticketCreado.codigo)" alt="Código QR del ticket">
+    </div>
+    <div class="ticket-info">
+      <p><strong>Código:</strong> {{ ticketCreado.codigo }}</p>
+      <p><strong>Fecha de visita:</strong> {{ ticketCreado.fechaVisita | date:'dd/MM/yyyy' }}</p>
+      <p><strong>Tipo:</strong> {{ obtenerNombreTipoTicket(ticketCreado.tipoEntrada) }}</p>
+    </div>
+    <p class="info-text">Guarde este código QR para presentarlo el día de su visita</p>
+    <button type="button" class="btn-cerrar" (click)="cerrarResultado()">Aceptar</button>
+  </div>
+
+  <!-- Formulario de compra -->
+  <form (ngSubmit)="comprarTicket()" #ticketForm="ngForm" *ngIf="!ticketCreado">
+    <div class="form-group">
+      <label for="fechaVisita">Fecha de Visita *</label>
+      <input 
+        type="date" 
+        id="fechaVisita" 
+        name="fechaVisita"
+        [(ngModel)]="fechaVisita"
+        [min]="fechaMinima"
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label>Tipo de Entrada *</label>
+      <div class="radio-group">
+        <label class="radio-label">
+          <input 
+            type="radio" 
+            name="tipoEntrada" 
+            [value]="TipoTicket.General"
+            [(ngModel)]="tipoEntrada"
+            (change)="onTipoEntradaChange()"
+          >
+          <span>Entrada General</span>
+        </label>
+        <label class="radio-label">
+          <input 
+            type="radio" 
+            name="tipoEntrada" 
+            [value]="TipoTicket.EventoEspecial"
+            [(ngModel)]="tipoEntrada"
+            (change)="onTipoEntradaChange()"
+          >
+          <span>Evento Especial</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="form-group" *ngIf="tipoEntrada === TipoTicket.EventoEspecial">
+      <label for="evento">Seleccionar Evento *</label>
+      <select 
+        id="evento" 
+        name="evento"
+        [(ngModel)]="eventoSeleccionado"
+        required
+      >
+        <option [value]="undefined">-- Seleccione un evento --</option>
+        <option *ngFor="let evento of eventos" [value]="evento.id">
+          {{ evento.titulo }} - {{ evento.inicio | date:'dd/MM/yyyy' }} (Aforo: {{ evento.aforoMaximo }})
+        </option>
+      </select>
+      <small *ngIf="eventos.length === 0" class="text-muted">
+        No hay eventos disponibles en este momento
+      </small>
+    </div>
+
+    <button 
+      type="submit" 
+      [disabled]="loading || !ticketForm.form.valid"
+      class="btn-comprar"
+    >
+      <span *ngIf="!loading">Comprar Ticket</span>
+      <span *ngIf="loading">Procesando...</span>
+    </button>
+  </form>
+</div>

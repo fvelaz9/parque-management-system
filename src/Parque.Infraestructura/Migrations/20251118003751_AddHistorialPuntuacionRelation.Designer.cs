@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Parque.Infraestructura;
 
@@ -11,9 +12,11 @@ using Parque.Infraestructura;
 namespace Parque.Infraestructura.Migrations
 {
     [DbContext(typeof(AppContexto))]
-    partial class AppContextoModelSnapshot : ModelSnapshot
+    [Migration("20251118003751_AddHistorialPuntuacionRelation")]
+    partial class AddHistorialPuntuacionRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -23,242 +26,184 @@ namespace Parque.Infraestructura.Migrations
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("AtraccionParqueEvento", b =>
-            {
-                b.Property<int>("AtraccionesId")
-                    .HasColumnType("int");
-
-                b.Property<int>("EventoId")
-                    .HasColumnType("int");
-
-                b.HasKey("AtraccionesId", "EventoId");
-
-                b.HasIndex("EventoId");
-
-                b.ToTable("EventoAtracciones", (string)null);
-            });
-
-            modelBuilder.Entity("Parque.Dominio.Atracciones.AtraccionParque", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
-
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                b.Property<int>("Capacidad")
-                    .HasColumnType("int");
-
-                b.Property<string>("Descripcion")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
-
-                b.Property<int>("EdadMinima")
-                    .HasColumnType("int");
-
-                b.Property<int>("Estado")
-                    .HasColumnType("int");
-
-                b.Property<string>("Nombre")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
-
-                b.Property<int>("Tipo")
-                    .HasColumnType("int");
-
-                b.HasKey("Id");
-
-                b.ToTable("Atracciones");
-            });
-
-            modelBuilder.Entity("Parque.Dominio.Atracciones.RegistroVisita", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
-
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                b.Property<int>("AtraccionId")
-                    .HasColumnType("int");
-
-                b.Property<DateTime?>("FechaEgreso")
-                    .HasColumnType("datetime2");
-
-                b.Property<DateTime>("FechaIngreso")
-                    .HasColumnType("datetime2");
-
-                b.Property<Guid>("Identificador")
-                    .HasColumnType("uniqueidentifier");
-
-                b.HasKey("Id");
-
-                b.ToTable("RegistrosVisitas");
-            });
-
-            modelBuilder.Entity("Parque.Dominio.ConfiguracionFechaHora", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
-
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                b.Property<DateTime>("FechaHoraConfigurada")
-                    .HasColumnType("datetime2");
-
-                b.HasKey("Id");
-
-                b.ToTable("ConfiguracionFechaHora");
-            });
-
-            modelBuilder.Entity("Parque.Dominio.Evento", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
-
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                b.Property<int>("AforoMaximo")
-                    .HasColumnType("int");
-
-                b.Property<float>("CostoAdicional")
-                    .HasColumnType("real");
-
-                b.Property<string>("Descripcion")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
-
-                b.Property<int>("Estado")
-                    .HasColumnType("int");
-
-                b.Property<DateTime>("Fin")
-                    .HasColumnType("datetime2");
-
-                b.Property<DateTime>("Inicio")
-                    .HasColumnType("datetime2");
-
-                b.Property<string>("Titulo")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
-
-                b.HasKey("Id");
-
-                b.ToTable("Eventos");
-            });
-
-            modelBuilder.Entity("Parque.Dominio.Gamificacion.ConfiguracionEstrategia", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
-
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                b.Property<string>("EstrategiaActiva")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
-
-                b.Property<DateTime>("FechaModificacion")
-                    .HasColumnType("datetime2");
-
-                b.HasKey("Id");
-
-                b.ToTable("ConfiguracionesEstrategia");
-            });
-
-            modelBuilder.Entity("Parque.Dominio.HistorialPuntuacion", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
-
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                b.Property<string>("EstrategiaActiva")
-                    .HasMaxLength(200)
-                    .HasColumnType("nvarchar(200)");
-
-                b.Property<DateTime>("FechaHora")
-                    .HasColumnType("datetime2");
-
-                b.Property<string>("OrigenPuntos")
-                    .HasMaxLength(500)
-                    .HasColumnType("nvarchar(500)");
-
-                b.Property<int>("Puntos")
-                    .HasColumnType("int");
-
-                b.Property<Guid?>("VisitanteId");
-            });
-                modelBuilder.Entity("Parque.Dominio.Gamificacion.HistorialCanje", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("FechaCanje")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("PuntosCanjeados")
+                    b.Property<int>("AtraccionesId")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("RecompensaId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<int>("EventoId")
+                        .HasColumnType("int");
 
-                    b.Property<Guid>("VisitanteId")
+                    b.HasKey("AtraccionesId", "EventoId");
 
-                        .HasColumnType("uniqueidentifier");
+                    b.HasIndex("EventoId");
 
-                    b.HasKey("Id");
-
-
-                    b.HasIndex("VisitanteId");
-
-                    b.ToTable("HistorialPuntuaciones");
-
-                    b.HasIndex("FechaCanje");
-
-                    b.HasIndex("RecompensaId");
-
-                    b.HasIndex("VisitanteId");
-
-                    b.ToTable("HistorialCanjes");
+                    b.ToTable("EventoAtracciones", (string)null);
                 });
 
-                modelBuilder.Entity("Parque.Dominio.Gamificacion.Recompensa", b =>
+            modelBuilder.Entity("Parque.Dominio.Atracciones.AtraccionParque", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("CantidadDisponible")
                         .HasColumnType("int");
 
-                    b.Property<int>("CostoEnPuntos")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Capacidad")
                         .HasColumnType("int");
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("FechaCreacion")
-                        .HasColumnType("datetime2");
+                    b.Property<int>("EdadMinima")
+                        .HasColumnType("int");
 
-                    b.Property<int?>("NivelMembresiaRequerido")
+                    b.Property<int>("Estado")
                         .HasColumnType("int");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Tipo")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Recompensas");
+                    b.ToTable("Atracciones");
                 });
 
-                modelBuilder.Entity("Parque.Dominio.Incidencia", b =>
+            modelBuilder.Entity("Parque.Dominio.Atracciones.RegistroVisita", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AtraccionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("FechaEgreso")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaIngreso")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("Identificador")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("RegistrosVisitas");
+                });
+
+            modelBuilder.Entity("Parque.Dominio.ConfiguracionFechaHora", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("FechaHoraConfigurada")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ConfiguracionFechaHora");
+                });
+
+            modelBuilder.Entity("Parque.Dominio.Evento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AforoMaximo")
+                        .HasColumnType("int");
+
+                    b.Property<float>("CostoAdicional")
+                        .HasColumnType("real");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Estado")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Fin")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Inicio")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Eventos");
+                });
+
+            modelBuilder.Entity("Parque.Dominio.Gamificacion.ConfiguracionEstrategia", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("EstrategiaActiva")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("FechaModificacion")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ConfiguracionesEstrategia");
+                });
+
+            modelBuilder.Entity("Parque.Dominio.HistorialPuntuacion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("EstrategiaActiva")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("FechaHora")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OrigenPuntos")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("Puntos")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("VisitanteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VisitanteId");
+
+                    b.ToTable("HistorialPuntuaciones");
+                });
+
+            modelBuilder.Entity("Parque.Dominio.Incidencia", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -286,7 +231,7 @@ namespace Parque.Infraestructura.Migrations
                     b.ToTable("Incidencias");
                 });
 
-                modelBuilder.Entity("Parque.Dominio.MantenimientoPreventivo", b =>
+            modelBuilder.Entity("Parque.Dominio.MantenimientoPreventivo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -319,7 +264,7 @@ namespace Parque.Infraestructura.Migrations
                     b.ToTable("MantenimientosPreventivos");
                 });
 
-                modelBuilder.Entity("Parque.Dominio.Sesion", b =>
+            modelBuilder.Entity("Parque.Dominio.Sesion", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -341,7 +286,7 @@ namespace Parque.Infraestructura.Migrations
                     b.ToTable("Sesiones");
                 });
 
-                modelBuilder.Entity("Parque.Dominio.Ticket", b =>
+            modelBuilder.Entity("Parque.Dominio.Ticket", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -375,7 +320,7 @@ namespace Parque.Infraestructura.Migrations
                     b.ToTable("Tickets");
                 });
 
-                modelBuilder.Entity("Parque.Dominio.Usuarios.Cuenta", b =>
+            modelBuilder.Entity("Parque.Dominio.Usuarios.Cuenta", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -412,7 +357,7 @@ namespace Parque.Infraestructura.Migrations
                     b.ToTable("Cuentas");
                 });
 
-                modelBuilder.Entity("Parque.Dominio.Usuarios.PuntuacionVisitante", b =>
+            modelBuilder.Entity("Parque.Dominio.Usuarios.PuntuacionVisitante", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -440,7 +385,7 @@ namespace Parque.Infraestructura.Migrations
                     b.ToTable("PuntuacionesVisitantes");
                 });
 
-                modelBuilder.Entity("Parque.Dominio.Usuarios.Visitante", b =>
+            modelBuilder.Entity("Parque.Dominio.Usuarios.Visitante", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -457,7 +402,7 @@ namespace Parque.Infraestructura.Migrations
                     b.ToTable("Visitantes");
                 });
 
-                modelBuilder.Entity("AtraccionParqueEvento", b =>
+            modelBuilder.Entity("AtraccionParqueEvento", b =>
                 {
                     b.HasOne("Parque.Dominio.Atracciones.AtraccionParque", null)
                         .WithMany()
@@ -472,7 +417,7 @@ namespace Parque.Infraestructura.Migrations
                         .IsRequired();
                 });
 
-                modelBuilder.Entity("Parque.Dominio.HistorialPuntuacion", b =>
+            modelBuilder.Entity("Parque.Dominio.HistorialPuntuacion", b =>
                 {
                     b.HasOne("Parque.Dominio.Usuarios.Visitante", null)
                         .WithMany("HistorialPuntuaciones")
@@ -480,7 +425,7 @@ namespace Parque.Infraestructura.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-                modelBuilder.Entity("Parque.Dominio.MantenimientoPreventivo", b =>
+            modelBuilder.Entity("Parque.Dominio.MantenimientoPreventivo", b =>
                 {
                     b.HasOne("Parque.Dominio.Incidencia", "IncidenciaAsociada")
                         .WithMany()
@@ -491,29 +436,29 @@ namespace Parque.Infraestructura.Migrations
                     b.Navigation("IncidenciaAsociada");
                 });
 
-                modelBuilder.Entity("Parque.Dominio.Usuarios.Cuenta", b =>
+            modelBuilder.Entity("Parque.Dominio.Usuarios.Cuenta", b =>
                 {
                     b.HasOne("Parque.Dominio.Usuarios.Visitante", "Visitante")
                         .WithOne()
                         .HasForeignKey("Parque.Dominio.Usuarios.Cuenta", "VisitanteId");
 
                     b.OwnsOne("Parque.Dominio.Usuarios.Email", "Email", b1 =>
-                    {
-                        b1.Property<Guid>("CuentaId")
-                            .HasColumnType("uniqueidentifier");
+                        {
+                            b1.Property<Guid>("CuentaId")
+                                .HasColumnType("uniqueidentifier");
 
-                        b1.Property<string>("Valor")
-                            .IsRequired()
-                            .HasColumnType("nvarchar(max)")
-                            .HasColumnName("Email");
+                            b1.Property<string>("Valor")
+                                .IsRequired()
+                                .HasColumnType("nvarchar(max)")
+                                .HasColumnName("Email");
 
-                        b1.HasKey("CuentaId");
+                            b1.HasKey("CuentaId");
 
-                        b1.ToTable("Cuentas");
+                            b1.ToTable("Cuentas");
 
-                        b1.WithOwner()
-                            .HasForeignKey("CuentaId");
-                    });
+                            b1.WithOwner()
+                                .HasForeignKey("CuentaId");
+                        });
 
                     b.Navigation("Email")
                         .IsRequired();
@@ -521,7 +466,7 @@ namespace Parque.Infraestructura.Migrations
                     b.Navigation("Visitante");
                 });
 
-                modelBuilder.Entity("Parque.Dominio.Usuarios.Visitante", b =>
+            modelBuilder.Entity("Parque.Dominio.Usuarios.Visitante", b =>
                 {
                     b.Navigation("HistorialPuntuaciones");
                 });

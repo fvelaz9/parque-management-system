@@ -27,7 +27,6 @@ export class EventoListComponent {
     this.loading.set(true);
     this.eventoService.listarEventos().subscribe({
       next: (result) => {
-        console.log('Eventos cargados:', result);
         this.eventos.set(result);
         this.loading.set(false);
         this.error.set('');
@@ -41,6 +40,11 @@ export class EventoListComponent {
   }
 
   eliminarEvento(evento: Evento) {
+    console.log('ID evento a eliminar:', evento.id);
+    if (!evento.id) {
+      alert('ID de evento inválido.');
+      return;
+    }
     if (confirm(`¿Seguro que deseas borrar "${evento.titulo}"?`)) {
       this.eventoService.deleteEvento(evento.id).subscribe({
         next: () => {

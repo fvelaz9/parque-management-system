@@ -1,19 +1,62 @@
 <div class="evento-list-container">
-  <h2>Lista de eventos</h2>
-  <ul class="evento-list">
-    <li *ngFor="let evento of eventos(); let i = index" class="evento-item">
-      <div>
-        <strong>{{ evento.titulo }}</strong><br>
-        {{ evento.descripcion }}<br>
-        Desde: {{ evento.inicio | date:'short' }}<br>
-        Hasta: {{ evento.fin | date:'short' }}<br>
-        Aforo máximo: {{ evento.aforoMaximo }}<br>
-        Costo adicional: ${{ evento.costoAdicional }}<br>
-        Estado: {{ evento.estado }}
-      </div>
-      <button (click)="eliminarEvento(evento)" class="btn-eliminar">Eliminar</button>
-    </li>
-  </ul>
+  <h2>Lista de Eventos</h2>
+  
+  <div *ngIf="loading()" class="loading">
+    Cargando eventos...
+  </div>
 
-  <button (click)="agregarEvento()" class="btn-agregar">Agregar evento</button>
+  <div *ngIf="error()" class="error">
+    {{ error() }}
+  </div>
+
+  <div *ngIf="!loading() && !error() && eventos().length === 0" class="empty-state">
+    No hay eventos creados aún.
+  </div>
+
+  <div class="eventos-grid" *ngIf="!loading() && eventos().length > 0">
+    <div *ngFor="let evento of eventos()" class="evento-card">
+      <div class="evento-header">
+        <h3>{{ evento.titulo }}</h3>
+        <span class="evento-estado" [class.activo]="evento.estado === 2">
+          {{ evento.estado }}
+        </span>
+      </div>
+      
+      <div class="evento-body">
+        <p class="evento-descripcion">{{ evento.descripcion || 'Sin descripción' }}</p>
+        
+        <div class="evento-info">
+          <div class="info-item">
+            <span class="info-label">Inicio:</span>
+            <span class="info-value">{{ evento.inicio | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          
+          <div class="info-item">
+            <span class="info-label">Fin:</span>
+            <span class="info-value">{{ evento.fin | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+          
+          <div class="info-item">
+            <span class="info-label">Aforo:</span>
+            <span class="info-value">{{ evento.aforoMaximo }} personas</span>
+          </div>
+          
+          <div class="info-item">
+            <span class="info-label">Costo adicional:</span>
+            <span class="info-value">${{ evento.costoAdicional }}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="evento-actions">
+        <button (click)="eliminarEvento(evento)" class="btn btn-danger">
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <button (click)="agregarEvento()" class="btn btn-primary btn-agregar">
+    + Agregar Evento
+  </button>
 </div>

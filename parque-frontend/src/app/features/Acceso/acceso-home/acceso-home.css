@@ -1,0 +1,62 @@
+.acceso-home-container {
+  max-width: 500px;
+  margin: 20px auto;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #fafafa;
+  border-radius: 8px;
+  box-shadow: 0 0 12px rgba(0,0,0,0.1);
+}
+
+h2 {
+  text-align: center;
+  color: #222;
+  margin-bottom: 30px;
+}
+
+h3 {
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.aforo-info p {
+  font-size: 16px;
+  margin: 6px 0;
+  color: #444;
+}
+
+.alerta {
+  color: #d32f2f; /* rojo */
+  font-weight: bold;
+  margin-top: 12px;
+  text-align: center;
+}
+
+.botones-control {
+  margin-top: 30px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.botones-control button {
+  width: 140px;
+  padding: 12px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  color: white;
+  background-color: #1976d2; /* azul */
+
+  transition: background-color 0.25s ease;
+}
+
+.botones-control button:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+.botones-control button:hover:not(:disabled) {
+  background-color: #125ea2;
+}
