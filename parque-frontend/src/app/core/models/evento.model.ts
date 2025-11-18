@@ -7,6 +7,7 @@ export interface Evento {
   inicio: string;
   fin: string;
   aforoMaximo: number;
+  aforoDisponible?: number;
   costoAdicional: number;
   estado: EstadoEvento;
   atracciones: AtraccionParque[];
@@ -20,7 +21,7 @@ export enum EstadoEvento {
 export interface CreateEventoRequest {
   titulo: string;
   descripcion: string;
-  inicio: string; // fechas como ISO string
+  inicio: string;
   fin: string;
   aforoMaximo: number;
   costoAdicional: number;

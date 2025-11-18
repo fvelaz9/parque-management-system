@@ -1,7 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { CreateEventoRequest, Evento, EventoOutDto } from '../models/evento.model';
+import { Observable, pipe } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { CreateEventoRequest, Evento, EventoOutDto, EstadoEvento } from '../models/evento.model';
 import { environment } from '../../../environments/environment.development';
 import { AuthService } from './auth.service';
 

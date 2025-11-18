@@ -46,6 +46,7 @@ export interface CuentaDto {
   apellido: string;
   email: string;
   roles: string[];
+  rol?: string;
   visitante: VisitanteDto | null;
 }
 

@@ -34,6 +34,11 @@
       </li>
       @if (isLoggedIn) {
         <li>
+          <a routerLink="/tickets/comprar" routerLinkActive="active" *ngIf="usuario?.rol === 'Visitante'">
+            Comprar Tickets
+          </a>
+        </li>
+        <li>
           <span class="usuario-nombre">{{ usuario?.nombre }}</span>
         </li>
         <li>

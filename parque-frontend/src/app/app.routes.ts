@@ -139,6 +139,12 @@ export const routes: Routes = [
       .then(m => m.SelectorEstrategiasComponent),
     canActivate: [authGuard]
   },
+  {
+    path: 'tickets/comprar',
+    loadComponent: () => import('./features/ticket/ticket')
+      .then(m => m.ComprarTicketComponent),
+    canActivate: [visitanteGuard]
+  },
   // Not Found route - debe ser la última
   {
     path: "**",
