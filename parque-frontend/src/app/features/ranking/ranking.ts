@@ -26,17 +26,16 @@ export class RankingComponent {
   public rankingVisitantes = signal<RankingVisitante[]>([]);
   public loading = signal(false);
   public error = signal('');
+  public successMessage = signal('');
   public fechaRanking: string = new Date().toISOString().split('T')[0];
   public topRanking: number = 10;
 
-  ngOnInit() {
-    // Cargar ranking automáticamente al iniciar
-    this.cargarRanking();
-  }
+  // ✅ QUITAR ngOnInit - No cargar nada al iniciar
 
   cargarRanking() {
     this.loading.set(true);
     this.error.set('');
+    this.successMessage.set(''); // Limpiar mensajes previos
 
     const fecha = this.fechaRanking || new Date().toISOString().split('T')[0];
     const url = `${this.apiUrl}/gamificacion/ranking/diario?fecha=${fecha}&top=${this.topRanking}`;
@@ -46,6 +45,11 @@ export class RankingComponent {
         console.log('Ranking response:', response);
         const ranking = response.content?.ranking || response.ranking || [];
         this.rankingVisitantes.set(ranking);
+
+        // ✅ Mostrar mensaje de éxito
+        const mensaje = response.message || `Ranking cargado correctamente (${ranking.length} visitantes)`;
+        this.successMessage.set(mensaje);
+
         this.loading.set(false);
       },
       error: (err) => {
