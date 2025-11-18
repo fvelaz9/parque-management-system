@@ -191,6 +191,10 @@ public class ServicioAccesoTest
             .Returns(cuenta);
         _repoIncidenciasMock!.Setup(r => r.ObtenerTodos()).Returns([]);
         _repoRegistrosMock!.Setup(r => r.ObtenerTodos()).Returns(registros);
+        _repoEventoMock!.Setup(r => r.ObtenerConRelaciones(
+                It.IsAny<Expression<Func<Evento, bool>>>(),
+                It.IsAny<string>()))
+            .Returns([]);
 
         var resultado = _servicio!.ValidarAcceso(request);
 
@@ -203,7 +207,7 @@ public class ServicioAccesoTest
     {
         var fechaActual = new DateTime(2025, 10, 8);
         var cuenta = Cuenta.Crear("Juan", "Perez", new Email("test@test.com"), "pass123", Rol.Visitante);
-        cuenta.AsignarVisitante(fechaActual.AddYears(-25));
+        cuenta.AsignarVisitante(fechaActual.AddYears(-25)); // 25 años - mayor que 12 requeridos
         var cuentaId = cuenta.Id;
 
         var ticket = new Dominio.Ticket
@@ -211,7 +215,7 @@ public class ServicioAccesoTest
             Codigo = Guid.NewGuid(),
             FechaVisita = fechaActual,
             TipoEntrada = TipoTicket.General,
-            CuentaId = cuentaId,
+            CuentaId = cuentaId, // MISMO ID que la cuenta
             EsValido = true
         };
         var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.MontañaRusa, 12, 24, "Test") { Id = 1 };
@@ -231,11 +235,17 @@ public class ServicioAccesoTest
             .Returns(cuenta);
         _repoIncidenciasMock!.Setup(r => r.ObtenerTodos()).Returns([]);
         _repoRegistrosMock!.Setup(r => r.ObtenerTodos()).Returns([]);
+        _repoEventoMock!.Setup(r => r.ObtenerConRelaciones(
+                It.IsAny<Expression<Func<Evento, bool>>>(),
+                It.IsAny<string>()))
+            .Returns([]);
 
         var resultado = _servicio!.ValidarAcceso(request);
 
         Assert.IsTrue(resultado.AccesoPermitido);
         Assert.AreEqual("Acceso permitido", resultado.Mensaje);
+        Assert.AreEqual("Montaña Rusa", resultado.NombreAtraccion);
+        Assert.AreEqual("Juan Perez", resultado.NombreVisitante);
     }
 
     [TestMethod]
@@ -266,12 +276,18 @@ public class ServicioAccesoTest
             .Returns(cuenta);
         _repoIncidenciasMock!.Setup(r => r.ObtenerTodos()).Returns([]);
         _repoRegistrosMock!.Setup(r => r.ObtenerTodos()).Returns([]);
+        _repoEventoMock!.Setup(r => r.ObtenerConRelaciones(
+                It.IsAny<Expression<Func<Evento, bool>>>(),
+                It.IsAny<string>()))
+            .Returns([]);
+        _repoTicketsMock.Setup(r => r.Editar(It.IsAny<Dominio.Ticket>()));
 
         var resultado = _servicio!.RegistrarIngreso(codigoTicket, 1, cuenta);
 
         Assert.IsNotNull(resultado);
         Assert.AreEqual(1, resultado.AtraccionId);
         _repoRegistrosMock.Verify(r => r.Agregar(It.IsAny<RegistroVisita>()), Times.Once);
+        _repoTicketsMock.Verify(r => r.Editar(It.IsAny<Dominio.Ticket>()), Times.Once); // Verificar que se edita el ticket
     }
 
     [TestMethod]
@@ -318,7 +334,7 @@ public class ServicioAccesoTest
     {
         var fechaActual = new DateTime(2025, 10, 8);
         var cuenta = Cuenta.Crear("Niño", "Perez", new Email("nino@test.com"), "pass123", Rol.Visitante);
-        cuenta.AsignarVisitante(fechaActual.AddYears(-5));
+        cuenta.AsignarVisitante(fechaActual.AddYears(-5)); // 5 años - menor que 12 requeridos
         var cuentaId = cuenta.Id;
 
         var ticket = new Dominio.Ticket
@@ -344,11 +360,18 @@ public class ServicioAccesoTest
             .Returns(atraccion);
         _repoCuentasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
             .Returns(cuenta);
+        _repoIncidenciasMock!.Setup(r => r.ObtenerTodos()).Returns([]);
+        _repoRegistrosMock!.Setup(r => r.ObtenerTodos()).Returns([]);
+        _repoEventoMock!.Setup(r => r.ObtenerConRelaciones(
+                It.IsAny<Expression<Func<Evento, bool>>>(),
+                It.IsAny<string>()))
+            .Returns([]);
 
         var resultado = _servicio!.ValidarAcceso(request);
 
         Assert.IsFalse(resultado.AccesoPermitido);
         Assert.IsTrue(resultado.Mensaje.Contains("Edad mínima requerida"));
+        Assert.IsTrue(resultado.Mensaje.Contains("12 años"));
     }
 
     [TestMethod]
@@ -358,12 +381,13 @@ public class ServicioAccesoTest
         var cuenta = Cuenta.Crear("Juan", "Perez", new Email("test@test.com"), "pass123", Rol.Visitante);
         cuenta.AsignarVisitante(fechaActual.AddYears(-25));
 
+        // Ticket con CuentaId diferente a cuenta.Id
         var ticket = new Dominio.Ticket
         {
             Codigo = Guid.NewGuid(),
             FechaVisita = fechaActual,
             TipoEntrada = TipoTicket.General,
-            CuentaId = Guid.NewGuid(),
+            CuentaId = Guid.NewGuid(), // DIFERENTE ID
             EsValido = true
         };
         var atraccion = new AtraccionParque("Carrusel", TipoAtraccion.Simulador, 0, 30, "Test") { Id = 1 };
@@ -372,7 +396,7 @@ public class ServicioAccesoTest
         {
             CodigoTicket = ticket.Codigo,
             AtraccionId = 1,
-            CuentaVisitanteId = cuenta.Id
+            CuentaVisitanteId = cuenta.Id // ESTE ES EL ID DE LA CUENTA, DIFERENTE AL DEL TICKET
         };
 
         _repoTicketsMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>()))
@@ -381,6 +405,12 @@ public class ServicioAccesoTest
             .Returns(atraccion);
         _repoCuentasMock!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>()))
             .Returns(cuenta);
+        _repoIncidenciasMock!.Setup(r => r.ObtenerTodos()).Returns([]);
+        _repoRegistrosMock!.Setup(r => r.ObtenerTodos()).Returns([]);
+        _repoEventoMock!.Setup(r => r.ObtenerConRelaciones(
+                It.IsAny<Expression<Func<Evento, bool>>>(),
+                It.IsAny<string>()))
+            .Returns([]);
 
         var resultado = _servicio!.ValidarAcceso(request);
 
@@ -405,11 +435,15 @@ public class ServicioAccesoTest
             EsValido = true
         };
         var atraccion = new AtraccionParque("Simulador", TipoAtraccion.Simulador, 8, 12, "Test") { Id = 1 };
-        var incidencia = new Incidencia(
-            "En mantenimiento",
-            fechaActual.AddHours(-2),
-            fechaActual.AddHours(2),
-            1);
+        var incidencia = new Incidencia
+        {
+            Id = 1,
+            AtraccionId = 1,
+            Descripcion = "En mantenimiento",
+            FechaReporte = fechaActual.AddHours(-2),
+            FechaResolucionEstimada = fechaActual.AddHours(2),
+            Disponible = false
+        };
 
         var request = new ValidarAccesoRequest
         {
@@ -426,6 +460,10 @@ public class ServicioAccesoTest
             .Returns(cuenta);
         _repoIncidenciasMock!.Setup(r => r.ObtenerTodos())
             .Returns([incidencia]);
+        _repoEventoMock!.Setup(r => r.ObtenerConRelaciones(
+                It.IsAny<Expression<Func<Evento, bool>>>(),
+                It.IsAny<string>()))
+            .Returns([]);
 
         var resultado = _servicio!.ValidarAcceso(request);
 
