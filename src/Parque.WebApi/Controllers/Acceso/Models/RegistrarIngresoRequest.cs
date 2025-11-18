@@ -1,6 +1,4 @@
-﻿using Parque.Dominio.Usuarios;
-
-namespace Parque.WebApi.Controllers.Acceso.Models;
+﻿namespace Parque.WebApi.Controllers.Acceso.Models;
 
 public class RegistrarIngresoRequest
 {
