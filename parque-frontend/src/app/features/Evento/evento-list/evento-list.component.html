@@ -3,8 +3,8 @@
   <ul class="evento-list">
     <li *ngFor="let evento of eventos(); let i = index" class="evento-item">
       <div>
-        <strong>{{ evento.titulo }}</strong><br>
-        {{ evento.descripcion }}<br>
+        Nombre: {{ evento.titulo }}<br>
+        Descripcion: {{ evento.descripcion }}<br>
         Desde: {{ evento.inicio | date:'short' }}<br>
         Hasta: {{ evento.fin | date:'short' }}<br>
         Aforo máximo: {{ evento.aforoMaximo }}<br>

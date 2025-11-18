@@ -1,0 +1,28 @@
+<div class="acceso-home-container">
+  <h2>Control de Acceso a Atracción</h2>
+
+  <div *ngIf="atraccion">
+    <h3>{{ atraccion.nombre }}</h3>
+
+    <div *ngIf="aforo">
+      <p><strong>Aforo actual:</strong> {{ aforo.aforoActual }}</p>
+      <p><strong>Capacidad máxima:</strong> {{ aforo.capacidadMaxima }}</p>
+      <p><strong>Disponible:</strong> {{ aforo.disponible }}</p>
+      <p *ngIf="aforo.disponible <= 0" class="alerta">
+        ¡Aforo completo! No se permite más ingreso.
+      </p>
+    </div>
+
+
+
+    <div class="botones-control">
+      <button type="button" [disabled]="aforo ? aforo.disponible === 0 : true" [routerLink]="['/acceso-ingreso']" [queryParams]="{ atraccionId: atraccionId }">Registrar Ingreso</button>
+      <button type="button" [disabled]="aforo ? aforo.aforoActual === 0 : true" [routerLink]="['/acceso-egreso']" [queryParams]="{ atraccionId: atraccionId }">Registrar Egreso</button>
+      <button type="submit" routerLink="/atracciones">Volver</button>
+    </div>
+  </div>
+
+  <div *ngIf="!atraccion">
+    <p>Cargando atracción...</p>
+  </div>
+</div>
