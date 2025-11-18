@@ -546,4 +546,114 @@ public class ServicioAccesoTest
         Assert.AreEqual(15.0, resultado.PorcentajeOcupacion);
         Assert.IsFalse(resultado.AforoCompleto);
     }
+
+    [TestMethod]
+    public void GetRegistrosActivos_SinRegistros_ReturnsListaVacia()
+    {
+        var usuarioId = Guid.NewGuid();
+        var atraccionId = 1;
+
+        var mockRepoRegistros = new Mock<IRepositorio<RegistroVisita>>();
+        var mockRepoTickets = new Mock<IRepositorio<Ticket>>();
+        mockRepoRegistros.Setup(r => r.ObtenerTodos()).Returns(new List<RegistroVisita>());
+
+        var servicio = new ServicioAcceso(null!, mockRepoTickets.Object, mockRepoRegistros.Object, null!, null!, null!, null!, null!);
+        var respuesta = servicio.ObtenerRegistrosActivosPorUsuario(usuarioId, atraccionId);
+
+        Assert.IsNotNull(respuesta);
+        Assert.AreEqual(0, respuesta.Count);
+    }
+
+    [TestMethod]
+    public void GetRegistrosActivos_RegistroSinTicket_ReturnsListaVacia()
+    {
+        var usuarioId = Guid.NewGuid();
+        var atraccionId = 1;
+        var registro = new RegistroVisita
+        {
+            Id = 5,
+            AtraccionId = atraccionId,
+            Identificador = Guid.NewGuid(),
+            FechaIngreso = DateTime.Now,
+            FechaEgreso = null
+        };
+
+        var mockRepoRegistros = new Mock<IRepositorio<RegistroVisita>>();
+        var mockRepoTickets = new Mock<IRepositorio<Ticket>>();
+        mockRepoRegistros.Setup(r => r.ObtenerTodos()).Returns(new List<RegistroVisita> { registro });
+        mockRepoTickets.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Ticket, bool>>>())).Returns((Ticket)null!);
+
+        var servicio = new ServicioAcceso(null!, mockRepoTickets.Object, mockRepoRegistros.Object, null!, null!, null!, null!, null!);
+        var respuesta = servicio.ObtenerRegistrosActivosPorUsuario(usuarioId, atraccionId);
+
+        Assert.IsNotNull(respuesta);
+        Assert.AreEqual(0, respuesta.Count);
+    }
+
+    [TestMethod]
+    public void GetRegistrosActivos_RegistroTicketOtroUsuario_ReturnsListaVacia()
+    {
+        var usuarioId = Guid.NewGuid();
+        var otroUsuarioId = Guid.NewGuid();
+        var atraccionId = 1;
+        var registro = new RegistroVisita
+        {
+            Id = 7,
+            AtraccionId = atraccionId,
+            Identificador = Guid.NewGuid(),
+            FechaIngreso = DateTime.Now,
+            FechaEgreso = null
+        };
+        var ticket = new Ticket
+        {
+            Codigo = registro.Identificador,
+            CuentaId = otroUsuarioId
+        };
+
+        var mockRepoRegistros = new Mock<IRepositorio<RegistroVisita>>();
+        var mockRepoTickets = new Mock<IRepositorio<Ticket>>();
+        mockRepoRegistros.Setup(r => r.ObtenerTodos()).Returns(new List<RegistroVisita> { registro });
+        mockRepoTickets.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Ticket, bool>>>())).Returns(ticket);
+
+        var servicio = new ServicioAcceso(null!, mockRepoTickets.Object, mockRepoRegistros.Object, null!, null!, null!, null!, null!);
+        var respuesta = servicio.ObtenerRegistrosActivosPorUsuario(usuarioId, atraccionId);
+
+        Assert.IsNotNull(respuesta);
+        Assert.AreEqual(0, respuesta.Count);
+    }
+
+    [TestMethod]
+    public void GetRegistrosActivos_Exitoso_ReturnsRegistros()
+    {
+        var usuarioId = Guid.NewGuid();
+        var atraccionId = 1;
+        var registro = new RegistroVisita
+        {
+            Id = 11,
+            AtraccionId = atraccionId,
+            Identificador = Guid.NewGuid(),
+            FechaIngreso = DateTime.Now,
+            FechaEgreso = null
+        };
+        var ticket = new Ticket
+        {
+            Codigo = registro.Identificador,
+            CuentaId = usuarioId
+        };
+
+        var mockRepoRegistros = new Mock<IRepositorio<RegistroVisita>>();
+        var mockRepoTickets = new Mock<IRepositorio<Ticket>>();
+        mockRepoRegistros.Setup(r => r.ObtenerTodos()).Returns(new List<RegistroVisita> { registro });
+        mockRepoTickets.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Ticket, bool>>>())).Returns(ticket);
+
+        var servicio = new ServicioAcceso(null!, mockRepoTickets.Object, mockRepoRegistros.Object, null!, null!, null!, null!, null!);
+        var respuesta = servicio.ObtenerRegistrosActivosPorUsuario(usuarioId, atraccionId);
+
+        Assert.IsNotNull(respuesta);
+        Assert.AreEqual(1, respuesta.Count);
+        Assert.AreEqual(registro.Id, respuesta[0].Id);
+        Assert.AreEqual(registro.Identificador, respuesta[0].Identificador);
+        Assert.AreEqual(registro.AtraccionId, respuesta[0].AtraccionId);
+        Assert.AreEqual(registro.FechaIngreso, respuesta[0].FechaIngreso);
+    }
 }
