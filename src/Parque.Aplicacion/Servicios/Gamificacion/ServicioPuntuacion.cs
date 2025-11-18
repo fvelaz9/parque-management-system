@@ -184,12 +184,11 @@ public class ServicioPuntuacion : IServicioPuntuacion
         }
 
         var cuenta = _repoCuentas.Encontrar(c => c.Id == ticket.CuentaId);
-        if(cuenta == null)
+        if(cuenta == null || cuenta.Visitante == null)
         {
-            throw new InvalidOperationException($"Cuenta con ID {ticket.CuentaId} no encontrada");
+            throw new InvalidOperationException($"Cuenta o Visitante no encontrado para ticket {registro.Identificador}");
         }
 
-        // Ahora cuenta.Visitante NO será NULL
         var visitanteId = cuenta.Visitante!.Id;
 
         var fechaRegistro = registro.FechaIngreso.Date;

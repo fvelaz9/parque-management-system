@@ -1,0 +1,416 @@
+.contenedor-egreso {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: var(--color-background);
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--color-border);
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.header h2 {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 28px;
+  font-weight: 600;
+  flex: 1;
+  min-width: 200px;
+}
+
+.info-atraccion {
+  display: flex;
+  gap: 10px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 6px 12px;
+  background-color: var(--color-primary);
+  color: var(--color-btn-primary-text);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.btn-volver {
+  padding: 8px 16px;
+  background-color: var(--color-secondary);
+  color: var(--color-text);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-volver:hover {
+  background-color: var(--color-secondary-hover);
+  transform: translateX(-2px);
+}
+
+/* Secciones */
+.seccion-cuentas,
+.seccion-registros {
+  margin: 20px 0;
+  padding: 20px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-card-border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-sm);
+}
+
+.seccion-cuentas h3,
+.seccion-registros h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: var(--color-text);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  padding: 30px;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+.loading p {
+  margin: 0;
+}
+
+/* Lista Wrapper */
+.lista-wrapper {
+  margin: 15px 0;
+}
+
+.registros-header {
+  padding: 10px 15px;
+  background-color: var(--color-secondary);
+  border-radius: 6px 6px 0 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.total {
+  color: var(--color-text-secondary);
+}
+
+/* Listas */
+.lista-cuentas,
+.lista-registros {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--color-card-border-inner);
+}
+
+.lista-cuentas li,
+.lista-registros li {
+  padding: 15px;
+  margin: 0;
+  background-color: var(--color-background);
+  border-bottom: 1px solid var(--color-card-border-inner);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lista-cuentas li:last-child,
+.lista-registros li:last-child {
+  border-bottom: none;
+}
+
+.lista-cuentas li:hover,
+.lista-registros li:hover {
+  background-color: rgba(var(--color-primary-rgb), 0.05);
+  border-left: 3px solid var(--color-primary);
+  padding-left: 12px;
+}
+
+.cuenta-seleccionada,
+.registro-seleccionado {
+  background-color: var(--color-primary);
+  color: var(--color-btn-primary-text);
+  border-left: 3px solid var(--color-primary-hover);
+}
+
+.cuenta-seleccionada .nombre,
+.cuenta-seleccionada .email,
+.cuenta-seleccionada .roles,
+.registro-seleccionado .label {
+  color: inherit;
+}
+
+/* Información de Cuenta */
+.cuenta-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.nombre {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--color-text);
+}
+
+.email {
+  font-size: 12px;
+  opacity: 0.7;
+  color: var(--color-text-secondary);
+}
+
+.roles {
+  font-size: 11px;
+  opacity: 0.6;
+  color: var(--color-text-secondary);
+}
+
+.puntos {
+  font-weight: 600;
+  font-size: 13px;
+  padding: 4px 8px;
+  background-color: rgba(var(--color-warning-rgb), 0.1);
+  color: var(--color-warning);
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* Información de Registro */
+.registro-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  flex: 1;
+}
+
+.codigo-ticket,
+.tiempo-ingreso,
+.atraccion-id {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  opacity: 0.7;
+  color: var(--color-text-secondary);
+}
+
+.valor {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text);
+  font-family: var(--font-family-mono);
+}
+
+/* Sin Registros */
+.sin-registros {
+  text-align: center;
+  padding: 30px;
+  background-color: var(--color-background);
+  border-radius: 6px;
+}
+
+/* Acciones */
+.acciones {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-card-border);
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  flex: 1;
+  min-width: 150px;
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-btn-primary-text);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-primary-hover);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.btn-primary:active:not(:disabled) {
+  background-color: var(--color-primary-active);
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background-color: var(--color-secondary);
+  color: var(--color-text);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-secondary-hover);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Mensajes */
+.mensaje {
+  margin-top: 15px;
+  padding: 12px 15px;
+  border-radius: 6px;
+  border-left: 4px solid;
+  font-weight: 500;
+  font-size: 14px;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.mensaje-exito {
+  background-color: rgba(var(--color-success-rgb), 0.1);
+  border-color: var(--color-success);
+  color: var(--color-success);
+}
+
+.mensaje-error {
+  background-color: rgba(var(--color-error-rgb), 0.1);
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+.mensaje-info {
+  background-color: rgba(var(--color-info-rgb), 0.1);
+  border-color: var(--color-info);
+  color: var(--color-info);
+}
+
+/* Errores e Info */
+.error {
+  color: var(--color-error);
+  font-weight: 600;
+  margin-top: 10px;
+  padding: 10px;
+  background-color: rgba(var(--color-error-rgb), 0.1);
+  border-radius: 4px;
+  border-left: 3px solid var(--color-error);
+}
+
+.info {
+  color: var(--color-info);
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+  margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .contenedor-egreso {
+    padding: 15px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .header h2 {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .btn-volver {
+    width: 100%;
+    text-align: center;
+  }
+
+  .registro-info {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .acciones {
+    flex-direction: column;
+  }
+
+  .btn {
+    min-width: auto;
+  }
+
+  .lista-cuentas li,
+  .lista-registros li {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .puntos {
+    align-self: flex-start;
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .seccion-cuentas,
+  .seccion-registros {
+    padding: 15px;
+  }
+
+  .header h2 {
+    font-size: 22px;
+  }
+
+  .btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .registros-header {
+    font-size: 11px;
+  }
+
+  .valor {
+    font-size: 12px;
+  }
+}

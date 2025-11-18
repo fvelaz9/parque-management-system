@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Parque.Aplicacion.DTOs;
+using Parque.Aplicacion.Servicios;
 using Parque.Aplicacion.Servicios.Acceso;
 using Parque.WebApi.Controllers.Acceso.Models;
 using Parque.WebApi.Filtros;
@@ -8,7 +9,7 @@ namespace Parque.WebApi.Controllers.Acceso;
 
 [ApiController]
 [Route("api/acceso")]
-public class AccesoController(IServicioAcceso servicio) : ControllerBase
+public class AccesoController(IServicioAcceso servicio, IServicioCuenta servicioCuenta) : ControllerBase
 {
     [HttpPost("validar")]
     [AuthorizationFilter("Operador")]
@@ -28,14 +29,10 @@ public class AccesoController(IServicioAcceso servicio) : ControllerBase
     [AuthorizationFilter("Operador")]
     public IActionResult RegistrarIngreso(int atraccionId, [FromBody] RegistrarIngresoRequest request)
     {
-        var registro = servicio.RegistrarIngreso(request.CodigoTicket, atraccionId, request.CuentaVisitante);
+        var cuentaVisitante = servicioCuenta.ObtenerCuenta(request.CuentaVisitanteId);
+        var registro = servicio.RegistrarIngreso(request.CodigoTicket, atraccionId, cuentaVisitante);
 
-        return Ok(new
-        {
-            mensaje = "Ingreso registrado exitosamente",
-            registro,
-            fechaIngreso = registro.FechaIngreso
-        });
+        return Ok(new { mensaje = "Ingreso registrado exitosamente", registro });
     }
 
     [HttpPost("atraccion/{atraccionId}/egreso")]
@@ -48,12 +45,13 @@ public class AccesoController(IServicioAcceso servicio) : ControllerBase
             ? (registro.FechaEgreso.Value - registro.FechaIngreso).TotalMinutes
             : 0;
 
-        return Ok(new
+        var respuesta = new
         {
-            mensaje = "Egreso registrado exitosamente. Puntos calculados.",
-            registro,
+            mensaje = "Egreso registrado exitosamente",
             tiempoVisitaMinutos = Math.Round(tiempoVisita, 2)
-        });
+        };
+
+        return Ok(respuesta);
     }
 
     [HttpGet("atraccion/{atraccionId}/aforo")]
@@ -62,5 +60,13 @@ public class AccesoController(IServicioAcceso servicio) : ControllerBase
     {
         var aforo = servicio.ObtenerAforoAtraccion(atraccionId);
         return Ok(aforo);
+    }
+
+    [HttpGet("registros-activos/{usuarioId:guid}/{atraccionId:int}")]
+    [AuthorizationFilter("Operador")]
+    public IActionResult GetRegistrosActivos(Guid usuarioId, int atraccionId)
+    {
+        var registrosActivos = servicio.ObtenerRegistrosActivosPorUsuario(usuarioId, atraccionId);
+        return Ok(registrosActivos);
     }
 }

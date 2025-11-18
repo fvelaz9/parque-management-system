@@ -32,7 +32,6 @@
           Eventos
         </a>
       </li>
-
       @if (isLoggedIn) {
         <li>
           <a routerLink="/tickets/comprar" routerLinkActive="active" *ngIf="usuario?.rol === 'Visitante'">
