@@ -102,7 +102,7 @@ export const routes: Routes = [
     path: 'evento-atracciones',
     loadComponent: () => import('./features/Evento/evento-atracciones/evento-atracciones')
       .then(m => m.EventoAtracciones),
-    canActivate: [authGuard]
+    canActivate: [operadorGuard]
   },
   {
    path: 'cuentas',
