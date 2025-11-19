@@ -54,7 +54,7 @@ public class EventoController(IServicioEvento servicioEvento, IServicioAtraccion
     }
 
     [HttpGet("{eventoId}/atracciones")]
-    [AuthorizationFilter("Operador")]
+    [AuthorizationFilter("any")]
     public IActionResult GetAtraccionesPorEvento(int eventoId)
     {
         var atracciones = servicioEvento.ObtenerAtraccionesPorEvento(eventoId);

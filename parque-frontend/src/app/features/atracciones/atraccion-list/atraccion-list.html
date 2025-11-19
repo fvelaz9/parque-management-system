@@ -41,7 +41,7 @@
               @if (isOperador) {
               <button class="btn btn-info" [routerLink]="['/acceso']" [queryParams]="{ atraccionId: atraccion.id }">Acceso</button>
               }
-              @if (isAdmin) {
+                @if (isAdmin) {
               <button class="btn btn-warning" [routerLink]="['/atracciones', 'editar', atraccion.id]">Editar</button>
               <button class="btn btn-danger" (click)="borrarAtraccion(atraccion)">Borrar</button>
               }

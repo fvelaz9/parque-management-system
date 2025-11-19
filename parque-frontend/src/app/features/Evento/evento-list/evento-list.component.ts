@@ -39,6 +39,9 @@ export class EventoListComponent {
       }
     });
   }
+  get isAdmin(): boolean {
+    return this.authService.getUsuario()?.roles?.includes('Administrador') || false;
+  }
 
   eliminarEvento(evento: Evento) {
     console.log('ID evento a eliminar:', evento.id);

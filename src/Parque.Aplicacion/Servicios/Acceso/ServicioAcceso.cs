@@ -288,6 +288,12 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
 
         registro.FechaEgreso = servicioFechaHora.ObtenerFechaActual();
         repoRegistros.Editar(registro);
+        var ticket = repoTickets.Encontrar(t => t.Codigo == codigoTicket);
+        if(ticket != null)
+        {
+            ticket.MarcarComoVigente();
+            repoTickets.Editar(ticket);
+        }
 
         servicioPuntuacion.CalcularYRegistrarPuntos(registro.Id);
 

@@ -47,18 +47,17 @@
           </div>
         </div>
       </div>
-
-        <div class="evento-actions">
-          @if (isAdmin){
-          <button (click)="eliminarEvento(evento)" class="btn btn-danger">
-            Eliminar
-          </button>
-          }
-          <button (click)="verAtracciones(evento)" class="btn btn-secondary">Ver Atracciones</button>
-        </div>
-
+      <div class="evento-actions">
+        @if (isAdmin) {
+        <button (click)="eliminarEvento(evento)" class="btn btn-danger">
+          Eliminar
+        </button>
+        }
+        <button (click)="verAtracciones(evento)" class="btn btn-primary btn-agregar">Ver Atracciones</button>
+      </div>
     </div>
   </div>
+
   @if (isAdmin){
     <button (click)="agregarEvento()" class="btn btn-primary btn-agregar">
       + Agregar Evento

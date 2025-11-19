@@ -115,7 +115,7 @@ export class AccesoIngreso implements OnInit {
         this.cargarUsuarios();
         setTimeout(() => {
           this.router.navigate(['/atracciones']);
-        }, 3000);
+        }, 2000);
       },
       error: (error) => {
         console.error('Error:', error);
