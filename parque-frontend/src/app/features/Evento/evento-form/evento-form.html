@@ -85,22 +85,6 @@
       </div>
     </div>
 
-    <div class="form-field">
-      <label for="estado" class="form-label">Estado</label>
-      <select
-        id="estado"
-        name="estado"
-        [(ngModel)]="evento.estado"
-        class="form-select"
-        required>
-        <option value="" disabled selected>Selecciona el estado</option>
-        <option [ngValue]="estadoEnum.Programado">Programado</option>
-        <option [ngValue]="estadoEnum.Activo">Activo</option>
-        <option [ngValue]="estadoEnum.Finalizado">Finalizado</option>
-        <option [ngValue]="estadoEnum.Cancelado">Cancelado</option>
-      </select>
-    </div>
-
     <div class="form-actions">
       <button
         type="submit"

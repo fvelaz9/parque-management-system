@@ -21,7 +21,7 @@ export class EventoForm {
     fin: '',
     aforoMaximo: 0,
     costoAdicional: 0,
-    estado: EstadoEvento.Programado,
+    estado: EstadoEvento.Activo,
     atraccionIds: [] as number[],
   };
 
