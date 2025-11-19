@@ -40,4 +40,9 @@ public class Ticket
     {
         return EsValido && FechaVisita.Date >= fechaReferencia.Date;
     }
+
+    public void MarcarComoVigente()
+    {
+        EsValido = true;
+    }
 }

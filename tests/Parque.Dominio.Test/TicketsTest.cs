@@ -183,4 +183,38 @@ public class TicketsTest
         Assert.ThrowsException<ArgumentException>(
             () => new Ticket(cuentaId, fechaPasada, 1, TipoTicket.General, fechaActual));
     }
+
+    [TestMethod]
+    public void MarcarComoVigente_DeberiaVolverValidoUnTicketInvalido()
+    {
+        var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
+        var fechaActual = new DateTime(2025, 10, 8, 10, 0, 0);
+        var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
+        var ticket = new Ticket(cuentaId, fechaVisita, 1, TipoTicket.General, fechaActual);
+
+        ticket.MarcarComoUsado();
+        Assert.IsFalse(ticket.EsValido);
+
+        ticket.MarcarComoVigente();
+
+        Assert.IsTrue(ticket.EsValido);
+    }
+
+    [TestMethod]
+    public void MarcarComoUsadoYLuegoVigente_EstaVigente_DeberiaSerTrue()
+    {
+        var cuentaId = new Guid("12345678-1234-1234-1234-123456789abc");
+        var fechaActual = new DateTime(2025, 10, 8, 10, 0, 0);
+        var fechaVisita = new DateTime(2025, 10, 10, 14, 0, 0);
+        var ticket = new Ticket(cuentaId, fechaVisita, 1, TipoTicket.General, fechaActual);
+
+        ticket.MarcarComoUsado();
+        ticket.MarcarComoVigente();
+
+        var fechaReferencia = new DateTime(2025, 10, 9, 12, 0, 0);
+        var resultado = ticket.EstaVigente(fechaReferencia);
+
+        Assert.IsTrue(ticket.EsValido);
+        Assert.IsTrue(resultado);
+    }
 }
