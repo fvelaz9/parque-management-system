@@ -290,7 +290,9 @@ public class ServicioPuntuacion : IServicioPuntuacion
             throw new InvalidOperationException($"Visitante con ID {visitanteId} no encontrado");
         }
 
-        return visitante.HistorialPuntuaciones
+        DateTime fechaActual = _servicioFechaHora.ObtenerFechaActual();
+
+        return visitante.HistorialPuntuaciones.Where(v => v.FechaHora <= fechaActual)
             .OrderByDescending(h => h.FechaHora)
             .Select(h => new HistorialPuntuacionDto
             {

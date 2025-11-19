@@ -1,0 +1,82 @@
+/* src/app/features/mis-tickets/mis-tickets.css */
+
+.ticket-card {
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.ticket-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ✅ NUEVO: Gradiente para el header de los tickets */
+.ticket-card .card-header {
+  padding: 1rem;
+  border-bottom: none;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+}
+
+/* Para asegurar que el texto del header sea blanco */
+.ticket-card .card-header h5,
+.ticket-card .card-header i {
+  color: white !important;
+}
+
+/* Mantener colores diferentes si querés distinguir por tipo (opcional) */
+.ticket-card .card-header.evento-especial {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+}
+
+.ticket-proximo {
+  border: 2px solid #28a745;
+}
+
+.qr-container {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  display: inline-block;
+}
+
+.qr-code {
+  max-width: 200px;
+  height: auto;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  padding: 0.5rem;
+  background: white;
+}
+
+.ticket-info {
+  text-align: center;
+}
+
+.info-item {
+  margin-bottom: 0.5rem;
+}
+
+.info-item i {
+  font-size: 1.2rem;
+  margin-bottom: 0.25rem;
+}
+
+.codigo {
+  font-family: 'Courier New', monospace;
+  font-size: 0.85rem;
+  word-break: break-all;
+  display: block;
+  background: #f8f9fa;
+  padding: 0.5rem;
+  border-radius: 4px;
+  margin-top: 0.25rem;
+}
+
+.card-footer {
+  background: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+  padding: 0.75rem;
+}

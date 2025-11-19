@@ -33,10 +33,14 @@
         </a>
       </li>
       @if (isVisitante){
-        <li>
-          <a routerLink="/tickets/comprar" routerLinkActive="active" class="nav-link">
+        <li  class="dropdown">
+          <a class="nav-link dropdown-toggle" (click)="toggleDropdown($event)">
             Tickets
           </a>
+          <ul class="dropdown-menu" [class.show]="isDropdownOpen">
+            <li><a routerLink="/tickets/comprar" routerLinkActive="active" class="nav-link">Comprar Tickets</a></li>
+            <li><a class="nav-link" routerLink="/mis-tickets" routerLinkActive="active">Mis Tickets</a></li>
+          </ul>
         </li>
         <li>
           <a routerLink="historial-puntuacion" routerLinkActive="active" class="nav-link">

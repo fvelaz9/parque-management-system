@@ -131,7 +131,6 @@ public class ServicioRecompensa(
             throw new InvalidOperationException("No hay puntos registrados para este visitante");
         }
 
-        // CAMBIO: Calcular el total de puntos sumando TODOS los registros
         var puntosDisponibles = puntuacionesVisitante.Sum(p => p.PuntosTotales);
 
         if(puntosDisponibles < recompensa.CostoEnPuntos)

@@ -192,6 +192,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/acceso-denegado/acceso-denegado')
       .then(m => m.AccesoDenegado)
   },
+  {
+    path: 'mis-tickets',
+    loadComponent: () => import('./features/mis-tickets/mis-tickets')
+      .then(m => m.MisTicketsComponent),
+    canActivate: [visitanteGuard]
+  },
   // Not Found route - debe ser la última
   {
     path: "**",
