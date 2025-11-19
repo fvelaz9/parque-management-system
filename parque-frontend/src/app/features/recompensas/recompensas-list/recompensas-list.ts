@@ -25,11 +25,6 @@ export class RecompensasList {
 
   private readonly loadEffect = effect(() => {
     const usuario = this.authService.getUsuario();
-    console.log('=== DEBUG USUARIO ===');
-    console.log('Usuario completo:', usuario);
-    console.log('Visitante ID (getter):', this.visitanteId);
-    console.log('=====================');
-
     this.cargarRecompensas();
   });
 

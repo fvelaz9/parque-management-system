@@ -21,6 +21,7 @@ export interface VisitanteDto {
   nivelMembresia: string;
   puntosDiarios: number;
   puntosTotales: number;
+  puntos?: number;
 }
 
 export type { CuentaDto };

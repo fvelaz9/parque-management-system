@@ -38,7 +38,6 @@ export class MantenimientoList {
     this.loading.set(true);
     this.mantenimientosService.getAllMantenimientos().subscribe({
       next: (result) => {
-        console.log('Mantenimientos cargados:', result);
         this.mantenimientos.set(result);
         this.loading.set(false);
       },
