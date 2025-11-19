@@ -49,9 +49,11 @@
       </div>
 
         <div class="evento-actions">
+          @if (isAdmin){
           <button (click)="eliminarEvento(evento)" class="btn btn-danger">
             Eliminar
           </button>
+          }
           <button (click)="verAtracciones(evento)" class="evento-actions">Ver Atracciones</button>
         </div>
 

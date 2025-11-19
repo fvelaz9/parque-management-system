@@ -13,9 +13,7 @@ export const operadorGuard: CanActivateFn = (route, state) => {
 
   if (!authService.tieneRol('Operador') ) {
     alert("Solo el operador puede acceder a esta informacion")
-    router.navigate(['/home']);
     return false;
   }
-
   return true;
 };
