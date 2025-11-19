@@ -661,19 +661,18 @@ public class ServicioPuntuacionTest
         // arrange
         var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
         visitante.AgregarPuntuacionAHistorial(
-            new HistorialPuntuacion(DateTime.UtcNow, "veiras", "A", 10)
-        );
-    
+            new HistorialPuntuacion(DateTime.UtcNow, "veiras", "A", 10));
+
         // ✅ CORRECCIÓN: Usar EncontrarConRelaciones en lugar de Encontrar
         _repoVisitanteMock!
             .Setup(r => r.EncontrarConRelaciones(
-                It.IsAny<Expression<Func<Visitante, bool>>>(), 
+                It.IsAny<Expression<Func<Visitante, bool>>>(),
                 "HistorialPuntuaciones"))
             .Returns(visitante);
-    
+
         // act
         var resultado = _servicio!.ObtenerHistorialVisitante(visitante.Id);
-    
+
         // assert
         Assert.IsInstanceOfType(resultado, typeof(List<HistorialPuntuacionDto>));
         Assert.AreEqual(1, resultado.Count);
@@ -689,10 +688,10 @@ public class ServicioPuntuacionTest
         // ✅ CORRECCIÓN: Usar EncontrarConRelaciones en lugar de Encontrar
         _repoVisitanteMock!
             .Setup(r => r.EncontrarConRelaciones(
-                It.IsAny<Expression<Func<Visitante, bool>>>(), 
+                It.IsAny<Expression<Func<Visitante, bool>>>(),
                 "HistorialPuntuaciones"))
             .Returns((Visitante)null!);
-    
+
         _servicio!.ObtenerHistorialVisitante(Guid.NewGuid());
     }
 }
