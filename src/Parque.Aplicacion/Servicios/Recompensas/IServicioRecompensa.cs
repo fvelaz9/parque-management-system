@@ -13,4 +13,5 @@ public interface IServicioRecompensa
     HistorialCanje CanjearRecompensa(CanjearRecompensaRequest request);
     List<HistorialCanjeDto> ObtenerHistorialCanjes(Guid visitanteId);
     void EliminarRecompensa(Guid id);
+    int ObtenerPuntosTotalesVisitante(Guid visitanteId);
 }

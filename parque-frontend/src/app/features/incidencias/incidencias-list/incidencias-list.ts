@@ -1,4 +1,3 @@
-// src/app/features/incidencias/incidencias-list/incidencias-list.component.ts
 import { Component, inject, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -23,7 +22,6 @@ export class IncidenciasListComponent {
   public error = signal('');
 
   private readonly loadIncidenciasEffect = effect(() => {
-    // Solo cargar si tiene permisos
     if (this.puedeGestionar) {
       this.cargarIncidencias();
     } else {
@@ -56,20 +54,5 @@ export class IncidenciasListComponent {
 
   get puedeGestionar(): boolean {
     return this.isAdmin || this.isOperador;
-  }
-
-  eliminarIncidencia(id: number) {
-    if (confirm('¿Estás seguro de que deseas resolver esta incidencia?')) {
-      this.incidenciasService.resolverIncidencia(id).subscribe({
-        next: () => {
-          console.log('Incidencia eliminada exitosamente');
-          this.cargarIncidencias();
-        },
-        error: (err) => {
-          console.error('Error al eliminar incidencia:', err);
-          alert('Error al eliminar la incidencia');
-        }
-      });
-    }
   }
 }

@@ -17,8 +17,8 @@ export class RecompensasList {
   private readonly recompensasService = inject(RecompensasService);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-
   total = signal(0);
+  puntosVisitante = signal(0);
   recompensas = signal<Recompensa[]>([]);
   loading = signal(true);
   error = signal('');
@@ -26,6 +26,7 @@ export class RecompensasList {
   private readonly loadEffect = effect(() => {
     const usuario = this.authService.getUsuario();
     this.cargarRecompensas();
+    this.cargarPuntosVisitante();
   });
 
   private cargarRecompensas() {
@@ -36,12 +37,22 @@ export class RecompensasList {
         this.total.set(resp.total);
         this.recompensas.set(resp.recompensas);
         this.loading.set(false);
+        this.cargarPuntosVisitante();
       },
       error: (err) => {
         console.error('Error al cargar recompensas:', err);
         this.error.set('Error al cargar las recompensas');
         this.loading.set(false);
       }
+    });
+  }
+  cargarPuntosVisitante() {
+    const visitanteId = this.visitanteId;
+    if (!visitanteId) return;
+
+    this.recompensasService.getPuntosVisitante(visitanteId).subscribe({
+      next: (resp) => this.puntosVisitante.set(resp.puntos),
+      error: () => this.puntosVisitante.set(0)
     });
   }
 
@@ -55,7 +66,6 @@ export class RecompensasList {
 
   get visitanteId(): string | null {
     const usuario = this.authService.getUsuario();
-    // ✅ CORRECTO - usar el ID del visitante asociado
     return usuario?.visitante?.id || null;
   }
 
@@ -123,5 +133,9 @@ export class RecompensasList {
         alert(err.error?.mensaje || 'Error al eliminar la recompensa');
       }
     });
+  }
+  get nombreVisitante(): string {
+    const usuario = this.authService.getUsuario();
+    return usuario?.nombre || 'Visitante';
   }
 }

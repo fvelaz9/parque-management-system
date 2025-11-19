@@ -119,8 +119,10 @@ public class ServicioRecompensa(
             throw new InvalidOperationException("Nivel de membresía insuficiente para canjear esta recompensa");
         }
 
+        DateTime fechaActual = servicioFechaHora.ObtenerFechaActual();
+
         var puntuacionesVisitante = repoPuntuacion.ObtenerTodos()
-            .Where(p => p.VisitanteId == request.VisitanteId)
+            .Where(p => p.VisitanteId == request.VisitanteId && p.Fecha <= fechaActual)
             .OrderByDescending(p => p.PuntosTotales)
             .ToList();
 
@@ -215,5 +217,14 @@ public class ServicioRecompensa(
         }
 
         repoRecompensa.Eliminar(r => r.Id == id);
+    }
+
+    public int ObtenerPuntosTotalesVisitante(Guid visitanteId)
+    {
+        DateTime fechaActual = servicioFechaHora.ObtenerFechaActual();
+        var puntuacionesVisitante = repoPuntuacion.ObtenerTodos()
+            .Where(p => p.VisitanteId == visitanteId && p.Fecha <= fechaActual)
+            .ToList();
+        return puntuacionesVisitante.Sum(p => p.PuntosTotales);
     }
 }

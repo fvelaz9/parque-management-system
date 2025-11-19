@@ -328,7 +328,6 @@ public class ServicioRecompensaTest
     [TestMethod]
     public void CanjearRecompensa_ConDatosValidos_DebeRetornarHistorialCanje()
     {
-        // Arrange
         var recompensaId = Guid.NewGuid();
         var visitanteId = Guid.NewGuid();
 
@@ -342,15 +341,16 @@ public class ServicioRecompensaTest
             CostoEnPuntos = 100,
             CantidadDisponible = 5,
             NivelMembresiaRequerido = NivelMembresia.Estandar,
-            FechaCreacion = DateTime.UtcNow
+            FechaCreacion = new DateTime(2025, 11, 10)
         };
 
-        // ✅ CAMBIO: Múltiples registros de puntuación
+        var fechaMock = new DateTime(2025, 11, 11);
+
         var puntuaciones = new List<PuntuacionVisitante>
-    {
-        new PuntuacionVisitante(visitanteId, DateTime.UtcNow.Date.AddDays(-1), 0) { PuntosTotales = 60 },
-        new PuntuacionVisitante(visitanteId, DateTime.UtcNow.Date, 0) { PuntosTotales = 50 }
-    };
+        {
+            new PuntuacionVisitante(visitanteId, fechaMock.AddDays(-1), 0) { PuntosTotales = 60 },
+            new PuntuacionVisitante(visitanteId, fechaMock, 0) { PuntosTotales = 50 }
+        };
 
         _mockRepoVisitante.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
             .Returns(visitante);
@@ -365,17 +365,14 @@ public class ServicioRecompensaTest
             RecompensaId = recompensaId
         };
 
-        // Act
         var resultado = _servicio.CanjearRecompensa(request);
 
-        // Assert
         Assert.IsNotNull(resultado);
         Assert.AreEqual(visitanteId, resultado.VisitanteId);
         Assert.AreEqual(recompensaId, resultado.RecompensaId);
         Assert.AreEqual(100, resultado.PuntosCanjeados);
         Assert.AreEqual(4, recompensa.CantidadDisponible);
 
-        // ✅ CAMBIO: Verificar que se editaron múltiples registros
         _mockRepoPuntuacion.Verify(r => r.Editar(It.IsAny<PuntuacionVisitante>()), Times.AtLeastOnce);
         _mockRepoHistorial.Verify(r => r.Agregar(It.IsAny<HistorialCanje>()), Times.Once);
     }
@@ -383,7 +380,6 @@ public class ServicioRecompensaTest
     [TestMethod]
     public void CanjearRecompensa_ConPuntosInsuficientes_DebeLanzarExcepcion()
     {
-        // Arrange
         var recompensaId = Guid.NewGuid();
         var visitanteId = Guid.NewGuid();
 
@@ -396,15 +392,16 @@ public class ServicioRecompensaTest
             Nombre = "Premio Caro",
             CostoEnPuntos = 1000,
             CantidadDisponible = 5,
-            FechaCreacion = DateTime.UtcNow
+            FechaCreacion = new DateTime(2025, 11, 11)
         };
 
-        // ✅ CAMBIO: Múltiples registros pero suma insuficiente
+        var fechaMock = new DateTime(2025, 11, 11);
+
         var puntuaciones = new List<PuntuacionVisitante>
-    {
-        new PuntuacionVisitante(visitanteId, DateTime.UtcNow.Date.AddDays(-1), 0) { PuntosTotales = 400 },
-        new PuntuacionVisitante(visitanteId, DateTime.UtcNow.Date, 0) { PuntosTotales = 50 }
-    };
+        {
+            new PuntuacionVisitante(visitanteId, fechaMock.AddDays(-1), 0) { PuntosTotales = 400 },
+            new PuntuacionVisitante(visitanteId, fechaMock, 0) { PuntosTotales = 50 }
+        };
 
         _mockRepoVisitante.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
             .Returns(visitante);
@@ -412,10 +409,11 @@ public class ServicioRecompensaTest
             .Returns(recompensa);
         _mockRepoPuntuacion.Setup(r => r.ObtenerTodos())
             .Returns(puntuaciones);
+        _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual())
+            .Returns(fechaMock);
 
         var request = new CanjearRecompensaRequest { VisitanteId = visitanteId, RecompensaId = recompensaId };
 
-        // Act & Assert
         var ex = Assert.ThrowsException<InvalidOperationException>(() => _servicio.CanjearRecompensa(request));
         Assert.AreEqual("Puntos insuficientes para canjear esta recompensa", ex.Message);
     }
@@ -461,7 +459,6 @@ public class ServicioRecompensaTest
     [TestMethod]
     public void CanjearRecompensa_DescuentoDistribuidoEnMultiplesRegistros_DebeActualizarCorrectamente()
     {
-        // Arrange
         var recompensaId = Guid.NewGuid();
         var visitanteId = Guid.NewGuid();
 
@@ -472,18 +469,19 @@ public class ServicioRecompensaTest
         {
             Id = recompensaId,
             Nombre = "Premio Test",
-            CostoEnPuntos = 150, // Se necesitan 150 puntos
+            CostoEnPuntos = 150,
             CantidadDisponible = 5,
-            FechaCreacion = DateTime.UtcNow
+            FechaCreacion = new DateTime(2025, 11, 11)
         };
 
-        // ✅ Múltiples registros que suman exactamente lo necesario
+        var fechaMock = new DateTime(2025, 11, 11);
+
         var puntuaciones = new List<PuntuacionVisitante>
-    {
-        new PuntuacionVisitante(visitanteId, DateTime.UtcNow.Date.AddDays(-2), 0) { PuntosTotales = 80 },
-        new PuntuacionVisitante(visitanteId, DateTime.UtcNow.Date.AddDays(-1), 0) { PuntosTotales = 50 },
-        new PuntuacionVisitante(visitanteId, DateTime.UtcNow.Date, 0) { PuntosTotales = 40 }
-    };
+        {
+            new PuntuacionVisitante(visitanteId, fechaMock.AddDays(-2), 0) { PuntosTotales = 80 },
+            new PuntuacionVisitante(visitanteId, fechaMock.AddDays(-1), 0) { PuntosTotales = 50 },
+            new PuntuacionVisitante(visitanteId, fechaMock, 0) { PuntosTotales = 40 }
+        };
 
         _mockRepoVisitante.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
             .Returns(visitante);
@@ -491,17 +489,16 @@ public class ServicioRecompensaTest
             .Returns(recompensa);
         _mockRepoPuntuacion.Setup(r => r.ObtenerTodos())
             .Returns(puntuaciones);
+        _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual())
+            .Returns(fechaMock);
 
         var request = new CanjearRecompensaRequest { VisitanteId = visitanteId, RecompensaId = recompensaId };
 
-        // Act
         var resultado = _servicio.CanjearRecompensa(request);
 
-        // Assert
         Assert.IsNotNull(resultado);
         Assert.AreEqual(150, resultado.PuntosCanjeados);
 
-        // ✅ Verificar que se editaron múltiples registros
         _mockRepoPuntuacion.Verify(r => r.Editar(It.IsAny<PuntuacionVisitante>()), Times.AtLeast(2));
     }
 

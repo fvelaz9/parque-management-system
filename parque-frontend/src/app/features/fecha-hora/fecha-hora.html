@@ -1,0 +1,26 @@
+<div class="container">
+  <h2>Fecha y Hora Actual en Uso</h2>
+  <p class="fecha-actual">{{ fechaHoraActual | date: 'yyyy-MM-dd HH:mm:ss' }}</p>
+
+  <div class="configurar-fecha">
+    <h3>Configurar Fecha y Hora</h3>
+    <input
+      type="datetime-local"
+      [(ngModel)]="fechaHoraConfigurar"
+      aria-label="Fecha y hora a configurar"
+      class="input-datetime"
+    />
+    <button class="btn btn-configurar" (click)="configurarFecha()">Configurar</button>
+  </div>
+
+  <div class="resetear-container">
+    <h3>Resetear Fecha al Sistema</h3>
+    <button class="btn btn-reset" (click)="resetearFecha()">Resetear</button>
+  </div>
+
+  <div *ngIf="mensaje || error" class="mensaje-reset-container">
+    <p *ngIf="mensaje" class="mensaje-exito">{{ mensaje }}</p>
+    <p *ngIf="error" class="mensaje-error">{{ error }}</p>
+    <button class="btn btn-reset" (click)="resetearFecha()">Resetear</button>
+  </div>
+</div>

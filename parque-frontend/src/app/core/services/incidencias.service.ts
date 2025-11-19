@@ -1,4 +1,4 @@
-// src/app/core/services/incidencias.service.ts
+
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -12,9 +12,5 @@ export class IncidenciasService {
 
   getAllIncidencias(): Observable<Incidencia[]> {
     return this.http.get<Incidencia[]>(this.apiUrl);
-  }
-
-  resolverIncidencia(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

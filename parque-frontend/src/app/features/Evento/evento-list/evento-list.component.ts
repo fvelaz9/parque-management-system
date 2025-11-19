@@ -75,7 +75,4 @@ export class EventoListComponent {
   }
   protected readonly EstadoEvento = EstadoEvento;
 
-  get isAdmin(): boolean {
-    return this.authService.getUsuario()?.roles?.includes('Administrador') || false;
-  }
 }

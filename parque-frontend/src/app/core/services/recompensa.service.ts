@@ -43,4 +43,8 @@ export class RecompensasService {
   delete(id: string): Observable<any> {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
+  getPuntosVisitante(visitanteId: string): Observable<{ puntos: number }> {
+    return this.http.get<{ puntos: number }>(`${this.apiUrl}/puntos/${visitanteId}`);
+  }
+
 }
