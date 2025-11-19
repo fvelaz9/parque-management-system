@@ -3,7 +3,7 @@
     <ul class="navbar-menu">
       <li>
         <a routerLink="/home" routerLinkActive="active" class="nav-link">
-          Incio
+          Inicio
         </a>
       </li>
       <li>
@@ -32,10 +32,14 @@
           Eventos
         </a>
       </li>
-
-      <!-- ✅ AGREGAR: Dropdown Administración (Solo Admin) -->
+      @if (isVisitante){
+        <li>
+          <a routerLink="/tickets/comprar" routerLinkActive="active" class="nav-link">
+            Tickets
+          </a>
+        </li>
+      }
       @if (isLoggedIn) {
-        <!-- Si es Admin: nombre con dropdown -->
         @if (isAdmin) {
           <li class="dropdown">
             <a class="nav-link dropdown-toggle usuario-nombre" (click)="toggleAdminDropdown($event)">

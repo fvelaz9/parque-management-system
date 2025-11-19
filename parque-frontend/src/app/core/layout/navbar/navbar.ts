@@ -35,9 +35,10 @@ export class NavbarComponent {
   get isOperador(): boolean {
     return this.authService.getUsuario()?.roles?.includes('Operador') || false;
   }
+  get isVisitante(): boolean {
+    return this.authService.getUsuario()?.roles?.includes('Visitante') || false;
+  }
 
-
-  // Toggle dropdown Mantenimiento (ya existe)
   toggleDropdown(event: Event): void {
     event.stopPropagation();
     this.isDropdownOpen = !this.isDropdownOpen;
