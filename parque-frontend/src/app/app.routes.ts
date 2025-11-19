@@ -179,6 +179,9 @@ export const routes: Routes = [
     path: 'historial-puntuacion',
     loadComponent: () => import('./features/historial-puntuacion/historial-puntuacion')
       .then(m => m.HistorialPuntuacionComponent),
+    canActivate: [visitanteGuard]
+  },
+  {
     path: 'acceso-denegado',
     loadComponent: () => import('./features/acceso-denegado/acceso-denegado')
       .then(m => m.AccesoDenegado)
