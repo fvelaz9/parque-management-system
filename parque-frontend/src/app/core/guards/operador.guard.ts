@@ -12,7 +12,7 @@ export const operadorGuard: CanActivateFn = (route, state) => {
   }
 
   if (!authService.tieneRol('Operador')) {
-    router.navigate(['/home']);
+    router.navigate(['/acceso-denegado']);
     return false;
   }
 

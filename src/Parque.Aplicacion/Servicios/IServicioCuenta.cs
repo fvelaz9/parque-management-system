@@ -13,4 +13,6 @@ public interface IServicioCuenta
     IEnumerable<CuentaDto> ObtenerTodas();
     Cuenta ObtenerCuenta(Guid cuentaId);
     public List<CuentaDto> ObtenerCuentasVisitantes();
+    public void AgregarRol(Guid cuentaId, Rol rol);
+    public void QuitarRol(Guid cuentaId, Rol rol);
 }

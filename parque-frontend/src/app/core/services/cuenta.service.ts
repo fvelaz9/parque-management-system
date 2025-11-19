@@ -40,6 +40,19 @@ export class CuentaService {
       nuevoNivel,
     );
   }
+
+  agregarRol(id: string, rol: number): Observable<ResponseDto<null>> {
+    return this.http.patch<ResponseDto<null>>(
+      `${this.apiUrl}/${id}/roles`,
+      rol
+    );
+  }
+
+  quitarRol(id: string, rol: number): Observable<ResponseDto<null>> {
+    return this.http.delete<ResponseDto<null>>(
+      `${this.apiUrl}/${id}/roles/${rol}`
+    );
+  }
   
   obtenerCuentasVisitantes(): Observable<ResponseDto<CuentaDto[]>> {
     return this.http.get<ResponseDto<CuentaDto[]>>(`${this.apiUrl}/visitantes`);
