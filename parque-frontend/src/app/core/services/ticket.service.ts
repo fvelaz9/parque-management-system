@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Ticket, CrearTicketDto } from '../models/ticket.model';
 import { environment } from '../../../environments/environment.development';
@@ -19,10 +19,16 @@ export class TicketService {
   obtenerMisTickets(): Observable<Ticket[]> {
     return this.http.get<Ticket[]>(`${this.apiUrl}/mis-tickets`);
   }
+
   getTicketsPorUsuarioYEvento(usuarioId: string, eventoId: number): Observable<Ticket[]> {
     return this.http.get<Ticket[]>(
-        `${this.apiUrl}/por-usuario/${usuarioId}/evento/${eventoId}`,
-        { headers: this.getHeaders() }
+        `${this.apiUrl}/por-usuario/${usuarioId}/evento/${eventoId}`
+    );
+  }
+
+  getTicketsPorUsuario(usuarioId: string): Observable<Ticket[]> {
+    return this.http.get<Ticket[]>(
+        `${this.apiUrl}/por-usuario/${usuarioId}`
     );
   }
 }

@@ -1,9 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, pipe } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { CreateEventoRequest, Evento, EventoOutDto, EstadoEvento } from '../models/evento.model';
 import { environment } from '../../../environments/environment.development';
-import { AuthService } from './auth.service';
 import {AtraccionParque} from '../models/atraccion.model';
 
 @Injectable({
@@ -25,10 +24,8 @@ export class EventoService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
   obtenerAtraccionesPorEvento(eventoId: number): Observable<AtraccionParque[]> {
-    const headers = this.getAuthHeaders();
     return this.http.get<AtraccionParque[]>(
-      `${this.apiUrl}/${eventoId}/atracciones`,
-      { headers }
+      `${this.apiUrl}/${eventoId}/atracciones`
     );
   }
 }

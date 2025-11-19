@@ -55,7 +55,6 @@ export class ReportesComponent implements OnInit {
 
     this.http.get<Atraccion[]>(url).subscribe({
       next: (result) => {
-        console.log('Atracciones cargadas:', result);
         this.atracciones.set(result);
         this.loading.set(false);
       },

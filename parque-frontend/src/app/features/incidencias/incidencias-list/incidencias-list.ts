@@ -35,7 +35,6 @@ export class IncidenciasListComponent {
     this.loading.set(true);
     this.incidenciasService.getAllIncidencias().subscribe({
       next: (result) => {
-        console.log('Incidencias cargadas:', result);
         this.incidencias.set(result);
         this.loading.set(false);
       },

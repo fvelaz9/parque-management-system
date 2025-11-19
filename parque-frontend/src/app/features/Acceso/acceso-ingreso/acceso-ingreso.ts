@@ -77,7 +77,7 @@ export class AccesoIngreso implements OnInit {
       });
     } else {
       this.ticketService.getTicketsPorUsuario(usuarioId).subscribe({
-        next: (tickets) => {
+        next: (tickets: Ticket[]) => {
           this.ticketsUsuario = tickets;
           this.mensajeRespuesta = '';
         },
