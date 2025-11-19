@@ -1,0 +1,121 @@
+.contenedor-principal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+.tarjeta-mensaje {
+  background: white;
+  border-radius: 1rem;
+  padding: 3rem;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  animation: aparecer 0.5s ease-out;
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.icono-prohibicion {
+  margin: 0 auto 2rem;
+  width: 100px;
+  height: 100px;
+  color: #dc3545;
+}
+
+.icono-prohibicion svg {
+  width: 100%;
+  height: 100%;
+  animation: rotacion 2s ease-in-out infinite;
+}
+
+@keyframes rotacion {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(5deg); }
+}
+
+.titulo-principal {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.mensaje-descripcion {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 1rem;
+  line-height: 1.6;
+}
+
+.contenedor-botones {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.boton {
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.boton-primario {
+  background-color: #007bff;
+  color: white;
+}
+
+.boton-primario:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.boton-secundario {
+  background-color: #6c757d;
+  color: white;
+}
+
+.boton-secundario:hover {
+  background-color: #545b62;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+@media (max-width: 576px) {
+  .tarjeta-mensaje {
+    padding: 2rem;
+  }
+
+  .titulo-principal {
+    font-size: 1.5rem;
+  }
+
+  .contenedor-botones {
+    flex-direction: column;
+  }
+
+  .boton {
+    width: 100%;
+  }
+}

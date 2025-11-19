@@ -10,9 +10,9 @@ export interface RegistrarCuentaDto {
   apellido: string;
   email: string;
   password: string;
-  rol: number;
+  roles: Rol[];
   fechaNacimiento?: string | null;
-  nivelMembresia?: number | null;
+  nivelMembresia?: NivelMembresia | null;
 }
 
 export interface ModificarPerfilDto {
