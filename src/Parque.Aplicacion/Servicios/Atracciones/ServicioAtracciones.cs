@@ -55,14 +55,12 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRep
 
     public ReporteAtraccionDto ObtenerReporteUso(int atraccionId, DateTime fechaInicio, DateTime fechaFin)
     {
-        // Buscar la atracción
         var atraccion = _repositorio.Encontrar(a => a.Id == atraccionId);
         if(atraccion == null)
         {
             throw new ExcepcionEntidadNoEncontrada($"Atracción con ID {atraccionId} no encontrada");
         }
 
-        // Contar registros de visita por FechaIngreso en el rango
         var cantidadVisitas = _repositorioRegistros.ObtenerTodos()
             .Count(r => r.AtraccionId == atraccionId && r.FechaIngreso >= fechaInicio && r.FechaIngreso <= fechaFin);
 
