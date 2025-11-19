@@ -103,13 +103,13 @@ export class AccesoEgreso implements OnInit {
 
           setTimeout(() => {
             this.router.navigate(['/atracciones']);
-          }, 3000);
+          }, 2000);
         } else {
           this.mensajeRespuesta = 'Egreso registrado';
           this.tipoMensaje = 'exito';
           setTimeout(() => {
             this.router.navigate(['/atracciones']);
-          }, 3000);
+          }, 2000);
         }
       },
       error: (error: ResponseDto) => {
