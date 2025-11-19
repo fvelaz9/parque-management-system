@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import {EstadoEvento, Evento} from '../../../core/models/evento.model';
 import { EventoService } from '../../../core/services/evento.service';
 import { Router } from '@angular/router';
+import {AuthService} from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-evento-list',
@@ -13,7 +14,7 @@ import { Router } from '@angular/router';
 })
 export class EventoListComponent {
   private readonly eventoService = inject(EventoService);
-
+  private readonly authService = inject(AuthService);
   public eventos = signal<Evento[]>([]);
   public loading = signal<boolean>(true);
   public error = signal<string>('');
@@ -37,6 +38,9 @@ export class EventoListComponent {
         this.loading.set(false);
       }
     });
+  }
+  get isAdmin(): boolean {
+    return this.authService.getUsuario()?.roles?.includes('Administrador') || false;
   }
 
   eliminarEvento(evento: Evento) {

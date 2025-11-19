@@ -116,14 +116,18 @@ h2 {
 }
 
 .evento-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
   padding: 1rem 1.25rem;
   background: #f8f9fa;
   border-top: 1px solid #e9ecef;
-  display: flex;
   justify-content: flex-end;
 }
 
 .btn {
+  min-width: 130px;
+  text-align: center;
   padding: 0.5rem 1.25rem;
   border: none;
   border-radius: 6px;
@@ -131,6 +135,13 @@ h2 {
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.btn-danger,
+.btn-primary {
+  padding: 0.5rem 1.25rem;
+  margin: 0;
 }
 
 .btn-danger {
@@ -166,10 +177,20 @@ h2 {
   .eventos-grid {
     grid-template-columns: 1fr;
   }
-  
+
   .evento-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
+  }
+
+  .evento-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+  .btn {
+    width: 100%;
+    min-width: unset;
   }
 }
