@@ -103,4 +103,32 @@ public class CuentaController(IServicioCuenta servicioCuenta) : ControllerBase
             Message = "Visitantes obtenidos exitosamente"
         });
     }
+
+    [HttpPatch("{id:guid}/roles")]
+    [AuthorizationFilter("Administrador")]
+    public IActionResult AgregarRol(Guid id, [FromBody] Rol rol)
+    {
+        servicioCuenta.AgregarRol(id, rol);
+
+        return Ok(new ResponseDto
+        {
+            Content = null,
+            ExecutionSuccessful = true,
+            Message = "Rol agregado exitosamente"
+        });
+    }
+
+    [HttpDelete("{id:guid}/roles/{rol}")]
+    [AuthorizationFilter("Administrador")]
+    public IActionResult QuitarRol(Guid id, Rol rol)
+    {
+        servicioCuenta.QuitarRol(id, rol);
+
+        return Ok(new ResponseDto
+        {
+            Content = null,
+            ExecutionSuccessful = true,
+            Message = "Rol eliminado exitosamente"
+        });
+    }
 }

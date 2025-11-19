@@ -149,7 +149,7 @@ public class CuentaControllerTest
             "Sistema",
             "admin@parque.com",
             "AdminPass123!",
-            Rol.Administrador,
+            [Rol.Administrador],
             null,
             null);
 
@@ -190,7 +190,7 @@ public class CuentaControllerTest
             "Martínez",
             "pedro.martinez@parque.com",
             "OperadorPass456!",
-            Rol.Operador,
+            [Rol.Operador],
             new DateTime(1985, 7, 20),
             null);
 
@@ -207,7 +207,7 @@ public class CuentaControllerTest
                  d.Apellido == dto.Apellido &&
                  d.Email == dto.Email &&
                  d.Password == dto.Password &&
-                 d.Rol == dto.Rol &&
+                 d.Roles.SequenceEqual(dto.Roles) &&
                  d.FechaNacimiento == dto.FechaNacimiento &&
                  d.NivelMembresia == dto.NivelMembresia)))
             .Returns(cuentaCreada);
@@ -235,7 +235,7 @@ public class CuentaControllerTest
             "Fernández",
             "laura.fernandez@email.com",
             "VisitantePass789!",
-            Rol.Visitante,
+            [Rol.Visitante],
             new DateTime(1992, 11, 5),
             NivelMembresia.Premium);
 
@@ -289,7 +289,7 @@ public class CuentaControllerTest
             "Silva",
             "roberto.silva@parque.com",
             "StrongPass999!",
-            Rol.Administrador,
+            [Rol.Administrador],
             null,
             null);
 
@@ -516,7 +516,7 @@ public class CuentaControllerTest
             .Returns(cuentaDto);
 
         var controller = new CuentaController(mockServicio.Object);
-        var dto = new RegistrarCuentaDto("Admin", "Sistema", "admin@test.com", "pass123", Rol.Administrador, null, null);
+        var dto = new RegistrarCuentaDto("Admin", "Sistema", "admin@test.com", "pass123", [Rol.Administrador], null, null);
 
         // Act
         var resultado = controller.CrearCuenta(dto) as CreatedResult;

@@ -24,17 +24,20 @@ export const routes: Routes = [
   {
     path: 'atracciones',
     loadComponent: () => import('./features/atracciones/atraccion-list/atraccion-list')
-      .then(m => m.AtraccionListComponent)
+      .then(m => m.AtraccionListComponent),
+    canActivate: [authGuard]
   },
   {
     path: 'atracciones/nueva',
     loadComponent: () => import('./features/atracciones/atraccion-form/atraccion-form')
-      .then(m => m.AtraccionForm)
+      .then(m => m.AtraccionForm),
+    canActivate: [adminGuard]
   },
   {
     path: 'atracciones/editar/:id',
     loadComponent: () => import('./features/atracciones/atraccion-edit/atraccion-edit')
-      .then(m => m.AtraccionEdit)
+      .then(m => m.AtraccionEdit),
+    canActivate: [adminGuard]
   },
   {
     path: 'login',
@@ -49,42 +52,50 @@ export const routes: Routes = [
   {
     path: 'mantenimientos',
     loadComponent: () => import('./features/mantenimientos/mantenimiento-list/mantenimiento-list')
-      .then(m => m.MantenimientoList)
+      .then(m => m.MantenimientoList),
+    canActivate: [adminGuard, operadorGuard]
   },
   {
     path: 'mantenimientos/nuevo',
     loadComponent: () => import('./features/mantenimientos/mantenimiento-form/mantenimiento-form')
-      .then(m => m.MantenimientoForm)
+      .then(m => m.MantenimientoForm),
+    canActivate: [adminGuard]
   },
   {
     path: 'recompensas',
     loadComponent: () => import('./features/recompensas/recompensas-list/recompensas-list')
-      .then(m => m.RecompensasList)
+      .then(m => m.RecompensasList),
+    canActivate: [adminGuard, visitanteGuard]
   },
   {
     path: 'recompensas/nueva',
     loadComponent: () => import('./features/recompensas/recompensa-form/recompensa-form')
-      .then(m => m.RecompensaForm)
+      .then(m => m.RecompensaForm),
+    canActivate: [adminGuard]
   },
   {
     path: 'recompensas/editar/:id',
     loadComponent: () => import('./features/recompensas/recompensa-editar/recompensa-editar')
-      .then(m => m.RecompensaEditar)
+      .then(m => m.RecompensaEditar),
+    canActivate: [adminGuard]
   },
   {
     path: 'recompensas/historial',
     loadComponent: () => import('./features/recompensas/recompensa-historial/recompensa-historial')
-      .then(m => m.HistorialCanje)
+      .then(m => m.HistorialCanje),
+    canActivate: [visitanteGuard]
   },
   {
     path: 'mantenimientos/editar/:id',
     loadComponent: () => import('./features/mantenimientos/mantenimiento-edit/mantenimiento-edit')
-      .then(m => m.MantenimientoEdit)
+      .then(m => m.MantenimientoEdit),
+    canActivate: [adminGuard]
   },
   {
     path: 'incidencias',
     loadComponent: () => import('./features/incidencias/incidencias-list/incidencias-list')
-      .then(m => m.IncidenciasListComponent)
+      .then(m => m.IncidenciasListComponent),
+    canActivate: [operadorGuard]
   },
   {
     path: 'eventos',
@@ -96,7 +107,7 @@ export const routes: Routes = [
     path: 'eventos/nuevo',
     loadComponent: () => import('./features/Evento/evento-form/evento-form')
       .then(m => m.EventoForm),
-    canActivate: [authGuard]
+    canActivate: [adminGuard]
   },
   {
     path: 'evento-atracciones',
@@ -144,17 +155,19 @@ export const routes: Routes = [
     path: 'configuracion/estrategias',
     loadComponent: () => import('./features/configuracion/selector-estrategias/selector-estrategias')
       .then(m => m.SelectorEstrategiasComponent),
-    canActivate: [authGuard]
+    canActivate: [adminGuard]
   },
   {
     path: 'ranking',
     loadComponent: () => import('./features/ranking/ranking')
-      .then(m => m.RankingComponent)
+      .then(m => m.RankingComponent),
+    canActivate: [adminGuard]
   },
   {
     path: 'reportes',
     loadComponent: () => import('./features/reportes/reportes')
-      .then(m => m.ReportesComponent)
+      .then(m => m.ReportesComponent),
+    canActivate: [adminGuard]
   },
   {
     path: 'tickets/comprar',
@@ -166,6 +179,9 @@ export const routes: Routes = [
     path: 'historial-puntuacion',
     loadComponent: () => import('./features/historial-puntuacion/historial-puntuacion')
       .then(m => m.HistorialPuntuacionComponent),
+    path: 'acceso-denegado',
+    loadComponent: () => import('./features/acceso-denegado/acceso-denegado')
+      .then(m => m.AccesoDenegado)
   },
   // Not Found route - debe ser la última
   {

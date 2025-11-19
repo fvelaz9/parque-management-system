@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CuentaService } from '../../../core/services/cuenta.service';
-import { Rol, NivelMembresia } from '../../../core/models/cuenta.model';
+import { Rol, NivelMembresia, RegistrarCuentaDto } from '../../../core/models/cuenta.model';
 
 @Component({
   selector: 'app-crear-cuenta',
@@ -104,14 +104,12 @@ export class CrearCuentaComponent {
 
     this.loading = true;
 
-    const rolCombinado = this.rolesSeleccionados.reduce((acc, rol) => acc | rol, this.NO_ROLES_SELECTED);
-
-    const dto = {
+    const dto: RegistrarCuentaDto = {
       nombre: this.cuentaForm.value.nombre,
       apellido: this.cuentaForm.value.apellido,
       email: this.cuentaForm.value.email,
       password: this.cuentaForm.value.password,
-      rol: rolCombinado,
+      roles: this.rolesSeleccionados, // Enviamos el array directamente
       fechaNacimiento: this.esVisitante ? this.cuentaForm.value.fechaNacimiento : null,
       nivelMembresia: this.esVisitante ? parseInt(this.cuentaForm.value.nivelMembresia) : null
     };

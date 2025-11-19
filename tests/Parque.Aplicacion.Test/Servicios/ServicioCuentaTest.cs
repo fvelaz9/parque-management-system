@@ -233,7 +233,7 @@ public class ServicioCuentaTest
             "Rodríguez",
             "maria@admin.com",
             "admin123",
-            Rol.Administrador,
+            [Rol.Administrador],
             null,
             null);
 
@@ -266,7 +266,7 @@ public class ServicioCuentaTest
             "López",
             "carlos@operador.com",
             "operador123",
-            Rol.Operador,
+            [Rol.Operador],
             null,
             null);
 
@@ -299,7 +299,7 @@ public class ServicioCuentaTest
             "García",
             "ana@visitante.com",
             "visitante123",
-            Rol.Visitante,
+            [Rol.Visitante],
             fechaNacimiento,
             null);
 
@@ -333,7 +333,7 @@ public class ServicioCuentaTest
             "Fernández",
             "luis@premium.com",
             "premium123",
-            Rol.Visitante,
+            [Rol.Visitante],
             fechaNacimiento,
             NivelMembresia.Premium);
 
@@ -360,7 +360,7 @@ public class ServicioCuentaTest
             "Martín",
             "sofia@vip.com",
             "vip123",
-            Rol.Visitante,
+            [Rol.Visitante],
             fechaNacimiento,
             NivelMembresia.VIP);
 
@@ -388,7 +388,7 @@ public class ServicioCuentaTest
             "Usuario",
             "duplicado@test.com",
             "password123",
-            Rol.Administrador,
+            [Rol.Administrador],
             null,
             null);
 
@@ -409,7 +409,7 @@ public class ServicioCuentaTest
             "Apellido",
             "email-invalido",
             "password123",
-            Rol.Operador,
+            [Rol.Operador],
             null,
             null);
 
@@ -429,7 +429,7 @@ public class ServicioCuentaTest
             "Apellido",
             "test@test.com",
             string.Empty,
-            Rol.Administrador,
+            [Rol.Administrador],
             null,
             null);
 
@@ -451,7 +451,7 @@ public class ServicioCuentaTest
             "Martínez",
             "pedro@test.com",
             "password123",
-            Rol.Visitante,
+            [Rol.Visitante],
             null,
             null);
 

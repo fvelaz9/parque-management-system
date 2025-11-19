@@ -12,7 +12,7 @@ export const visitanteGuard: CanActivateFn = (route, state) => {
   }
 
   if (!authService.tieneRol('Visitante')) {
-    router.navigate(['/home']);
+    router.navigate(['/acceso-denegado']);
     return false;
   }
 
