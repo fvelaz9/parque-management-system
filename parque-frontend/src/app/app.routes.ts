@@ -65,7 +65,7 @@ export const routes: Routes = [
     path: 'recompensas',
     loadComponent: () => import('./features/recompensas/recompensas-list/recompensas-list')
       .then(m => m.RecompensasList),
-    canActivate: [adminGuard, visitanteGuard]
+    canActivate: [authGuard]
   },
   {
     path: 'recompensas/nueva',
