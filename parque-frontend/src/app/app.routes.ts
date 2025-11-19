@@ -182,6 +182,12 @@ export const routes: Routes = [
     canActivate: [visitanteGuard]
   },
   {
+    path: 'fecha-hora',
+    loadComponent: () => import('./features/fecha-hora/fecha-hora')
+      .then(m => m.FechaHora),
+    canActivate: [authGuard]
+  },
+  {
     path: 'acceso-denegado',
     loadComponent: () => import('./features/acceso-denegado/acceso-denegado')
       .then(m => m.AccesoDenegado)
