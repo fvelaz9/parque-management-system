@@ -10,11 +10,10 @@ export const operadorGuard: CanActivateFn = (route, state) => {
     router.navigate(['/login']);
     return false;
   }
-
   if (!authService.tieneRol('Operador')) {
+    alert("Solo el operador puede acceder a esta informacion")
     router.navigate(['/acceso-denegado']);
     return false;
   }
-
   return true;
 };

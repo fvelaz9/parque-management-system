@@ -64,6 +64,9 @@ export class AtraccionListComponent {
   get isAdmin(): boolean {
     return this.authService.getUsuario()?.roles?.includes('Administrador') || false;
   }
+  get isOperador(): boolean {
+    return this.authService.getUsuario()?.roles?.includes('Operador') || false;
+  }
 
   editarAtraccion(atraccion: any) {
     this.atraccionesService.updateAtraccion(atraccion.id, atraccion).subscribe({

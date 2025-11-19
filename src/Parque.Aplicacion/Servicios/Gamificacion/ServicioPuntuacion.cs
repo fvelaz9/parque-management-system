@@ -282,27 +282,23 @@ public class ServicioPuntuacion : IServicioPuntuacion
 
     public List<HistorialPuntuacionDto> ObtenerHistorialVisitante(Guid visitanteId)
     {
-        var visitante = ObtenerVisitante(visitanteId);
-
-        return visitante.HistorialPuntuaciones
-            .OrderByDescending(x => x.FechaHora)
-            .Select(x => new HistorialPuntuacionDto
-            {
-                FechaHora = x.FechaHora,
-                EstrategiaActiva = x.EstrategiaActiva,
-                OrigenPuntos = x.OrigenPuntos,
-                Puntos = x.Puntos
-            }).ToList();
-    }
-
-    public Visitante ObtenerVisitante(Guid visitanteId)
-    {
-        var visitante = _repoVisitante.Encontrar(v => v.Id == visitanteId);
+        var visitante = _repoVisitante.EncontrarConRelaciones(
+            v => v.Id == visitanteId,
+            "HistorialPuntuaciones");
         if(visitante == null)
         {
             throw new InvalidOperationException($"Visitante con ID {visitanteId} no encontrado");
         }
 
-        return visitante;
+        return visitante.HistorialPuntuaciones
+            .OrderByDescending(h => h.FechaHora)
+            .Select(h => new HistorialPuntuacionDto
+            {
+                FechaHora = h.FechaHora,
+                EstrategiaActiva = h.EstrategiaActiva,
+                OrigenPuntos = h.OrigenPuntos,
+                Puntos = h.Puntos
+            })
+            .ToList();
     }
 }

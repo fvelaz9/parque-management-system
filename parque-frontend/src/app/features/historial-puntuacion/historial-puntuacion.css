@@ -1,0 +1,19 @@
+/* src/app/features/historial-puntuacion/historial-puntuacion.css */
+.table-responsive {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.table tbody tr {
+  transition: all 0.2s;
+}
+
+.table tbody tr:hover {
+  background-color: rgba(0, 123, 255, 0.05);
+}
+
+.badge {
+  font-size: 0.875rem;
+  padding: 0.5rem 0.75rem;
+}
+
