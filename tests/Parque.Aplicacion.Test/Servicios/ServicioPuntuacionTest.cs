@@ -660,27 +660,39 @@ public class ServicioPuntuacionTest
     {
         // arrange
         var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
-        visitante.HistorialPuntuaciones.Add(new HistorialPuntuacion(DateTime.UtcNow, "veiras", "A", 10));
-
+        visitante.AgregarPuntuacionAHistorial(
+            new HistorialPuntuacion(DateTime.UtcNow, "veiras", "A", 10)
+        );
+    
+        // ✅ CORRECCIÓN: Usar EncontrarConRelaciones en lugar de Encontrar
         _repoVisitanteMock!
-            .Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
+            .Setup(r => r.EncontrarConRelaciones(
+                It.IsAny<Expression<Func<Visitante, bool>>>(), 
+                "HistorialPuntuaciones"))
             .Returns(visitante);
-
+    
         // act
         var resultado = _servicio!.ObtenerHistorialVisitante(visitante.Id);
-
+    
         // assert
         Assert.IsInstanceOfType(resultado, typeof(List<HistorialPuntuacionDto>));
+        Assert.AreEqual(1, resultado.Count);
+        Assert.AreEqual(10, resultado[0].Puntos);
+        Assert.AreEqual("veiras", resultado[0].OrigenPuntos);
+        Assert.AreEqual("A", resultado[0].EstrategiaActiva);
     }
 
     [TestMethod]
     [ExpectedException(typeof(InvalidOperationException))]
     public void ObtenerHistorialPuntuacionesDtoVisitanteNoExiste()
     {
+        // ✅ CORRECCIÓN: Usar EncontrarConRelaciones en lugar de Encontrar
         _repoVisitanteMock!
-            .Setup(r => r.Encontrar(It.IsAny<Expression<Func<Visitante, bool>>>()))
+            .Setup(r => r.EncontrarConRelaciones(
+                It.IsAny<Expression<Func<Visitante, bool>>>(), 
+                "HistorialPuntuaciones"))
             .Returns((Visitante)null!);
-
+    
         _servicio!.ObtenerHistorialVisitante(Guid.NewGuid());
     }
 }
