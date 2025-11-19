@@ -38,6 +38,11 @@
             Tickets
           </a>
         </li>
+        <li>
+          <a routerLink="historial-puntuacion" routerLinkActive="active" class="nav-link">
+            Puntaje
+          </a>
+        </li>
       }
       @if (isLoggedIn) {
         @if (isAdmin) {
@@ -53,7 +58,6 @@
             </ul>
           </li>
         } @else {
-          <!-- Si es Operador o Visitante: solo el nombre sin dropdown -->
           <li>
             <span class="usuario-nombre">{{ usuario?.nombre }}</span>
           </li>

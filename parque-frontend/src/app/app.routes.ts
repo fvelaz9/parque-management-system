@@ -162,6 +162,11 @@ export const routes: Routes = [
       .then(m => m.ComprarTicketComponent),
     canActivate: [visitanteGuard]
   },
+  {
+    path: 'historial-puntuacion',
+    loadComponent: () => import('./features/historial-puntuacion/historial-puntuacion')
+      .then(m => m.HistorialPuntuacionComponent),
+  },
   // Not Found route - debe ser la última
   {
     path: "**",
