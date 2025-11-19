@@ -148,14 +148,12 @@ public class ServicioRecompensa(
 
             if(puntuacion.PuntosTotales >= puntosADescontar)
             {
-                // Este registro tiene suficientes puntos para cubrir
                 puntuacion.PuntosTotales -= puntosADescontar;
                 repoPuntuacion.Editar(puntuacion);
                 puntosADescontar = 0;
             }
             else if(puntuacion.PuntosTotales > 0)
             {
-                // Este registro no tiene suficientes, descontamos lo que tiene
                 puntosADescontar -= puntuacion.PuntosTotales;
                 puntuacion.PuntosTotales = 0;
                 repoPuntuacion.Editar(puntuacion);

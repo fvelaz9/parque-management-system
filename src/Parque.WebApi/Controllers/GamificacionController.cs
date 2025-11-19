@@ -40,7 +40,7 @@ public class GamificacionController(IServicioPuntuacion servicioPuntuacion) : Co
     }
 
     [HttpGet("historial")]
-    [AuthorizationFilter("Administrador")]
+    [AuthorizationFilter("Visitante")]
     public ActionResult<ResponseDto> ObtenerHistorialPuntuaciones([FromQuery] Guid visitanteId)
     {
         try

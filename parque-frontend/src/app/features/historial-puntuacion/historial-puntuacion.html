@@ -4,36 +4,9 @@
   <div class="card shadow-sm mb-4">
     <div class="card-body">
       <h2 class="mb-1">
-        <i class="bi bi-clock-history text-primary"></i> Historial de Puntuación
+        <i class="bi bi-clock-history text-primary"></i> Mi Historial de Puntuación
       </h2>
       <p class="text-muted mb-0">Auditoría y trazabilidad de tus puntos acumulados</p>
-    </div>
-  </div>
-
-  <!-- Filtro de búsqueda -->
-  <div class="card shadow-sm mb-4">
-    <div class="card-body">
-      <div class="row g-3">
-        <div class="col-md-8">
-          <label for="visitanteId" class="form-label">ID Visitante</label>
-          <input
-            type="text"
-            id="visitanteId"
-            class="form-control"
-            [(ngModel)]="visitanteId"
-            placeholder="Ingrese el ID del visitante">
-        </div>
-        <div class="col-md-4 d-flex align-items-end">
-          <button
-            class="btn btn-primary w-100"
-            (click)="buscarHistorial()"
-            [disabled]="loading() || !visitanteId">
-            <span *ngIf="loading()" class="spinner-border spinner-border-sm me-2"></span>
-            <i *ngIf="!loading()" class="bi bi-search me-2"></i>
-            {{ loading() ? 'Buscando...' : 'Buscar Historial' }}
-          </button>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -42,7 +15,7 @@
     <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
       <span class="visually-hidden">Cargando historial...</span>
     </div>
-    <p class="mt-3 text-muted">Cargando historial de puntuación...</p>
+    <p class="mt-3 text-muted">Cargando tu historial de puntuación...</p>
   </div>
 
   <!-- Error -->
@@ -104,11 +77,11 @@
   </div>
 
   <!-- Sin resultados -->
-  <div *ngIf="!loading() && !error() && historial().length === 0 && visitanteId" class="card shadow-sm">
+  <div *ngIf="!loading() && !error() && historial().length === 0" class="card shadow-sm">
     <div class="card-body text-center py-5">
       <i class="bi bi-inbox text-muted" style="font-size: 4rem;"></i>
       <h4 class="mt-3">No hay registros de puntuación</h4>
-      <p class="text-muted mb-0">Este visitante no tiene historial de puntuación</p>
+      <p class="text-muted mb-0">Aún no has acumulado puntos en el sistema</p>
     </div>
   </div>
 </div>
