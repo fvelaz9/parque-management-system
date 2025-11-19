@@ -12,9 +12,23 @@
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
 }
 
+/* ✅ NUEVO: Gradiente para el header de los tickets */
 .ticket-card .card-header {
   padding: 1rem;
   border-bottom: none;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+}
+
+/* Para asegurar que el texto del header sea blanco */
+.ticket-card .card-header h5,
+.ticket-card .card-header i {
+  color: white !important;
+}
+
+/* Mantener colores diferentes si querés distinguir por tipo (opcional) */
+.ticket-card .card-header.evento-especial {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
 }
 
 .ticket-proximo {
