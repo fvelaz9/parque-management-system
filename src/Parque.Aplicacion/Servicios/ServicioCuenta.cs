@@ -23,9 +23,19 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
     {
         ValidarEmailUnico(dto.Email);
 
-        var cuenta = CrearCuentaBase(dto.Nombre, dto.Apellido, dto.Email, dto.Password, dto.Rol);
+        if(dto.Roles == null || !dto.Roles.Any())
+        {
+            throw new ExcepcionDominio("Debe especificar al menos un rol");
+        }
 
-        if(dto.Rol == Rol.Visitante)
+        var cuenta = CrearCuentaBase(dto.Nombre, dto.Apellido, dto.Email, dto.Password, dto.Roles.First());
+
+        foreach(var rol in dto.Roles.Skip(1))
+        {
+            cuenta.AgregarRol(rol);
+        }
+
+        if(dto.Roles.Contains(Rol.Visitante))
         {
             AsignarPerfilVisitante(cuenta, dto);
         }
@@ -187,5 +197,19 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
         var resultado = cuentasVisitantes.Select(c => c.ToDto()).ToList();
 
         return resultado;
+    }
+
+    public void AgregarRol(Guid cuentaId, Rol rol)
+    {
+        var cuenta = ObtenerCuenta(cuentaId);
+        cuenta.AgregarRol(rol);
+        cuentaRepo.Editar(cuenta);
+    }
+
+    public void QuitarRol(Guid cuentaId, Rol rol)
+    {
+        var cuenta = ObtenerCuenta(cuentaId);
+        cuenta.QuitarRol(rol);
+        cuentaRepo.Editar(cuenta);
     }
 }

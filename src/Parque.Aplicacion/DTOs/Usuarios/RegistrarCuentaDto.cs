@@ -6,7 +6,7 @@ public record RegistrarCuentaDto(
     string Apellido,
     string Email,
     string Password,
-    Rol Rol,
+    List<Rol> Roles,
     DateTime? FechaNacimiento,
     NivelMembresia? NivelMembresia
 );
