@@ -47,7 +47,6 @@
           </div>
         </div>
       </div>
-
       <div class="evento-actions">
         @if (isAdmin) {
         <button (click)="eliminarEvento(evento)" class="btn btn-danger">
@@ -59,7 +58,9 @@
     </div>
   </div>
 
-  <button (click)="agregarEvento()" class="btn btn-primary btn-agregar">
-    + Agregar Evento
-  </button>
+  @if (isAdmin){
+    <button (click)="agregarEvento()" class="btn btn-primary btn-agregar">
+      + Agregar Evento
+    </button>
+  }
 </div>

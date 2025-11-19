@@ -74,4 +74,8 @@ export class EventoListComponent {
     this.router.navigate(['/eventos/nuevo']);
   }
   protected readonly EstadoEvento = EstadoEvento;
+
+  get isAdmin(): boolean {
+    return this.authService.getUsuario()?.roles?.includes('Administrador') || false;
+  }
 }

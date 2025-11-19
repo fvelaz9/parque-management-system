@@ -11,6 +11,7 @@ export const authGuard: CanActivateFn = (route, state) => {
   if (isAuthenticated) {
     return true;
   } else {
+    alert("Solo el administrador puede acceder a esta seccion")
     router.navigate(['/login']);
     return false;
   }
