@@ -77,6 +77,13 @@
       </div>
     </article>
   </div>
+  <div
+    class="puntos-visitante"
+    *ngIf="isVisitante && !loading() && !error()"
+  >
+    <span>Puntos {{ nombreVisitante }}:</span>
+    <span class="puntos-total">{{ puntosVisitante() }}</span>
+  </div>
 
   <div class="vacio" *ngIf="!loading() && !error() && recompensas().length === 0">
     <p>No hay recompensas disponibles en este momento.</p>

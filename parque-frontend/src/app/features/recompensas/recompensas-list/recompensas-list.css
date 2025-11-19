@@ -236,3 +236,26 @@
 .btn-editar:hover {
   background: #fb8c00;
 }
+.puntos-visitante {
+  background: linear-gradient(90deg, #a18cd1 0%, #6d50a2 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 32px auto 0 auto;
+  font-size: 1.2rem;
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 10px rgba(76, 62, 133, 0.08);
+  max-width: 320px;
+  color: #fff;
+}
+
+.puntos-total {
+  color: #fff;
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-left: 10px;
+}
+

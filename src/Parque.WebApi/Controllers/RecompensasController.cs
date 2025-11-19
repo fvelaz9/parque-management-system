@@ -145,4 +145,11 @@ public class RecompensasController(IServicioRecompensa servicioRecompensa) : Con
             return NotFound(new { mensaje = ex.Message });
         }
     }
+
+    [HttpGet("puntos/{visitanteId}")]
+    public IActionResult ObtenerPuntos(Guid visitanteId)
+    {
+        var puntos = servicioRecompensa.ObtenerPuntosTotalesVisitante(visitanteId);
+        return Ok(new { puntos });
+    }
 }
