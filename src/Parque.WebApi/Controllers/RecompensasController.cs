@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Parque.Aplicacion.DTOs.RecompensasDtos;
 using Parque.Aplicacion.Servicios.Recompensas;
 using Parque.WebApi.Filtros;
@@ -7,13 +8,20 @@ namespace Parque.WebApi.Controllers;
 
 [ApiController]
 [Route("api/recompensas")]
-public class RecompensasController(IServicioRecompensa servicioRecompensa) : ControllerBase
+public class RecompensasController : ControllerBase
 {
+    private readonly IServicioRecompensa _servicioRecompensa;
+
+    public RecompensasController(IServicioRecompensa servicioRecompensa)
+    {
+        _servicioRecompensa = servicioRecompensa ?? throw new ArgumentNullException(nameof(servicioRecompensa));
+    }
+
     [HttpPost]
     [AuthorizationFilter("Administrador")]
     public IActionResult CrearRecompensa([FromBody] RecompensaDto dto)
     {
-        var recompensa = servicioRecompensa.CrearRecompensa(dto);
+        var recompensa = _servicioRecompensa.CrearRecompensa(dto);
         return CreatedAtAction(
             nameof(ObtenerRecompensaPorId),
             new { id = recompensa.Id },
@@ -37,7 +45,7 @@ public class RecompensasController(IServicioRecompensa servicioRecompensa) : Con
     [AuthorizationFilter("Administrador")]
     public IActionResult ActualizarRecompensa(Guid id, [FromBody] RecompensaDto dto)
     {
-        var recompensa = servicioRecompensa.ActualizarRecompensa(id, dto);
+        var recompensa = _servicioRecompensa.ActualizarRecompensa(id, dto);
         return Ok(new
         {
             mensaje = "Recompensa actualizada exitosamente",
@@ -57,7 +65,7 @@ public class RecompensasController(IServicioRecompensa servicioRecompensa) : Con
     [AuthorizationFilter("any")]
     public IActionResult ObtenerRecompensas()
     {
-        var recompensas = servicioRecompensa.ObtenerRecompensas();
+        var recompensas = _servicioRecompensa.ObtenerRecompensas();
         return Ok(new
         {
             total = recompensas.Count,
@@ -78,7 +86,7 @@ public class RecompensasController(IServicioRecompensa servicioRecompensa) : Con
     [AuthorizationFilter("any")]
     public IActionResult ObtenerRecompensaPorId(Guid id)
     {
-        var recompensa = servicioRecompensa.ObtenerRecompensaPorId(id);
+        var recompensa = _servicioRecompensa.ObtenerRecompensaPorId(id);
         return Ok(new
         {
             recompensa.Id,
@@ -95,7 +103,7 @@ public class RecompensasController(IServicioRecompensa servicioRecompensa) : Con
     [AuthorizationFilter("Visitante")]
     public IActionResult CanjearRecompensa([FromBody] CanjearRecompensaRequest request)
     {
-        var historial = servicioRecompensa.CanjearRecompensa(request);
+        var historial = _servicioRecompensa.CanjearRecompensa(request);
         return Ok(new
         {
             mensaje = "Recompensa canjeada exitosamente",
@@ -114,7 +122,7 @@ public class RecompensasController(IServicioRecompensa servicioRecompensa) : Con
     [AuthorizationFilter("any")]
     public IActionResult ObtenerHistorialCanjes(Guid visitanteId)
     {
-        var historial = servicioRecompensa.ObtenerHistorialCanjes(visitanteId);
+        var historial = _servicioRecompensa.ObtenerHistorialCanjes(visitanteId);
         return Ok(new
         {
             visitanteId,
@@ -137,7 +145,7 @@ public class RecompensasController(IServicioRecompensa servicioRecompensa) : Con
     {
         try
         {
-            servicioRecompensa.EliminarRecompensa(id);
+            _servicioRecompensa.EliminarRecompensa(id);
             return Ok(new { mensaje = "Recompensa eliminada exitosamente" });
         }
         catch(InvalidOperationException ex)
@@ -149,7 +157,7 @@ public class RecompensasController(IServicioRecompensa servicioRecompensa) : Con
     [HttpGet("puntos/{visitanteId}")]
     public IActionResult ObtenerPuntos(Guid visitanteId)
     {
-        var puntos = servicioRecompensa.ObtenerPuntosTotalesVisitante(visitanteId);
+        var puntos = _servicioRecompensa.ObtenerPuntosTotalesVisitante(visitanteId);
         return Ok(new { puntos });
     }
 }
