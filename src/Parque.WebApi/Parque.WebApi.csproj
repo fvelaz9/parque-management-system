@@ -7,6 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="EDocumentosServerDa2\**" />
+    <Content Remove="EDocumentosServerDa2\**" />
+    <EmbeddedResource Remove="EDocumentosServerDa2\**" />
+    <None Remove="EDocumentosServerDa2\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Parque.Aplicacion\Parque.Aplicacion.csproj" />
   </ItemGroup>
 
