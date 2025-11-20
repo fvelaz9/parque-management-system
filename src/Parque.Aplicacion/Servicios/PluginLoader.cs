@@ -1,9 +1,10 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Microsoft.Extensions.Logging;
 using Parque.Dominio.Gamificacion;
 
 namespace Parque.Aplicacion.Servicios;
-
+[ExcludeFromCodeCoverage]
 public class PluginLoader
 {
     private readonly string _rutaPlugins;

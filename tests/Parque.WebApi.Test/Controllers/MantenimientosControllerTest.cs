@@ -23,7 +23,6 @@ public class MantenimientosControllerTest
     [TestMethod]
     public void GetAll_RetornaOkConListaDeMantenimientos()
     {
-        // Arrange - Ahora usa CrearMantenimientoRequest con las propiedades opcionales
         var mantenimientos = new List<CrearMantenimientoRequest>
         {
             new CrearMantenimientoRequest
@@ -51,21 +50,17 @@ public class MantenimientosControllerTest
         };
         _mockServicio.Setup(s => s.ListarMantenimientos()).Returns(mantenimientos);
 
-        // Act
         var resultado = _controller.GetAll();
 
-        // Assert
         Assert.IsInstanceOfType(resultado, typeof(OkObjectResult));
         var okResult = resultado as OkObjectResult;
         Assert.IsNotNull(okResult);
         Assert.AreEqual(200, okResult.StatusCode);
 
-        // ✅ CAMBIAR: Ahora es IEnumerable<CrearMantenimientoRequest>
         var lista = okResult.Value as IEnumerable<CrearMantenimientoRequest>;
         Assert.IsNotNull(lista);
         Assert.AreEqual(2, lista.Count());
 
-        // Verificar que contiene las propiedades esperadas
         var primerMantenimiento = lista.First();
         Assert.AreEqual(1, primerMantenimiento.Id);
         Assert.AreEqual("Montaña Rusa", primerMantenimiento.NombreAtraccion);
@@ -77,7 +72,6 @@ public class MantenimientosControllerTest
     [TestMethod]
     public void Create_ConDatosValidos_RetornaCreated()
     {
-        // Arrange
         var request = new CrearMantenimientoRequest
         {
             AtraccionId = 1,
@@ -96,10 +90,8 @@ public class MantenimientosControllerTest
 
         _mockServicio.Setup(s => s.CrearMantenimiento(request)).Returns(mantenimientoCreado);
 
-        // Act
         var resultado = _controller.Create(request);
 
-        // Assert
         Assert.IsInstanceOfType(resultado, typeof(CreatedAtActionResult));
         var createdResult = resultado as CreatedAtActionResult;
         Assert.IsNotNull(createdResult);
@@ -114,7 +106,6 @@ public class MantenimientosControllerTest
     [TestMethod]
     public void Create_ConDatosInvalidos_RetornaBadRequest()
     {
-        // Arrange
         var request = new CrearMantenimientoRequest
         {
             AtraccionId = 1,
@@ -127,10 +118,8 @@ public class MantenimientosControllerTest
         _mockServicio.Setup(s => s.CrearMantenimiento(request))
             .Throws(new ArgumentException("La descripción del mantenimiento es requerida"));
 
-        // Act
         var resultado = _controller.Create(request);
 
-        // Assert
         Assert.IsInstanceOfType(resultado, typeof(BadRequestObjectResult));
         var badRequestResult = resultado as BadRequestObjectResult;
         Assert.IsNotNull(badRequestResult);
@@ -140,13 +129,8 @@ public class MantenimientosControllerTest
     [TestMethod]
     public void Delete_MantenimientoExiste_RetornaNoContent()
     {
-        // Arrange
         _mockServicio.Setup(s => s.EliminarMantenimiento(1));
-
-        // Act
         var resultado = _controller.Delete(1);
-
-        // Assert
         Assert.IsInstanceOfType(resultado, typeof(NoContentResult));
         var noContentResult = resultado as NoContentResult;
         Assert.IsNotNull(noContentResult);
@@ -157,17 +141,65 @@ public class MantenimientosControllerTest
     [TestMethod]
     public void Delete_MantenimientoNoExiste_RetornaNotFound()
     {
-        // Arrange
-        _mockServicio.Setup(s => s.EliminarMantenimiento(999))
-            .Throws(new ArgumentException("Mantenimiento no encontrado"));
-
-        // Act
+        _mockServicio.Setup(s => s.EliminarMantenimiento(999)).Throws(new ArgumentException("Mantenimiento no encontrado"));
         var resultado = _controller.Delete(999);
-
-        // Assert
         Assert.IsInstanceOfType(resultado, typeof(NotFoundObjectResult));
         var notFoundResult = resultado as NotFoundObjectResult;
         Assert.IsNotNull(notFoundResult);
         Assert.AreEqual(404, notFoundResult.StatusCode);
+    }
+
+    [TestMethod]
+    public void ActualizarMantenimiento_DatosValidos_RetornaOkConMensajeYDto()
+    {
+        var id = 1;
+        var request = new CrearMantenimientoRequest
+        {
+            AtraccionId = 1,
+            FechaProgramada = DateTime.Today.AddDays(1),
+            HoraInicio = TimeSpan.FromHours(10),
+            DuracionEstimada = TimeSpan.FromHours(2),
+            Descripcion = "Prueba"
+        };
+
+        var mantenimiento = new MantenimientoPreventivo
+        {
+            Id = id,
+            AtraccionId = request.AtraccionId,
+            FechaProgramada = request.FechaProgramada,
+            HoraInicio = request.HoraInicio,
+            Descripcion = request.Descripcion,
+            DuracionEstimada = request.DuracionEstimada
+        };
+
+        _mockServicio.Setup(s => s.ActualizarMantenimiento(id, request)).Returns(mantenimiento);
+        var result = _controller.ActualizarMantenimiento(id, request);
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.IsTrue(okResult.Value.ToString().Contains("Mantenimiento actualizado exitosamente"));
+    }
+
+    [TestMethod]
+    public void ActualizarMantenimiento_MantenimientoNoExiste_RetornaBadRequest()
+    {
+        var id = 9;
+        var request = new CrearMantenimientoRequest
+        {
+            AtraccionId = 1,
+            FechaProgramada = DateTime.Today.AddDays(1),
+            HoraInicio = TimeSpan.FromHours(10),
+            DuracionEstimada = TimeSpan.FromHours(2),
+            Descripcion = "Mantenimiento prueba"
+        };
+        _mockServicio.Setup(s => s.ActualizarMantenimiento(id, request))
+            .Throws(new ArgumentException("No existe"));
+
+        var result = _controller.ActualizarMantenimiento(id, request);
+
+        var badRequest = result as BadRequestObjectResult;
+        Assert.IsNotNull(badRequest);
+
+        var rawError = badRequest.Value.ToString();
+        Assert.IsTrue(rawError!.Contains("No existe"));
     }
 }
