@@ -17,9 +17,9 @@ export class NavbarComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  // Estados de los dropdowns
-  isDropdownOpen = false;
-  isAdminDropdownOpen = false; // ✅ AGREGAR
+  isMantenimientoDropdownOpen = false; 
+  isTicketsDropdownOpen = false; 
+  isAdminDropdownOpen = false;
 
   get isLoggedIn(): boolean {
     return this.authService.isLoggedIn();
@@ -39,21 +39,31 @@ export class NavbarComponent {
     return this.authService.getUsuario()?.roles?.includes('Visitante') || false;
   }
 
-  toggleDropdown(event: Event): void {
-    event.stopPropagation();
-    this.isDropdownOpen = !this.isDropdownOpen;
-    this.isAdminDropdownOpen = false;
-  }
-
   toggleAdminDropdown(event: Event): void {
     event.stopPropagation();
     this.isAdminDropdownOpen = !this.isAdminDropdownOpen;
-    this.isDropdownOpen = false;
+    this.isMantenimientoDropdownOpen = false;
+    this.isTicketsDropdownOpen = false;
+  }
+
+  toggleMantenimientoDropdown(event: Event): void {
+    event.stopPropagation();
+    this.isMantenimientoDropdownOpen = !this.isMantenimientoDropdownOpen;
+    this.isTicketsDropdownOpen = false;
+    this.isAdminDropdownOpen = false;
+  }
+
+  toggleTicketsDropdown(event: Event): void {
+    event.stopPropagation();
+    this.isTicketsDropdownOpen = !this.isTicketsDropdownOpen;
+    this.isMantenimientoDropdownOpen = false;
+    this.isAdminDropdownOpen = false;
   }
 
   onClickOutside(event: Event): void {
-    this.isDropdownOpen = false;
-    this.isAdminDropdownOpen = false; // ✅ AGREGAR
+    this.isMantenimientoDropdownOpen = false;
+    this.isTicketsDropdownOpen = false;
+    this.isAdminDropdownOpen = false;
   }
 
   logout(): void {

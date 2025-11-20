@@ -1,19 +1,15 @@
 <!-- src/app/features/atracciones/atraccion-list/atraccion-list.html -->
 <div class="container">
-  <div class="card shadow-sm mb-4">
-    <div class="card-body">
-      <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <h2 class="mb-1">
-            <i class="bi bi-tools text-warning"></i> Atracciones
-          </h2>
-          <p class="text-muted mb-0">Gestión y informacion de atracciones</p>
-        </div>
-        @if (isAdmin) {
-          <button type="button" class="btn btn-primary btn-lg" [routerLink]="['/atracciones', 'nueva']"> Crear nueva atracción</button>
-        }
-      </div>
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Atracciones</h1>
+      <p class="subtitle">Gestión e información de atracciones</p>
     </div>
+    @if (isAdmin) {
+      <button type="button" class="btn btn-primary" [routerLink]="['/atracciones', 'nueva']">
+        Crear nueva atracción
+      </button>
+    }
   </div>
 
   @if (loading()) {
@@ -22,7 +18,7 @@
     </div>
   } @else if (error()) {
     <div class="error">
-      <p>Error {{ error() }}</p>
+      <p>{{ error() }}</p>
     </div>
   } @else {
     <div class="atracciones-grid">
@@ -37,13 +33,13 @@
             <p><strong>Capacidad:</strong> {{ atraccion.capacidad }} personas</p>
             <p><strong>Estado:</strong> {{ getEstadoNombre(atraccion.estado)}}</p>
             <p class="descripcion">{{ atraccion.descripcion }}</p>
-            <div class="d-flex gap-2">
+            <div class="card-actions">
               @if (isOperador) {
-              <button class="btn btn-info" [routerLink]="['/acceso']" [queryParams]="{ atraccionId: atraccion.id }">Acceso</button>
+                <button class="btn btn-secondary" [routerLink]="['/acceso']" [queryParams]="{ atraccionId: atraccion.id }">Acceso</button>
               }
-                @if (isAdmin) {
-              <button class="btn btn-warning" [routerLink]="['/atracciones', 'editar', atraccion.id]">Editar</button>
-              <button class="btn btn-danger" (click)="borrarAtraccion(atraccion)">Borrar</button>
+              @if (isAdmin) {
+                <button class="btn btn-primary" [routerLink]="['/atracciones', 'editar', atraccion.id]">Editar</button>
+                <button class="btn btn-danger" (click)="borrarAtraccion(atraccion)">Borrar</button>
               }
             </div>
           </div>

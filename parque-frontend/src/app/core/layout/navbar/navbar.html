@@ -13,12 +13,12 @@
       </li>
       @if (isAdmin || isOperador) {
         <li class="dropdown">
-          <a class="nav-link dropdown-toggle" (click)="toggleDropdown($event)">
+          <a class="nav-link dropdown-toggle" (click)="toggleMantenimientoDropdown($event)">
             Mantenimiento
           </a>
-          <ul class="dropdown-menu" [class.show]="isDropdownOpen">
-            <li><a routerLink="/mantenimientos" routerLinkActive="active" (click)="isDropdownOpen = false">Mantenimientos Preventivos</a></li>
-            <li><a routerLink="/incidencias" routerLinkActive="active" (click)="isDropdownOpen = false">Incidencias</a></li>
+          <ul class="dropdown-menu" [class.show]="isMantenimientoDropdownOpen">
+            <li><a routerLink="/mantenimientos" routerLinkActive="active" (click)="isMantenimientoDropdownOpen = false">Mantenimientos Preventivos</a></li>
+            <li><a routerLink="/incidencias" routerLinkActive="active" (click)="isMantenimientoDropdownOpen = false">Incidencias</a></li>
           </ul>
         </li>
       }
@@ -33,13 +33,13 @@
         </a>
       </li>
       @if (isVisitante){
-        <li  class="dropdown">
-          <a class="nav-link dropdown-toggle" (click)="toggleDropdown($event)">
+        <li class="dropdown">
+          <a class="nav-link dropdown-toggle" (click)="toggleTicketsDropdown($event)">
             Tickets
           </a>
-          <ul class="dropdown-menu" [class.show]="isDropdownOpen">
-            <li><a routerLink="/tickets/comprar" routerLinkActive="active" class="nav-link">Comprar Tickets</a></li>
-            <li><a class="nav-link" routerLink="/mis-tickets" routerLinkActive="active">Mis Tickets</a></li>
+          <ul class="dropdown-menu" [class.show]="isTicketsDropdownOpen">
+            <li><a routerLink="/tickets/comprar" routerLinkActive="active" (click)="isTicketsDropdownOpen = false">Comprar Tickets</a></li>
+            <li><a routerLink="/mis-tickets" routerLinkActive="active" (click)="isTicketsDropdownOpen = false">Mis Tickets</a></li>
           </ul>
         </li>
         <li>
