@@ -95,7 +95,7 @@ export const routes: Routes = [
     path: 'incidencias',
     loadComponent: () => import('./features/incidencias/incidencias-list/incidencias-list')
       .then(m => m.IncidenciasListComponent),
-    canActivate: [operadorGuard]
+    canActivate: [authGuard]
   },
   {
     path: 'eventos',
