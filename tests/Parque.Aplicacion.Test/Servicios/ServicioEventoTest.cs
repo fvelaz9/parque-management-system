@@ -2,6 +2,7 @@
 using Moq;
 using Parque.Aplicacion.Servicios;
 using Parque.Dominio;
+using Parque.Dominio.Atracciones;
 using Parque.Dominio.Excepciones;
 using Parque.Infraestructura.Repositorios;
 
@@ -60,7 +61,8 @@ public class ServicioEventoTest
     [TestMethod]
     public void EliminarEventoPorId()
     {
-        var evento = new Evento("Noche", "Temático", DateTime.Now, DateTime.Now.AddHours(2), 100, 50, EstadoEvento.Programado) { Id = 1 };
+        var evento = new Evento("Noche", "Temático", DateTime.Now, DateTime.Now.AddHours(2), 100, 50,
+            EstadoEvento.Programado) { Id = 1 };
 
         var mockRepo = new Mock<IRepositorio<Evento>>();
         mockRepo.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>())).Returns(evento);
@@ -95,7 +97,8 @@ public class ServicioEventoTest
     [TestMethod]
     public void ObtenerEventoPorId()
     {
-        var evento = new Evento("asada", "Dagdasjh", DateTime.Now, DateTime.Now.AddHours(2), 100, 50, EstadoEvento.Programado) { Id = 1 };
+        var evento = new Evento("asada", "Dagdasjh", DateTime.Now, DateTime.Now.AddHours(2), 100, 50,
+            EstadoEvento.Programado) { Id = 1 };
         _mockRepositorio!.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>())).Returns(evento);
 
         Evento resultado = _servicioEvento!.ObtenerEventoPorId(1);
@@ -109,8 +112,10 @@ public class ServicioEventoTest
     {
         var eventos = new List<Evento>
         {
-            new Evento("Evento 1", "addads", DateTime.Now, DateTime.Now.AddHours(1), 50, 10, EstadoEvento.Programado),
-            new Evento("Evento 2", "sdadaas", DateTime.Now, DateTime.Now.AddHours(2), 100, 20, EstadoEvento.Cancelado)
+            new Evento("Evento 1", "addads", DateTime.Now, DateTime.Now.AddHours(1), 50, 10,
+                EstadoEvento.Programado),
+            new Evento("Evento 2", "sdadaas", DateTime.Now, DateTime.Now.AddHours(2), 100, 20,
+                EstadoEvento.Cancelado)
         };
 
         _mockRepositorio!.Setup(r => r.ObtenerTodos()).Returns(eventos);
@@ -124,7 +129,8 @@ public class ServicioEventoTest
     [TestMethod]
     public void ActualizarEvento()
     {
-        var evento = new Evento("Titulo", "Desc", DateTime.Now, DateTime.Now.AddHours(2), 100, 50, EstadoEvento.Programado) { Id = 1 };
+        var evento = new Evento("Titulo", "Desc", DateTime.Now, DateTime.Now.AddHours(2), 100, 50,
+            EstadoEvento.Programado) { Id = 1 };
 
         _mockRepositorio!.Setup(r => r.Editar(It.IsAny<Evento>())).Verifiable();
 
@@ -137,7 +143,8 @@ public class ServicioEventoTest
     [ExpectedException(typeof(ArgumentException))]
     public void ActualizarEventoIdInvalido()
     {
-        var evento = new Evento("Titulo", "Desc", DateTime.Now, DateTime.Now.AddHours(2), 100, 50, EstadoEvento.Programado) { Id = 0 };
+        var evento = new Evento("Titulo", "Desc", DateTime.Now, DateTime.Now.AddHours(2), 100, 50,
+            EstadoEvento.Programado) { Id = 0 };
         _servicioEvento!.ActualizarEvento(evento);
     }
 
@@ -145,7 +152,8 @@ public class ServicioEventoTest
     [ExpectedException(typeof(ArgumentException))]
     public void ActualizarEventoFechaInvalida()
     {
-        var evento = new Evento("Titulo", "Desc", DateTime.Now.AddHours(2), DateTime.Now, 100, 50, EstadoEvento.Programado) { Id = 1 };
+        var evento = new Evento("Titulo", "Desc", DateTime.Now.AddHours(2), DateTime.Now, 100, 50,
+            EstadoEvento.Programado) { Id = 1 };
         _servicioEvento!.ActualizarEvento(evento);
     }
 
@@ -153,7 +161,11 @@ public class ServicioEventoTest
     [ExpectedException(typeof(ArgumentException))]
     public void ActualizarEventoAforoInvalido()
     {
-        var evento = new Evento("Titulo", "Desc", DateTime.Now, DateTime.Now.AddHours(2), 0, 50, EstadoEvento.Programado) { Id = 1 };
+        var evento =
+            new Evento("Titulo", "Desc", DateTime.Now, DateTime.Now.AddHours(2), 0, 50, EstadoEvento.Programado)
+            {
+                Id = 1
+            };
         _servicioEvento!.ActualizarEvento(evento);
     }
 
@@ -162,8 +174,71 @@ public class ServicioEventoTest
     public void ActualizarEventoCostoNegativo()
     {
         var evento = new Evento("Titulo", "Desc", DateTime.Now, DateTime.Now.AddHours(2), 100, -10,
-            EstadoEvento.Programado)
-        { Id = 1 };
+            EstadoEvento.Programado) { Id = 1 };
         _servicioEvento!.ActualizarEvento(evento);
+    }
+
+    [TestMethod]
+    public void ObtenerAtraccionesPorEvento_Valido_RetornaLista()
+    {
+        var eventoId = 5;
+        var atracciones = new List<AtraccionParque>
+        {
+            new AtraccionParque("Montaña Rusa", TipoAtraccion.MontañaRusa, 12, 50, "Emocionante!") { Id = 1 },
+            new AtraccionParque("Carrusel", TipoAtraccion.Simulador, 0, 40, "Familiar") { Id = 2 }
+        };
+
+        var evento =
+            new Evento("Fiesta", "Evento con atracciones", DateTime.Today, DateTime.Today.AddHours(3), 100, 20,
+                EstadoEvento.Programado) { Id = eventoId, Atracciones = atracciones };
+
+        var repoMock = new Mock<IRepositorio<Evento>>();
+        repoMock.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Evento, bool>>>(), "Atracciones"))
+            .Returns(evento);
+        var servicio = new ServicioEvento(repoMock.Object);
+
+        var result = servicio.ObtenerAtraccionesPorEvento(eventoId);
+
+        Assert.AreEqual(2, result.Count);
+        Assert.AreEqual("Montaña Rusa", result[0].Nombre);
+        Assert.AreEqual("Carrusel", result[1].Nombre);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionEntidadNoEncontrada))]
+    public void ObtenerAtraccionesPorEvento_EventoNoExiste_LanzaExcepcion()
+    {
+        var eventoId = 999;
+        var repoMock = new Mock<IRepositorio<Evento>>();
+        repoMock.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Evento, bool>>>(), "Atracciones"))
+            .Returns((Evento?)null);
+        var servicio = new ServicioEvento(repoMock.Object);
+
+        servicio.ObtenerAtraccionesPorEvento(eventoId);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ArgumentException))]
+    public void EliminarEventoPorId_IdMenorOIgualCero_LanzaException()
+    {
+        var repoMock = new Mock<IRepositorio<Evento>>();
+        var servicio = new ServicioEvento(repoMock.Object);
+
+        // Evento ID inválido: 0
+        servicio.EliminarEventoPorId(0);
+    }
+
+    [TestMethod]
+    [ExpectedException(typeof(ExcepcionEntidadNoEncontrada))]
+    public void ObtenerEventoPorId_EventoNoExiste_LanzaException()
+    {
+        var repoMock = new Mock<IRepositorio<Evento>>();
+        repoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento,bool>>>()))
+            .Returns((Evento?)null);
+
+        var servicio = new ServicioEvento(repoMock.Object);
+        var eventoIdInexistente = 432;
+
+        servicio.ObtenerEventoPorId(eventoIdInexistente);
     }
 }
