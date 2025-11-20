@@ -37,7 +37,7 @@ public class TicketController(IServicioTicket service) : ControllerBase
             return Unauthorized(new { mensaje = "Usuario no autenticado" });
         }
 
-        var tickets = service.ListarTickets().Where(t => t.CuentaId == usuario.Id);
+        var tickets = service.ListarTickets().Where(t => t.CuentaId == usuario.Id && t.EsValido);
         return Ok(tickets);
     }
 
