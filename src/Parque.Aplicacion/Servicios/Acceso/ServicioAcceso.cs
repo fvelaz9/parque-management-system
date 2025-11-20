@@ -195,7 +195,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             })
             .ToList();
 
-        if (mantenimientos.Any())
+        if(mantenimientos.Any())
         {
             var mant = mantenimientos.First();
 
