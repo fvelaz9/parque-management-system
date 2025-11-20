@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Parque.Aplicacion.DTOs.RecompensasDtos;
 using Parque.Aplicacion.Servicios.Recompensas;
@@ -318,7 +318,11 @@ public class RecompensasController_Test
         var okResult = result as OkObjectResult;
         Assert.IsNotNull(okResult);
         Assert.AreEqual(200, okResult.StatusCode);
-        Assert.AreEqual("Recompensa eliminada exitosamente", ((dynamic)okResult.Value).mensaje);
+
+        var valueType = okResult.Value?.GetType();
+        var mensajeProp = valueType?.GetProperty("mensaje");
+        var mensaje = mensajeProp?.GetValue(okResult.Value) as string;
+        Assert.AreEqual("Recompensa eliminada exitosamente", mensaje);
     }
 
     [TestMethod]
@@ -337,7 +341,11 @@ public class RecompensasController_Test
         var notFoundResult = result as NotFoundObjectResult;
         Assert.IsNotNull(notFoundResult);
         Assert.AreEqual(404, notFoundResult.StatusCode);
-        Assert.AreEqual(mensajeError, ((dynamic)notFoundResult.Value).mensaje);
+
+        var valueType = notFoundResult.Value?.GetType();
+        var mensajeProp = valueType?.GetProperty("mensaje");
+        var mensaje = mensajeProp?.GetValue(notFoundResult.Value) as string;
+        Assert.AreEqual(mensajeError, mensaje);
     }
 
     #endregion
@@ -360,7 +368,11 @@ public class RecompensasController_Test
         var okResult = result as OkObjectResult;
         Assert.IsNotNull(okResult);
         Assert.AreEqual(200, okResult.StatusCode);
-        Assert.AreEqual(puntosEsperados, ((dynamic)okResult.Value).puntos);
+
+        var valueType = okResult.Value?.GetType();
+        var puntosProp = valueType?.GetProperty("puntos");
+        var puntos = puntosProp?.GetValue(okResult.Value);
+        Assert.AreEqual(puntosEsperados, puntos);
     }
 
     #endregion

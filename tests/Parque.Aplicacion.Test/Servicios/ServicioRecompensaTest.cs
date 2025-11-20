@@ -1,6 +1,4 @@
 ﻿using System.Linq.Expressions;
-using System.Text.Json;
-using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Parque.Aplicacion.DTOs.RecompensasDtos;
 using Parque.Aplicacion.Servicios;
@@ -8,7 +6,6 @@ using Parque.Aplicacion.Servicios.Recompensas;
 using Parque.Dominio.Gamificacion;
 using Parque.Dominio.Usuarios;
 using Parque.Infraestructura.Repositorios;
-using Parque.WebApi.Controllers;
 
 namespace Parque.Aplicacion.Test.Servicios;
 
@@ -646,40 +643,65 @@ public class ServicioRecompensaTest
     }
 
     [TestMethod]
-    public void EliminarRecompensa_IdValido_RetornaOk()
+    public void EliminarRecompensa_IdValido_DebeEliminarCorrectamente()
     {
-        var controller = new RecompensasController(null);
+        // Arrange
         var id = Guid.NewGuid();
-        var result = controller.EliminarRecompensa(id);
-        var okResult = result as OkObjectResult;
-        Assert.IsNotNull(okResult);
-        var json = (JsonElement)okResult.Value;
-        Assert.AreEqual("Recompensa eliminada exitosamente", json.GetProperty("mensaje").GetString());
+        var recompensa = new Recompensa
+        {
+            Id = id,
+            Nombre = "Recompensa Test",
+            CostoEnPuntos = 100,
+            CantidadDisponible = 5,
+            FechaCreacion = DateTime.UtcNow
+        };
+
+        _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>()))
+            .Returns(recompensa);
+        _mockRepoRecompensa.Setup(r => r.Eliminar(It.IsAny<Expression<Func<Recompensa, bool>>>()));
+
+        // Act
+        _servicio.EliminarRecompensa(id);
+
+        // Assert
+        _mockRepoRecompensa.Verify(r => r.Eliminar(It.IsAny<Expression<Func<Recompensa, bool>>>()), Times.Once);
     }
 
     [TestMethod]
-    public void EliminarRecompensa_IdInvalido_RetornaNotFound()
+    public void EliminarRecompensa_IdInvalido_DebeLanzarExcepcion()
     {
-        var controller = new RecompensasController(null);
+        // Arrange
         var id = Guid.NewGuid();
-        var result = controller.EliminarRecompensa(id);
-        var notFound = result as NotFoundObjectResult;
-        Assert.IsNotNull(notFound);
+        _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>()))
+            .Returns((Recompensa)null!);
 
-        var json = (JsonElement)notFound.Value;
-        Assert.AreEqual("Recompensa con ID " + id + " no encontrada", json.GetProperty("mensaje").GetString());
+        // Act & Assert
+        var ex = Assert.ThrowsException<InvalidOperationException>(() => _servicio.EliminarRecompensa(id));
+        Assert.AreEqual($"Recompensa con ID {id} no encontrada", ex.Message);
     }
 
     [TestMethod]
     public void ObtenerPuntos_VisitanteExiste_RetornaPuntos()
     {
-        var controller = new RecompensasController(null);
+        // Arrange
         var visitanteId = Guid.NewGuid();
-        var result = controller.ObtenerPuntos(visitanteId);
-        var okResult = result as OkObjectResult;
-        Assert.IsNotNull(okResult);
+        var puntosEsperados = 150;
+        var fechaMock = new DateTime(2025, 11, 11, 22, 0, 0);
 
-        var json = (JsonElement)okResult.Value;
-        Assert.AreEqual(150, json.GetProperty("puntos").GetInt32()); // Asumiendo el valor esperado
+        var puntuaciones = new List<PuntuacionVisitante>
+        {
+            new PuntuacionVisitante(visitanteId, fechaMock.AddDays(-2), 0) { PuntosTotales = 50 },
+            new PuntuacionVisitante(visitanteId, fechaMock.AddDays(-1), 0) { PuntosTotales = 60 },
+            new PuntuacionVisitante(visitanteId, fechaMock, 0) { PuntosTotales = 40 }
+        };
+
+        _mockRepoPuntuacion.Setup(r => r.ObtenerTodos()).Returns(puntuaciones);
+        _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual()).Returns(fechaMock);
+
+        // Act
+        var resultado = _servicio.ObtenerPuntosTotalesVisitante(visitanteId);
+
+        // Assert
+        Assert.AreEqual(puntosEsperados, resultado);
     }
 }

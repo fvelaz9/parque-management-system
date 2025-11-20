@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Parque.Aplicacion.DTOs.RecompensasDtos;
 using Parque.Aplicacion.Servicios.Recompensas;
 using Parque.WebApi.Filtros;
@@ -8,14 +7,9 @@ namespace Parque.WebApi.Controllers;
 
 [ApiController]
 [Route("api/recompensas")]
-public class RecompensasController : ControllerBase
+public class RecompensasController(IServicioRecompensa servicioRecompensa) : ControllerBase
 {
-    private readonly IServicioRecompensa _servicioRecompensa;
-
-    public RecompensasController(IServicioRecompensa servicioRecompensa)
-    {
-        _servicioRecompensa = servicioRecompensa ?? throw new ArgumentNullException(nameof(servicioRecompensa));
-    }
+    private readonly IServicioRecompensa _servicioRecompensa = servicioRecompensa ?? throw new ArgumentNullException(nameof(servicioRecompensa));
 
     [HttpPost]
     [AuthorizationFilter("Administrador")]
