@@ -207,4 +207,60 @@ public class TicketControllerTest
         // Assert
         Assert.IsInstanceOfType(result, typeof(UnauthorizedObjectResult));
     }
+
+    [TestMethod]
+    public void GetTicketsPorUsuario_UsuarioConTickets_RetornaOkConTickets()
+    {
+        // Arrange
+        var usuarioId = Guid.NewGuid();
+        var tickets = new List<Ticket>
+        {
+            new Ticket(usuarioId, DateTime.Today, 1, TipoTicket.General, DateTime.Now) { Codigo = Guid.NewGuid() },
+            new Ticket(usuarioId, DateTime.Today.AddDays(1), 2, TipoTicket.EventoEspecial, DateTime.Now) { Codigo = Guid.NewGuid() }
+        };
+
+        _servicioMock!.Setup(s => s.ListarTicketsValidosGeneral(usuarioId)).Returns(tickets);
+
+        // Act
+        var result = _controller!.GetTicketsPorUsuario(usuarioId);
+
+        // Assert
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        var value = okResult.Value as IEnumerable<Ticket>;
+        Assert.IsNotNull(value);
+        Assert.AreEqual(2, value.Count());
+        Assert.IsTrue(value.All(t => t.CuentaId == usuarioId));
+    }
+
+    [TestMethod]
+    public void GetTicketsPorUsuario_UsuarioSinTickets_RetornaOkConListaVacia()
+    {
+        var usuarioId = Guid.NewGuid();
+        _servicioMock!.Setup(s => s.ListarTicketsValidosGeneral(usuarioId)).Returns([]);
+        var result = _controller!.GetTicketsPorUsuario(usuarioId);
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        var value = okResult.Value as IEnumerable<Ticket>;
+        Assert.IsNotNull(value);
+        Assert.AreEqual(0, value.Count());
+    }
+
+    [TestMethod]
+    public void GetTicketsPorUsuarioYEvento_ExistenTickets_RetornaOk()
+    {
+        var usuarioId = Guid.NewGuid();
+        var eventoId = 42;
+        var tickets = new List<Ticket>
+        {
+            new Ticket(usuarioId, DateTime.Today, eventoId, TipoTicket.EventoEspecial, DateTime.Now) { Codigo = Guid.NewGuid() }
+        };
+        _servicioMock!.Setup(s => s.ObtenerTicketsPorUsuarioYEvento(usuarioId, eventoId)).Returns(tickets);
+        var result = _controller!.GetTicketsPorUsuarioYEvento(usuarioId, eventoId);
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        var value = okResult.Value as IEnumerable<Ticket>;
+        Assert.IsNotNull(value);
+        Assert.AreEqual(1, value.Count());
+    }
 }

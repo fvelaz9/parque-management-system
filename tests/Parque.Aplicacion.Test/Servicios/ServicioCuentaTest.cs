@@ -813,7 +813,8 @@ public class ServicioCuentaTest
         // Arrange
         var cuenta = Cuenta.Crear("Juan", "Pérez", new Email("juan@test.com"), "pass123", Rol.Visitante);
         cuenta.AsignarVisitante(new DateTime(1990, 1, 1));
-
+        cuenta.AgregarRol(Rol.Operador);
+        cuenta.QuitarRol(Rol.Operador);
         var mockRepo = new Mock<IRepositorio<Cuenta>>();
         mockRepo.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Cuenta, bool>>>(), It.IsAny<string[]>()))
             .Returns(cuenta);
@@ -973,4 +974,28 @@ public class ServicioCuentaTest
     }
 
     #endregion
+    [TestMethod]
+    public void ObtenerCuentasVisitantes_DevuelveSoloVisitantes()
+    {
+        var visitantes = new List<Cuenta>
+        {
+            Cuenta.Crear("Ana", "Martínez", new Email("ana@test.com"), "pass123", Rol.Visitante),
+            Cuenta.Crear("Luis", "Fernández", new Email("luis@test.com"), "pass123", Rol.Visitante)
+        };
+        var otros = new List<Cuenta>
+        {
+            Cuenta.Crear("Admin", "Global", new Email("admin@test.com"), "pass", Rol.Administrador)
+        };
+        var todasCuentas = visitantes.Concat(otros).ToList();
+        var repoMock = new Mock<IRepositorio<Cuenta>>();
+        repoMock.Setup(r => r.ObtenerConRelaciones(It.IsAny<Expression<Func<Cuenta, bool>>>(), "Visitante"))
+            .Returns(todasCuentas);
+
+        var servicio = new ServicioCuenta(repoMock.Object);
+
+        var result = servicio.ObtenerCuentasVisitantes();
+
+        Assert.AreEqual(2, result.Count);
+        Assert.IsTrue(result.All(c => c.Roles.Contains("Visitante")));
+    }
 }

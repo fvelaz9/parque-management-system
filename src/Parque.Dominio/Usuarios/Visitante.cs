@@ -3,7 +3,7 @@
 namespace Parque.Dominio.Usuarios;
 public class Visitante
 {
-    public Guid Id { get; private set; }
+    public Guid Id { get; set; }
     public DateTime FechaNacimiento { get; private set; }
     public NivelMembresia NivelMembresia { get; private set; }
     public List<HistorialPuntuacion> HistorialPuntuaciones { get; private set; } = [];

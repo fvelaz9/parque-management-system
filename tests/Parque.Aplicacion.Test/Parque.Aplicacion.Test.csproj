@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Parque.Aplicacion\Parque.Aplicacion.csproj" />
+    <ProjectReference Include="..\..\src\Parque.WebApi\Parque.WebApi.csproj" />
   </ItemGroup>
 
   <ItemGroup>
