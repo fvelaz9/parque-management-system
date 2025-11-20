@@ -153,3 +153,6 @@ TestResult.xml
 *.bak
 Entropy.bin
 data/
+
+# deploy
+environment.prod.ts
