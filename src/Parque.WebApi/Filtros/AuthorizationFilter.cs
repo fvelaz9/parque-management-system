@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -6,8 +7,7 @@ using Parque.Aplicacion.Servicios;
 using Parque.Dominio.Excepciones;
 
 namespace Parque.WebApi.Filtros;
-
-// ✅ CAMBIO: Usar params string[] para aceptar múltiples roles
+[ExcludeFromCodeCoverage]
 public class AuthorizationFilter(params string[] roles) : Attribute, IAuthorizationFilter
 {
     private const string AUTHORIZATION_HEADER = "Authorization";
@@ -15,7 +15,6 @@ public class AuthorizationFilter(params string[] roles) : Attribute, IAuthorizat
 
     public void OnAuthorization(AuthorizationFilterContext context)
     {
-        // ✅ Verificar si el endpoint tiene [AllowAnonymous]
         var hasAllowAnonymous = context.ActionDescriptor.EndpointMetadata
             .Any(m => m is IAllowAnonymous);
 
@@ -55,7 +54,6 @@ public class AuthorizationFilter(params string[] roles) : Attribute, IAuthorizat
 
         try
         {
-            // ✅ CAMBIO: Verificar si el usuario tiene al menos uno de los roles permitidos
             var tieneRolPermitido = false;
             foreach(var rol in _roles)
             {

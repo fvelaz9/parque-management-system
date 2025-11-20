@@ -301,4 +301,67 @@ public class RecompensasController_Test
     }
 
     #endregion
+    #region EliminarRecompensa Tests
+
+    [TestMethod]
+    public void EliminarRecompensa_IdValido_RetornaOk()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        _serviceMock!.Setup(s => s.EliminarRecompensa(id));
+
+        // Act
+        var result = _controller!.EliminarRecompensa(id);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.AreEqual(200, okResult.StatusCode);
+        Assert.AreEqual("Recompensa eliminada exitosamente", ((dynamic)okResult.Value).mensaje);
+    }
+
+    [TestMethod]
+    public void EliminarRecompensa_IdInvalido_RetornaNotFound()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var mensajeError = "No se encontró la recompensa";
+        _serviceMock!.Setup(s => s.EliminarRecompensa(id)).Throws(new InvalidOperationException(mensajeError));
+
+        // Act
+        var result = _controller!.EliminarRecompensa(id);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(NotFoundObjectResult));
+        var notFoundResult = result as NotFoundObjectResult;
+        Assert.IsNotNull(notFoundResult);
+        Assert.AreEqual(404, notFoundResult.StatusCode);
+        Assert.AreEqual(mensajeError, ((dynamic)notFoundResult.Value).mensaje);
+    }
+
+    #endregion
+
+    #region ObtenerPuntos Tests
+
+    [TestMethod]
+    public void ObtenerPuntos_VisitanteExiste_RetornaPuntos()
+    {
+        // Arrange
+        var visitanteId = Guid.NewGuid();
+        var puntosEsperados = 350;
+        _serviceMock!.Setup(s => s.ObtenerPuntosTotalesVisitante(visitanteId)).Returns(puntosEsperados);
+
+        // Act
+        var result = _controller!.ObtenerPuntos(visitanteId);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.AreEqual(200, okResult.StatusCode);
+        Assert.AreEqual(puntosEsperados, ((dynamic)okResult.Value).puntos);
+    }
+
+    #endregion
 }

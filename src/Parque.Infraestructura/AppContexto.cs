@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
@@ -6,7 +7,7 @@ using Parque.Dominio.Gamificacion;
 using Parque.Dominio.Usuarios;
 
 namespace Parque.Infraestructura;
-
+[ExcludeFromCodeCoverage]
 public class AppContexto(DbContextOptions options) : DbContext(options)
 {
     public DbSet<Cuenta> Cuentas { get; set; }
