@@ -9,7 +9,7 @@ using Parque.Infraestructura.Repositorios;
 namespace Parque.Aplicacion.Servicios.Acceso;
 
 public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepositorio<Dominio.Ticket> repoTickets,
-    IRepositorio<RegistroVisita> repoRegistros, IRepositorio<Incidencia> repoIncidencias, IRepositorio<Cuenta> repoCuentas,
+    IRepositorio<RegistroVisita> repoRegistros, IRepositorio<MantenimientoPreventivo> repoMantenimientos, IRepositorio<Cuenta> repoCuentas,
     IRepositorio<Evento> repoEvento, IServicioFechaHora servicioFechaHora, IServicioPuntuacion servicioPuntuacion) : IServicioAcceso
 {
     public ValidarAccesoResponse ValidarAcceso(ValidarAccesoRequest request)
@@ -72,7 +72,7 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
             return validacion;
         }
 
-        var incidencias = ValidarIncidencias(request.AtraccionId, atraccion);
+        var incidencias = ValidarMantenimientosPreventivos(request.AtraccionId, atraccion);
         if(incidencias != null)
         {
             return incidencias;
@@ -182,20 +182,30 @@ public class ServicioAcceso(IRepositorio<AtraccionParque> repoAtracciones, IRepo
         return null;
     }
 
-    private ValidarAccesoResponse? ValidarIncidencias(int atraccionId, AtraccionParque atraccion)
+    private ValidarAccesoResponse? ValidarMantenimientosPreventivos(int atraccionId, AtraccionParque atraccion)
     {
-        var incidencias = repoIncidencias.ObtenerTodos()
-            .Where(i => i.AtraccionId == atraccionId && i.EstaActiva(servicioFechaHora.ObtenerFechaActual()))
+        var ahora = servicioFechaHora.ObtenerFechaActual();
+        var mantenimientos = repoMantenimientos.ObtenerTodos()
+            .Where(m => m.AtraccionId == atraccionId)
+            .Where(m =>
+            {
+                var inicio = m.FechaHoraInicio();
+                var fin = m.FechaHoraFin();
+                return ahora >= inicio && ahora <= fin;
+            })
             .ToList();
 
-        if(incidencias.Any())
+        if (mantenimientos.Any())
         {
-            var incidencia = incidencias.First();
+            var mant = mantenimientos.First();
+
             return new ValidarAccesoResponse
             {
                 AccesoPermitido = false,
-                Mensaje = $"Atracción fuera de servicio. {incidencia.Descripcion}. " +
-                         $"Resolución estimada: {incidencia.FechaResolucionEstimada:dd/MM/yyyy HH:mm}",
+                Mensaje =
+                    $"Atracción en mantenimiento preventivo. {mant.Descripcion ?? "Trabajo programado"}. " +
+                    $"Inicio: {mant.FechaHoraInicio():dd/MM/yyyy HH:mm} - " +
+                    $"Fin estimado: {mant.FechaHoraFin():dd/MM/yyyy HH:mm}",
                 NombreAtraccion = atraccion.Nombre
             };
         }

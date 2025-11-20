@@ -26,7 +26,9 @@ export class MisTicketsComponent implements OnInit {
   ngOnInit(): void {
     this.cargarTickets();
   }
-
+  verConprar() {
+    this.router.navigate(['/tickets/comprar']);
+  }
   private cargarTickets(): void {
     this.loading.set(true);
     this.error.set('');
