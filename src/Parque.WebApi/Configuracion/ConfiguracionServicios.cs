@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
 using Parque.Aplicacion.Servicios;
 using Parque.Aplicacion.Servicios.Acceso;
 using Parque.Aplicacion.Servicios.Atracciones;
@@ -13,7 +14,7 @@ using Parque.Infraestructura.Repositorios;
 using Parque.WebApi.Filtros;
 
 namespace Parque.WebApi.Configuracion;
-
+[ExcludeFromCodeCoverage]
 public static class ConfiguracionServicios
 {
     public static IServiceCollection AgregarServicios(this IServiceCollection services)

@@ -53,13 +53,13 @@ export const routes: Routes = [
     path: 'mantenimientos',
     loadComponent: () => import('./features/mantenimientos/mantenimiento-list/mantenimiento-list')
       .then(m => m.MantenimientoList),
-    canActivate: [adminGuard, operadorGuard]
+    canActivate: [authGuard]
   },
   {
     path: 'mantenimientos/nuevo',
     loadComponent: () => import('./features/mantenimientos/mantenimiento-form/mantenimiento-form')
       .then(m => m.MantenimientoForm),
-    canActivate: [adminGuard]
+    canActivate: [authGuard]
   },
   {
     path: 'recompensas',
@@ -89,13 +89,13 @@ export const routes: Routes = [
     path: 'mantenimientos/editar/:id',
     loadComponent: () => import('./features/mantenimientos/mantenimiento-edit/mantenimiento-edit')
       .then(m => m.MantenimientoEdit),
-    canActivate: [adminGuard]
+    canActivate: [authGuard]
   },
   {
     path: 'incidencias',
     loadComponent: () => import('./features/incidencias/incidencias-list/incidencias-list')
       .then(m => m.IncidenciasListComponent),
-    canActivate: [operadorGuard]
+    canActivate: [authGuard]
   },
   {
     path: 'eventos',

@@ -42,17 +42,15 @@ export class NavbarComponent {
   toggleDropdown(event: Event): void {
     event.stopPropagation();
     this.isDropdownOpen = !this.isDropdownOpen;
-    this.isAdminDropdownOpen = false; // ✅ AGREGAR: Cerrar el otro
+    this.isAdminDropdownOpen = false;
   }
 
-  // ✅ AGREGAR: Toggle dropdown Admin
   toggleAdminDropdown(event: Event): void {
     event.stopPropagation();
     this.isAdminDropdownOpen = !this.isAdminDropdownOpen;
-    this.isDropdownOpen = false; // Cerrar el otro dropdown
+    this.isDropdownOpen = false;
   }
 
-  // Cerrar dropdowns cuando se hace click afuera
   onClickOutside(event: Event): void {
     this.isDropdownOpen = false;
     this.isAdminDropdownOpen = false; // ✅ AGREGAR

@@ -13,4 +13,7 @@ export class IncidenciasService {
   getAllIncidencias(): Observable<Incidencia[]> {
     return this.http.get<Incidencia[]>(this.apiUrl);
   }
+  resolverIncidencia(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
 }
