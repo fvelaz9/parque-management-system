@@ -328,10 +328,12 @@ public class ServicioRecompensaTest
     [TestMethod]
     public void CanjearRecompensa_ConDatosValidos_DebeRetornarHistorialCanje()
     {
+        // Arrange
         var recompensaId = Guid.NewGuid();
         var visitanteId = Guid.NewGuid();
 
         var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
+        visitante.Id = visitanteId;
         visitante.AsignarMembresia(NivelMembresia.Premium);
 
         var recompensa = new Recompensa
@@ -358,6 +360,7 @@ public class ServicioRecompensaTest
             .Returns(recompensa);
         _mockRepoPuntuacion.Setup(r => r.ObtenerTodos())
             .Returns(puntuaciones);
+        _mockRepoHistorial.Setup(r => r.Agregar(It.IsAny<HistorialCanje>()));
 
         var request = new CanjearRecompensaRequest
         {
@@ -365,13 +368,15 @@ public class ServicioRecompensaTest
             RecompensaId = recompensaId
         };
 
+        // Act
         var resultado = _servicio.CanjearRecompensa(request);
 
+        // Assert
         Assert.IsNotNull(resultado);
         Assert.AreEqual(visitanteId, resultado.VisitanteId);
         Assert.AreEqual(recompensaId, resultado.RecompensaId);
         Assert.AreEqual(100, resultado.PuntosCanjeados);
-        Assert.AreEqual(4, recompensa.CantidadDisponible);
+        Assert.AreEqual(4, recompensa.CantidadDisponible); // Debe haber decrementado
 
         _mockRepoPuntuacion.Verify(r => r.Editar(It.IsAny<PuntuacionVisitante>()), Times.AtLeastOnce);
         _mockRepoHistorial.Verify(r => r.Agregar(It.IsAny<HistorialCanje>()), Times.Once);
