@@ -728,8 +728,8 @@ public class CuentaControllerTest
         // Arrange
         var visitantes = new List<CuentaDto>
         {
-            new CuentaDto(Guid.NewGuid(), "Ana", "Martínez", "ana@test.com", new[] { "Visitante" }, null),
-            new CuentaDto(Guid.NewGuid(), "Luis", "Fernández", "luis@test.com", new[] { "Visitante" }, null)
+            new CuentaDto(Guid.NewGuid(), "Ana", "Martínez", "ana@test.com", ["Visitante"], null),
+            new CuentaDto(Guid.NewGuid(), "Luis", "Fernández", "luis@test.com", ["Visitante"], null)
         };
         _serviceMock!.Setup(s => s.ObtenerCuentasVisitantes()).Returns(visitantes);
 

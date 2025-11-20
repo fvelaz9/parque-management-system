@@ -217,7 +217,7 @@ public class ServicioTicketsTest
 
         _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
             .Returns(evento);
-        _repositorioMock.Setup(r => r.ObtenerTodos()).Returns(new List<Ticket>());
+        _repositorioMock.Setup(r => r.ObtenerTodos()).Returns([]);
         _repositorioMock.Setup(r => r.Agregar(It.IsAny<Ticket>()));
 
         var ticket = _servicio.CrearTicketEventoEspecial(cuentaId, fechaVisita, eventoId);
@@ -257,58 +257,58 @@ public class ServicioTicketsTest
         _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
             .Returns(evento);
 
-        _repositorioMock.Setup(r => r.ObtenerTodos()).Returns(new List<Ticket>
-        {
+        _repositorioMock.Setup(r => r.ObtenerTodos()).Returns(
+        [
             new Ticket { EventoId = eventoId, EsValido = true }
-        });
+        ]);
 
         _servicio.CrearTicketEventoEspecial(cuentaId, fechaVisita, eventoId);
     }
 
     [TestMethod]
-public void CrearTicket_ConTipoGeneral_RetornaTicketGeneral()
-{
-    var cuentaId = Guid.NewGuid();
-    var ticketDto = new CrearTicketDto
+    public void CrearTicket_ConTipoGeneral_RetornaTicketGeneral()
     {
-        FechaVisita = _fechaActual.AddDays(2),
-        TipoEntrada = TipoTicket.General
-    };
-    _repositorioMock.Setup(r => r.Agregar(It.IsAny<Ticket>()));
+        var cuentaId = Guid.NewGuid();
+        var ticketDto = new CrearTicketDto
+        {
+            FechaVisita = _fechaActual.AddDays(2),
+            TipoEntrada = TipoTicket.General
+        };
+        _repositorioMock.Setup(r => r.Agregar(It.IsAny<Ticket>()));
 
-    var ticket = _servicio.CrearTicket(cuentaId, ticketDto);
+        var ticket = _servicio.CrearTicket(cuentaId, ticketDto);
 
-    Assert.IsNotNull(ticket);
-    Assert.AreEqual(TipoTicket.General, ticket.TipoEntrada);
-    _repositorioMock.Verify(r => r.Agregar(It.IsAny<Ticket>()), Times.Once);
-}
+        Assert.IsNotNull(ticket);
+        Assert.AreEqual(TipoTicket.General, ticket.TipoEntrada);
+        _repositorioMock.Verify(r => r.Agregar(It.IsAny<Ticket>()), Times.Once);
+    }
 
-[TestMethod]
-public void CrearTicket_ConTipoEventoEspecial_RetornaTicketEventoEspecial()
-{
-    var cuentaId = Guid.NewGuid();
-    var eventoId = 15;
-    var ticketDto = new CrearTicketDto
+    [TestMethod]
+    public void CrearTicket_ConTipoEventoEspecial_RetornaTicketEventoEspecial()
     {
-        FechaVisita = _fechaActual.AddDays(3),
-        TipoEntrada = TipoTicket.EventoEspecial,
-        EventoId = eventoId
-    };
+        var cuentaId = Guid.NewGuid();
+        var eventoId = 15;
+        var ticketDto = new CrearTicketDto
+        {
+            FechaVisita = _fechaActual.AddDays(3),
+            TipoEntrada = TipoTicket.EventoEspecial,
+            EventoId = eventoId
+        };
 
-    var evento = new Evento("Fiesta", "Evento", _fechaActual, _fechaActual.AddDays(10), 100, 30, EstadoEvento.Programado)
-    { Id = eventoId };
+        var evento = new Evento("Fiesta", "Evento", _fechaActual, _fechaActual.AddDays(10), 100, 30, EstadoEvento.Programado)
+        { Id = eventoId };
 
-    _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
-        .Returns(evento);
-    _repositorioMock.Setup(r => r.ObtenerTodos()).Returns(new List<Ticket>());
-    _repositorioMock.Setup(r => r.Agregar(It.IsAny<Ticket>()));
+        _repositorioEventoMock.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Evento, bool>>>()))
+            .Returns(evento);
+        _repositorioMock.Setup(r => r.ObtenerTodos()).Returns([]);
+        _repositorioMock.Setup(r => r.Agregar(It.IsAny<Ticket>()));
 
-    var ticket = _servicio.CrearTicket(cuentaId, ticketDto);
+        var ticket = _servicio.CrearTicket(cuentaId, ticketDto);
 
-    Assert.IsNotNull(ticket);
-    Assert.AreEqual(TipoTicket.EventoEspecial, ticket.TipoEntrada);
-    Assert.AreEqual(eventoId, ticket.EventoId);
-}
+        Assert.IsNotNull(ticket);
+        Assert.AreEqual(TipoTicket.EventoEspecial, ticket.TipoEntrada);
+        Assert.AreEqual(eventoId, ticket.EventoId);
+    }
 
     [TestMethod]
     [ExpectedException(typeof(ArgumentException))]

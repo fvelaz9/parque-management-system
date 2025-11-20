@@ -237,7 +237,7 @@ public class TicketControllerTest
     public void GetTicketsPorUsuario_UsuarioSinTickets_RetornaOkConListaVacia()
     {
         var usuarioId = Guid.NewGuid();
-        _servicioMock!.Setup(s => s.ListarTicketsValidosGeneral(usuarioId)).Returns(new List<Ticket>());
+        _servicioMock!.Setup(s => s.ListarTicketsValidosGeneral(usuarioId)).Returns([]);
         var result = _controller!.GetTicketsPorUsuario(usuarioId);
         var okResult = result as OkObjectResult;
         Assert.IsNotNull(okResult);
