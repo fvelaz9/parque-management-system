@@ -128,7 +128,7 @@ public class ServicioCuenta(IRepositorio<Cuenta> cuentaRepo) : IServicioCuenta
         }
     }
 
-    private static void ValidarDatosModificacion(ModificarPerfilDto dto)
+    public static void ValidarDatosModificacion(ModificarPerfilDto dto)
     {
         if(dto.Nombre != null && string.IsNullOrWhiteSpace(dto.Nombre))
         {

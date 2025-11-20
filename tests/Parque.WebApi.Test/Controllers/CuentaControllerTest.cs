@@ -722,4 +722,74 @@ public class CuentaControllerTest
     }
 
     #endregion
+    [TestMethod]
+    public void ObtenerCuentasVisitantes_ConVisitantes_RetornaOk()
+    {
+        // Arrange
+        var visitantes = new List<CuentaDto>
+        {
+            new CuentaDto(Guid.NewGuid(), "Ana", "Martínez", "ana@test.com", ["Visitante"], null),
+            new CuentaDto(Guid.NewGuid(), "Luis", "Fernández", "luis@test.com", ["Visitante"], null)
+        };
+        _serviceMock!.Setup(s => s.ObtenerCuentasVisitantes()).Returns(visitantes);
+
+        // Act
+        var result = _controller!.ObtenerCuentasVisitantes();
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        var response = okResult.Value as ResponseDto;
+        Assert.IsNotNull(response);
+        Assert.IsTrue(response.ExecutionSuccessful);
+        Assert.AreEqual("Visitantes obtenidos exitosamente", response.Message);
+        Assert.IsInstanceOfType(response.Content, typeof(IEnumerable<CuentaDto>));
+        var content = (IEnumerable<CuentaDto>)response.Content!;
+        Assert.AreEqual(2, content.Count());
+    }
+
+    [TestMethod]
+    public void AgregarRol_Valido_RetornaOk()
+    {
+        // Arrange
+        var cuentaId = Guid.NewGuid();
+        var rol = Rol.Administrador;
+        _serviceMock!.Setup(s => s.AgregarRol(cuentaId, rol));
+
+        // Act
+        var result = _controller!.AgregarRol(cuentaId, rol);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        var response = okResult.Value as ResponseDto;
+        Assert.IsNotNull(response);
+        Assert.IsTrue(response.ExecutionSuccessful);
+        Assert.AreEqual("Rol agregado exitosamente", response.Message);
+        Assert.IsNull(response.Content);
+    }
+
+    [TestMethod]
+    public void QuitarRol_Valido_RetornaOk()
+    {
+        // Arrange
+        var cuentaId = Guid.NewGuid();
+        var rol = Rol.Operador;
+        _serviceMock!.Setup(s => s.QuitarRol(cuentaId, rol));
+
+        // Act
+        var result = _controller!.QuitarRol(cuentaId, rol);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        var response = okResult.Value as ResponseDto;
+        Assert.IsNotNull(response);
+        Assert.IsTrue(response.ExecutionSuccessful);
+        Assert.AreEqual("Rol eliminado exitosamente", response.Message);
+        Assert.IsNull(response.Content);
+    }
 }

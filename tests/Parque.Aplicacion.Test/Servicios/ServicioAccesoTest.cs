@@ -1,11 +1,13 @@
 ﻿using System.Linq.Expressions;
 using Moq;
 using Parque.Aplicacion.DTOs;
+using Parque.Aplicacion.DTOs.Usuarios;
 using Parque.Aplicacion.Servicios;
 using Parque.Aplicacion.Servicios.Acceso;
 using Parque.Aplicacion.Servicios.Gamificacion;
 using Parque.Dominio;
 using Parque.Dominio.Atracciones;
+using Parque.Dominio.Excepciones;
 using Parque.Dominio.Usuarios;
 using Parque.Infraestructura.Repositorios;
 
@@ -776,5 +778,108 @@ public class ServicioAccesoTest
         Assert.AreEqual(registro.Identificador, respuesta[0].Identificador);
         Assert.AreEqual(registro.AtraccionId, respuesta[0].AtraccionId);
         Assert.AreEqual(registro.FechaIngreso, respuesta[0].FechaIngreso);
+    }
+
+    [TestMethod]
+    public void ValidarDatosModificacion_ValoresWhitespaceEnConstructor_LanzaExcepcionDominio()
+    {
+        var dto = new ModificarPerfilDto(" ", " ", " ", DateTime.Today.AddYears(-30));
+        var ex = Assert.ThrowsException<ExcepcionDominio>(() => ServicioCuenta.ValidarDatosModificacion(dto));
+        Assert.IsTrue(ex.Message.Contains("vacío"));
+    }
+
+    [TestMethod]
+    public void ValidarAcceso_EventoEspecial_AtraccionNoIncluidaEnEvento_RetornaAccesoDenegado()
+    {
+        var request = new ValidarAccesoRequest
+        {
+            CodigoTicket = Guid.NewGuid(),
+            AtraccionId = 2, // No está incluida
+            CuentaVisitanteId = Guid.NewGuid()
+        };
+        var ticket = new Dominio.Ticket
+        {
+            Codigo = request.CodigoTicket,
+            TipoEntrada = TipoTicket.EventoEspecial,
+            EventoId = 101,
+            EsValido = true,
+            FechaVisita = DateTime.Today
+        };
+        var atraccion = new AtraccionParque("Montaña Rusa", TipoAtraccion.MontañaRusa, 12, 30, "test") { Id = 2 };
+        var cuenta = Cuenta.Crear("Ana", "Test", new Email("ana@test.com"), "pass", Rol.Visitante);
+        var evento = new Evento("Mega Fiesta", "Evento multiatracción", DateTime.Today.AddDays(-1), DateTime.Today.AddDays(5), 100, 30, EstadoEvento.Programado)
+        {
+            Id = 101,
+            Atracciones =
+            [
+                new AtraccionParque("Carrusel", TipoAtraccion.Simulador, 0, 20, "child") { Id = 1 }
+            ]
+        };
+
+        var repoTickets = new Mock<IRepositorio<Dominio.Ticket>>();
+        var repoAtracciones = new Mock<IRepositorio<AtraccionParque>>();
+        var repoCuentas = new Mock<IRepositorio<Cuenta>>();
+        var repoEvento = new Mock<IRepositorio<Evento>>();
+        var servicioFechaHora = new Mock<IServicioFechaHora>();
+        repoTickets.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>())).Returns(ticket);
+        repoAtracciones.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>())).Returns(atraccion);
+        repoCuentas.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>())).Returns(cuenta);
+        repoEvento.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Evento, bool>>>(), "Atracciones")).Returns(evento);
+        servicioFechaHora.Setup(s => s.ObtenerFechaActual()).Returns(DateTime.Today);
+
+        var servicioAcceso = new ServicioAcceso(repoAtracciones.Object, repoTickets.Object, null!, null!, repoCuentas.Object, repoEvento.Object, servicioFechaHora.Object, null!);
+        var resultado = servicioAcceso.ValidarAcceso(request);
+
+        Assert.IsFalse(resultado.AccesoPermitido);
+        Assert.IsTrue(resultado.Mensaje.Contains("no forma parte del evento"));
+        Assert.IsTrue(resultado.Mensaje.Contains("Carrusel"));
+        Assert.AreEqual(atraccion.Nombre, resultado.NombreAtraccion);
+    }
+
+    [TestMethod]
+    public void ValidarAcceso_EventoEspecial_FechaActualFueraDelEvento_RetornaAccesoDenegado()
+    {
+        var request = new ValidarAccesoRequest
+        {
+            CodigoTicket = Guid.NewGuid(),
+            AtraccionId = 1,
+            CuentaVisitanteId = Guid.NewGuid()
+        };
+
+        var hoy = DateTime.Today;
+        var ticket = new Dominio.Ticket
+        {
+            Codigo = request.CodigoTicket,
+            TipoEntrada = TipoTicket.EventoEspecial,
+            EventoId = 101,
+            EsValido = true,
+            FechaVisita = hoy // dentro del rango, pero fechaActual se simula fuera
+        };
+        var atraccion = new AtraccionParque("Carrusel", TipoAtraccion.Simulador, 0, 20, "child") { Id = 1 };
+        var cuenta = Cuenta.Crear("Ana", "Test", new Email("ana@test.com"), "pass", Rol.Visitante);
+
+        var evento = new Evento("Mega Fiesta", "Evento multiatracción", hoy.AddDays(2), hoy.AddDays(5), 100, 30, EstadoEvento.Programado) // evento inicia en el futuro
+        {
+            Id = 101,
+            Atracciones = [atraccion]
+        };
+
+        var repoTickets = new Mock<IRepositorio<Dominio.Ticket>>();
+        var repoAtracciones = new Mock<IRepositorio<AtraccionParque>>();
+        var repoCuentas = new Mock<IRepositorio<Cuenta>>();
+        var repoEvento = new Mock<IRepositorio<Evento>>();
+        var servicioFechaHora = new Mock<IServicioFechaHora>();
+        repoTickets.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Dominio.Ticket, bool>>>())).Returns(ticket);
+        repoAtracciones.Setup(r => r.Encontrar(It.IsAny<Expression<Func<AtraccionParque, bool>>>())).Returns(atraccion);
+        repoCuentas.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Cuenta, bool>>>())).Returns(cuenta);
+        repoEvento.Setup(r => r.EncontrarConRelaciones(It.IsAny<Expression<Func<Evento, bool>>>(), "Atracciones")).Returns(evento);
+        servicioFechaHora.Setup(s => s.ObtenerFechaActual()).Returns(hoy);
+
+        var servicioAcceso = new ServicioAcceso(repoAtracciones.Object, repoTickets.Object, null!, null!, repoCuentas.Object, repoEvento.Object, servicioFechaHora.Object, null!);
+        var resultado = servicioAcceso.ValidarAcceso(request);
+
+        Assert.IsFalse(resultado.AccesoPermitido);
+        Assert.IsTrue(resultado.Mensaje.Contains("no está activo"));
+        Assert.IsTrue(resultado.Mensaje.Contains(evento.Titulo));
     }
 }

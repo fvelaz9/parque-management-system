@@ -264,4 +264,29 @@ public class EventoControllerTest
 
         _controller!.ObtenerPorId(eventoId);
     }
+
+    [TestMethod]
+    public void GetAtraccionesPorEvento_DevuelveListaDeAtracciones()
+    {
+        // Arrange
+        var eventoId = 1;
+        var atracciones = new List<AtraccionParque>
+        {
+            new AtraccionParque("Montaña Rusa", TipoAtraccion.MontañaRusa, 12, 50, "Intensa!") { Id = 1 }
+        };
+        _servicioEventoMock!.Setup(s => s.ObtenerAtraccionesPorEvento(eventoId)).Returns(atracciones);
+
+        // Act
+        var result = _controller!.GetAtraccionesPorEvento(eventoId);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+
+        var atraccionesResp = okResult.Value as List<AtraccionParque>;
+        Assert.IsNotNull(atraccionesResp);
+        Assert.AreEqual(1, atraccionesResp.Count);
+        Assert.AreEqual("Montaña Rusa", atraccionesResp.First().Nombre);
+    }
 }

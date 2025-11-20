@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Parque.Aplicacion.DTOs.RecompensasDtos;
 using Parque.Aplicacion.Servicios.Recompensas;
@@ -298,6 +298,81 @@ public class RecompensasController_Test
         var okResult = result as OkObjectResult;
         Assert.IsNotNull(okResult);
         Assert.AreEqual(200, okResult.StatusCode);
+    }
+
+    #endregion
+    #region EliminarRecompensa Tests
+
+    [TestMethod]
+    public void EliminarRecompensa_IdValido_RetornaOk()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        _serviceMock!.Setup(s => s.EliminarRecompensa(id));
+
+        // Act
+        var result = _controller!.EliminarRecompensa(id);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.AreEqual(200, okResult.StatusCode);
+
+        var valueType = okResult.Value?.GetType();
+        var mensajeProp = valueType?.GetProperty("mensaje");
+        var mensaje = mensajeProp?.GetValue(okResult.Value) as string;
+        Assert.AreEqual("Recompensa eliminada exitosamente", mensaje);
+    }
+
+    [TestMethod]
+    public void EliminarRecompensa_IdInvalido_RetornaNotFound()
+    {
+        // Arrange
+        var id = Guid.NewGuid();
+        var mensajeError = "No se encontró la recompensa";
+        _serviceMock!.Setup(s => s.EliminarRecompensa(id)).Throws(new InvalidOperationException(mensajeError));
+
+        // Act
+        var result = _controller!.EliminarRecompensa(id);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(NotFoundObjectResult));
+        var notFoundResult = result as NotFoundObjectResult;
+        Assert.IsNotNull(notFoundResult);
+        Assert.AreEqual(404, notFoundResult.StatusCode);
+
+        var valueType = notFoundResult.Value?.GetType();
+        var mensajeProp = valueType?.GetProperty("mensaje");
+        var mensaje = mensajeProp?.GetValue(notFoundResult.Value) as string;
+        Assert.AreEqual(mensajeError, mensaje);
+    }
+
+    #endregion
+
+    #region ObtenerPuntos Tests
+
+    [TestMethod]
+    public void ObtenerPuntos_VisitanteExiste_RetornaPuntos()
+    {
+        // Arrange
+        var visitanteId = Guid.NewGuid();
+        var puntosEsperados = 350;
+        _serviceMock!.Setup(s => s.ObtenerPuntosTotalesVisitante(visitanteId)).Returns(puntosEsperados);
+
+        // Act
+        var result = _controller!.ObtenerPuntos(visitanteId);
+
+        // Assert
+        Assert.IsInstanceOfType(result, typeof(OkObjectResult));
+        var okResult = result as OkObjectResult;
+        Assert.IsNotNull(okResult);
+        Assert.AreEqual(200, okResult.StatusCode);
+
+        var valueType = okResult.Value?.GetType();
+        var puntosProp = valueType?.GetProperty("puntos");
+        var puntos = puntosProp?.GetValue(okResult.Value);
+        Assert.AreEqual(puntosEsperados, puntos);
     }
 
     #endregion

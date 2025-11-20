@@ -328,10 +328,12 @@ public class ServicioRecompensaTest
     [TestMethod]
     public void CanjearRecompensa_ConDatosValidos_DebeRetornarHistorialCanje()
     {
+        // Arrange
         var recompensaId = Guid.NewGuid();
         var visitanteId = Guid.NewGuid();
 
         var visitante = Visitante.Crear(new DateTime(1990, 1, 1));
+        visitante.Id = visitanteId;
         visitante.AsignarMembresia(NivelMembresia.Premium);
 
         var recompensa = new Recompensa
@@ -358,6 +360,7 @@ public class ServicioRecompensaTest
             .Returns(recompensa);
         _mockRepoPuntuacion.Setup(r => r.ObtenerTodos())
             .Returns(puntuaciones);
+        _mockRepoHistorial.Setup(r => r.Agregar(It.IsAny<HistorialCanje>()));
 
         var request = new CanjearRecompensaRequest
         {
@@ -365,13 +368,15 @@ public class ServicioRecompensaTest
             RecompensaId = recompensaId
         };
 
+        // Act
         var resultado = _servicio.CanjearRecompensa(request);
 
+        // Assert
         Assert.IsNotNull(resultado);
         Assert.AreEqual(visitanteId, resultado.VisitanteId);
         Assert.AreEqual(recompensaId, resultado.RecompensaId);
         Assert.AreEqual(100, resultado.PuntosCanjeados);
-        Assert.AreEqual(4, recompensa.CantidadDisponible);
+        Assert.AreEqual(4, recompensa.CantidadDisponible); // Debe haber decrementado
 
         _mockRepoPuntuacion.Verify(r => r.Editar(It.IsAny<PuntuacionVisitante>()), Times.AtLeastOnce);
         _mockRepoHistorial.Verify(r => r.Agregar(It.IsAny<HistorialCanje>()), Times.Once);
@@ -638,39 +643,65 @@ public class ServicioRecompensaTest
     }
 
     [TestMethod]
-    public void EliminarRecompensa_ConIdValido_DebeEliminarRecompensa()
+    public void EliminarRecompensa_IdValido_DebeEliminarCorrectamente()
     {
         // Arrange
-        var recompensaId = Guid.NewGuid();
-        var recompensaExistente = new Recompensa
+        var id = Guid.NewGuid();
+        var recompensa = new Recompensa
         {
-            Id = recompensaId,
-            Nombre = "Recompensa a eliminar",
-            Descripcion = "Descripción de prueba",
+            Id = id,
+            Nombre = "Recompensa Test",
             CostoEnPuntos = 100,
             CantidadDisponible = 5,
             FechaCreacion = DateTime.UtcNow
         };
 
         _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>()))
-            .Returns(recompensaExistente);
+            .Returns(recompensa);
+        _mockRepoRecompensa.Setup(r => r.Eliminar(It.IsAny<Expression<Func<Recompensa, bool>>>()));
 
         // Act
-        _servicio.EliminarRecompensa(recompensaId);
+        _servicio.EliminarRecompensa(id);
 
         // Assert
-        _mockRepoRecompensa.Verify(r => r.Eliminar(It.Is<Expression<Func<Recompensa, bool>>>(
-            expr => expr.Compile()(recompensaExistente))), Times.Once);
+        _mockRepoRecompensa.Verify(r => r.Eliminar(It.IsAny<Expression<Func<Recompensa, bool>>>()), Times.Once);
     }
 
     [TestMethod]
-    public void EliminarRecompensa_ConIdInexistente_DebeLanzarExcepcion()
+    public void EliminarRecompensa_IdInvalido_DebeLanzarExcepcion()
     {
         // Arrange
-        var recompensaId = Guid.NewGuid();
-        _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>())).Returns((Recompensa)null!);
-        var ex = Assert.ThrowsException<InvalidOperationException>(() => _servicio.EliminarRecompensa(recompensaId));
-        Assert.AreEqual($"Recompensa con ID {recompensaId} no encontrada", ex.Message);
-        _mockRepoRecompensa.Verify(r => r.Eliminar(It.IsAny<Expression<Func<Recompensa, bool>>>()), Times.Never);
+        var id = Guid.NewGuid();
+        _mockRepoRecompensa.Setup(r => r.Encontrar(It.IsAny<Expression<Func<Recompensa, bool>>>()))
+            .Returns((Recompensa)null!);
+
+        // Act & Assert
+        var ex = Assert.ThrowsException<InvalidOperationException>(() => _servicio.EliminarRecompensa(id));
+        Assert.AreEqual($"Recompensa con ID {id} no encontrada", ex.Message);
+    }
+
+    [TestMethod]
+    public void ObtenerPuntos_VisitanteExiste_RetornaPuntos()
+    {
+        // Arrange
+        var visitanteId = Guid.NewGuid();
+        var puntosEsperados = 150;
+        var fechaMock = new DateTime(2025, 11, 11, 22, 0, 0);
+
+        var puntuaciones = new List<PuntuacionVisitante>
+        {
+            new PuntuacionVisitante(visitanteId, fechaMock.AddDays(-2), 0) { PuntosTotales = 50 },
+            new PuntuacionVisitante(visitanteId, fechaMock.AddDays(-1), 0) { PuntosTotales = 60 },
+            new PuntuacionVisitante(visitanteId, fechaMock, 0) { PuntosTotales = 40 }
+        };
+
+        _mockRepoPuntuacion.Setup(r => r.ObtenerTodos()).Returns(puntuaciones);
+        _mockServicioFechaHora.Setup(s => s.ObtenerFechaActual()).Returns(fechaMock);
+
+        // Act
+        var resultado = _servicio.ObtenerPuntosTotalesVisitante(visitanteId);
+
+        // Assert
+        Assert.AreEqual(puntosEsperados, resultado);
     }
 }

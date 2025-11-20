@@ -1,7 +1,8 @@
-﻿using Parque.Dominio;
+﻿using System.Diagnostics.CodeAnalysis;
+using Parque.Dominio;
 
 namespace Parque.WebApi.Controllers.Evento.Modelos;
-
+[ExcludeFromCodeCoverage]
 public class EventoOutDto(Dominio.Evento evento)
 {
     public int Id { get; set; } = evento.Id;

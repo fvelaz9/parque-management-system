@@ -1,5 +1,7 @@
-﻿namespace Parque.WebApi.Filtros;
+﻿using System.Diagnostics.CodeAnalysis;
 
+namespace Parque.WebApi.Filtros;
+[ExcludeFromCodeCoverage]
 public record ResponseDto
 {
     public object? Content { get; set; }

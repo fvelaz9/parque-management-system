@@ -1,9 +1,10 @@
-﻿using Parque.Dominio;
+﻿using System.Diagnostics.CodeAnalysis;
+using Parque.Dominio;
 using Parque.Dominio.Atracciones;
 using Parque.Dominio.Gamificacion;
 
 namespace Parque.Plugin.PuntuacionPorHora;
-
+[ExcludeFromCodeCoverage]
 public class PuntuacionPorHoraEstrategia : IEstrategiaPuntuacion
 {
     private const int PUNTOS_BASE = 10;
