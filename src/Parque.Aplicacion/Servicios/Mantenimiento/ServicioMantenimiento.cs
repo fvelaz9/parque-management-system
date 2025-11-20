@@ -144,20 +144,13 @@ public class ServicioMantenimiento(IRepositorio<MantenimientoPreventivo> repoMan
             throw new ArgumentException("Mantenimiento no encontrado");
         }
 
-        // repoIncidencias.Eliminar(i => i.Id == mantenimiento.IncidenciaId);
         repoMantenimiento.Eliminar(m => m.Id == id);
         var atraccion = repoAtracciones.Encontrar(a => a.Id == mantenimiento.AtraccionId);
         if(atraccion != null)
         {
             var fechaActual = servicioFechaHora.ObtenerFechaActual();
-            var tieneIncidenciasActivas = repoIncidencias
-                .ObtenerTodos()
-                .Any(i => i.AtraccionId == mantenimiento.AtraccionId && i.EstaActiva(fechaActual));
-            if(!tieneIncidenciasActivas)
-            {
-                atraccion.Estado = EstadoAtraccion.Disponible;
-                repoAtracciones.Editar(atraccion);
-            }
+            atraccion.Estado = EstadoAtraccion.Disponible;
+            repoAtracciones.Editar(atraccion);
         }
     }
 
