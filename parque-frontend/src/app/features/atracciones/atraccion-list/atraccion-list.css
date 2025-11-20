@@ -2,32 +2,55 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-h1 {
-  color: #333;
-  margin-bottom: 2rem;
-  text-align: center;
+/* HEADER DE LA PÁGINA */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.header-content h1 {
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+  font-weight: 700;
+  font-size: 2rem;
+  letter-spacing: 0.3px;
+}
+
+.subtitle {
+  color: #7f8c8d;
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 400;
 }
 
 .loading, .error {
   text-align: center;
   padding: 2rem;
   font-size: 1.2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .error {
-  color: #d32f2f;
-  background-color: #ffebee;
-  border-radius: 8px;
-  padding: 1rem;
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 10px;
+  padding: 1.25rem;
+  font-weight: 500;
 }
 
 .atracciones-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 1.5rem;
-  margin-top: 2rem;
+  margin-top: 1rem;
 }
 
 .atraccion-card {
@@ -36,6 +59,7 @@ h1 {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: transform 0.3s, box-shadow 0.3s;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .atraccion-card:hover {
@@ -55,13 +79,16 @@ h1 {
 .card-header h2 {
   margin: 0;
   font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
 }
 
 .badge {
   padding: 0.4rem 0.8rem;
   border-radius: 20px;
   font-size: 0.85rem;
-  font-weight: bold;
+  font-weight: 600;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .badge.disponible {
@@ -79,12 +106,15 @@ h1 {
 }
 
 .card-body p {
-  margin: 0.5rem 0;
+  margin: 0.75rem 0;
   color: #555;
+  font-size: 0.95rem;
+  line-height: 1.5;
 }
 
 .card-body strong {
-  color: #333;
+  color: #2c3e50;
+  font-weight: 600;
 }
 
 .descripcion {
@@ -93,6 +123,78 @@ h1 {
   border-top: 1px solid #eee;
   font-style: italic;
   color: #666;
+  line-height: 1.6;
+}
+
+.card-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.card-actions .btn {
+  flex: 1;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #5568d3 0%, #63398b 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #ff5252 0%, #d84a5c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.5);
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg, #a8b3cf 0%, #8895b3 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(168, 179, 207, 0.3);
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #949eb8 0%, #7280a0 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(168, 179, 207, 0.5);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
 
 .empty {
@@ -100,4 +202,39 @@ h1 {
   color: #999;
   font-size: 1.1rem;
   padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
+  }
+
+  .header-content h1 {
+    text-align: center;
+  }
+
+  .subtitle {
+    text-align: center;
+  }
+
+  .page-header .btn {
+    width: 100%;
+  }
+
+  .atracciones-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .card-actions {
+    flex-direction: column;
+  }
+
+  .card-actions .btn {
+    width: 100%;
+  }
 }

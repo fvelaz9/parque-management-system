@@ -185,7 +185,7 @@ export const routes: Routes = [
     path: 'fecha-hora',
     loadComponent: () => import('./features/fecha-hora/fecha-hora')
       .then(m => m.FechaHora),
-    canActivate: [authGuard]
+    canActivate: [adminGuard]
   },
   {
     path: 'acceso-denegado',

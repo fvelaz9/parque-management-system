@@ -1,20 +1,20 @@
 <div class="selector-estrategias-container">
-  <h2>⚙️ Configuración de Estrategias de Puntaje</h2>
+  <h2>Configuración de Estrategias de Puntaje</h2>
 
   <!-- Mensajes -->
   <div *ngIf="errorMessage" class="alert alert-error">
-    <span>❌ {{ errorMessage }}</span>
+    <span>{{ errorMessage }}</span>
     <button (click)="limpiarMensajes()" class="close-btn" aria-label="Cerrar">&times;</button>
   </div>
 
   <div *ngIf="successMessage" class="alert alert-success">
-    <span>✅ {{ successMessage }}</span>
+    <span>{{ successMessage }}</span>
     <button (click)="limpiarMensajes()" class="close-btn" aria-label="Cerrar">&times;</button>
   </div>
 
   <!-- Estrategia Actual -->
   <div class="estrategia-actual" *ngIf="estrategiaActual">
-    <h3>🎯 Estrategia Activa</h3>
+    <h3>Estrategia Activa</h3>
     <div class="estrategia-info">
       <div>
         <span class="badge" [class.badge-base]="estrategiaActual.origen === 'Base'" 
@@ -27,9 +27,8 @@
     </div>
   </div>
 
-  <!-- Selector de Estrategia -->
   <div class="selector-form">
-    <h3>🔄 Cambiar Estrategia</h3>
+    <h3>Cambiar Estrategia</h3>
     
     <div class="form-group">
       <label for="estrategia">Selecciona una estrategia:</label>
@@ -39,12 +38,12 @@
         [disabled]="loading"
         class="form-control">
         <option value="">-- Selecciona una estrategia --</option>
-        <optgroup label="📊 Estrategias Base" *ngIf="estrategiasBase.length > 0">
+        <optgroup label="Estrategias Base" *ngIf="estrategiasBase.length > 0">
           <option *ngFor="let estrategia of estrategiasBase" [value]="estrategia.nombre">
             {{ estrategia.nombre }} - {{ estrategia.descripcion }}
           </option>
         </optgroup>
-        <optgroup label="🔌 Estrategias Plugin" *ngIf="estrategiasPlugin.length > 0">
+        <optgroup label="Estrategias Plugin" *ngIf="estrategiasPlugin.length > 0">
           <option *ngFor="let estrategia of estrategiasPlugin" [value]="estrategia.nombre">
             {{ estrategia.nombre }} - {{ estrategia.descripcion }}
           </option>
@@ -56,28 +55,28 @@
       (click)="cambiarEstrategia()" 
       [disabled]="!estrategiaSeleccionada || loading"
       class="btn btn-primary">
-      <span *ngIf="!loading">✓ Aplicar Estrategia</span>
-      <span *ngIf="loading">⏳ Aplicando...</span>
+      <span *ngIf="!loading">Aplicar Estrategia</span>
+      <span *ngIf="loading">Aplicando...</span>
     </button>
   </div>
 
   <!-- Lista de Estrategias -->
   <div class="estrategias-lista">
     <div class="lista-header">
-      <h3>📋 Estrategias Disponibles</h3>
+      <h3>Estrategias Disponibles</h3>
       <button 
         (click)="recargarPlugins()" 
         [disabled]="loadingRecargar"
         class="btn btn-secondary">
-        <span *ngIf="!loadingRecargar">🔄 Recargar Plugins</span>
-        <span *ngIf="loadingRecargar">⏳ Recargando...</span>
+        <span *ngIf="!loadingRecargar">Recargar Plugins</span>
+        <span *ngIf="loadingRecargar">Recargando...</span>
       </button>
     </div>
 
     <div class="stats">
-      <span class="stat">📊 Base: {{ cantidadBase }}</span>
-      <span class="stat">🔌 Plugins: {{ cantidadPlugins }}</span>
-      <span class="stat">📈 Total: {{ estrategias.length }}</span>
+      <span class="stat">Base: {{ cantidadBase }}</span>
+      <span class="stat">Plugins: {{ cantidadPlugins }}</span>
+      <span class="stat">Total: {{ estrategias.length }}</span>
     </div>
 
     <div class="estrategias-grid">
