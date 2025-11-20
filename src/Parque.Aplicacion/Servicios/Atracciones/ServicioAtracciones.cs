@@ -62,7 +62,7 @@ public class ServicioAtracciones(IRepositorio<AtraccionParque> repositorio, IRep
         }
 
         var cantidadVisitas = _repositorioRegistros.ObtenerTodos()
-            .Count(r => r.AtraccionId == atraccionId && r.FechaIngreso >= fechaInicio && r.FechaIngreso <= fechaFin);
+            .Count(r => r.AtraccionId == atraccionId && r.FechaIngreso.Date >= fechaInicio.Date && r.FechaIngreso.Date <= fechaFin.Date);
 
         return new ReporteAtraccionDto
         {
