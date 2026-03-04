@@ -11,21 +11,70 @@
 ![Code Analysis - Main](https://github.com/IngSoft-DA2/cardozo-pons-velazquez/actions/workflows/code-analysis.yml/badge.svg?branch=develop&event=push)
 
 
-# 📘 Obligatorio – Diseño de Aplicaciones 2  
+# 🎢 Parque Management System
 
-Este repositorio contiene el desarrollo del **obligatorio de Diseño de Aplicaciones 2 (DA2)**.  
-El proyecto consiste en una aplicación para un parque temático virtual.  
+Academic project developed for the course **Application Design 2**.
 
-## 🗂️ Estructura de la solución  
-```
-Obligatorio.sln                   (Archivo de solución .NET)
+This project consists of a backend system designed to manage a virtual theme park, applying layered architecture principles and clean separation of concerns.
+
+---
+
+## 🏗 Architecture
+
+The solution follows a layered architecture inspired by Domain-Driven Design concepts:
+
+Obligatorio.sln
 
 src/
-├─ Parque.WebApi/                 (Capa de presentación – endpoints HTTP)
-├─ Parque.Aplicacion/             (Casos de uso y lógica de negocio)
-├─ Parque.Dominio/                (Entidades y reglas del dominio)
-└─ Parque.Infraestructura/        (Acceso a datos y servicios externos)
+├─ Parque.WebApi/          → Presentation layer (HTTP endpoints)  
+├─ Parque.Aplicacion/      → Application layer (use cases & business logic)  
+├─ Parque.Dominio/         → Domain layer (entities & business rules)  
+└─ Parque.Infraestructura/ → Infrastructure layer (data access & external services)  
 
 tests/
-└─ Parque.Aplicacion.Tests/       (Proyecto de pruebas – MSTest)
-```
+└─ Parque.Aplicacion.Tests/ → Unit tests (MSTest)
+
+### Architectural Highlights
+
+- Clear separation between domain, application and infrastructure layers  
+- Dependency Injection  
+- RESTful API design  
+- Business rule validation at domain level  
+- Unit testing for application layer  
+- CI pipelines configured with GitHub Actions  
+- Code analysis integration  
+
+---
+
+## 🛠 Technologies Used
+
+- .NET  
+- C#  
+- ASP.NET Web API  
+- MSTest  
+- GitHub Actions (CI/CD)  
+- Docker (Compose configuration)  
+
+---
+
+## 👨‍💻 My Contribution
+
+This was a team-based academic project.  
+
+My main contributions included:
+
+- Implementation of application use cases  
+- REST API endpoint development  
+- Business logic validation  
+- Writing and maintaining unit tests  
+- CI pipeline configuration  
+- Refactoring and architectural improvements  
+
+This repository is published as part of my personal portfolio to showcase backend architecture design and clean code practices.
+
+---
+
+## 📌 Notes
+
+This project was developed in an academic context and does not represent a production-ready system.  
+It is shared for educational and portfolio purposes.
